@@ -9,10 +9,9 @@ name: KONGRAVE auto-publish
 # via os.getenv (python-dotenv devient un no-op quand .env.local est absent).
 
 on:
-  # CRON GELÉ (hotfix safe-zones) : publication auto suspendue le temps de corriger le scale buste
-  # sur ep02-11. ep01 reste en ligne. Réactiver après validation PO.
-  # schedule:
-  #   - cron: "7 * * * *"        # toutes les heures à :07 UTC (cf. fuseaux dans schedule.json)
+  # Réactivé (v13 validée) : publie l'épisode dû dans schedule.json. ep02 = 02:00 Dubai.
+  schedule:
+    - cron: "7 * * * *"          # toutes les heures à :07 UTC (cf. fuseaux dans schedule.json)
   workflow_dispatch:
     inputs:
       dry_run:

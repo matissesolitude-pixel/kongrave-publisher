@@ -22,8 +22,42 @@ from batch_voice import tts
 FF = os.environ.get("FFMPEG") or "/opt/homebrew/bin/ffmpeg"
 ROOT = Path(__file__).resolve().parent
 W, H = 1080, 1920
+# PLANCHE BD (Sin City) : la CASE ACTIVE (qui joue la vidéo) est une cellule d'une page plus grande.
+# Gouttières symétriques (blanc cassé), cases VOISINES en encre noire au-dessus/en-dessous (coupées
+# par le cadre). Générique = plein cadre (pas de case). Un seul gabarit pour toute la série.
+SIDE = 80                     # gouttière latérale (gauche = droite, symétrique)
+VG = 44                       # gouttière verticale (blanc) entre case active et cases voisines
+ACT_TOP, ACT_BOT = 250, 1570  # bords haut/bas de la case active (contenu clair de l'UI Instagram)
+PANEL_X0, PANEL_X1 = SIDE, W - SIDE      # 80 .. 1000
+PANEL_W = PANEL_X1 - PANEL_X0            # 920
+PANEL_H = ACT_BOT - ACT_TOP              # 1320
+GUTTER = "0xEFEAE0@1"         # blanc cassé (gouttière BD)
+PANEL_BORDER = 14             # trait noir épais de la case
+BUSTE_W = 820                 # le buste REMPLIT la case (tête proche du bord haut, petit air)
+BUSTE_TOP = ACT_TOP + 22
+# repères pour bulles/captions (rester DANS la case active)
+INX = PANEL_X0 + PANEL_BORDER + 6         # bord intérieur gauche
+INY_TOP = ACT_TOP + PANEL_BORDER + 4      # bord intérieur haut
+CAP_MAXW = PANEL_W - 2 * (PANEL_BORDER + 24)   # largeur max cartouche caption (dans la case)
+
+NB_TOP_H = ACT_TOP - VG               # hauteur de la case voisine du haut (bas à ACT_TOP-VG)
+NB_BOT_Y = ACT_BOT + VG               # haut de la case voisine du bas
+NB_BOT_H = H - NB_BOT_Y               # hauteur de la case voisine du bas
+# gouttière blanc cassé hors case active (chaîne de filtres, sans virgule finale)
+GUTTERS = (
+    f"drawbox=x=0:y=0:w={W}:h={ACT_TOP}:color={GUTTER}:t=fill,"
+    f"drawbox=x=0:y={ACT_BOT}:w={W}:h={H-ACT_BOT}:color={GUTTER}:t=fill,"
+    f"drawbox=x=0:y=0:w={SIDE}:h={H}:color={GUTTER}:t=fill,"
+    f"drawbox=x={W-SIDE}:y=0:w={SIDE}:h={H}:color={GUTTER}:t=fill")
+# traits noirs épais : case active + amorces voisines (même trait partout)
+BORDERS = (
+    f"drawbox=x={PANEL_X0}:y={ACT_TOP}:w={PANEL_W}:h={PANEL_H}:color=black:t={PANEL_BORDER},"
+    f"drawbox=x={PANEL_X0}:y=0:w={PANEL_W}:h={NB_TOP_H}:color=black:t={PANEL_BORDER},"
+    f"drawbox=x={PANEL_X0}:y={NB_BOT_Y}:w={PANEL_W}:h={NB_BOT_H}:color=black:t={PANEL_BORDER}")
+BUSTE_W = 600         # largeur du buste au compositing (réduit : tête + bulle tiennent dans la zone sûre)
+BUSTE_TOP = 300       # haut du buste bien SOUS la barre de statut (tête dégagée)
 LEAD, HOLD = 1.5, 0.5
-JSON = ROOT / "KONGRAVE_episodes_02_to_28_v2.json"
+JSON = ROOT / "KONGRAVE_episodes_02_to_28_v3.json"
 AUDIO = ROOT / "audio"
 DECOR = ROOT / "assets" / "BACKGROUND.MOV"
 DECOR_A, DECOR_B = 8.5, 14.85          # région du décor SANS le burst WIPED OUT
@@ -117,9 +151,12 @@ def seg_clip(seg_num, shot, dur, work, champ):
     else:
         src = SHOTS[shot]
     if shot.startswith("buste"):
-        # gros plan : buste détouré (alpha), luma binarisée, alpha conservé, sur le décor rouge
-        ov = (f"[1:v]scale={W}:-1,{PERSO_BIN}[p];"
-              f"[0:v][p]overlay=(W-w)/2:120:format=auto[v]")
+        # gros plan : le buste REMPLIT la case bord à bord (object-fit COVER) — scale pour couvrir
+        # toute la surface intérieure de la case puis crop les côtés. Aucun bord vidéo visible.
+        # Détouré (alpha) sur le décor : le perso couvre la case, le décor comble d'éventuels trous.
+        ov = (f"[1:v]scale={PANEL_W}:{PANEL_H}:force_original_aspect_ratio=increase,"
+              f"crop={PANEL_W}:{PANEL_H},{PERSO_BIN}[p];"
+              f"[0:v][p]overlay={PANEL_X0}:{ACT_TOP}:format=auto[v]")
     else:
         # plein-pied : ~0.70, pieds au sol, calage ep01 (x=384,y=834)
         ov = (f"[1:v]scale=504:-1,{PERSO_BIN}[p];"
@@ -225,15 +262,15 @@ def impact_word_png(word, dst):
 
 def caption_png(text, dst):
     from PIL import ImageDraw, ImageFont
-    fs = 58
-    while fs > 30:
+    fs = 46                       # réduit pour l'échelle case BD (tient DANS la case)
+    while fs > 28:
         f = ImageFont.truetype(BANGERS, fs)
         d0 = ImageDraw.Draw(Image.new("RGBA", (4, 4)))
-        # wrap <= 2 lignes, max 900px
+        # wrap <= 2 lignes, largeur max = intérieur de la case active
         words = text.split(); lines = []; cur = ""
         for w in words:
             t = (cur + " " + w).strip()
-            if d0.textlength(t, font=f) <= 900 or not cur:
+            if d0.textlength(t, font=f) <= CAP_MAXW or not cur:
                 cur = t
             else:
                 lines.append(cur); cur = w
@@ -388,6 +425,17 @@ def build(ep, e, work):
         flashes = [ft for ft in flashes if not (fs <= ft <= fe)]
         eclair_at = [ft for ft in eclair_at if not (fs <= ft <= fe)]
 
+    # CASES VOISINES (planche) : crops RÉELS de CET épisode (frame d'avant / d'après), assombris,
+    # jamais rien de généré. Extraits de `base` (décor+perso binarisés, sans bulle ni caption).
+    nb_top_img, nb_bot_img = work / "nb_top.png", work / "nb_bot.png"
+    dim = "eq=brightness=-0.05:contrast=0.9:saturation=0.85"   # ~75-80% : dessin visible, en retrait
+    run([FF, "-y", "-v", "error", "-ss", "1.6", "-i", str(base), "-frames:v", "1", "-vf",
+         f"scale={PANEL_W}:{NB_TOP_H}:force_original_aspect_ratio=increase,crop={PANEL_W}:{NB_TOP_H},{dim}",
+         str(nb_top_img)], "nbtop")
+    run([FF, "-y", "-v", "error", "-ss", f"{max(0.0, body_dur-2.0):.2f}", "-i", str(base), "-frames:v", "1", "-vf",
+         f"scale={PANEL_W}:{NB_BOT_H}:force_original_aspect_ratio=increase,crop={PANEL_W}:{NB_BOT_H},{dim}",
+         str(nb_bot_img)], "nbbot")
+
     # filtergraph final
     inp = ["-i", str(base), "-i", str(voice), "-i", str(asset / "flash.png"), "-i", str(ECLAIR)]
     idx = 4
@@ -397,6 +445,8 @@ def build(ep, e, work):
     spidx = []
     for (p, a, b) in subs:
         spidx.append(idx); inp += ["-i", str(p)]; idx += 1
+    nbt_idx = idx; inp += ["-i", str(nb_top_img)]; idx += 1
+    nbb_idx = idx; inp += ["-i", str(nb_bot_img)]; idx += 1
 
     # DOCTRINE : plus AUCUNE inversion N&B. Les impacts sont des burst bubbles (starburst), pas des flashs.
     nodes = ["[0:v]null[v0]"]
@@ -417,22 +467,29 @@ def build(ep, e, work):
             #   buste (visage)        -> y=H*0.57 (sur le visage, cf. FEED THE MARKET)
             #   champ/insert (seg4)   -> y=H*0.42 (centré, pas d'avatar à éviter, cf. ZERO)
             #   plein-pied (avatar)   -> y=H*0.28 (AU-DESSUS de la tête du perso, pas dessus)
-            yc = 0.57 if n in buste_segs else (0.42 if n == 4 else 0.28)
+            # DANS LA CASE : buste rempli -> impact sur le visage (0.34) ; plein-pied 0.30 (top >= ACT_TOP) ;
+            # seg4 insert centré 0.42. Starburst confiné dans la case active.
+            yc = 0.34 if n in buste_segs else (0.42 if n == 4 else 0.30)
             pop = f"620*(0.86+0.14*min(1\\,(t-{t0})/0.12))"
             k += 1; nn = f"v{k}"
             nodes.append(f"[{shidx[n]}:v]scale=-1:h='{pop}':eval=frame[w{n}];"
                          f"[{cur}][w{n}]overlay=x=(W-w)/2:y='(H*{yc})-(h/2)':enable='between(t,{t0},{t1})'[{nn}]"); cur = nn
         else:
-            # dialogue (template Simon) : buste RC = scale1000 overlay(-70,-20) flush coin HG (ep01_fix) ;
-            # plein-pied DISC (tmpl_disc, queue éclair) = scale700 overlay(96,64) -> oval ~(108,76)-(780,492).
-            sc, px, py = (1000, -70, -20) if n in buste_segs else (700, 96, 64)
+            # dialogue (template Simon) — COLLÉ au coin intérieur haut-gauche de la case : flush
+            # trait haut + trait gauche (peut mordre le trait, jamais la gouttière). Pas de flottement.
+            sc, px, py = (700, PANEL_X0, ACT_TOP) if n in buste_segs else (680, PANEL_X0, ACT_TOP)
             k += 1; nn = f"v{k}"
             nodes.append(f"[{shidx[n]}:v]scale={sc}:-1[b{n}];"
                          f"[{cur}][b{n}]overlay={px}:{py}:enable='between(t,{t0},{t1})'[{nn}]"); cur = nn
     for (p, a, b), ix in zip(subs, spidx):
         k += 1; nn = f"v{k}"
-        nodes.append(f"[{cur}][{ix}:v]overlay=x=(W-w)/2:y=1540-h:enable='between(t,{a:.2f},{b:.2f})'[{nn}]"); cur = nn
-    k += 1; nodes.append(f"[{cur}]format=yuv420p[vb]")   # base déjà binarisée ; garde le jaune des captions
+        nodes.append(f"[{cur}][{ix}:v]overlay=x=(W-w)/2:y={ACT_BOT - PANEL_BORDER - 8}-h:enable='between(t,{a:.2f},{b:.2f})'[{nn}]"); cur = nn
+    # PLANCHE BD (corps uniquement, générique reste plein cadre) : gouttière blanc cassé ->
+    # cases VOISINES (crops réels de l'épisode, assombris) -> traits noirs épais.
+    k += 1; nn = f"v{k}"; nodes.append(f"[{cur}]{GUTTERS}[{nn}]"); cur = nn
+    k += 1; nn = f"v{k}"; nodes.append(f"[{cur}][{nbt_idx}:v]overlay={PANEL_X0}:0[{nn}]"); cur = nn
+    k += 1; nn = f"v{k}"; nodes.append(f"[{cur}][{nbb_idx}:v]overlay={PANEL_X0}:{NB_BOT_Y}[{nn}]"); cur = nn
+    k += 1; nodes.append(f"[{cur}]{BORDERS},format=yuv420p[vb]")   # garde le jaune des captions
 
     # audio corps = voix (adelay LEAD) + orage (rumble bcl + crack sur flashs)
     total = body_dur

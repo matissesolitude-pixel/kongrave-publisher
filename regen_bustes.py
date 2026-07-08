@@ -40,7 +40,8 @@ def _one_clip(api_key, audio_path, out, secs):
     # les secondes jusqu'à ce que ça passe (un léger gel de fin est invisible).
     ib, ab = b64_file(BUSTE_IMG), b64_file(audio_path)
     tried = []
-    for s in [min(MAX_SECS, max(1, secs)), 3, 2]:
+    seq = [min(MAX_SECS, max(1, secs)), 3, 2, 1]
+    for i, s in enumerate(seq):
         if s in tried:
             continue
         tried.append(s)
@@ -50,11 +51,13 @@ def _one_clip(api_key, audio_path, out, secs):
             download_video(poll_task(api_key, tid), out)
             return
         except SystemExit as e:
-            if "cannot exceed" in str(e) or "1004" in str(e):
-                print(f"    plafond DomoAI atteint à {s}s, retry plus court…", flush=True)
+            # échec (cap durée fluctuant, ou 402 crédits) : on retente en plus court ; au dernier
+            # essai on abandonne. create_task/fatal sort en code 1, donc on retente sur TOUT SystemExit.
+            if i < len(seq) - 1:
+                print(f"    échec à {s}s ({str(e)[:40]}), retry plus court…", flush=True)
                 continue
             raise
-    sys.exit("[ERREUR] DomoAI refuse même 2s pour ce buste (throttling sévère).")
+    sys.exit("[ERREUR] DomoAI refuse même 1s (throttling sévère ou crédits épuisés).")
 
 
 def gen_buste(api_key, ep, seg):

@@ -23,7 +23,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-JSON = ROOT / "KONGRAVE_episodes_02_to_28_v2.json"
+JSON = ROOT / "KONGRAVE_episodes_02_to_28_v3.json"
 INBOX = ROOT / "inbox"
 SCHEDULE = ROOT / "schedule.json"
 HF = ROOT / "hf"                       # projet HyperFrames (hyperframes.json/meta.json/assets)
@@ -47,12 +47,13 @@ def publish_dt(n):
     return BASE + timedelta(hours=6 * (n - 1))   # ep01=base, ep02=+6h, …
 
 HASHTAGS = "#kongrave #trading #forex #tradingpsychology #riskmanagement #disruptive"
-CTA = "Reply GAME — tell me what wiped YOU out. The best stories become episodes."
+# CTA en PREMIÈRE ligne (décision PO), "Comment" (pas "Reply")
+CTA = "Comment GAME — tell me what wiped YOU out. The best stories become episodes."
 
 def caption_for(ep):
-    # "règle en une phrase" = la punchline de fermeture (seg5), sans le point final superflu
+    # template : CTA d'abord, puis la règle (punchline seg5), puis hashtags
     rule = next(s["voice"] for s in ep["segments"] if s["segment"] == 5).strip()
-    return f"{rule}\n\n{CTA}\n\n{HASHTAGS}"
+    return f"{CTA}\n\n{rule}\n\n{HASHTAGS}"
 
 # --- helpers -----------------------------------------------------------------
 def run(cmd, **kw):
