@@ -39,9 +39,9 @@ def seg4_type(n):
     return "champ" if n in CHAMP else ("prop" if n in PROP else "narrative")
 
 # --- planning ----------------------------------------------------------------
-# 4 reels/jour à partir du lundi 14 juillet 2026, heures Dubai (UTC+4). 28 ép. = 7 j (jusqu'au 20).
+# 4 reels/jour à partir du 8 juillet 2026, heures Dubai (UTC+4). 28 ép. = 7 j (jusqu'au 14).
 TZ = timezone(timedelta(hours=4))
-START = datetime(2026, 7, 14, tzinfo=TZ)
+START = datetime(2026, 7, 8, tzinfo=TZ)
 SLOTS = [8, 12, 17, 21]
 
 def publish_dt(n):
