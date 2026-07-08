@@ -68,10 +68,13 @@ def fatal(message: str) -> None:
 
 
 def load_api_key() -> str:
-    load_dotenv(ENV_PATH)
-    key = os.getenv("DOMOAI_API_KEY", "").strip()
+    # CI-first : os.environ (secret GitHub) d'abord, .env.local en fallback local uniquement.
+    key = os.environ.get("DOMOAI_API_KEY", "").strip()
+    if not key and ENV_PATH.exists():
+        load_dotenv(ENV_PATH)
+        key = os.getenv("DOMOAI_API_KEY", "").strip()
     if not key:
-        fatal("DOMOAI_API_KEY manquante dans .env.local (ouvre le fichier, colle la clé).")
+        fatal("DOMOAI_API_KEY absente (ni env CI ni .env.local). Vérifie le secret GitHub (nom exact).")
     return key
 
 

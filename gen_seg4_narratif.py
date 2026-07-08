@@ -119,10 +119,16 @@ SCENES = {
 
 
 def gemini_key():
-    for line in (ROOT / ".env.local").read_text().splitlines():
-        if line.startswith("GEMINI_API_KEY="):
-            return line.split("=", 1)[1].strip().strip('"').strip("'")
-    sys.exit("[ERREUR] GEMINI_API_KEY absente.")
+    # CI-first : os.environ (secret GitHub) d'abord, .env.local en fallback local.
+    k = os.environ.get("GEMINI_API_KEY", "").strip()
+    if k:
+        return k
+    env = ROOT / ".env.local"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            if line.startswith("GEMINI_API_KEY="):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    sys.exit("[ERREUR] GEMINI_API_KEY absente (ni env CI ni .env.local). Vérifie le secret GitHub.")
 
 
 def gen_image(scene, img):

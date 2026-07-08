@@ -5,8 +5,10 @@ name: KONGRAVE autoprod
 # Secrets requis : ELEVENLABS_API_KEY, DOMOAI_API_KEY, GEMINI_API_KEY.
 
 on:
-  schedule:
-    - cron: "13 */4 * * *"          # toutes les 4 h (minute 13 pour éviter l'heure pile)
+  # CRON GELÉ : ep12-28 ont un script (mots-chocs + follow me) en cours de réécriture.
+  # Réactiver quand le JSON v2 corrigé sera commité.
+  # schedule:
+  #   - cron: "13 */4 * * *"        # toutes les 4 h (minute 13 pour éviter l'heure pile)
   workflow_dispatch:
     inputs:
       episode:
@@ -35,10 +37,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Système (ffmpeg, tesseract, chromium)
+      - name: Système (ffmpeg, tesseract, chromium, fonts)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg tesseract-ocr chromium-browser
+          sudo apt-get install -y ffmpeg tesseract-ocr chromium-browser fontconfig fonts-dejavu-core
+
+      - name: Polices (repo -> système, AVANT tout rendu Chromium/ffmpeg)
+        run: |
+          mkdir -p ~/.local/share/fonts
+          cp output/v3/fonts/*.ttf ~/.local/share/fonts/ 2>/dev/null || true
+          fc-cache -f >/dev/null 2>&1 || true
+          fc-list | grep -i bangers || echo "(Bangers via chemin repo dans PIL, ok)"
 
       - name: Python 3.12
         uses: actions/setup-python@v5

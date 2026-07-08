@@ -44,15 +44,22 @@ def fmt_word(word):
     if len(t) == 2:
         return f"{t[0]}\n{t[1]}"
     return word
-FONTS = ["/System/Library/Fonts/Supplemental/Arial Bold.ttf", "/System/Library/Fonts/Supplemental/Arial.ttf",
-         "/Library/Fonts/Arial.ttf", "/System/Library/Fonts/Helvetica.ttc"]
+FONTS = [
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",              # macOS (dev local)
+    "/System/Library/Fonts/Supplemental/Arial.ttf",
+    "/Library/Fonts/Arial.ttf", "/System/Library/Fonts/Helvetica.ttc",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",           # Linux runner (sans-serif)
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    str(ROOT / "output" / "v3" / "fonts" / "Bangers-Regular.ttf"),    # repo — TOUJOURS présent (fallback garanti)
+]
 
 
 def FT():
     for f in FONTS:
         if Path(f).exists():
             return f
-    sys.exit("[ERREUR] aucune police trouvée.")
+    # dernier recours : police PIL par défaut (jamais de sys.exit qui casserait tout le run)
+    return None
 
 
 def dur_of(p):
