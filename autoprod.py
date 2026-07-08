@@ -39,15 +39,12 @@ def seg4_type(n):
     return "champ" if n in CHAMP else ("prop" if n in PROP else "narrative")
 
 # --- planning ----------------------------------------------------------------
-# 4 reels/jour à partir du 8 juillet 2026, heures Dubai (UTC+4). 28 ép. = 7 j (jusqu'au 14).
+# CADENCE 6h à partir du 9 juillet 2026 01:00 Dubai (UTC+4) : ep_n = base + 6h*(n-1).
 TZ = timezone(timedelta(hours=4))
-START = datetime(2026, 7, 8, tzinfo=TZ)
-SLOTS = [8, 12, 17, 21]
+BASE = datetime(2026, 7, 9, 1, 0, tzinfo=TZ)
 
 def publish_dt(n):
-    idx = n - 1                        # ep01 = index 0
-    day, slot = divmod(idx, len(SLOTS))
-    return (START + timedelta(days=day)).replace(hour=SLOTS[slot], minute=0, second=0)
+    return BASE + timedelta(hours=6 * (n - 1))   # ep01=base, ep02=+6h, …
 
 HASHTAGS = "#kongrave #trading #forex #tradingpsychology #riskmanagement #disruptive"
 CTA = "Reply GAME — tell me what wiped YOU out. The best stories become episodes."
