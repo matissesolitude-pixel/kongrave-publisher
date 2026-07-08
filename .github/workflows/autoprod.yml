@@ -5,10 +5,10 @@ name: KONGRAVE autoprod
 # Secrets requis : ELEVENLABS_API_KEY, DOMOAI_API_KEY, GEMINI_API_KEY.
 
 on:
-  # CRON GELÉ : ep12-28 ont un script (mots-chocs + follow me) en cours de réécriture.
-  # Réactiver quand le JSON v2 corrigé sera commité.
-  # schedule:
-  #   - cron: "13 */4 * * *"        # toutes les 4 h (minute 13 pour éviter l'heure pile)
+  # Réactivé : JSON v3 (éditorial, no follow me), compositing case BD v13, crédits DomoAI OK,
+  # cap 3s géré (découpe+concat). Produit ep12+ (1/run, toutes les 4 h) et commit dans inbox.
+  schedule:
+    - cron: "13 */4 * * *"          # toutes les 4 h (minute 13)
   workflow_dispatch:
     inputs:
       episode:

@@ -41,10 +41,10 @@ def seg4_type(n):
 # --- planning ----------------------------------------------------------------
 # CADENCE 6h à partir du 9 juillet 2026 01:00 Dubai (UTC+4) : ep_n = base + 6h*(n-1).
 TZ = timezone(timedelta(hours=4))
-BASE = datetime(2026, 7, 9, 1, 0, tzinfo=TZ)
+BASE = datetime(2026, 7, 9, 2, 0, tzinfo=TZ)     # ancre = ep02 (9 juil 02:00 Dubai)
 
 def publish_dt(n):
-    return BASE + timedelta(hours=6 * (n - 1))   # ep01=base, ep02=+6h, …
+    return BASE + timedelta(hours=6 * (n - 2))   # ep02=base, ep03=+6h, … ep12=+60h
 
 HASHTAGS = "#kongrave #trading #forex #tradingpsychology #riskmanagement #disruptive"
 # CTA en PREMIÈRE ligne (décision PO), "Comment" (pas "Reply")

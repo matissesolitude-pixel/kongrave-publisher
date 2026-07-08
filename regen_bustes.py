@@ -23,9 +23,9 @@ BUSTE_SEGS = (2, 5)   # seg2 = reveal face cam, seg5 = cta face cam
 # DomoAI talking-avatar : durée de sortie plafonnée à 4s (contrainte 2026-07-08, error 1004).
 # Voix ≤ MONO_MAX -> 1 clip (seconds=4). Voix plus longues -> découpage en tranches ≤ CHUNK_MAX,
 # 1 clip par tranche (MÊME image source -> le visage NE DÉRIVE PAS), puis concat -> lip-sync complet.
-MAX_SECS = 4
-MONO_MAX = 4.15      # au-delà, on découpe (sous ça, un léger gel de fin <0.15s est invisible)
-CHUNK_MAX = 3.8
+MAX_SECS = 3         # plafond durée talking-avatar observé côté DomoAI (2026-07-09)
+MONO_MAX = 3.1       # au-delà, on découpe (sous ça, un léger gel de fin est invisible)
+CHUNK_MAX = 2.8      # taille max d'une tranche (sous le plafond, marge de sécurité)
 
 
 def _dur(path):
