@@ -1,77 +1,77 @@
 name: KONGRAVE autoprod
 
-# Production autonome d'UN episode par run (voix + bustes + seg4 + assemblage), puis commit
-# dans inbox/ + schedule.json. Le publish.yml (separe) publiera a la date planifiee.
+# Production autonome d'UN épisode par run (voix + bustes + seg4 + assemblage), puis commit
+# dans inbox/ + schedule.json. Le publish.yml (séparé) publiera à la date planifiée.
 # Secrets requis : ELEVENLABS_API_KEY, DOMOAI_API_KEY, GEMINI_API_KEY.
 
 on:
   schedule:
-      - cron: "13 */4 * * *"        # toutes les 4 h (minute 13 pour eviter l'heure pile)
-        workflow_dispatch:
-            inputs:
-                  episode:
-                          description: "Forcer un numero d'episode (vide = prochain non produit)"
-                                  required: false
+    - cron: "13 */4 * * *"          # toutes les 4 h (minute 13 pour éviter l'heure pile)
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Forcer un numéro d'épisode (vide = prochain non produit)"
+        required: false
 
-                                  concurrency:
-                                    group: kongrave-autoprod
-                                      cancel-in-progress: false
+concurrency:
+  group: kongrave-autoprod
+  cancel-in-progress: false
 
-                                      permissions:
-                                        contents: write
+permissions:
+  contents: write
 
-                                        jobs:
-                                          produce:
-                                              runs-on: ubuntu-latest
-                                                  timeout-minutes: 45
-                                                      env:
-                                                            FFMPEG: /usr/bin/ffmpeg
-                                                                  FFPROBE: /usr/bin/ffprobe
-                                                                        ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-                                                                              DOMOAI_API_KEY: ${{ secrets.DOMOAI_API_KEY }}
-                                                                                    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-                                                                                          PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
-                                                                                              steps:
-                                                                                                    - name: Checkout
-                                                                                                            uses: actions/checkout@v4
-                                                                                                            
-                                                                                                                  - name: Systeme (ffmpeg, tesseract, chromium)
-                                                                                                                          run: |
-                                                                                                                                    sudo apt-get update
-                                                                                                                                              sudo apt-get install -y ffmpeg tesseract-ocr chromium-browser
-                                                                                                                                              
-                                                                                                                                                    - name: Python 3.12
-                                                                                                                                                            uses: actions/setup-python@v5
-                                                                                                                                                                    with:
-                                                                                                                                                                              python-version: "3.12"
-                                                                                                                                                                              
-                                                                                                                                                                                    - name: Node 20
-                                                                                                                                                                                            uses: actions/setup-node@v4
-                                                                                                                                                                                                    with:
-                                                                                                                                                                                                              node-version: "20"
-                                                                                                                                                                                                              
-                                                                                                                                                                                                                    - name: Cache modele rembg
-                                                                                                                                                                                                                            uses: actions/cache@v4
-                                                                                                                                                                                                                                    with:
-                                                                                                                                                                                                                                              path: ~/.u2net
-                                                                                                                                                                                                                                                        key: rembg-isnet-anime
-                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                              - name: Deps Python
-                                                                                                                                                                                                                                                                      run: pip install -r requirements-autoprod.txt
-                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                            - name: Production (1 episode)
-                                                                                                                                                                                                                                                                                    run: python autoprod.py
-                                                                                                                                                                                                                                                                                            env:
-                                                                                                                                                                                                                                                                                                      FORCE_EPISODE: ${{ github.event.inputs.episode }}
-                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                            - name: Commit & push
-                                                                                                                                                                                                                                                                                                                    run: |
-                                                                                                                                                                                                                                                                                                                              git config user.name  "kongrave-autoprod"
-                                                                                                                                                                                                                                                                                                                                        git config user.email "autoprod@users.noreply.github.com"
-                                                                                                                                                                                                                                                                                                                                                  git add -f inbox/EPISODE_*.mp4 schedule.json
-                                                                                                                                                                                                                                                                                                                                                            if git diff --cached --quiet; then
-                                                                                                                                                                                                                                                                                                                                                                        echo "Rien de nouveau a committer."
-                                                                                                                                                                                                                                                                                                                                                                                  else
-                                                                                                                                                                                                                                                                                                                                                                                              git commit -m "autoprod: nouvel episode produit [skip ci]"
-                                                                                                                                                                                                                                                                                                                                                                                                          git push
-                                                                                                                                                                                                                                                                                                                                                                                                                    fi
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      FFMPEG: /usr/bin/ffmpeg
+      FFPROBE: /usr/bin/ffprobe
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      DOMOAI_API_KEY: ${{ secrets.DOMOAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Système (ffmpeg, tesseract, chromium)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg tesseract-ocr chromium-browser
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache modèle rembg
+        uses: actions/cache@v4
+        with:
+          path: ~/.u2net
+          key: rembg-isnet-anime
+
+      - name: Deps Python
+        run: pip install -r requirements-autoprod.txt
+
+      - name: Production (1 épisode)
+        run: python autoprod.py
+        env:
+          FORCE_EPISODE: ${{ github.event.inputs.episode }}
+
+      - name: Commit & push
+        run: |
+          git config user.name  "kongrave-autoprod"
+          git config user.email "autoprod@users.noreply.github.com"
+          git add -f inbox/EPISODE_*.mp4 schedule.json
+          if git diff --cached --quiet; then
+            echo "Rien de nouveau à committer."
+          else
+            git commit -m "autoprod: nouvel épisode produit [skip ci]"
+            git push
+          fi
