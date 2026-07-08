@@ -1,0 +1,26 @@
+[
+  {
+    "episode_number": 1,
+    "filepath": "inbox/EPISODE_01_kongrave.mp4",
+    "caption": "KONGRAVE — Épisode 01.\n\n#kongrave #trading #disruptive",
+    "publish_datetime": "2026-07-07T18:00:00+02:00"
+  },
+  {
+    "episode_number": 2,
+    "filepath": "inbox/EPISODE_02_kongrave.mp4",
+    "caption": "KONGRAVE — Épisode 02.\n\n#kongrave #trading #disruptive",
+    "publish_datetime": "2026-07-09T18:00:00+02:00"
+  },
+  {
+    "episode_number": 3,
+    "filepath": "inbox/EPISODE_03_kongrave.mp4",
+    "caption": "KONGRAVE — Épisode 03.\n\n#kongrave #trading #disruptive",
+    "publish_datetime": "2026-07-11T18:00:00+02:00"
+  },
+  {
+    "episode_number": 4,
+    "filepath": "inbox/EPISODE_04_kongrave.mp4",
+    "caption": "KONGRAVE — Épisode 04.\n\n#kongrave #trading #disruptive",
+    "publish_datetime": "2026-07-13T18:00:00+02:00"
+  }
+]

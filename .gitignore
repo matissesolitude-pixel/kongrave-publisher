@@ -1,0 +1,12 @@
+# Secrets — JAMAIS committés (le token vit dans GitHub Secrets, pas ici)
+.env.local
+
+# Sorties runtime : on IGNORE tout SAUF le journal de publication, qui doit
+# persister entre les runs éphémères (idempotence : un ep "success" n'est jamais republié).
+output/*
+!output/publish_log.json
+
+__pycache__/
+
+# NOTE : en mode GitHub Actions, les vidéos de inbox/ ET schedule.json SONT versionnés
+# (le runner en a besoin pour l'upload resumable). Ils ne sont donc plus ignorés ici.
