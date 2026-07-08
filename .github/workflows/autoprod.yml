@@ -29,9 +29,10 @@ jobs:
     env:
       FFMPEG: /usr/bin/ffmpeg
       FFPROBE: /usr/bin/ffprobe
-      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-      DOMOAI_API_KEY: ${{ secrets.DOMOAI_API_KEY }}
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      # les secrets du repo sont nommés sans _KEY -> on les mappe vers les noms attendus par le code
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API }}
+      DOMOAI_API_KEY: ${{ secrets.DOMOAI_API }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API }}
       PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
     steps:
       - name: Checkout
