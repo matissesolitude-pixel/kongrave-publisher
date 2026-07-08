@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body { width:1080px; height:1920px; overflow:hidden; background:#0b0b0b; }
+    </style>
+  </head>
+  <body>
+    <!-- ep09 STOP LOSS — MÉTAPHORE : un funambule sur son fil ; en dessous, le FILET de sécurité
+         (rouge) qu'on RETIRE. Bouger/enlever son stop = retirer le filet : la moindre chute devient
+         mortelle. N&B + 1 rouge (le filet). Compris sans le son. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6"
+         data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="6" data-track-index="1"
+           width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect x="0" y="0" width="1080" height="1920" fill="#0b0b0b"/>
+        <defs>
+          <pattern id="mesh" width="42" height="42" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <path d="M0 0 H42 M0 0 V42" stroke="#C41E1E" stroke-width="5" fill="none"/>
+          </pattern>
+        </defs>
+
+        <!-- mâts + fil -->
+        <rect x="188" y="700" width="16" height="900" fill="#f2f2f2"/>
+        <rect x="876" y="700" width="16" height="900" fill="#f2f2f2"/>
+        <line x1="196" y1="706" x2="884" y2="706" stroke="#fff" stroke-width="5"/>
+
+        <!-- FUNAMBULE (silhouette blanche, balancier) -->
+        <g id="acrobat" transform="translate(540,706)">
+          <line x1="-190" y1="-70" x2="190" y2="-70" stroke="#f2f2f2" stroke-width="9"/> <!-- balancier -->
+          <g stroke="#f2f2f2" stroke-width="17" stroke-linecap="round" fill="none">
+            <path d="M0,0 L-18,-58"/><path d="M0,0 L18,-58"/>    <!-- jambes -->
+            <path d="M0,-58 L0,-120"/>                           <!-- torse -->
+            <path d="M0,-104 L-190,-70"/><path d="M0,-104 L190,-70"/> <!-- bras -> balancier -->
+          </g>
+          <circle cx="0" cy="-142" r="22" fill="#f2f2f2" stroke="#000" stroke-width="4"/>
+        </g>
+
+        <!-- FILET de sécurité rouge (on le retire) -->
+        <g id="net">
+          <rect x="150" y="1300" width="780" height="150" fill="url(#mesh)" stroke="#C41E1E" stroke-width="8"/>
+          <line x1="150" y1="1300" x2="120" y2="1600" stroke="#C41E1E" stroke-width="8"/>
+          <line x1="930" y1="1300" x2="960" y2="1600" stroke="#C41E1E" stroke-width="8"/>
+        </g>
+        <!-- flèche de retrait (indice de mouvement) -->
+        <g id="pull" opacity="0">
+          <path d="M980,1375 L1050,1375 M1020,1350 L1050,1375 L1020,1400" stroke="#fff" stroke-width="7" fill="none"/>
+        </g>
+      </svg>
+    </div>
+
+    <script>
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // 1) filet en place, funambule stable
+      tl.to({},{duration:0.8});
+      // 2) on RETIRE le filet (glisse hors cadre à droite + s'efface) — la flèche indique
+      tl.to("#pull",{opacity:1,duration:0.2},0.7);
+      tl.to("#net",{x:1000,opacity:0,duration:1.3,ease:"power2.in"},1.0);
+      tl.to("#pull",{opacity:0,duration:0.2},2.1);
+      // 3) plus de filet -> le funambule VACILLE au-dessus du vide (oscillation qui s'aggrave)
+      tl.to("#acrobat",{rotation:7,transformOrigin:"540px 706px",duration:0.5,ease:"sine.inOut",
+                        yoyo:true,repeat:5},2.4);
+      tl.to("#acrobat",{rotation:-11,transformOrigin:"540px 706px",duration:0.5,ease:"power1.in"},5.4);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

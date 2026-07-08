@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body { width:1080px; height:1920px; overflow:hidden; background:#0b0b0b; }
+      .num { font-family:Arial, sans-serif; font-weight:900; fill:#fff; }
+    </style>
+  </head>
+  <body>
+    <!-- ep07 OVER-TRADING — MÉTAPHORE : 12 balles tirées en RAFALE, dispersées, ratent la cible ;
+         vs 1 balle de SNIPER en plein centre. Trop trader = arroser ; le pro = un seul tir juste.
+         N&B + 1 rouge (le mille = rouge). Compris sans le son. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6"
+         data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="6" data-track-index="1"
+           width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect x="0" y="0" width="1080" height="1920" fill="#0b0b0b"/>
+        <!-- séparateur -->
+        <line x1="120" y1="965" x2="960" y2="965" stroke="#333" stroke-width="3" stroke-dasharray="14 14"/>
+
+        <!-- CIBLE HAUT (rafale) -->
+        <g id="thaut" transform="translate(600,470)">
+          <circle r="215" fill="none" stroke="#fff" stroke-width="5"/>
+          <circle r="150" fill="none" stroke="#fff" stroke-width="5"/>
+          <circle r="85"  fill="none" stroke="#fff" stroke-width="5"/>
+          <circle r="34"  fill="#C41E1E" stroke="#000" stroke-width="4"/>
+        </g>
+        <g id="holesTop"></g>
+        <text id="cntTop" class="num" x="150" y="300" font-size="150" text-anchor="middle">0</text>
+
+        <!-- CIBLE BAS (sniper) -->
+        <g id="tbas" transform="translate(600,1400)">
+          <circle r="215" fill="none" stroke="#fff" stroke-width="5"/>
+          <circle r="150" fill="none" stroke="#fff" stroke-width="5"/>
+          <circle r="85"  fill="none" stroke="#fff" stroke-width="5"/>
+          <circle r="34"  fill="#C41E1E" stroke="#000" stroke-width="4"/>
+        </g>
+        <g id="holesBot"></g>
+        <text id="cntBot" class="num" x="150" y="1300" font-size="150" text-anchor="middle">0</text>
+        <line id="tracer" x1="120" y1="1400" x2="600" y2="1400" stroke="#fff" stroke-width="6" opacity="0"/>
+        <g id="splat" opacity="0" transform="translate(600,1400)"></g>
+      </svg>
+    </div>
+
+    <script>
+      const NS="http://www.w3.org/2000/svg";
+      const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+      // 12 impacts dispersés autour de la cible haute (angle d'or + rayon variable = éparpillé, ratent le centre)
+      const TC=[600,470], holesTop=document.getElementById("holesTop");
+      const spray=[];
+      for(let i=0;i<12;i++){
+        const ang=i*2.399963, rad=70+((i*37)%150);           // 70..220 : surtout hors du mille
+        const x=TC[0]+Math.cos(ang)*rad, y=TC[1]+Math.sin(ang)*rad;
+        const h=el("g",{opacity:0});
+        h.appendChild(el("circle",{cx:x,cy:y,r:11,fill:"#0b0b0b",stroke:"#fff","stroke-width":4}));
+        holesTop.appendChild(h); spray.push(h);
+      }
+      // impact sniper (centre exact de la cible basse)
+      const BC=[600,1400], splat=document.getElementById("splat");
+      let pts="";for(let i=0;i<20;i++){const a=i*Math.PI/10,r=(i%2?60:26);pts+=(i?"L":"M")+(Math.cos(a)*r).toFixed(1)+" "+(Math.sin(a)*r).toFixed(1)+" ";}
+      splat.appendChild(el("path",{d:pts+"Z",fill:"#C41E1E",stroke:"#000","stroke-width":4}));
+      splat.appendChild(el("circle",{cx:0,cy:0,r:12,fill:"#0b0b0b"}));
+
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // HAUT : rafale — 12 impacts qui claquent vite, compteur 1->12
+      const c={t:0};
+      spray.forEach((h,i)=>{
+        const t=0.4+i*0.12;
+        tl.to(h,{opacity:1,duration:0.05},t);
+        tl.to(c,{t:i+1,duration:0.05,onUpdate:()=>document.getElementById("cntTop").textContent=Math.round(c.t)},t);
+      });
+      // BAS : sniper — un seul tir, lent, tracer puis impact rouge plein centre, compteur 1
+      tl.to("#tracer",{opacity:1,duration:0.12},3.5).to("#tracer",{opacity:0,duration:0.12},3.75);
+      tl.fromTo("#splat",{opacity:0,scale:0,transformOrigin:"600px 1400px"},
+                {opacity:1,scale:1,duration:0.25,ease:"back.out(2)"},3.7);
+      tl.to("#cntBot",{duration:0.01,onComplete:()=>document.getElementById("cntBot").textContent="1"},3.7);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

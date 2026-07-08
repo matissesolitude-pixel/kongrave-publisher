@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0b0b}</style>
+  </head>
+  <body>
+    <!-- ep15 RISK FIRST — MÉTAPHORE : une balance penche dangereusement (que du gain visé) ;
+         on POSE d'abord le contrepoids ROUGE = le RISQUE défini -> la balance s'ÉQUILIBRE.
+         Définis ton risque en premier, et le trade tient. N&B + 1 rouge. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="7" data-track-index="1" width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect width="1080" height="1920" fill="#0b0b0b"/>
+        <!-- socle + pivot -->
+        <polygon points="540,1180 470,1360 610,1360" fill="#f2f2f2" stroke="#000" stroke-width="5"/>
+        <rect x="360" y="1360" width="360" height="24" fill="#f2f2f2"/>
+        <!-- fléau + plateaux (pivot au sommet du triangle 540,1180) -->
+        <g id="beam">
+          <rect x="180" y="1168" width="720" height="22" rx="10" fill="#f2f2f2" stroke="#000" stroke-width="4"/>
+          <!-- plateau gauche (GAIN) -->
+          <line x1="230" y1="1179" x2="230" y2="1250" stroke="#f2f2f2" stroke-width="5"/>
+          <rect id="gain" x="150" y="1250" width="160" height="90" rx="8" fill="#1a1a1a" stroke="#fff" stroke-width="5"/>
+          <!-- plateau droit (où tombe le RISQUE) -->
+          <line x1="850" y1="1179" x2="850" y2="1250" stroke="#f2f2f2" stroke-width="5"/>
+          <rect id="pan" x="770" y="1250" width="160" height="90" rx="8" fill="none" stroke="#fff" stroke-width="5"/>
+          <rect id="risk" x="795" y="1245" width="110" height="95" rx="10" fill="#C41E1E" stroke="#000" stroke-width="6" opacity="0"/>
+        </g>
+      </svg>
+    </div>
+    <script>
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // 1) déséquilibre : le côté GAIN plonge, ça penche méchamment
+      tl.fromTo("#beam",{rotation:0,svgOrigin:"540 1179"},{rotation:16,svgOrigin:"540 1179",duration:1.1,ease:"power2.in"},0.3);
+      tl.to("#beam",{rotation:13,svgOrigin:"540 1179",duration:0.6,yoyo:true,repeat:1,ease:"sine.inOut"},1.5); // vacille
+      // 2) on POSE le RISQUE (rouge) dans le plateau droit
+      tl.fromTo("#risk",{y:-260,opacity:1},{y:0,opacity:1,duration:0.5,ease:"bounce.out"},3.0);
+      // 3) la balance s'ÉQUILIBRE (fléau revient à l'horizontale, oscillation amortie)
+      tl.to("#beam",{rotation:0,svgOrigin:"540 1179",duration:1.6,ease:"elastic.out(1,0.5)"},3.4);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

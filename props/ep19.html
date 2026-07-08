@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0b0b}</style>
+  </head>
+  <body>
+    <!-- ep19 FOMO — MÉTAPHORE : à gauche l'ESCALATOR (le marché) monte tout seul et emporte un
+         repère ROUGE jusqu'en haut ; à droite un personnage COURT dans les escaliers et reste
+         toujours DERRIÈRE. Courir après le marché épuise et ne rattrape jamais. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="7" data-track-index="1" width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect width="1080" height="1920" fill="#0b0b0b"/>
+        <!-- ESCALATOR (bande diagonale + crans) -->
+        <polygon points="150,1560 380,1560 620,560 390,560" fill="#161616" stroke="#fff" stroke-width="5"/>
+        <g stroke="#555" stroke-width="3">
+          <line x1="200" y1="1440" x2="410" y2="1440"/><line x1="250" y1="1240" x2="450" y2="1240"/>
+          <line x1="300" y1="1040" x2="490" y2="1040"/><line x1="350" y1="840" x2="530" y2="840"/>
+          <line x1="400" y1="640" x2="570" y2="640"/>
+        </g>
+        <rect id="market" x="250" y="1470" width="90" height="70" rx="8" fill="#C41E1E" stroke="#000" stroke-width="6"/>
+        <!-- ESCALIERS (à droite) -->
+        <g fill="none" stroke="#fff" stroke-width="5">
+          <path d="M660,1560 H780 V1440 H860 V1320 H940 V1200 H1010 V1080"/>
+        </g>
+        <!-- coureur (silhouette blanche) -->
+        <g id="runner">
+          <g stroke="#f2f2f2" stroke-width="15" stroke-linecap="round" fill="none">
+            <path d="M0,0 L-18,-40"/><path d="M0,0 L20,-38"/><path d="M4,-40 L2,-92"/>
+            <path d="M2,-78 L34,-64"/><path d="M2,-78 L-28,-70"/>
+          </g>
+          <circle cx="2" cy="-112" r="17" fill="#f2f2f2" stroke="#000" stroke-width="4"/>
+        </g>
+      </svg>
+    </div>
+    <script>
+      // escalator : le repère ROUGE glisse jusqu'en haut (lisse). Coureur : monte les marches mais
+      // reste plus bas (il court après et n'y arrive pas).
+      const STAIRS=[[712,1560],[820,1440],[900,1320],[975,1200],[1010,1120]]; // positions pieds successives
+      const runner=document.getElementById("runner");
+      function place(i){const p=STAIRS[Math.max(0,Math.min(STAIRS.length-1,i))];runner.setAttribute("transform",`translate(${p[0]},${p[1]})`);}
+      place(0);
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // marché (rouge) : bas -> haut, régulier
+      tl.to("#market",{x:150,y:-910,duration:4.4,ease:"none"},0.6);
+      // coureur : saute de marche en marche mais s'essouffle (n'atteint que ~3/5 des marches)
+      const st={i:0};
+      // bob d'effort intégré dans place() (léger décalage vertical alterné selon l'index)
+      tl.to(st,{i:3.2,duration:4.4,ease:"power2.out",onUpdate:()=>{
+        const p=STAIRS[Math.max(0,Math.min(STAIRS.length-1,Math.round(st.i)))];
+        const bob=(Math.round(st.i*3)%2)?-12:0;
+        runner.setAttribute("transform",`translate(${p[0]},${p[1]+bob})`);
+      }},0.6);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

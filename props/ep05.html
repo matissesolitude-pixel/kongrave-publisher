@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body { width:1080px; height:1920px; overflow:hidden; background:#0b0b0b; }
+    </style>
+  </head>
+  <body>
+    <!-- ep05 YOUR PATTERN — MÉTAPHORE : Sisyphe franchit une colline, le rocher ROUGE bascule de
+         l'AUTRE côté dans la vallée suivante… et il y a une AUTRE colline identique, encore une.
+         Succession sans fin = tu recommences toujours pareil. N&B + 1 rouge. Sans texte. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6"
+         data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="6" data-track-index="1"
+           width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect x="0" y="0" width="1080" height="1920" fill="#0b0b0b"/>
+        <path id="ground" fill="#191919"/>
+        <path id="surface" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+
+        <g id="boulder">
+          <circle cx="0" cy="0" r="88" fill="#C41E1E" stroke="#000" stroke-width="7"/>
+          <path d="M-46,-26 L-16,-40 L4,-14 M18,10 L48,-6 M-26,32 L2,40 L26,18"
+                fill="none" stroke="#000" stroke-width="5" opacity="0.8"/>
+          <circle cx="-26" cy="-30" r="11" fill="#000" opacity="0.35"/>
+          <circle cx="30" cy="26" r="9" fill="#000" opacity="0.35"/>
+        </g>
+
+        <g id="figure">
+          <g stroke="#f2f2f2" stroke-width="18" stroke-linecap="round" fill="none">
+            <path d="M-14,0 L2,-52"/><path d="M26,0 L6,-52"/>
+            <path d="M4,-52 L40,-94"/><path d="M40,-94 L84,-88"/>
+          </g>
+          <circle cx="48" cy="-110" r="18" fill="#f2f2f2" stroke="#000" stroke-width="4"/>
+        </g>
+      </svg>
+    </div>
+
+    <script>
+      // profil de collines identiques (cosinus), plus hautes/marquées : 3 crêtes visibles
+      const MID=1015, AMP=285, PER=400, R=88;
+      // crêtes à x=230,630,1030 ; vallées à 30,430,830 (une vallée à gauche pour démarrer)
+      const gy=x=>MID - AMP*Math.cos(2*Math.PI*(x-230)/PER);
+      // tracé sol + surface
+      let surf="";
+      for(let x=0;x<=1080;x+=8){ surf+=(x===0?"M":"L")+x+" "+gy(x).toFixed(1)+" "; }
+      document.getElementById("surface").setAttribute("d", surf.trim());
+      document.getElementById("ground").setAttribute("d", surf.trim()+" L1080 1920 L0 1920 Z");
+      // hachures Sin City dans les vallées basses
+      const scene=document.getElementById("scene"), NS="http://www.w3.org/2000/svg";
+
+      const boulder=document.getElementById("boulder"), figure=document.getElementById("figure");
+      const S={fx:30, rx:85, spin:0};
+      function render(){
+        boulder.setAttribute("transform",`translate(${S.rx},${gy(S.rx)-R}) rotate(${S.spin})`);
+        figure.setAttribute("transform",`translate(${S.fx},${gy(S.fx)})`);
+      }
+      render();
+
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // un franchissement : pousse jusqu'à la crête -> le rocher BASCULE de l'autre côté (vallée
+      // suivante) en roulant -> l'homme redescend le rejoindre pour la colline SUIVANTE.
+      function cross(t0, valley){
+        const peak=valley+200, next=valley+400;
+        tl.to(S,{fx:peak-52, rx:peak, spin:"+=190", duration:1.5, ease:"power2.in", onUpdate:render}, t0);
+        tl.to(S,{rx:next, spin:"+=600", duration:0.55, ease:"power1.in", onUpdate:render}, t0+1.55); // bascule autre côté
+        tl.to(S,{fx:next-58, duration:0.8, ease:"power1.inOut", onUpdate:render}, t0+1.85);           // il redescend
+      }
+      cross(0.3, 30);      // colline 1
+      cross(2.9, 430);     // colline 2 (identique)
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

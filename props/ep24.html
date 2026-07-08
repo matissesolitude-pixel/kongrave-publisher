@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0b0b}</style>
+  </head>
+  <body>
+    <!-- ep24 ONE PERCENT — MÉTAPHORE : deux murs de briques. À gauche on retire 1 brique ROUGE :
+         le mur TIENT (risque 1%). À droite on en retire 5 : le mur S'ÉCROULE (risque 5%). -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="7" data-track-index="1" width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect width="1080" height="1920" fill="#0b0b0b"/>
+        <line x1="60" y1="1500" x2="1020" y2="1500" stroke="#fff" stroke-width="5"/>
+        <g id="left"></g>
+        <g id="rightBase"></g>
+        <g id="rightTop"></g>
+      </svg>
+    </div>
+    <script>
+      const NS="http://www.w3.org/2000/svg";
+      const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+      const BW=70,BH=40,COLS=6,ROWS=8;
+      function brick(gx,gy,red){const b=el("rect",{x:gx,y:gy,width:BW-6,height:BH-6,rx:4,
+        fill:red?"#C41E1E":"#e9e9e9",stroke:"#000","stroke-width":4});return b;}
+      // construit un mur ; renvoie les briques rouges + le groupe "top" (au-dessus de la base)
+      function wall(gEl, gTop, x0, reds){
+        const re018=[];
+        for(let r=0;r<ROWS;r++){
+          for(let c=0;c<COLS;c++){
+            const gx=x0+c*BW+(r%2?BW/2:0)-BW/2, gy=1500-BH-r*BH;
+            if(gx<x0-BW/2||gx>x0+(COLS-1)*BW+BW/2) continue;
+            const isRed=reds.some(([rr,cc])=>rr===r&&cc===c);
+            const b=brick(gx,gy,isRed);
+            (r===0?gEl:(gTop||gEl)).appendChild(b);
+            if(isRed) re018.push(b);
+          }
+        }
+        return re018;
+      }
+      const left=document.getElementById("left");
+      const rBase=document.getElementById("rightBase"), rTop=document.getElementById("rightTop");
+      // gauche : 1 brique rouge (base) ; wall complet dans #left
+      const Lred=wall(left,left,220,[[0,2]]);
+      // droite : 5 briques rouges en base ; base dans #rightBase, reste dans #rightTop (s'écroule)
+      const Rred=wall(rBase,rTop,760,[[0,0],[0,1],[0,2],[0,3],[0,4]]);
+
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // GAUCHE : la brique rouge sort, le mur ne bouge pas
+      tl.to(Lred,{y:"+=140",opacity:0,duration:0.6,ease:"power2.in"},1.0);
+      // DROITE : les 5 briques rouges sortent une à une...
+      tl.to(Rred,{y:"+=150",opacity:0,duration:0.5,stagger:0.12,ease:"power2.in"},1.0);
+      // ...puis tout le haut du mur S'ÉCROULE (chute + bascule + éparpillement)
+      tl.to(rTop,{y:220,rotation:9,svgOrigin:"760 1460",duration:0.9,ease:"power3.in"},2.1);
+      tl.to(rTop,{opacity:0.15,duration:0.6},2.7);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

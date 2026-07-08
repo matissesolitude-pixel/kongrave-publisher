@@ -1,0 +1,14 @@
+# Deps runtime pour autoprod.py sur le runner GitHub Actions (Linux, Python 3.12).
+# ffmpeg / tesseract / chromium sont installés via apt dans autoprod.yml.
+requests>=2.31
+python-dotenv>=1.0        # load_dotenv devient un no-op quand .env.local est absent (clés via env)
+Pillow>=10.0
+numpy>=1.26
+mutagen>=1.47             # audio_seconds (durée mp3)
+rembg>=2.0                # détourage des bustes (isnet-anime)
+onnxruntime>=1.17         # backend rembg
+opencv-python-headless>=4.9  # detourage_video : décodage frames (cv2, sans GUI pour le runner)
+scipy>=1.12               # detourage_video : ndimage (masques, composantes)
+imageio-ffmpeg>=0.4.9     # detourage_video : ffmpeg embarqué (ProRes 4444 alpha)
+google-genai>=0.3         # Gemini image (scènes narratives)
+pytesseract>=0.3.10       # OCR anti-texte halluciné (scene_textcheck)

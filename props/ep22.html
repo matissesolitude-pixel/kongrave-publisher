@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0b0b}</style>
+  </head>
+  <body>
+    <!-- ep22 COMPOUNDING — MÉTAPHORE : à gauche, une petite boule de neige ROULE et GROSSIT
+         (petits gains réguliers). À droite, une grosse boule immobile FOND en flaque rouge
+         (le coup unique qui s'évapore). Ennuyeux + régulier > gros + fragile. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="7" data-track-index="1" width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect width="1080" height="1920" fill="#0b0b0b"/>
+        <!-- pente gauche -->
+        <line x1="80" y1="620" x2="470" y2="1440" stroke="#fff" stroke-width="6"/>
+        <!-- boule de neige qui grossit -->
+        <g id="snow">
+          <circle r="26" fill="#f2f2f2" stroke="#000" stroke-width="4"/>
+          <path d="M-12,-8 L8,-14 M-6,10 L14,4" stroke="#000" stroke-width="3" fill="none" opacity="0.6"/>
+        </g>
+        <!-- sol droit -->
+        <line x1="620" y1="1440" x2="1000" y2="1440" stroke="#fff" stroke-width="6"/>
+        <!-- flaque rouge (fonte) -->
+        <ellipse id="puddle" cx="810" cy="1436" rx="0" ry="0" fill="#C41E1E"/>
+        <!-- grosse boule immobile qui fond -->
+        <circle id="big" cx="810" cy="1300" r="135" fill="#f2f2f2" stroke="#000" stroke-width="5"/>
+      </svg>
+    </div>
+    <script>
+      const snow=document.getElementById("snow");
+      const S={t:0};
+      function rollSnow(){
+        // position le long de la pente (80,620)->(470,1440), rayon croissant, spin
+        const p=S.t, x=80+(470-80)*p, y=620+(1440-620)*p - (26+120*p)*0.2;
+        const r=26+120*p;
+        snow.querySelector("circle").setAttribute("r",r.toFixed(1));
+        snow.setAttribute("transform",`translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${(p*720).toFixed(0)})`);
+      }
+      rollSnow();
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // gauche : la boule roule et grossit
+      tl.to(S,{t:1,duration:4.6,ease:"power1.in",onUpdate:rollSnow},0.5);
+      // droite : la grosse boule fond (rayon -> petit), la flaque rouge grandit, la boule descend un peu
+      tl.to("#big",{attr:{r:14,cy:1420},duration:4.6,ease:"power1.in"},0.5);
+      tl.to("#puddle",{attr:{rx:150,ry:26},duration:4.6,ease:"power1.in"},0.7);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

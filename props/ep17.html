@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0b0b}</style>
+  </head>
+  <body>
+    <!-- ep17 CORRELATION — MÉTAPHORE : 3 dominos reliés par un FIL rouge. On en pousse un, le fil
+         entraîne les 3 en même temps -> ils tombent ENSEMBLE. 3 trades corrélés = un seul trade. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="7" data-track-index="1" width="1080" height="1920" viewBox="0 0 1080 1920">
+        <rect width="1080" height="1920" fill="#0b0b0b"/>
+        <line x1="120" y1="1302" x2="960" y2="1302" stroke="#fff" stroke-width="5"/>
+        <polyline id="thread" fill="none" stroke="#C41E1E" stroke-width="7"/>
+        <g id="bars"></g>
+      </svg>
+    </div>
+    <script>
+      const NS="http://www.w3.org/2000/svg", FLOOR=1300, W=48, H=210, XS=[320,540,760];
+      const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+      const bars=document.getElementById("bars"), thread=document.getElementById("thread");
+      const G=[];
+      XS.forEach(x=>{const g=el("g",{});
+        g.appendChild(el("rect",{x:x-W/2,y:FLOOR-H,width:W,height:H,rx:6,fill:"#f2f2f2",stroke:"#000","stroke-width":5}));
+        g.appendChild(el("circle",{cx:x,cy:FLOOR-H+26,r:6,fill:"#C41E1E"})); // point d'attache du fil
+        bars.appendChild(g); G.push(g);});
+      const S={a:0};
+      function render(){
+        const a=S.a*Math.PI/180, pts=[];
+        XS.forEach((x,i)=>{
+          G[i].setAttribute("transform",`rotate(${S.a} ${x} ${FLOOR})`);
+          // point d'attache (à H-26 du pivot) tourné autour de (x,FLOOR)
+          pts.push([x+(H-26)*Math.sin(a), FLOOR-(H-26)*Math.cos(a)]);
+        });
+        thread.setAttribute("points", pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" "));
+      }
+      render();
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // léger temps debout, puis on pousse -> le fil tire les 3 EN MÊME TEMPS (chute quasi simultanée)
+      tl.to(S,{a:82,duration:1.0,ease:"power2.in",onUpdate:render},1.2);
+      tl.to(S,{a:78,duration:0.4,ease:"power1.out",onUpdate:render},2.2); // petit rebond au sol
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

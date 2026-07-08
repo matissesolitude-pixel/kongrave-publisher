@@ -1,0 +1,1440 @@
+{
+  "batch": "KONGRAVE_week1_v2",
+  "episodes_count": 27,
+  "note": "v2 — segment 4 retravaillé : chaque épisode a un plan preuve unique et cohérent avec son thème. Champ de bataille conservé UNIQUEMENT quand le texte parle de destruction de masse (ep02, 03, 13). Production un par un, pas en batch.",
+  "episodes": [
+    {
+      "number": 2,
+      "title": "REVENGE",
+      "pillar": "education",
+      "day": 1,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You just lost. And right now — you want it back.",
+          "plan": "orage seul → éclair révèle perso de dos",
+          "mot_choc": "K.O.",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "lost"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "That feeling has a name… revenge. And the market — loves it.",
+          "plan": "buste animé face cam",
+          "mot_choc": "TRAP",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "it"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "A manager never trades to get even. He trades… to get paid.",
+          "plan": "corps contemple la ville, profil",
+          "mot_choc": "DISCIPLINE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "paid"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Every blown account I've ever seen… died on a revenge trade. Every — single — one.",
+          "plan": "champ de bataille (destruction de masse = cohérent)",
+          "mot_choc": "GRAVEYARD",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "trade"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Next time you want revenge… walk away. That's how you strike back.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "NEXT ROUND",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "back"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "BIG EGO",
+      "pillar": "education",
+      "day": 1,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Your account is small. But your ego… is huge. That's why you're broke.",
+          "plan": "orage → éclair révèle perso (il fume)",
+          "mot_choc": "REKT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "broke"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Size isn't about money. It's about humility. I run real capital — I size like I could be wrong.",
+          "plan": "buste animé face cam",
+          "mot_choc": "HUMBLE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "wrong"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Ten percent a day… isn't a goal. It's a countdown.",
+          "plan": "corps sirote le verre, dos/profil",
+          "mot_choc": "TICK TOCK",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "countdown"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Nine out of ten blow up… chasing size they can't hold.",
+          "plan": "champ de bataille (9/10 détruits = cohérent)",
+          "mot_choc": "9/10",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "up"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Trade small. Think big. Or the market teaches you… the hard way.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "LAST CHANCE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "way"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "THE ARISTOCRAT",
+      "pillar": "story",
+      "day": 1,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "There's a villain who never raises his voice. He doesn't need to — he bleeds you in silence.",
+          "plan": "orage → éclair révèle couloir feutré, porte qui se ferme",
+          "mot_choc": "GHOST",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "silence"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "They call him the Aristocrat. Euro-Dollar. He lures you into his range… and waits.",
+          "plan": "buste animé face cam",
+          "mot_choc": "BLUE BLOOD",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "waits"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "He doesn't spike. He doesn't crash. He just… drains. Slowly. Until you overtrade yourself to death.",
+          "plan": "corps assis, profil, cigare dans un cendrier",
+          "mot_choc": "SLOW BLEED",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "death"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Most traders don't even realize he's killing them. They think they're trading — they're just feeding him.",
+          "plan": "couloir d'hôtel vide, lumières qui s'éteignent une par une vers le fond — l'Aristocrate t'endort",
+          "mot_choc": "PREY",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "feeding",
+          "seg4_kind": "hyperframes"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Learn his pattern — or keep paying his rent.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "DECODE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "pattern"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "YOUR PATTERN",
+      "pillar": "miroir",
+      "day": 2,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You don't lose randomly. You lose… the exact same way. Every time.",
+          "plan": "orage → éclair révèle perso de dos devant des écrans",
+          "mot_choc": "ON REPEAT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "time"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Same setup. Same mistake. Same excuse. You've told yourself it was different — it wasn't.",
+          "plan": "buste animé face cam",
+          "mot_choc": "DENIAL",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "different"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The market doesn't beat you with new tricks. It beats you — with your own.",
+          "plan": "corps profil, bras croisés",
+          "mot_choc": "YOUR HAND",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "own"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Open your journal. Last ten losses. Same entry. Same flaw. You already know.",
+          "plan": "gros plan sur un carnet ouvert sous une lampe, pages qui se tournent — le pattern écrit noir sur blanc",
+          "mot_choc": "THE RECEIPTS",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "know",
+          "seg4_kind": "hyperframes"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Stop blaming the market for a wound you keep reopening. Read your own pattern.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "SELF-SABOTAGE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "reopening"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "EMPTY CHAIR",
+      "pillar": "autorite",
+      "day": 2,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Last night… another one packed his desk.",
+          "plan": "orage → éclair révèle bureau vide, chaise qui tourne",
+          "mot_choc": "CASUALTY",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "desk"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Ten years in this game — gone… in one trade. One size he couldn't hold.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ONE BULLET",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "hold"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The desk stays empty. The market — doesn't notice.",
+          "plan": "corps de dos, regarde la baie vitrée",
+          "mot_choc": "FORGOTTEN",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "notice"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "I've watched it happen to better traders than you. Better than me. Nobody's safe — unless they choose to be.",
+          "plan": "rangée de bureaux vides, open space désert, une seule lampe encore allumée au fond",
+          "mot_choc": "NO MERCY",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "safe"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "If your chair is still warm… respect it. Or be the next empty desk.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "STILL BREATHING",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "warm"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "OVER-TRADING",
+      "pillar": "education",
+      "day": 2,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You took twelve trades today. You needed — one.",
+          "plan": "orage → éclair révèle perso assis, tête baissée",
+          "mot_choc": "OVERKILL",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "one"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "More trades doesn't mean more money. It means more exposure… to your own mistakes.",
+          "plan": "buste animé face cam",
+          "mot_choc": "NAKED",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "mistakes"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "A sniper fires once. A gambler — fires until he's empty.",
+          "plan": "corps profil, contemple la ville",
+          "mot_choc": "TRIGGER HAPPY",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "empty"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "The best month I ever had… I traded nine times. Nine — in thirty days.",
+          "plan": "écran unique dans le noir, curseur immobile — le calme d'un mois à 9 trades",
+          "mot_choc": "LESS IS MORE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "days"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Put the gun down. Wait for the shot that matters. Quality kills quantity.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE KILL",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "matters"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "THE CABLE",
+      "pillar": "story",
+      "day": 2,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Some villains take their time. This one — doesn't.",
+          "plan": "orage → éclair révèle ruelle sous la pluie, néon de pub",
+          "mot_choc": "NO WARNING",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "time"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "The Cable. Pound-Dollar. Fast, violent, no warning. He hits — and he's gone before you blink.",
+          "plan": "buste animé face cam",
+          "mot_choc": "AMBUSH",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "blink"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The Aristocrat bleeds you slowly. The Cable — breaks you on the spot.",
+          "plan": "corps de dos, pluie sur la vitre",
+          "mot_choc": "SNAP",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "spot"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Fifty-pip spike on a Tuesday. No news. No reason. That's his signature — chaos disguised as noise.",
+          "plan": "ruelle de Londres sous la pluie, néon de pub qui grésille et s'éteint d'un coup — la violence du Cable",
+          "mot_choc": "SUCKER PUNCH",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "noise"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "You don't fight the Cable. You survive him.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "DUCK",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "survive"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "STOP LOSS",
+      "pillar": "education",
+      "day": 3,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You moved your stop. You told yourself — just a little more room. That's the last thought before the blow.",
+          "plan": "orage → éclair révèle perso, main sur le front",
+          "mot_choc": "R.I.P.",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "blow"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "A stop loss isn't a suggestion. It's the only promise you make to yourself — that you'll walk away alive.",
+          "plan": "buste animé face cam",
+          "mot_choc": "LIFELINE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "alive"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The stop was right where you put it. You moved it — because you couldn't accept being wrong.",
+          "plan": "corps profil, accoudé au bar",
+          "mot_choc": "EGO",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "wrong"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Every account that ever blew up… had a stop loss. It just — wasn't there anymore when it mattered.",
+          "plan": "bureau abandonné, écran rouge figé, chaise repoussée — quelqu'un est parti en urgence",
+          "mot_choc": "TOO LATE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "mattered"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Set it. Leave it. Live to trade tomorrow. Discipline doesn't feel good — it feels like surviving.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "NON-NEGOTIABLE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "surviving"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "CASH IS A TRADE",
+      "pillar": "viral",
+      "day": 3,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You think doing nothing means you're losing. That's why — you keep losing.",
+          "plan": "orage → éclair révèle perso immobile, bras croisés",
+          "mot_choc": "BACKWARDS",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "losing"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Cash is a position. Sitting out — is a trade. The hardest one you'll ever make.",
+          "plan": "buste animé face cam",
+          "mot_choc": "HANDS OFF",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "make"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The market pays patience — and taxes excitement.",
+          "plan": "corps assis, échiquier devant lui",
+          "mot_choc": "SIT TIGHT",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "excitement"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "My best weeks… I didn't trade. I watched. I waited. And when they moved — I was ready. They weren't.",
+          "plan": "ville vue d'en haut la nuit, immobile, lumières lentes — le calme avant le mouvement",
+          "mot_choc": "LOADED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "ready"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Stop confusing action with progress. Cash is a position too.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "STILLNESS",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "progress"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "THE JOURNAL",
+      "pillar": "autorite",
+      "day": 3,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "I write every trade. Every win. Every loss. Every excuse I almost believed.",
+          "plan": "orage → éclair révèle bureau, carnet ouvert",
+          "mot_choc": "CONFESSION",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "believed"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "The journal doesn't lie. You do. It remembers — what you're trying to forget.",
+          "plan": "buste animé face cam",
+          "mot_choc": "NO ALIBI",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "forget"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "You don't journal to track your P&L. You journal — to track your mind.",
+          "plan": "corps penché sur le bureau, profil",
+          "mot_choc": "HEAD GAME",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "mind"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Six months of journal entries showed me I was making the same mistake… every single Thursday.",
+          "plan": "insert statique : carnet ouvert sous une lampe, stylo posé à côté — les preuves écrites",
+          "mot_choc": "THE PATTERN",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "Thursday"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Write it down. Face what's in there. The truth is expensive — ignorance costs more.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "PROOF",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "costs"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "YOU'RE LYING",
+      "pillar": "miroir",
+      "day": 3,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You said it was the market. It wasn't. You said it was the broker. It wasn't. You're lying — to yourself.",
+          "plan": "orage → éclair révèle perso face miroir",
+          "mot_choc": "GUILTY",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "yourself"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "The story you tell yourself after a loss… is more dangerous than the loss itself.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE ALIBI",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "itself"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Blame is a painkiller. It feels good — and it stops you from healing.",
+          "plan": "corps de dos, couloir sombre",
+          "mot_choc": "NUMB",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "healing"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "I blamed the market for two years. The day I stopped — everything changed. Not the market. Me.",
+          "plan": "miroir dans un bureau sombre, reflet flou d'une silhouette — le mensonge qu'on se raconte",
+          "mot_choc": "CULPRIT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "changed"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Stop telling yourself stories. Start reading the truth.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "DROP THE ACT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "truth"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "DRAWDOWN",
+      "pillar": "education",
+      "day": 4,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You're down twenty percent. And the voice in your head says — trade bigger. Win it back.",
+          "plan": "orage → éclair révèle perso assis dans le noir",
+          "mot_choc": "TILT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "back"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "A drawdown isn't a problem. What you DO in a drawdown — that's the problem.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE TRAP",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "problem"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Cut your size. Slow down. Survive the storm — then rebuild. Never the other way around.",
+          "plan": "corps profil, pluie sur la vitre",
+          "mot_choc": "SHRINK",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "rebuild"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "The ones who doubled down in a drawdown… never came back. The ones who halved their size — always did.",
+          "plan": "champ de bataille (ceux qui ne sont jamais revenus = destruction de masse cohérente)",
+          "mot_choc": "HALF LIVES",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "always"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Drawdowns don't kill traders. Pride does. Shrink before you grow.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "HUMBLE PIE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "grow"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "THE MADMAN",
+      "pillar": "story",
+      "day": 4,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "He doesn't follow rules. He doesn't follow logic. He just — explodes.",
+          "plan": "orage → éclair révèle buildings, lumières qui clignotent",
+          "mot_choc": "UNHINGED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "explodes"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "US Thirty. The Madman. Three hundred points on a single sentence from the Fed. No warning. No mercy.",
+          "plan": "buste animé face cam",
+          "mot_choc": "DETONATION",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "mercy"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "You can't read him. You can't predict him. You can only — respect the distance.",
+          "plan": "corps de dos, écrans qui strobent",
+          "mot_choc": "KEEP BACK",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "distance"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "He's destroyed more accounts in a minute… than the others do in a month. And he'll do it again — tomorrow.",
+          "plan": "skyline de nuit, toutes les lumières d'un building qui s'éteignent d'un coup — le blackout du Madman",
+          "mot_choc": "BODY COUNT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "tomorrow"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Some villains you fight. This one — you avoid.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "RUN",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "avoid"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "RISK FIRST",
+      "pillar": "education",
+      "day": 4,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You planned your entry. Your target. Your profit. But not — your exit if you're wrong.",
+          "plan": "orage → éclair révèle perso debout, bras croisés",
+          "mot_choc": "BLIND SPOT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "wrong"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Amateurs plan the win. Professionals — plan the loss.",
+          "plan": "buste animé face cam",
+          "mot_choc": "WORST CASE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "loss"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Before you ask how much you can make… ask how much you can lose. That number — runs the trade.",
+          "plan": "corps profil, main sur le menton",
+          "mot_choc": "DOWNSIDE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "runs"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "I define my risk before I see my reward. If the risk doesn't fit — the trade doesn't exist.",
+          "plan": "échiquier vu de haut, pièces positionnées, une seule case vide au centre — la position calculée",
+          "mot_choc": "NON-STARTER",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "exist"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Risk first. Everything else second. That's the order that keeps you alive.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "SEQUENCE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "alive"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "THE PLAN",
+      "pillar": "miroir",
+      "day": 4,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You had a plan this morning. By noon — you'd broken every rule in it.",
+          "plan": "orage → éclair révèle perso devant un écran, tête dans les mains",
+          "mot_choc": "IMPROVISED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "broken"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "A plan you don't follow — is just decoration. It sits there making you feel prepared… while you improvise.",
+          "plan": "buste animé face cam",
+          "mot_choc": "WALLPAPER",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "improvise"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The plan isn't the hard part. Following it when you're losing — that's the hard part.",
+          "plan": "corps de dos, baie vitrée nocturne",
+          "mot_choc": "THE TEST",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "losing"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Every trader has a plan. Five percent follow it. Guess which five percent are still here.",
+          "plan": "feuilles de papier éparpillées sur un bureau, vent qui entre par la fenêtre — le plan abandonné",
+          "mot_choc": "THE FEW",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "here"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Write it. Follow it. No exceptions.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "OBEY IT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "exceptions"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "title": "CORRELATION",
+      "pillar": "education",
+      "day": 5,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You opened three trades. You thought — you were diversified. You were tripling your risk.",
+          "plan": "orage → éclair révèle trois écrans allumés dans le noir",
+          "mot_choc": "TRIPLE THREAT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "risk"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Three dollar pairs moving together isn't three trades. It's one trade — wearing three masks.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ONE BET",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "masks"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Correlation is the risk you don't see — until every position moves against you at the same time.",
+          "plan": "corps profil, contemple la ville",
+          "mot_choc": "HIDDEN",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "time"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "One DXY move… and all three trades died together. Same reason. Same second. Same grave.",
+          "plan": "trois lampes alignées sur un bureau qui s'éteignent l'une après l'autre — simultanéité de la perte",
+          "mot_choc": "GROUP BURIAL",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "grave"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Know what you're actually risking. See the invisible thread — before it hangs you.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE STRINGS",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "thread"
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "title": "THE BARON",
+      "pillar": "story",
+      "day": 5,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "The dirtiest villain doesn't trade fair. He doesn't even pretend.",
+          "plan": "orage → éclair révèle silhouette dans la fumée industrielle",
+          "mot_choc": "NO RULES",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "pretend"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Oil. The Baron. He moves on geopolitics, on supply lies, on rumors — and when you think he's done… he spikes again.",
+          "plan": "buste animé face cam",
+          "mot_choc": "RIGGED",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "again"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The Baron doesn't need your analysis. He runs on forces — you can't even see from your chart.",
+          "plan": "corps de dos, horizon industriel",
+          "mot_choc": "UNSEEN",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "chart"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Forty-six thousand… gone in sixteen seconds. Real money. Real loss. That's the Baron's signature.",
+          "plan": "flamme industrielle dans la nuit, fumée noire qui monte — la violence brute du pétrole",
+          "mot_choc": "BLINK",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "signature"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Oil doesn't care about your stop. It doesn't care about your plan. Respect the Baron — or don't trade him.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "UNTOUCHABLE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "Baron"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "title": "FOMO",
+      "pillar": "education",
+      "day": 5,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "The candle moved without you. And now — you're chasing it.",
+          "plan": "orage → éclair révèle perso debout, penché vers l'écran",
+          "mot_choc": "HOOKED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "chasing"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Fear of missing out — isn't about the trade you missed. It's about the pain of watching someone else win.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ENVY",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "win"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The best traders I know… miss trades every day. They sleep fine.",
+          "plan": "corps profil, café à la main",
+          "mot_choc": "NO REGRET",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "fine"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Every late entry I've ever taken out of FOMO — every single one — was worse than the trade I missed.",
+          "plan": "porte d'ascenseur qui se ferme lentement, personne dedans — le train est parti, et c'est ok",
+          "mot_choc": "PAID MORE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "missed"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Miss the trade. Keep the capital. There's always another setup.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "NEXT ONE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "setup"
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "title": "CONVICTION",
+      "pillar": "miroir",
+      "day": 5,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You didn't hold your trade because you had conviction. You held it — because you had ego.",
+          "plan": "orage → éclair révèle perso immobile dans le noir",
+          "mot_choc": "PRIDE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "ego"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Conviction says — I've done the work, and the evidence supports this position. Ego says — I can't be wrong.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE LINE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "wrong"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "One has a stop loss. The other — doesn't.",
+          "plan": "corps profil, regard vers le bas",
+          "mot_choc": "THE TELL",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "other"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "I've had conviction and been wrong. The difference — I walked away with my capital. Ego would have buried it.",
+          "plan": "bureau calme après la tempête, chaise repoussée, écran éteint — le trade est fini, le capital est intact",
+          "mot_choc": "SURVIVED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "buried"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Ask yourself — right now. Is it conviction… or ego. Learn the difference before it costs you.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE MASK",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "difference"
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "title": "THE HOUSE",
+      "pillar": "story",
+      "day": 6,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You thought you were trading against the market. You're not. You're trading — against the house.",
+          "plan": "orage → éclair révèle néons de casino dans le noir",
+          "mot_choc": "RIGGED GAME",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "house"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "The brokers. They built the table. They wrote the rules. And when you start winning… they change them.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE DEALER",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "them"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Slippage. Spread widening. Requotes. It's not a bug — it's the business model.",
+          "plan": "corps de dos, lumières rouges",
+          "mot_choc": "BY DESIGN",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "model"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Thirty lots filled instantly on entry. On exit — sixteen seconds of silence. That's not execution. That's selection.",
+          "plan": "table de poker vide, cartes retournées face cachée, une seule lampe au-dessus — le jeu est truqué",
+          "mot_choc": "STACKED DECK",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "selection"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Know who's dealing the cards. The house always does.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE EDGE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "cards"
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "title": "COMPOUNDING",
+      "pillar": "education",
+      "day": 6,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You want to double your account this month. You'll have — no account next month.",
+          "plan": "orage → éclair révèle perso assis, doigts croisés",
+          "mot_choc": "BLOWN",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "month"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Compounding doesn't need heroics. It needs — consistency. Small gains. Protected capital. Time.",
+          "plan": "buste animé face cam",
+          "mot_choc": "SLOW BURN",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "consistency"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Two percent a week — doesn't sound exciting. Until you do the math over a year.",
+          "plan": "corps profil, regarde l'horizon",
+          "mot_choc": "SNOWBALL",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "math"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "The traders who survive ten years… don't have the best win rate. They have the best — staying rate.",
+          "plan": "ville à l'aube, lumière qui monte lentement sur les buildings — la construction silencieuse",
+          "mot_choc": "SURVIVORS",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "rate"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Be boring. Be consistent. Be here next year. Compounding rewards the ones who don't quit.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "TORTOISE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "quit"
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "title": "SILENCE",
+      "pillar": "autorite",
+      "day": 6,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "My best trade this week — was silence.",
+          "plan": "orage → éclair révèle bureau vide, écrans éteints",
+          "mot_choc": "POWER MOVE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "silence"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "No setup met my criteria. No edge appeared. So I did — nothing. And I kept everything.",
+          "plan": "buste animé face cam",
+          "mot_choc": "PATIENCE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "everything"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The market screams every day — buy me, sell me, do something. The professionals — don't listen.",
+          "plan": "corps dos, baie vitrée, ville silencieuse",
+          "mot_choc": "TUNE OUT",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "listen"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Three days. Zero trades. Zero drawdown. When the setup came on Thursday — I had full capital. Full clarity.",
+          "plan": "bureau immaculé, pas un papier, écrans éteints, lumière naturelle — le vide comme arme",
+          "mot_choc": "LOADED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "clarity"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Doing nothing — is the hardest skill in trading. Master it.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "RESTRAINT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "hardest"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "title": "ONE PERCENT",
+      "pillar": "viral",
+      "day": 6,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You're risking five percent per trade — and wondering why your account is bleeding.",
+          "plan": "orage → éclair révèle perso de dos, horizon rouge",
+          "mot_choc": "SUICIDE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "bleeding"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "One percent risk. That's it. That's the entire secret — that nobody wants to hear.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE ANSWER",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "hear"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "One percent means — you can be wrong ten times in a row… and still be in the game.",
+          "plan": "corps profil, échiquier",
+          "mot_choc": "BULLETPROOF",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "game"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "I manage real capital. I risk — less than one percent. If it's good enough for real money… it's good enough for yours.",
+          "plan": "coffre-fort massif, porte épaisse entrouverte, lumière qui filtre — le capital protégé",
+          "mot_choc": "PROOF",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "yours"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Shrink your risk. Grow your account. The math doesn't lie.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE ODDS",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "lie"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "title": "AVERAGING DOWN",
+      "pillar": "education",
+      "day": 7,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Your trade is underwater. And you just — added more.",
+          "plan": "orage → éclair révèle perso penché, mains sur la table",
+          "mot_choc": "DIGGING",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "more"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Averaging down on a losing trade isn't strategy. It's negotiating — with a bullet.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ROULETTE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "bullet"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "If the trade was right at one lot — why does it need two? Because the market proved you wrong. And you doubled down — on wrong.",
+          "plan": "corps profil, regard sombre",
+          "mot_choc": "STUBBORN",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "wrong"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "Adding to a winner is skill. Adding to a loser — is a funeral invitation.",
+          "plan": "parking souterrain, néons crus, une seule voiture qui s'éloigne — le dernier qui part",
+          "mot_choc": "GRAVE ERROR",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "invitation"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "If it's going against you — cut it. Don't feed it.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "LET GO",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "feed"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "title": "THE GRAVEYARD",
+      "pillar": "story",
+      "day": 7,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Every blown account — has a story. And every story — starts the same way.",
+          "plan": "orage → éclair révèle parking vide la nuit",
+          "mot_choc": "PREDICTABLE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "way"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "It starts with confidence. Then conviction. Then — stubbornness. Then the screen goes red and doesn't come back.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE SPIRAL",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "back"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The graveyard of traders is full — of people who were right about the direction… and wrong about the size.",
+          "plan": "corps de dos, marche dans un couloir vide",
+          "mot_choc": "TOO BIG",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "size"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "They knew the entry. They knew the target. They just — couldn't survive the trip.",
+          "plan": "open space vide la nuit, rangée de bureaux déserts, écrans éteints un par un — le cimetière des traders",
+          "mot_choc": "THE MIDDLE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "trip"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Don't become another story that starts the same way.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "WHAT THEY HIDE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "way"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "title": "WINNERS QUIT",
+      "pillar": "viral",
+      "day": 7,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You hit your daily target. And then — you kept trading.",
+          "plan": "orage → éclair révèle perso debout, manteau, prêt à partir",
+          "mot_choc": "GREED",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "trading"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "You won. And you gave it back. Not because the market took it — because you couldn't stop.",
+          "plan": "buste animé face cam",
+          "mot_choc": "NO BRAKES",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "stop"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Winners — quit. They hit the number. They close the screen. They leave.",
+          "plan": "corps de dos, marche vers la sortie",
+          "mot_choc": "DISCIPLINE",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "leave"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "My best days end at ten AM. Screen off. Walk away. The gains are real — only if you keep them.",
+          "plan": "porte de bureau qui se ferme lentement, couloir vide derrière — celui qui part au bon moment",
+          "mot_choc": "CLOCK OUT",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "them"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Hit your target. Walk away. Learn the discipline of enough.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "KNOW WHEN",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "enough"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "title": "THE MIRROR",
+      "pillar": "miroir",
+      "day": 7,
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Twenty-seven rules. You've heard them all. And you already know — which ones you break.",
+          "plan": "orage → éclair révèle perso face caméra, immobile",
+          "mot_choc": "GUILTY",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "break"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Knowing the rules was never the hard part. Living them — when you're losing, when you're scared, when you're angry — that's the war.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE FIGHT",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "war"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The market doesn't care how much you know. It only cares — how much you obey.",
+          "plan": "corps profil, silhouette contre la baie vitrée",
+          "mot_choc": "SUBMIT",
+          "mot_choc_type": "bulle_dialogue",
+          "mot_choc_anchor": "obey"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "voice": "I break my own rules too. The difference — I write it down. I face it. And I fix it. Every single time.",
+          "plan": "carnet ouvert sur un bureau, stylo posé, lumière d'aube qui entre — le rituel du gérant",
+          "mot_choc": "ACCOUNTABLE",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "fix"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "This isn't content. This is a mirror. Look at it — or look away. The rules don't stop.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "REFLECTION",
+          "mot_choc_type": "impact_inversion",
+          "mot_choc_anchor": "away"
+        }
+      ]
+    }
+  ]
+}

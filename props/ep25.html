@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0b0b0b}</style>
+  </head>
+  <body>
+    <!-- ep25 AVERAGING DOWN — MÉTAPHORE : un bateau prend l'eau par un TROU rouge. Au lieu de
+         boucher le trou (couper la perte), on VERSE encore de l'eau dedans (on ajoute à la
+         position perdante) -> il coule plus vite. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="7" data-track-index="1" width="1080" height="1920" viewBox="0 0 1080 1920">
+        <defs>
+          <clipPath id="hold"><polygon points="360,980 720,980 660,1200 420,1200"/></clipPath>
+        </defs>
+        <rect width="1080" height="1920" fill="#0b0b0b"/>
+        <!-- mer -->
+        <rect x="0" y="1055" width="1080" height="865" fill="#141414"/>
+        <line x1="0" y1="1055" x2="1080" y2="1055" stroke="#fff" stroke-width="5"/>
+        <!-- seau qui verse (averaging down) -->
+        <g id="bucket" transform="translate(790,720)">
+          <path d="M0,0 L70,0 L60,80 L10,80 Z" fill="#1a1a1a" stroke="#fff" stroke-width="5"/>
+        </g>
+        <line id="pour" x1="815" y1="800" x2="600" y2="990" stroke="#fff" stroke-width="10" opacity="0"/>
+        <!-- BATEAU -->
+        <g id="boat">
+          <polygon points="360,980 720,980 660,1200 420,1200" fill="#0d0d0d" stroke="#fff" stroke-width="6"/>
+          <rect x="530" y="880" width="10" height="110" fill="#f2f2f2"/>            <!-- mât -->
+          <!-- eau qui monte dans la cale -->
+          <g clip-path="url(#hold)"><rect id="water" x="360" y="1200" width="360" height="0" fill="#4a4a4a"/></g>
+          <!-- TROU rouge + fuite -->
+          <circle cx="430" cy="1120" r="18" fill="#C41E1E" stroke="#000" stroke-width="4"/>
+          <path id="leak" d="M430,1120 q-40,20 -50,60" fill="none" stroke="#C41E1E" stroke-width="7" opacity="0.9"/>
+        </g>
+      </svg>
+    </div>
+    <script>
+      window.__timelines=window.__timelines||{};
+      const tl=gsap.timeline({paused:true});
+      // 1) l'eau monte doucement dans la cale (fuite par le trou)
+      tl.to("#water",{attr:{y:1080,height:120},duration:1.6,ease:"power1.in"},0.4);
+      // 2) au lieu de boucher : on VERSE encore de l'eau (le seau bascule et déverse)
+      tl.to("#bucket",{rotation:52,svgOrigin:"790 800",duration:0.5,ease:"power2.in"},1.8);
+      tl.to("#pour",{opacity:1,duration:0.2},2.1);
+      tl.to("#water",{attr:{y:990,height:210},duration:1.4,ease:"power2.in"},2.2);
+      // 3) le bateau S'ENFONCE (descend + gîte) et disparaît sous la ligne d'eau
+      tl.to("#pour",{opacity:0,duration:0.2},3.6);
+      tl.to("#boat",{y:230,rotation:-10,svgOrigin:"540 1090",duration:1.6,ease:"power2.in"},3.7);
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>
