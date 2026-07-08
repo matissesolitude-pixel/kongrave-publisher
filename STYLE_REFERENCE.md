@@ -73,10 +73,16 @@ buste ≈ **y 0.57·H** (sur le visage).
   Un mot en **fin de phrase** (YOU LOST, ZERO, FEED du master) tombe alors PILE **dans le silence qui suit** ;
   un mot au milieu (BLOWN, STRIKE BACK) claque **sur le mot**. Robuste dans tous les cas.
 - Maintien : **impact 1.2 s** (ZERO 1.05/FEED 1.26), **dialogue 1.6 s** (DISC 1.65/RC 1.27).
-- **SYNC audio (bug corrigé)** : le lit d'orage intro DOIT faire **4.0 s** (boomerang body[0:2]+reverse),
-  pour que l'audio du corps démarre pile à la fin du générique (4.0 s). Un bed de 3 s (atrim=0:1.5)
-  décalait la voix de **~1 s EN AVANCE** sur l'image. Vérif : `bed.wav` = 4.000000.
-- Clamp de chaque choc/caption à la fenêtre vidéo de son segment. Générique 4 s + corps ; LEAD 1.5 s, GAP 0.45 s.
+- **GÉNÉRIQUE 1.2 s (PO 2026-07-09, ep03+)** : le générique VISUEL est trimé à **`GENERIQUE_DUR=1.2`** s,
+  fenêtre climax `[GEN_CLIMAX=0.0, 1.2]` du clip Veo (logo KONGRAVE + éclair à ~0.5 s). Même point de coupe
+  toute la série. ep01-02 publiés = 4 s INTACTS, on n'y touche pas. autoprod (ep12+) hérite de la constante.
+- **TRANSITION = L-CUT** : l'IMAGE coupe à 1.2 s, mais l'**AUDIO Veo continue** (`GEN_AUDIO_TAIL=1.6` s de
+  fade out + écho « bave ») PAR-DESSUS le 1er segment case BD ; l'orage (bed) fade in dessous sur 1.2 s.
+  Queue audio NON raccourcie. Doctrine audio d'origine (orage monte + Veo bave) inchangée, juste recalée.
+- **SYNC (recalage)** : le lit d'orage intro fait **`GENERIQUE_DUR`** s (RUMBLE bouclé, montée sur la durée),
+  puis l'audio du corps est concaténé → le corps démarre à 1.2 s pour l'IMAGE **et** l'AUDIO. Le corps étant
+  une unité autonome (timing interne relatif à 0), rien ne se désync : seul son point d'insertion passe de 4.0 à 1.2 s.
+- Clamp de chaque choc/caption à la fenêtre vidéo de son segment. Générique 1.2 s + corps ; LEAD 1.5 s, GAP 0.45 s.
 
 ## E. AVATAR / DÉCOR (rappel)
 - Plein-pied **dos/profil UNIQUEMENT** (`output/perso_detoure/v2/{dos,profil}_clean.mov`), scale 504,

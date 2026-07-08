@@ -64,6 +64,9 @@ DECOR_A, DECOR_B = 8.5, 14.85          # région du décor SANS le burst WIPED O
 DECOR_LOOP = ROOT / "output" / "v3" / "work" / "decor_bin_red.mp4"  # pré-rendu : N&B + fauteuil rouge
 PERSO_BIN = r"format=yuva420p,lut=y=255*gt(val\,140)"  # binarise la luma, GARDE l'alpha
 GEN = ROOT / "output" / "v3" / "work" / "generique_intro_clean.mp4"
+GENERIQUE_DUR = 1.2   # (PO 2026-07-09) générique VISUEL trimé à 1.2s ; ep01-02 publiés = INTACTS
+GEN_CLIMAX = 0.0      # offset du climax 1.2s dans le clip Veo (logo + éclair à ~0.5s -> fenêtre [0,1.2])
+GEN_AUDIO_TAIL = 1.6  # L-CUT : l'audio Veo continue en fade out ~1.6s PAR-DESSUS le 1er segment (queue non raccourcie)
 CHAMP = ROOT / "assets" / "champ_bataille.png"
 ECLAIR = ROOT / "output" / "v3" / "work" / "eclair_alpha.png"
 RUMBLE = ROOT / "output" / "v3" / "work" / "rumble_v3.wav"
@@ -515,7 +518,7 @@ def build(ep, e, work):
 
 def gen_audio_fix(body, work, ep):
     out = ROOT / "output" / "v3" / f"EPISODE_{ep:02d}_kongrave.mp4"
-    INTRO = 4.0
+    INTRO = GENERIQUE_DUR          # générique visuel = 1.2s (le corps démarre à 1.2s, image ET audio)
     body_dur = dur_of(body)
     bwav = work / "bodya.wav"
     run([FF, "-y", "-v", "error", "-i", str(body), "-vn", "-c:a", "pcm_s16le", str(bwav)], "bodya")
@@ -523,14 +526,17 @@ def gen_audio_fix(body, work, ep):
     # boomerangeait body[0:2] qui contient ~0.5 s de voix (la voix démarre à 1.5 s) -> la voix
     # de l'avatar fuyait dans le générique. Niveau calé sur l'orage du corps (rumble*0.30), montée.
     bed = work / "bed.wav"
-    run([FF, "-y", "-v", "error", "-stream_loop", "-1", "-i", str(RUMBLE), "-t", "4",
-         "-af", "volume='0.30*(0.22+0.78*t/4)':eval=frame", "-c:a", "pcm_s16le", str(bed)], "bed")
+    run([FF, "-y", "-v", "error", "-stream_loop", "-1", "-i", str(RUMBLE), "-t", f"{GENERIQUE_DUR}",
+         "-af", f"volume='0.30*(0.22+0.78*t/{GENERIQUE_DUR})':eval=frame", "-c:a", "pcm_s16le", str(bed)], "bed")
     basea = work / "basea.wav"
     run([FF, "-y", "-v", "error", "-i", str(bed), "-i", str(bwav), "-filter_complex",
          "[0:a][1:a]concat=n=2:v=0:a=1[a]", "-map", "[a]", "-c:a", "pcm_s16le", str(basea)], "basea")
     veo = work / "veo.wav"
-    run([FF, "-y", "-v", "error", "-i", str(GEN), "-vn", "-af",
-         "apad=whole_dur=5.6,aecho=0.85:0.5:280|560|960:0.4|0.28|0.18,afade=t=out:st=4.0:d=1.6",
+    # L-CUT : audio Veo du même climax, joué 1.2s + queue qui BAVE en fade out ~1.6s par-dessus le corps.
+    run([FF, "-y", "-v", "error", "-ss", f"{GEN_CLIMAX}", "-t", f"{GENERIQUE_DUR + GEN_AUDIO_TAIL}",
+         "-i", str(GEN), "-vn", "-af",
+         f"apad=whole_dur={GENERIQUE_DUR + GEN_AUDIO_TAIL},aecho=0.85:0.5:280|560|960:0.4|0.28|0.18,"
+         f"afade=t=out:st={GENERIQUE_DUR}:d={GEN_AUDIO_TAIL}",
          "-c:a", "pcm_s16le", str(veo)], "veo")
     fina = work / "fina.wav"
     run([FF, "-y", "-v", "error", "-i", str(basea), "-i", str(veo), "-filter_complex",
@@ -539,7 +545,8 @@ def gen_audio_fix(body, work, ep):
     # concat vidéo générique + corps, mux audio final
     total = INTRO + body_dur
     genv = work / "genv.mp4"
-    run([FF, "-y", "-v", "error", "-i", str(GEN), "-an", "-vf", f"scale={W}:{H},setsar=1,fps=30",
+    run([FF, "-y", "-v", "error", "-ss", f"{GEN_CLIMAX}", "-t", f"{GENERIQUE_DUR}", "-i", str(GEN),
+         "-an", "-vf", f"scale={W}:{H},setsar=1,fps=30",
          "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", str(genv)], "genv")
     catf = work / "cat.txt"; catf.write_text(f"file '{genv}'\nfile '{body}'\n")
     catv = work / "catv.mp4"

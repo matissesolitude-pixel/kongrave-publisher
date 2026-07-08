@@ -11,7 +11,7 @@ name: KONGRAVE auto-publish
 on:
   # Réactivé (v13 validée) : publie l'épisode dû dans schedule.json. ep02 = 02:00 Dubai.
   schedule:
-    - cron: "7 * * * *"          # toutes les heures à :07 UTC (cf. fuseaux dans schedule.json)
+    - cron: "7,37 * * * *"       # 2×/h (:07 et :37 UTC) : résilient si GitHub saute/retarde un créneau
   workflow_dispatch:
     inputs:
       dry_run:
