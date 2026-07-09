@@ -193,15 +193,19 @@ def run(dry_run: bool = False) -> int:
 
     print(f"[cron] {len(due)} épisode(s) dû(s) ; budget 24h restant : {budget}.")
 
+    # Un seul épisode par exécution. Après une interruption (panne GitHub, échec
+    # Meta), plusieurs épisodes deviennent dus en même temps : les publier en
+    # rafale enverrait deux Reels à quelques minutes d'intervalle. On traite le
+    # plus ancien et on sort — les suivants partiront aux exécutions d'après.
+    # Effet de bord assumé : un épisode qui échoue durablement bloque la file.
     for entry in due:
         if not dry_run and budget <= 0:
             msg = f"⚠️ KONGRAVE : limite {MAX_PUBLISH_PER_DAY} pubs/24h atteinte — report."
             print(f"[cron] {msg}", file=sys.stderr)
             notify.send(msg)
             break
-        result = _process(entry, dry_run)
-        if result.get("status") == "success":
-            budget -= 1
+        _process(entry, dry_run)
+        break
     return 0
 
 

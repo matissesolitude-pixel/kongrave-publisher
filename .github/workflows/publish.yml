@@ -11,7 +11,7 @@ name: KONGRAVE auto-publish
 on:
   # Réactivé (v13 validée) : publie l'épisode dû dans schedule.json. ep02 = 02:00 Dubai.
   schedule:
-    - cron: "7,37 * * * *"       # 2×/h (:07 et :37 UTC) : résilient si GitHub saute/retarde un créneau
+    - cron: "7 * * * *"         # 1×/h (:07 UTC). NE PAS repasser à 2×/h : voir la note ci-dessous.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -20,6 +20,11 @@ on:
         default: false
 
 # Un seul run à la fois : un upload peut durer > l'intervalle de cron.
+# GitHub annule tout run EN ATTENTE quand un nouveau run du même groupe est mis en
+# file. Si la file d'attente dépasse l'intervalle de cron, les runs s'annulent donc
+# en chaîne et plus rien ne s'exécute (constaté le 2026-07-09, panne Actions : 15 min
+# d'attente, cron 2×/h, aucun run abouti pendant 4 h). L'intervalle doit rester
+# nettement supérieur à la latence de file : d'où 1×/h.
 concurrency:
   group: kongrave-publish
   cancel-in-progress: false
