@@ -102,12 +102,25 @@ def _publishes_last_24h(log: List[dict], now: datetime) -> int:
     return count
 
 
+def _is_held(entry: dict) -> bool:
+    """Un épisode en hold n'est JAMAIS publiable, quelle que soit sa date.
+
+    Le hold est un verrou de contenu (master fautif, insert manquant), pas un report :
+    repousser la date ne protège de rien, car la date finit toujours par arriver.
+    """
+    return bool(entry.get("hold"))
+
+
 def _due_episodes(schedule: List[dict], log: List[dict], now: datetime) -> List[dict]:
     already = _published_episode_numbers(log)
     due = []
     for entry in schedule:
         num = entry.get("episode_number")
         if num in already:
+            continue
+        if _is_held(entry):
+            reason = entry.get("hold_reason", "sans motif")
+            print(f"[cron] ep{num:02d} EN HOLD — non publiable ({reason}).")
             continue
         try:
             when = _parse_dt(entry["publish_datetime"])
@@ -130,6 +143,15 @@ def _now_iso() -> str:
 
 def _process(entry: dict, dry_run: bool) -> dict:
     num = entry.get("episode_number")
+
+    # Deuxième barrière, volontairement redondante avec _due_episodes : _process est
+    # appelable directement (script, test, futur code). Un hold doit tenir ici aussi.
+    if _is_held(entry):
+        raise RuntimeError(
+            f"ep{num:02d} est en hold ({entry.get('hold_reason', 'sans motif')}) — "
+            f"publication refusée."
+        )
+
     mp4_path = (BASE_DIR / entry["filepath"]).resolve()
     caption = entry.get("caption", "")
 
