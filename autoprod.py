@@ -32,7 +32,7 @@ PY = sys.executable
 
 # --- classification seg4 -----------------------------------------------------
 CHAMP = {2, 3, 13}
-PROP = {5, 7, 9, 10, 15, 17, 19, 22, 24, 25}
+PROP = {4, 5, 7, 9, 10, 15, 17, 19, 22, 24, 25}   # 4 = couloir d'hôtel (props/ep04.html)
 NARRATIVE_TEXT_OK = {11}               # journal : écriture manuscrite intrinsèque -> pas d'OCR
 
 def seg4_type(n):

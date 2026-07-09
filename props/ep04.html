@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      /* Couloir d'hôtel Sin City : perspective 1 point, N&B pur, encré. Les lumières du plafond
+         s'éteignent une par une VERS LE FOND — l'Aristocrate t'endort. (ep04 seg4, insert concept) */
+      .ink { fill: none; stroke: #fff; }
+      .wall { fill: #000; stroke: #fff; stroke-width: 3; }
+      .door { fill: #0a0a0a; stroke: #fff; stroke-width: 3; }
+      .glow { fill: url(#lg); }
+      .bulb { fill: #fff; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5"
+         data-width="1080" data-height="1920">
+      <svg id="scene" class="clip" data-start="0" data-duration="5" data-track-index="1"
+           width="1080" height="1920" viewBox="0 0 1080 1920">
+        <defs>
+          <radialGradient id="lg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+            <stop offset="35%" stop-color="#ffffff" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="1080" height="1920" fill="#000"/>
+        <g id="corridor"></g>
+        <g id="lights"></g>
+        <!-- voile noir qui monte quand les lumières meurent -->
+        <rect id="dark" x="0" y="0" width="1080" height="1920" fill="#000" opacity="0"/>
+      </svg>
+    </div>
+
+    <script>
+      const VPX = 540, VPY = 830, W = 1080, H = 1920;
+      const SVGNS = "http://www.w3.org/2000/svg";
+      const el = (n, a) => { const e = document.createElementNS(SVGNS, n);
+        for (const k in a) e.setAttribute(k, a[k]); return e; };
+      // profondeurs : k=1 (près, plein cadre) -> k petit (loin, près du VP)
+      const K = [1.0, 0.66, 0.44, 0.29, 0.19, 0.125];
+      const corner = (cx, cy, k) => [VPX + (cx - VPX) * k, VPY + (cy - VPY) * k];
+      const corridor = document.getElementById("corridor");
+      const lightsG = document.getElementById("lights");
+
+      // 4 lignes de fuite (coins -> VP)
+      [[0,0],[W,0],[0,H],[W,H]].forEach(([x,y]) =>
+        corridor.appendChild(el("line",{x1:x,y1:y,x2:VPX,y2:VPY,stroke:"#fff","stroke-width":2,opacity:.55})));
+
+      // bandes de profondeur (rectangles décroissants) + portes gauche/droite entre bandes
+      for (let i = 0; i < K.length; i++) {
+        const k = K[i];
+        const L = VPX - VPX * k, R = VPX + (W - VPX) * k;
+        const T = VPY - VPY * k,  B = VPY + (H - VPY) * k;
+        corridor.appendChild(el("rect",{x:L,y:T,width:R-L,height:B-T,fill:"none",stroke:"#fff","stroke-width":2,opacity:.5}));
+        // portes : quad entre bande i et i+1 sur chaque mur (bas de mur -> ~55% hauteur)
+        if (i < K.length - 1) {
+          const k2 = K[i+1];
+          const L2 = VPX - VPX * k2, R2 = VPX + (W - VPX) * k2;
+          const B2 = VPY + (H - VPY) * k2, T2 = VPY - VPY * k2;
+          const doorTop = f => VPY + (H*0.42 - VPY) * f; // haut de porte
+          // porte gauche
+          corridor.appendChild(el("polygon",{class:"door",points:
+            `${L},${B} ${L2},${B2} ${L2},${doorTop(k2)} ${L},${doorTop(k)}`}));
+          // porte droite
+          corridor.appendChild(el("polygon",{class:"door",points:
+            `${R},${B} ${R2},${B2} ${R2},${doorTop(k2)} ${R},${doorTop(k)}`}));
+        }
+      }
+
+      // lumières de plafond (une par bande), au centre-haut, décroissantes vers le VP
+      const lights = [];
+      for (let i = 0; i < K.length; i++) {
+        const k = K[i];
+        const cy = VPY - VPY * k + Math.max(18, 70 * k);   // juste sous le plafond de la bande
+        const r  = Math.max(10, 46 * k);
+        const g = el("g", {});
+        g.appendChild(el("circle",{cx:VPX,cy:cy,r:r*2.6,class:"glow"}));
+        g.appendChild(el("circle",{cx:VPX,cy:cy,r:r*0.5,class:"bulb"}));
+        lightsG.appendChild(g);
+        lights.push(g);
+      }
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // léger travelling avant (on avance dans le couloir)
+      tl.fromTo("#corridor, #lights", {transformOrigin:"540px 830px", scale:1.0},
+                {scale:1.14, duration:5, ease:"none"}, 0);
+      // les lumières meurent UNE PAR UNE vers le fond (près -> loin), avec flicker
+      lights.forEach((g, i) => {
+        const t = 0.5 + i * 0.62;
+        tl.to(g, {opacity:0.25, duration:0.06, yoyo:true, repeat:3}, t);       // flicker agonie
+        tl.to(g, {opacity:0, duration:0.35, ease:"power2.in"}, t + 0.24);       // extinction
+      });
+      // le noir engloutit doucement à la fin
+      tl.to("#dark", {opacity:0.72, duration:1.4, ease:"power2.in"}, 3.4);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

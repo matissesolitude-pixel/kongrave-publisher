@@ -68,6 +68,11 @@ GENERIQUE_DUR = 1.2   # (PO 2026-07-09) générique VISUEL trimé à 1.2s ; ep01
 GEN_CLIMAX = 0.0      # offset du climax 1.2s dans le clip Veo (logo + éclair à ~0.5s -> fenêtre [0,1.2])
 GEN_AUDIO_TAIL = 1.6  # L-CUT : l'audio Veo continue en fade out ~1.6s PAR-DESSUS le 1er segment (queue non raccourcie)
 CHAMP = ROOT / "assets" / "champ_bataille.png"
+# Seuls ces épisodes ont légitimement le champ de bataille en seg4 (destruction de
+# masse). Pour tous les autres, l'insert seg4_hf.mp4 est OBLIGATOIRE : sans lui,
+# seg_clip() retombait silencieusement sur le champ, et ep04-ep11 sont partis en
+# production avec la mauvaise image (constaté le 2026-07-09).
+CHAMP_EPISODES = {1, 2, 3, 13}
 ECLAIR = ROOT / "output" / "v3" / "work" / "eclair_alpha.png"
 RUMBLE = ROOT / "output" / "v3" / "work" / "rumble_v3.wav"
 CRACK = ROOT / "output" / "v3" / "work" / "crack.wav"
@@ -341,6 +346,16 @@ def build(ep, e, work):
         n = s["segment"]
         seg_dur[n] = durs[i] + (LEAD if n == 1 else 0.0) + (GAP if n != last else 0.0)
     champ = work / "champ_bin.png"; champ_png(champ)
+
+    # Garde-fou seg4 : échouer fort, comme pour les bustes lip-sync manquants.
+    if ep not in CHAMP_EPISODES and not (work / "seg4_hf.mp4").is_file():
+        sys.exit(
+            f"[ERREUR] insert seg4 manquant : {work / 'seg4_hf.mp4'}\n"
+            f"  prop     -> rendre props/ep{ep:02d}.html avec HyperFrames\n"
+            f"  narratif -> python gen_seg4_narratif.py {ep} --go\n"
+            f"Le champ de bataille est réservé aux épisodes {sorted(CHAMP_EPISODES)} "
+            f"(destruction de masse). Ne jamais le laisser combler un insert absent."
+        )
 
     files = []
     for s in segs:
