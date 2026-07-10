@@ -33,6 +33,8 @@ jobs:
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API }}
       DOMOAI_API_KEY: ${{ secrets.DOMOAI_API }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
     steps:
       - name: Checkout

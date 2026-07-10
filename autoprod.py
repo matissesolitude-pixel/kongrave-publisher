@@ -166,9 +166,35 @@ def main():
         e = next_episode(eps)
     if e is None:
         print("[AUTOPROD] tous les épisodes sont produits — rien à faire.", flush=True)
-        return
+        return None
     produce(e)
+    return e["number"]
 
 
 if __name__ == "__main__":
-    main()
+    # notify.py est optionnel en local (il vit dans publisher/) ; sur le runner il est présent.
+    try:
+        import notify
+    except Exception:
+        notify = None
+
+    def _notify(msg):
+        if notify:
+            try:
+                notify.send(msg)
+            except Exception:
+                pass
+
+    try:
+        produced = main()
+    except SystemExit as exc:
+        # run()/make_*() font sys.exit("[AUTOPROD] ..."). exc.code = ce message (échec).
+        if exc.code not in (None, 0):
+            _notify(f"⚠️ KONGRAVE autoprod — ÉCHEC : {exc.code}")
+        raise
+    except Exception as exc:
+        _notify(f"⚠️ KONGRAVE autoprod — EXCEPTION : {type(exc).__name__}: {exc}")
+        raise
+    else:
+        if produced:
+            _notify(f"✅ KONGRAVE autoprod — ep{produced:02d} produit et planifié.")
