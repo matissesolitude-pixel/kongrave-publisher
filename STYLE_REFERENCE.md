@@ -73,16 +73,25 @@ buste ≈ **y 0.57·H** (sur le visage).
   Un mot en **fin de phrase** (YOU LOST, ZERO, FEED du master) tombe alors PILE **dans le silence qui suit** ;
   un mot au milieu (BLOWN, STRIKE BACK) claque **sur le mot**. Robuste dans tous les cas.
 - Maintien : **impact 1.2 s** (ZERO 1.05/FEED 1.26), **dialogue 1.6 s** (DISC 1.65/RC 1.27).
-- **GÉNÉRIQUE 1.2 s (PO 2026-07-09, ep03+)** : le générique VISUEL est trimé à **`GENERIQUE_DUR=1.2`** s,
-  fenêtre climax `[GEN_CLIMAX=0.0, 1.2]` du clip Veo (logo KONGRAVE + éclair à ~0.5 s). Même point de coupe
-  toute la série. ep01-02 publiés = 4 s INTACTS, on n'y touche pas. autoprod (ep12+) hérite de la constante.
-- **TRANSITION = L-CUT** : l'IMAGE coupe à 1.2 s, mais l'**AUDIO Veo continue** (`GEN_AUDIO_TAIL=1.6` s de
-  fade out + écho « bave ») PAR-DESSUS le 1er segment case BD ; l'orage (bed) fade in dessous sur 1.2 s.
-  Queue audio NON raccourcie. Doctrine audio d'origine (orage monte + Veo bave) inchangée, juste recalée.
-- **SYNC (recalage)** : le lit d'orage intro fait **`GENERIQUE_DUR`** s (RUMBLE bouclé, montée sur la durée),
-  puis l'audio du corps est concaténé → le corps démarre à 1.2 s pour l'IMAGE **et** l'AUDIO. Le corps étant
-  une unité autonome (timing interne relatif à 0), rien ne se désync : seul son point d'insertion passe de 4.0 à 1.2 s.
-- Clamp de chaque choc/caption à la fenêtre vidéo de son segment. Générique 1.2 s + corps ; LEAD 1.5 s, GAP 0.45 s.
+- **GÉNÉRIQUE 1.2 s** : le générique VISUEL est trimé à **`GENERIQUE_DUR=1.2`** s, fenêtre climax
+  `[GEN_CLIMAX=0.0, 1.2]` du clip Veo (logo KONGRAVE + éclair à ~0.5 s). Même point de coupe toute la série.
+- **POSITION = FIN (PO 2026-07-11, `GENERIQUE_POSITION="end"`, gabarit ACTIF).** Cold open : l'épisode
+  ouvre DIRECT sur seg1 (orage + hook), aucun générique en tête. Le générique 1.2 s passe en DERNIÈRE
+  position, **après le seg5 COMPLET + `GEN_END_SILENCE=0.30` s de silence**. Charnière de boucle
+  (seg5 → battement → générique → re-hook au replay). **Le générique ne mord JAMAIS les derniers mots**
+  (il est entièrement APRÈS le corps). Motif PO : rétention insuffisante avec générique en tête.
+  - **Audio** = corps (autonome) | 0.30 s de silence | audio Veo 1.2 s (écho + fade out 0.4 s pour une
+    boucle nette). Aucun chevauchement → simple concaténation, pas de mix.
+  - **Vidéo** = corps | hold 0.30 s (dernière image de seg5 figée) | générique 1.2 s.
+  - **Aucun offset recalé** : captions/bulles/mots-chocs sont en TEMPS-CORPS, le générique n'entre pas
+    dans leur calcul. La bascule ne touche que `gen_audio_fix` (`_gen_end`). autoprod (ep14+) hérite.
+  - Vérifié sur ep07 (banc d'essai, master publié restauré ensuite) : cold open OK, seg5 complet, silence
+    mesuré à −43 dB entre voix (−32) et générique (−30).
+- **ARCHIVE — gabarit TÊTE (`GENERIQUE_POSITION="head"`, legacy).** Générique 1.2 s EN TÊTE, transition
+  L-CUT : l'image coupe à 1.2 s mais l'audio Veo continue (`GEN_AUDIO_TAIL=1.6` s, fade + écho « bave »)
+  par-dessus le 1er segment ; lit d'orage intro de 1.2 s sous le générique. **Épisodes publiés ainsi
+  (INTOUCHABLES) : ep01-05, 07, 09, 10.** Code conservé dans `_gen_head`, désactivé par le drapeau.
+- Clamp de chaque choc/caption à la fenêtre vidéo de son segment. LEAD 1.5 s, GAP 0.45 s.
 
 ## E. AVATAR / DÉCOR (rappel)
 - Plein-pied **dos/profil UNIQUEMENT** (`output/perso_detoure/v2/{dos,profil}_clean.mov`), scale 504,
