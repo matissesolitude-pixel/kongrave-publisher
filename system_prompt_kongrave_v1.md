@@ -4,51 +4,20 @@ Règles PERMANENTES de production des Reels KONGRAVE. Paramètres exacts (positi
 voir `STYLE_REFERENCE.md`. Le builder est `build_episode.py` (JSON `KONGRAVE_episodes_02_to_28_v3.json`).
 Référence absolue de style = master validé `output/v3/EPISODE_01_kongrave.mp4`.
 
-## 0. Hook — matrice profil × valeur (AVANT d'écrire un mot) — v1.1
+## 0. Hook & copywriting → `LTTI_PROFILES.md` (source canonique)
 
-**COPYWRITING — RÈGLE DE BASE : tout script KONGRAVE s'écrit POUR un profil.** Les 16 LTTI, leur
-fuite documentée et leur hook ads sont dans **`LTTI_PROFILES.md`** (racine, 5 blocs par profil :
-Miroir → Signature → Fuite n°1 → Coût → Pont). On choisit le profil AVANT d'écrire, et le hook part
-de sa Fuite n°1.
+**RÈGLE DE BASE : tout script KONGRAVE s'écrit POUR un profil.** La matrice de hook (doctrine v1.1),
+les 16 profils LTTI (canon V2, avec leurs « registres forts » = cellules qui marchent par profil), les
+4 familles, les garde-fous compliance et le schéma de tags JSON (`ltti_target` + `hook_cell`) vivent
+dans **`LTTI_PROFILES.md`** (racine) — qui **fait autorité sur le copywriting**. Ne pas dupliquer ici.
 
-Un hook = **UNE cellule** de la matrice. On fixe 4 coordonnées avant la première ligne.
-
-**1. PROFIL (qui) —** un des **16 LTTI** (`LTTI_PROFILES.md`). Les 4 axes binaires : **1** Cadence S/O ·
-**2** Info I/E · **3** Régulation R/T · **4** Cadre D/X. Les **4 familles** = Glacier (SI), Circuit (OI),
-Sniper (SE), Assaillant (OE). **Sa fuite n°1 documentée est la matière du hook.** Rotation calibrée sur
-les 4 familles (ne jamais puiser toujours dans la même).
-
-**2. VARIABLE + VALENCE (quoi) —** un des **4 facteurs** de l'Équation de Valeur, à l'un de ses 2 pôles
-(= 8 états signés) :
-- `++` Dream outcome / `--` Nightmare
-- `++` Speed / `--` Time delay
-- `++` Likelihood / `--` Risk
-- `++` Ease / `--` Effort & sacrifice
-
-  **FILTRE KONGRAVE :** le dream outcome est une **IDENTITÉ** (le manager, le pro, celui qui dort la
-  nuit), **JAMAIS un chiffre**. Le nightmare est **compliant par nature** — c'est le terrain naturel
-  de KONGRAVE.
-
-**3. REGARD (par quels yeux) —** un seul : le trader lui-même · sa femme/famille (qui ne sait pas) ·
-les collègues · les autres traders (l'envie) · le desk qui recrute · le marché-ennemi qui le connaît.
-
-**4. TEMPS (quand) — NEUTRE :** passé · présent · futur.
-
-**ORTHOGONALITÉ (v1.1) —** les axes VARIABLE, REGARD, TEMPS sont **indépendants** ; aucune combinaison
-n'a d'émotion pré-assignée. **Le temps ne porte aucune émotion en soi — c'est REGARD × VALENCE qui
-colore la période.** La même cellule temporelle s'inverse selon les yeux :
-- passé × prospect × `--` = son **regret**
-- passé × ennemi × `++` = le **trophée de l'ennemi** (= douleur du prospect par ricochet)
-- présent × femme × `--` = ce qu'**elle ne voit pas encore**
-- présent × ennemi × `++` = le **festin en cours**
-- futur × collègues × `++` = l'**identité qu'ils décriront**
-
-**RÈGLE D'OR :** un hook = une seule cellule. Pas deux variables, pas deux regards. La précision fait
-l'arrêt de scroll. — **RÈGLE DE FRAÎCHEUR :** jamais deux épisodes consécutifs sur la même cellule,
-même si le profil change.
-
-Grille totale jouable = **4 facteurs × 2 pôles × 6 regards × 3 temps = 144 cellules**. Toute la grille
-est jouable ; la valence et le regard, pas le temps, portent l'émotion.
+Rappels non négociables (le détail est dans le fichier) :
+- **Un hook = UNE cellule** (profil × variable × regard × temps + valence). Jamais deux variables ni
+  deux regards. **Fraîcheur :** jamais deux épisodes consécutifs sur la même cellule.
+- **Axes orthogonaux :** le temps est neutre ; c'est **regard × valence** qui colore la période.
+- **Le dream outcome est une IDENTITÉ, jamais un chiffre.** Aucun montant, aucune promesse de gain
+  (garde-fou compliance). Le nightmare est le terrain naturel de KONGRAVE.
+- ep29+ : chaque épisode porte ses tags `ltti_target` / `hook_cell` (cf. `LTTI_PROFILES.md` §5).
 
 ## 1. Bulles éditoriales (RÈGLE CENTRALE)
 - La bulle-choc **ne répète JAMAIS** ce qui est dit vocalement. C'est un **commentaire éditorial** :
