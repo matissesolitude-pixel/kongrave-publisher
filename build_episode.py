@@ -67,6 +67,16 @@ GEN = ROOT / "output" / "v3" / "work" / "generique_intro_clean.mp4"
 GENERIQUE_DUR = 1.2   # (PO 2026-07-09) générique VISUEL trimé à 1.2s ; ep01-02 publiés = INTACTS
 GEN_CLIMAX = 0.0      # offset du climax 1.2s dans le clip Veo (logo + éclair à ~0.5s -> fenêtre [0,1.2])
 GEN_AUDIO_TAIL = 1.6  # L-CUT : l'audio Veo continue en fade out ~1.6s PAR-DESSUS le 1er segment (queue non raccourcie)
+
+# (PO 2026-07-11) BASCULE GÉNÉRIQUE EN FIN — cold open + charnière de boucle.
+#   "end"  : l'épisode ouvre DIRECT sur seg1 (orage + hook) ; le générique 1.2s passe en DERNIÈRE
+#            position, après le seg5 COMPLET + GEN_END_SILENCE. Le générique ne mord jamais les
+#            derniers mots. Rejoue -> re-hook (boucle). C'est le gabarit ACTIF.
+#   "head" : gabarit legacy archivé (générique en tête). ep01-05, 07, 09, 10 ont été publiés ainsi.
+# Les offsets (captions/bulles/mots-chocs) sont calculés en TEMPS-CORPS : le générique n'entre pas
+# dans leur calcul, donc la bascule tête<->fin ne recale AUCUN offset — elle ne touche que gen_audio_fix.
+GENERIQUE_POSITION = "end"
+GEN_END_SILENCE = 0.30   # battement de silence entre la dernière image de seg5 et le générique final
 CHAMP = ROOT / "assets" / "champ_bataille.png"
 # Seuls ces épisodes ont légitimement le champ de bataille en seg4 (destruction de
 # masse). Pour tous les autres, l'insert seg4_hf.mp4 est OBLIGATOIRE : sans lui,
@@ -533,6 +543,59 @@ def build(ep, e, work):
 
 def gen_audio_fix(body, work, ep):
     out = ROOT / "output" / "v3" / f"EPISODE_{ep:02d}_kongrave.mp4"
+    if GENERIQUE_POSITION == "end":
+        return _gen_end(body, work, out, ep)
+    return _gen_head(body, work, out, ep)
+
+
+def _gen_end(body, work, out, ep):
+    """Gabarit FIN (actif) : cold open sur seg1, générique 1.2s reporté après seg5 + silence.
+
+    Aucun offset à recaler : le corps (captions/bulles/mots-chocs, temps-corps) est intact ;
+    on ajoute seulement un battement puis le générique à la suite. La charnière seg5 -> silence ->
+    générique -> re-hook fait la boucle. Le générique ne mord jamais les derniers mots (il est APRÈS).
+    """
+    body_dur = dur_of(body)
+
+    # --- audio : corps (self-contained) | silence | audio Veo du générique. Aucun chevauchement. ---
+    bwav = work / "bodya.wav"
+    run([FF, "-y", "-v", "error", "-i", str(body), "-vn", "-c:a", "pcm_s16le", str(bwav)], "bodya")
+    sil = work / "sil.wav"
+    run([FF, "-y", "-v", "error", "-f", "lavfi", "-t", f"{GEN_END_SILENCE}",
+         "-i", "anullsrc=r=44100:cl=stereo", "-c:a", "pcm_s16le", str(sil)], "sil")
+    veo = work / "veo.wav"
+    fo = max(0.0, GENERIQUE_DUR - 0.4)   # fade out propre en fin de générique (boucle nette)
+    run([FF, "-y", "-v", "error", "-ss", f"{GEN_CLIMAX}", "-t", f"{GENERIQUE_DUR}", "-i", str(GEN),
+         "-vn", "-af", f"aecho=0.85:0.5:280|560|960:0.4|0.28|0.18,afade=t=out:st={fo:.2f}:d=0.4",
+         "-c:a", "pcm_s16le", str(veo)], "veo")
+    fina = work / "fina.wav"
+    run([FF, "-y", "-v", "error", "-i", str(bwav), "-i", str(sil), "-i", str(veo),
+         "-filter_complex", "[0:a][1:a][2:a]concat=n=3:v=0:a=1[a]",
+         "-map", "[a]", "-c:a", "pcm_s16le", str(fina)], "finaEnd")
+
+    # --- vidéo : corps | hold 0.3s (dernière image de seg5) | générique 1.2s ---
+    last = work / "last.png"
+    run([FF, "-y", "-v", "error", "-sseof", "-0.10", "-i", str(body), "-frames:v", "1", str(last)], "lastframe")
+    holdv = work / "holdv.mp4"
+    run([FF, "-y", "-v", "error", "-loop", "1", "-t", f"{GEN_END_SILENCE}", "-i", str(last),
+         "-vf", f"scale={W}:{H},setsar=1,fps=30", "-c:v", "libx264", "-crf", "18",
+         "-pix_fmt", "yuv420p", str(holdv)], "holdv")
+    genv = work / "genv.mp4"
+    run([FF, "-y", "-v", "error", "-ss", f"{GEN_CLIMAX}", "-t", f"{GENERIQUE_DUR}", "-i", str(GEN),
+         "-an", "-vf", f"scale={W}:{H},setsar=1,fps=30", "-c:v", "libx264", "-crf", "18",
+         "-pix_fmt", "yuv420p", str(genv)], "genvEnd")
+    catv = work / "catv.mp4"
+    run([FF, "-y", "-v", "error", "-i", str(body), "-i", str(holdv), "-i", str(genv),
+         "-filter_complex", "[0:v][1:v][2:v]concat=n=3:v=1[v]", "-map", "[v]",
+         "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", str(catv)], "catvEnd")
+
+    total = body_dur + GEN_END_SILENCE + GENERIQUE_DUR
+    run([FF, "-y", "-v", "error", "-i", str(catv), "-i", str(fina), "-map", "0:v", "-map", "1:a",
+         "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.2f}", str(out)], "muxEnd")
+    print(f"[OK] ep{ep:02d} (générique FIN) -> {out}  ({total:.1f}s)")
+
+
+def _gen_head(body, work, out, ep):
     INTRO = GENERIQUE_DUR          # générique visuel = 1.2s (le corps démarre à 1.2s, image ET audio)
     body_dur = dur_of(body)
     bwav = work / "bodya.wav"
