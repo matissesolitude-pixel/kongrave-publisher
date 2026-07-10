@@ -1,0 +1,35 @@
+name: KONGRAVE notify test
+
+# Envoie un message Telegram de test depuis le runner (workflow_dispatch).
+# Sert à vérifier que TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID sont bien posés et
+# que notify.py fonctionne côté CI. N'a aucun cron : ne tourne que sur demande.
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "Message à envoyer"
+        default: "KONGRAVE notifications actives"
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Envoi du message de test
+        env:
+          MSG: ${{ github.event.inputs.message }}
+        run: |
+          python - <<'PY'
+          import os, sys, notify
+          ok = notify.send(os.environ.get("MSG") or "KONGRAVE notifications actives")
+          print("envoyé ✅" if ok else "échec ❌ (secrets manquants ou API Telegram refusée)")
+          sys.exit(0 if ok else 1)
+          PY
