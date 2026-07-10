@@ -29,6 +29,18 @@ STYLE = (
     "No text, no letters, no logos, NO people anywhere. "
 )
 
+# Garde-fou compliance (LTTI_PROFILES.md §4) : JAMAIS de chiffre ni de montant à l'écran.
+# Renforcé dans le prompt ET vérifié à l'OCR après génération (scene_textcheck.image_forbidden).
+NO_NUMBERS = (
+    " ABSOLUTELY NO numbers, NO digits, NO prices, NO currency symbols, NO amounts, NO dates, "
+    "NO percentages, NO readable text. Any handwriting or ledger content must be a purely "
+    "ILLEGIBLE abstract ink scrawl — wavy lines and crossed-out strokes only, never real characters. "
+)
+
+# Épisodes où l'écriture manuscrite ILLISIBLE est tolérée (concept), mais où les CHIFFRES restent
+# interdits comme partout ailleurs.
+TEXT_OK = {11}
+
 # ep -> (scene_prompt, anim_prompt)
 SCENES = {
     4: ("An empty, plush five-star hotel corridor at night in strong one-point perspective, "
@@ -45,12 +57,14 @@ SCENES = {
         "blank shape, NO text ever appears), steam drifting, faint rain, menacing stillness before "
         "violence. Frank Miller Sin City black and white ink, keep the red neon glow. No people, NO text, NO letters."),
     11: ("An open leather trading journal / ledger lying on a dark wooden desk under a single desk "
-         "lamp at night, close top-down three-quarter view, pages densely covered in handwritten "
-         "notes and numbers, several entries circled, one entry circled in dark red ink (the ONLY "
-         "red element), a fountain pen resting on the page, intimate confessional noir mood.",
+         "lamp at night, close top-down three-quarter view, pages covered in dense ILLEGIBLE "
+         "handwritten scrawl — wavy ink lines, scratched-out strokes and crossings-out only, NO "
+         "readable words, NO numbers, NO amounts, NO dates — several lines angrily crossed out, one "
+         "scribbled line circled in dark red ink (the ONLY red element), a fountain pen resting on "
+         "the page, intimate confessional noir mood.",
          "Slow push-in onto the open journal under the lamp, pages faintly settling, the one red "
-         "circled entry drawing the eye, quiet confessional stillness. Frank Miller Sin City black "
-         "and white ink, keep the one red circle. No people, no text."),
+         "circled scrawl drawing the eye, quiet confessional stillness. Frank Miller Sin City black "
+         "and white ink, keep the one red circle. No people, no text, no numbers."),
     6: ("A deserted corporate trading floor at night, long rows of empty desks with dark "
         "switched-off monitors and vacant office chairs, one chair toppled over on the floor in "
         "the foreground, a single desk lamp still glowing at the far end, cold and lifeless, one "
@@ -131,21 +145,33 @@ def gemini_key():
     sys.exit("[ERREUR] GEMINI_API_KEY absente (ni env CI ni .env.local). Vérifie le secret GitHub.")
 
 
-def gen_image(scene, img):
+def gen_image(scene, img, allow_text=False):
     from google import genai
     from google.genai import types
+    from scene_textcheck import image_forbidden
     client = genai.Client(api_key=gemini_key())
     cfg = types.GenerateContentConfig(response_modalities=["IMAGE"],
                                       image_config=types.ImageConfig(aspect_ratio="9:16"))
-    for attempt in range(3):
-        resp = client.models.generate_content(model=MODEL_IMG, contents=[STYLE + scene], config=cfg)
+    prompt = STYLE + NO_NUMBERS + scene
+    for attempt in range(4):
+        resp = client.models.generate_content(model=MODEL_IMG, contents=[prompt], config=cfg)
+        wrote = False
         for cand in (resp.candidates or []):
             for part in (getattr(getattr(cand, "content", None), "parts", None) or []):
                 data = getattr(part, "inline_data", None)
                 if data and data.data:
-                    img.write_bytes(data.data); print(f"[OK] image -> {img}"); return
-        print(f"    [vide {attempt+1}/3]")
-    sys.exit("[ECHEC] Gemini : pas d'image.")
+                    img.write_bytes(data.data); wrote = True; break
+            if wrote:
+                break
+        if not wrote:
+            print(f"    [vide {attempt+1}/4]"); continue
+        # Garde-fou : chiffres/devises TOUJOURS interdits ; mots alpha interdits sauf journaux.
+        bad, reason = image_forbidden(str(img), allow_text=allow_text)
+        if not bad:
+            print(f"[OK] image -> {img}"); return
+        print(f"    [rejet {reason} {attempt+1}/4] régénération avec prompt renforcé", flush=True)
+        prompt = STYLE + NO_NUMBERS + NO_NUMBERS + scene   # double la contrainte au retry
+    sys.exit(f"[ECHEC] image non conforme (chiffre/devise ou texte) après 4 tentatives : {img}")
 
 
 def animate(anim, img, raw):
@@ -184,7 +210,7 @@ def main():
         print(f"[DRY-RUN ep{a.ep:02d}] --go pour générer (~$0.10 image + ~$0.30 i2v).")
         print("SCENE:", scene[:90], "…"); return
     if not a.anim_only:
-        gen_image(scene, img)
+        gen_image(scene, img, allow_text=(a.ep in TEXT_OK))
     animate(anim, img, raw)
     finish(raw, dst)
 
