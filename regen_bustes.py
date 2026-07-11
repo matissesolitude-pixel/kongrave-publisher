@@ -23,9 +23,10 @@ BUSTE_SEGS = (2, 5)   # seg2 = reveal face cam, seg5 = cta face cam
 # DomoAI talking-avatar : durée de sortie plafonnée à 4s (contrainte 2026-07-08, error 1004).
 # Voix ≤ MONO_MAX -> 1 clip (seconds=4). Voix plus longues -> découpage en tranches ≤ CHUNK_MAX,
 # 1 clip par tranche (MÊME image source -> le visage NE DÉRIVE PAS), puis concat -> lip-sync complet.
-MAX_SECS = 3         # plafond durée talking-avatar observé côté DomoAI (2026-07-09)
-MONO_MAX = 3.1       # au-delà, on découpe (sous ça, un léger gel de fin est invisible)
-CHUNK_MAX = 2.8      # taille max d'une tranche (sous le plafond, marge de sécurité)
+MAX_SECS = 2         # plafond durée talking-avatar DomoAI (abaissé à 2s le 2026-07-11, error 1004)
+MONO_MAX = 2.0       # au-delà, on découpe (sous ça, un léger gel de fin est invisible)
+CHUNK_MAX = 1.9      # taille max d'une tranche (sous le plafond 2s, marge de sécurité)
+# NB : cap 2s -> plus de tranches par buste -> plus de tâches DomoAI/épisode qu'avant.
 
 
 def _dur(path):
@@ -40,7 +41,7 @@ def _one_clip(api_key, audio_path, out, secs):
     # les secondes jusqu'à ce que ça passe (un léger gel de fin est invisible).
     ib, ab = b64_file(BUSTE_IMG), b64_file(audio_path)
     tried = []
-    seq = [min(MAX_SECS, max(1, secs)), 3, 2, 1]
+    seq = [min(MAX_SECS, max(1, secs)), 2, 1]   # cap 2s : on ne tente plus 3s (rejet 1004)
     for i, s in enumerate(seq):
         if s in tried:
             continue
