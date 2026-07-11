@@ -57,7 +57,8 @@ BORDERS = (
 BUSTE_W = 600         # largeur du buste au compositing (réduit : tête + bulle tiennent dans la zone sûre)
 BUSTE_TOP = 300       # haut du buste bien SOUS la barre de statut (tête dégagée)
 LEAD, HOLD = 1.5, 0.5
-JSON = ROOT / "KONGRAVE_episodes_02_to_28_v3.json"
+JSON = Path(os.environ.get("KONGRAVE_JSON") or ROOT / "KONGRAVE_episodes_02_to_28_v3.json")
+from seg4_routing import resolve_seg4_type, log_s2_metadata
 AUDIO = ROOT / "audio"
 DECOR = ROOT / "assets" / "BACKGROUND.MOV"
 DECOR_A, DECOR_B = 8.5, 14.85          # région du décor SANS le burst WIPED OUT
@@ -345,6 +346,8 @@ def dialog_fs(lines, box_w):
 
 def build(ep, e, work):
     work.mkdir(parents=True, exist_ok=True)
+    log_s2_metadata(e, ep)                      # métadonnées v4 : loggées, jamais bloquantes
+    seg4_kind = resolve_seg4_type(e, ep)        # fail loud si s2 sans seg4_type valide
     ft = FT()
     segs = sorted(e["segments"], key=lambda s: s["segment"])
     durs, voice = make_voice(ep, segs, work)
@@ -358,13 +361,15 @@ def build(ep, e, work):
     champ = work / "champ_bin.png"; champ_png(champ)
 
     # Garde-fou seg4 : échouer fort, comme pour les bustes lip-sync manquants.
-    if ep not in CHAMP_EPISODES and not (work / "seg4_hf.mp4").is_file():
+    # champ = pas d'insert requis (build_episode le génère depuis champ_bataille.png) ;
+    # prop/narratif = seg4_hf.mp4 OBLIGATOIRE.
+    if seg4_kind != "champ" and not (work / "seg4_hf.mp4").is_file():
         sys.exit(
-            f"[ERREUR] insert seg4 manquant : {work / 'seg4_hf.mp4'}\n"
+            f"[ERREUR] insert seg4 manquant (seg4_type={seg4_kind}) : {work / 'seg4_hf.mp4'}\n"
             f"  prop     -> rendre props/ep{ep:02d}.html avec HyperFrames\n"
             f"  narratif -> python gen_seg4_narratif.py {ep} --go\n"
-            f"Le champ de bataille est réservé aux épisodes {sorted(CHAMP_EPISODES)} "
-            f"(destruction de masse). Ne jamais le laisser combler un insert absent."
+            f"Le champ de bataille est réservé aux épisodes de destruction de masse "
+            f"(s1 {sorted(CHAMP_EPISODES)}, ou seg4_type=\"champ\" en s2)."
         )
 
     files = []
@@ -667,10 +672,10 @@ def seed_ep01_voices(work):
 
 
 def main():
-    d = json.load(open(JSON))
-    eps = [int(x) for x in sys.argv[1:]] or [e["number"] for e in d["episodes"]]
-    by = {e["number"]: e for e in d["episodes"]}
+    import kongrave_episodes
+    by = kongrave_episodes.by_number()          # s1 (v3) + s2 (saison2 si présent)
     by[1] = EP01
+    eps = [int(x) for x in sys.argv[1:]] or sorted(by)
     for ep in eps:
         if ep not in by:
             print(f"[skip] ep{ep} absent du JSON"); continue

@@ -22,21 +22,19 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import os
 ROOT = Path(__file__).resolve().parent
-JSON = ROOT / "KONGRAVE_episodes_02_to_28_v3.json"
+JSON = Path(os.environ.get("KONGRAVE_JSON") or ROOT / "KONGRAVE_episodes_02_to_28_v3.json")
 INBOX = ROOT / "inbox"
 SCHEDULE = ROOT / "schedule.json"
 HF = ROOT / "hf"                       # projet HyperFrames (hyperframes.json/meta.json/assets)
 PROPS = ROOT / "props"                 # compositions prop commitées : props/ep{NN}.html
 PY = sys.executable
 
-# --- classification seg4 -----------------------------------------------------
-CHAMP = {2, 3, 13}
-PROP = {4, 5, 7, 9, 10, 15, 17, 19, 22, 24, 25}   # 4 = couloir d'hôtel (props/ep04.html)
-NARRATIVE_TEXT_OK = {11}               # journal : écriture manuscrite intrinsèque -> pas d'OCR
+from seg4_routing import resolve_seg4_type, log_s2_metadata
 
-def seg4_type(n):
-    return "champ" if n in CHAMP else ("prop" if n in PROP else "narrative")
+# --- classification seg4 (v4 : le routage lit seg4_type explicite via seg4_routing) -----------
+NARRATIVE_TEXT_OK = {11}               # journal : écriture manuscrite intrinsèque -> pas d'OCR
 
 # --- planning ----------------------------------------------------------------
 # CADENCE 6h à partir du 9 juillet 2026 01:00 Dubai (UTC+4) : ep_n = base + 6h*(n-1).
@@ -44,7 +42,19 @@ TZ = timezone(timedelta(hours=4))
 BASE = datetime(2026, 7, 9, 2, 0, tzinfo=TZ)     # ancre = ep02 (9 juil 02:00 Dubai)
 
 def publish_dt(n):
-    return BASE + timedelta(hours=6 * (n - 2))   # ep02=base, ep03=+6h, … ep12=+60h
+    return BASE + timedelta(hours=6 * (n - 2))   # ep02=base, ep03=+6h, … ep12=+60h (fallback)
+
+def next_publish_dt(sched):
+    """Prochain créneau = dernier planifié + 6h. ROBUSTE aux recalages manuels du schedule
+    (holds, réinsertions) : on ne recalcule pas par formule (qui ignore les décalages faits à
+    la main), on continue la cadence après le dernier créneau réel. Fallback formule si vide."""
+    dts = []
+    for x in sched:
+        try:
+            dts.append(datetime.fromisoformat(x["publish_datetime"]))
+        except (KeyError, ValueError, TypeError):
+            pass
+    return (max(dts) + timedelta(hours=6)) if dts else BASE
 
 HASHTAGS = "#kongrave #trading #forex #tradingpsychology #riskmanagement #disruptive"
 # CTA en PREMIÈRE ligne (décision PO), "Comment" (pas "Reply")
@@ -64,7 +74,8 @@ def run(cmd, **kw):
     return r
 
 def load_episodes():
-    return sorted(json.load(open(JSON))["episodes"], key=lambda e: e["number"])
+    import kongrave_episodes
+    return kongrave_episodes.load_all()   # s1 (v3) + s2 (saison2 si présent), triés par number
 
 def next_episode(eps):
     for e in eps:
@@ -91,21 +102,23 @@ def make_prop(n):
     print(f"  [prop] {html.name} -> {dst}", flush=True)
 
 # --- seg4 : scène narrative (Gemini + OCR retry + DomoAI) --------------------
-def make_narrative(n):
+def make_narrative(n, e=None):
+    """Insert narratif (Gemini -> OCR anti-texte/chiffre -> DomoAI).
+    s1 : prompt figé dans g.SCENES. s2 (ep>=29) : le prompt vient du `plan` du seg4 dans le JSON."""
     import gen_seg4_narratif as g
-    import scene_textcheck as tc
-    if n not in g.SCENES:
-        sys.exit(f"[AUTOPROD] pas de prompt narratif pour ep{n:02d} (dict SCENES).")
-    scene, anim = g.SCENES[n]
+    if n in g.SCENES:
+        scene, anim = g.SCENES[n]
+    elif e is not None:
+        seg4 = next((s for s in e["segments"] if s["segment"] == 4), None)
+        if not seg4 or not seg4.get("plan"):
+            sys.exit(f"[AUTOPROD] ep{n:02d} narratif : ni g.SCENES ni plan seg4 dans le JSON.")
+        scene = seg4["plan"]                     # le plan JSON EST la description de scène
+        anim = "Slow subtle push-in, faint motion, oppressive noir stillness. No people, no text, no numbers."
+    else:
+        sys.exit(f"[AUTOPROD] pas de prompt narratif pour ep{n:02d}.")
     img = ROOT / "assets" / f"scene_seg4_ep{n:02d}.png"
-    check = n not in NARRATIVE_TEXT_OK
-    for attempt in range(3):
-        extra = "" if attempt == 0 else (
-            " ABSOLUTELY NO text, NO letters, NO words, NO signage with writing anywhere in the image.")
-        g.gen_image(scene + extra, img)
-        if not check or not tc.image_has_text(str(img)):
-            break
-        print(f"  [narratif] texte détecté, régénération {attempt+2}/3…", flush=True)
+    # gen_image applique déjà NO_NUMBERS + garde-fou OCR (texte ET chiffres) en interne.
+    g.gen_image(scene, img, allow_text=(n in NARRATIVE_TEXT_OK))
     d = ROOT / "output" / "batch" / f"ep{n:02d}"; d.mkdir(parents=True, exist_ok=True)
     raw = d / "seg4_i2v_raw.mp4"; dst = d / "seg4_hf.mp4"
     g.animate(anim, img, raw)
@@ -115,7 +128,8 @@ def make_narrative(n):
 # --- pipeline ----------------------------------------------------------------
 def produce(e):
     n = e["number"]
-    typ = seg4_type(n)
+    log_s2_metadata(e, n)               # métadonnées v4 : loggées, jamais bloquantes
+    typ = resolve_seg4_type(e, n)       # routage explicite (fail loud si s2 sans seg4_type)
     print(f"=== AUTOPROD ep{n:02d} {e['title']} | seg4={typ} ===", flush=True)
 
     # 1) voix (build_episode génère les v{n}.mp3 puis s'arrête au buste manquant : normal)
@@ -124,8 +138,8 @@ def produce(e):
     # 2) seg4 insert
     if typ == "prop":
         make_prop(n)
-    elif typ == "narrative":
-        make_narrative(n)
+    elif typ == "narratif":
+        make_narrative(n, e)
     # champ : rien à faire, build_episode le génère depuis champ_bataille.png
 
     # 3) bustes lip-sync (cap 4s + découpage/concat + retry auto intégrés dans regen_bustes)
@@ -143,15 +157,16 @@ def produce(e):
     shutil.copy(src, dst)
     sched = json.load(open(SCHEDULE)) if SCHEDULE.exists() else []
     sched = [x for x in sched if x.get("episode_number") != n]
+    when = next_publish_dt(sched)               # après le dernier créneau réel (+6h), pas la formule
     sched.append({
         "episode_number": n,
         "filepath": f"inbox/EPISODE_{n:02d}_kongrave.mp4",
         "caption": caption_for(e),
-        "publish_datetime": publish_dt(n).isoformat(),
+        "publish_datetime": when.isoformat(),
     })
     sched.sort(key=lambda x: x["episode_number"])
     json.dump(sched, open(SCHEDULE, "w"), ensure_ascii=False, indent=2)
-    print(f"[AUTOPROD] ep{n:02d} PRODUIT -> {dst.name}  (publish {publish_dt(n).isoformat()})", flush=True)
+    print(f"[AUTOPROD] ep{n:02d} PRODUIT -> {dst.name}  (publish {when.isoformat()})", flush=True)
 
 
 def main():
