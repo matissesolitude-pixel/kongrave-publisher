@@ -102,7 +102,36 @@ buste ≈ **y 0.57·H** (sur le visage).
   autre épisode** (sinon la bouche bouge sur le mauvais texte). Image source = `assets/buste_binaire_parfait.png`
   (face cam N&B sur blanc). Placement : scale 1080, overlay centré X, y 120. seg2 (reveal) + seg5 (cta).
   Le builder REFUSE de construire si `buste{2,5}_alpha.mov` de l'épisode est absent.
-- Décor binarisé + fauteuil rouge. Orage : flashs + éclair. seg4 = champ (ep02/03/13) sinon HyperFrames.
+- Décor binarisé + fauteuil rouge. Orage : flashs + éclair. seg4 : voir la hiérarchie §E-bis.
+
+## E-bis. SEG4 — HIÉRARCHIE HYPERFRAMES-FIRST (doctrine v2, PO 2026-07-11)
+
+**Ordre de routage seg4, du défaut à l'exception. Le `seg4_type` reste EXPLICITE dans le JSON
+(le code ne l'infère jamais, cf. `seg4_routing.py`), mais la doctrine d'écriture vise le prop d'abord.**
+
+1. **DÉFAUT = `prop` (HyperFrames).** Tout seg4 commence par la question : *« quelle métaphore
+   PHYSIQUE porte cette preuve ? »* — et on se creuse la tête AVANT de conclure qu'il n'y en a pas.
+   Deux registres, même pipeline (`npx hyperframes render`, HTML→MP4, 8-12 s, la voix parle par-dessus,
+   AUCUN texte/chiffre dans l'anim — les mots-chocs sont des overlays compositing) :
+   - **2D flat motion** (canon actuel : Sisyphe ep05, dominos, briques ep30).
+   - **3D Three.js/WebGL** — VALIDÉ (test échiquier, Chromium headless rend le WebGL). Objet symbolique,
+     caméra lente, toon shading Sin City N&B + **un seul rouge**. Charger Three.js par `<script>` CDN
+     comme GSAP ; timeline déterministe (pas de `requestAnimationFrame`, rendu dans l'`onUpdate` GSAP).
+     *À affiner avant batch : encrage Sin City (le toon plat manque d'encre) + cadrage safe zone.*
+   - **Économie** : un épisode prop ne coûte que **2 tâches DomoAI** (les bustes seulement, prop gratuit).
+   - La bibliothèque `props/ep{NN}.html` grossit — chaque prop versionné, style unifié, **jamais réutilisé**.
+
+2. **EXCEPTION = `narratif` (Gemini + DomoAI).** UNIQUEMENT quand la preuve exige une **SCÈNE HABITÉE**
+   (lieu, atmosphère, présence humaine suggérée) qu'aucun objet-métaphore ne peut porter. La charge de la
+   preuve est INVERSÉE : c'est le narratif qui doit se justifier. Coûte 3 tâches DomoAI (2 bustes + 1 i2v).
+   Image Gemini **sans texte NI chiffre** (garde-fou OCR `scene_textcheck` : rejette texte imprimé ET
+   chiffres/devises ; aveugle au manuscrit → prompt « scrawl illisible » + vérif visuelle pour les journaux).
+
+3. **`champ` (champ de bataille).** Inchangé : **destruction de masse explicite uniquement**
+   (s1 ep02/03/13, ou `seg4_type:"champ"` en s2). Aucun insert requis (généré depuis `champ_bataille.png`).
+
+**Schéma v4 (saison 2, ep29+)** : chaque épisode porte `ltti_target`, `taxonomy`, `hook_cell`
+(métadonnées, tolérées+loggées) et `seg4_type` sur le segment 4 (routage, **fail-loud si absent/invalide**).
 
 ## F. INTERDITS
 1. JAMAIS d'inversion N&B. 2. Bangers UNIQUEMENT. 3. Plein-pied jamais de face. 4. Impacts = `make_bubble`
