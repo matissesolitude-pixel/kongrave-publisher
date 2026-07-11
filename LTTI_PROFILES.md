@@ -223,3 +223,135 @@ R/T = régulation (Régulé/Tendu) · D/X = cadre (Discipliné/eXploratoire).
 Chaque épisode porte : `"ltti_target": "OETX"`, `"hook_cell": {"variable": "nightmare", "regard": "ennemi", "temps": "present", "valence": "++"}`.
 Objectif : croiser rétention/commentaires par famille ET par cellule — l'organique
 nourrit le média plan paid (Phase 1 du doc LTTI × Social Ads).
+
+---
+
+# DOCTRINE RETAIN + REWARD (complète la matrice HOOK §1)
+
+*Sources : Hormozi (Hook-Retain-Reward, équation de valeur) · Bencivenga (Fascinations, angle
+caché) · Abraham (Prééminence, éducation stratégique) · canon LTTI V2 (Miroir → Signature → Fuite
+→ Coût → Pont).*
+
+## §R1 — LE MAPPING ÉPISODE (structure 5 segments)
+
+| Segment | Fonction copy | Doctrine |
+|---|---|---|
+| seg1 (hook) | HOOK | La matrice (§1) : profil × variable × regard × temps × valence |
+| seg2 (reveal) | RETAIN — ouvrir la boucle | Nommer la chose, pas la solution |
+| seg3 (leçon) | RETAIN — creuser | La vérité qui coupe, sans encore payer |
+| seg4 (preuve) | RETAIN — le sommet de tension | La preuve visuelle + le coût |
+| seg5 (cta) | REWARD | Payer la promesse, sèche. La règle EST le CTA |
+
+Un épisode = UNE boucle ouverte au seg1, tendue jusqu'au seg4, payée au seg5.
+Jamais deux boucles. Jamais une boucle non payée.
+
+## §R2 — RETAIN (seg2 → seg4)
+
+### Principe central (Bencivenga)
+Chaque segment doit relancer la **démangeaison mentale** : le spectateur reste parce
+que la phrase qu'il vient d'entendre rend la suivante obligatoire. Une fascination =
+**teasing de la valeur** (révéler le secret sans la méthode) + **image mentale**
+(le projeter dans une situation concrète) + **curiosité pure**. Si un segment
+n'ajoute pas de tension, il fuit des spectateurs — le couper ou le réécrire.
+
+### Le squelette canon LTTI = la boucle naturelle
+La structure des textes de résultat (Miroir → Signature → Fuite → Coût → Pont)
+est le retain d'épisode par construction :
+- **seg2 = Miroir/Reveal** — on te nomme. « That feeling has a name… revenge. »
+  Le spectateur se reconnaît : il ne peut plus partir, on parle de LUI.
+- **seg3 = Signature retournée ou Leçon** — la flatterie qui coupe, ou la vérité
+  froide. Le canon flatte avant de trancher (« Ta discipline est réelle… ») :
+  la validation ACHÈTE l'écoute de la coupe qui suit.
+- **seg4 = Coût/Preuve** — le sommet. Le prix de la fuite, incarné visuellement
+  (le prop, la scène narrative). C'est ici que la tension est maximale — le
+  spectateur DOIT savoir comment on en sort. Il ne le saura qu'au seg5.
+
+### Les 3 véhicules (Hormozi), mappés aux piliers
+- **Histoires** (boucle ouverte narrative) → piliers STORY et AUTORITÉ.
+  Les vilains, l'empty chair, le journal : un récit dont la fin est retenue.
+- **Listes** (l'énumération crée l'attente du point suivant) → pilier MIROIR.
+  « Same setup. Same mistake. Same excuse. » — la liste des symptômes est
+  une liste de coups ; le spectateur attend le sien.
+- **Étapes** (l'ordre crée la progression) → pilier ÉDUCATION.
+  « Cut your size. Slow down. Survive. Then rebuild. » — chaque étape
+  implique la suivante.
+- VIRAL emprunte au plus violent des trois selon la cellule du hook.
+
+### La bulle-choc = fascination visuelle
+Le mot-choc éditorial est une fascination Bencivenga en un mot : il commente
+SANS répéter (règle centrale), donc il crée un écart entre ce qu'on entend et
+ce qu'on lit — cet écart EST une démangeaison. Le choisir pour la tension
+qu'il ajoute, jamais pour l'emphase. (SUSPECT #1 sur « Not the market. Me. » :
+la bulle accuse pendant que la voix avoue — deux canaux, une boucle.)
+
+### L'angle caché (Bencivenga — produit ennuyeux)
+Aucun sujet trading n'est ennuyeux : il y a toujours la pépite — le détail
+contre-intuitif, le chiffre de structure (jamais de performance), le geste
+précis documenté dans la fuite du profil. Si un seg3 sonne générique,
+retourner à LTTI_PROFILES : la fuite exacte du profil ciblé contient
+toujours l'angle. Générique = pas assez profilé.
+
+### Interdits retain
+- Pas de récapitulation (« comme je disais ») — un Reel de 25s n'a pas de passé.
+- Pas de teasing vide (« attends la fin ») — la tension vient du contenu,
+  jamais de l'annonce de contenu.
+- Pas de deuxième boucle (une sous-question ouverte au seg3 qui ne sera
+  jamais payée) — une seule dette par épisode.
+
+## §R3 — REWARD (seg5)
+
+### Principe central (Hormozi × Abraham)
+Le reward **paie la promesse exacte de la cellule du hook** — entièrement,
+vite, sec. C'est le paiement qui fabrique le replay, le follow implicite et
+le « Comment GAME » : un hook fort + un reward faible = un spectateur qui ne
+revient jamais. Le CTA ne convertit pas ; le reward convertit.
+
+### Prééminence (Abraham) — la forme du paiement
+Tuez le vendeur : le seg5 est un acte de **conseiller**, jamais de pitch.
+On donne la vraie règle, utilisable ce soir, sans rétention d'information
+(« éducation stratégique » : donner le critère de jugement, même s'il
+n'achète jamais). Le Patriarche donne l'ordre et tourne le dos. C'est
+l'aspiration par l'autorité, pas la séduction.
+- Formes canon : l'impératif sec (« Set it. Leave it. Live to trade
+  tomorrow. ») · l'identité (« Winners — quit. ») · le renversement
+  (« Miss the trade. Keep the capital. »)
+- Le reward est une IDENTITÉ ou un GESTE. Jamais un montant, jamais une
+  promesse de gain (garde-fou absolu §4).
+
+### Règle de calibration hook ↔ reward
+La cellule du hook définit la dette ; le seg5 la rembourse dans la même devise :
+- hook NIGHTMARE → reward = le geste qui l'évite (le disjoncteur, le hard stop)
+- hook DREAM-IDENTITÉ → reward = le premier pas concret vers cette identité
+- hook ENNEMI × ++ → reward = ce que l'ennemi ne veut pas que tu saches
+  (retirer sa nourriture : « Know who's dealing the cards. »)
+- hook SPEED/TIME → reward = ce qui se fait AUJOURD'HUI, pas « un jour »
+Test : relire le seg1, puis le seg5 seul. Si le seg5 ne répond pas
+mot pour mot à la dette du seg1 → réécrire le seg5, pas le hook.
+
+### Boucle de série (le retain d'audience, pas d'épisode)
+Chaque épisode paie sa dette ; la SÉRIE, elle, n'est jamais soldée : la
+fuite du profil a 16 voisines, le vilain a des frères, la règle suivante
+existe. C'est la « communication de fer » d'Abraham — jamais trop fréquent,
+seulement trop ennuyeux : 4/jour se justifie tant que chaque épisode paie.
+Le « Comment GAME » est la porte : le spectateur payé veut donner SA
+version — le reward fabrique l'UGC du funnel.
+
+## §R4 — CHECKLIST AVANT LIVRAISON D'UN SCRIPT (les 6 tests)
+
+1. **Test cellule** : profil + variable + regard + temps + valence notés
+   AVANT l'écriture ? (tags JSON remplis)
+2. **Test démangeaison** (Bencivenga) : couper le Reel après chaque segment —
+   le spectateur a-t-il une raison CONTENUE de voir le suivant ?
+3. **Test boucle unique** : une seule dette ouverte, aucune sous-boucle orpheline ?
+4. **Test paiement** : seg1 puis seg5 seuls — la dette est-elle remboursée
+   dans la même devise ?
+5. **Test prééminence** : « un coach trading high-ticket retail pourrait-il
+   écrire exactement ça ? » Si oui → réécrire. Le seg5 conseille, ne vend pas.
+6. **Test bulle** : chaque mot-choc commente sans répéter, et ajoute de la
+   tension (pas de l'emphase) ?
+
+## §R5 — CE QUE CETTE DOCTRINE NE COUVRE PAS (rangé ailleurs)
+- Le Soul Read / Poker Reading (baseline, ranges, tells verbaux) = doctrine
+  du SETTER (qualification DM), pas du broadcast. Backlog setter IA.
+- Les 30 multiplicateurs Abraham / Parthénon = doctrine BUSINESS (offres,
+  back-end, partenariats), pas du script. Backlog KONGRAVE-as-a-Service.
