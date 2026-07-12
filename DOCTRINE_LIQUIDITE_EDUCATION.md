@@ -128,7 +128,45 @@ Les recherches ont solidement couvert la **taxonomie** (§L2) et le **pourquoi s
 
 ---
 
+## §L5 — LA FORME : « LA LIGNE CONTINUE » (décidée PO)
+
+**Ce que ce n'est PAS** : pas de facecam, pas de chart annoté façon SMC (= le look des 25
+concurrents), pas de personnage récurrent dessiné.
+
+### 1. Le dispositif
+Un Reel = **UN trait, zéro coupure**. Une ligne (blanc ou rouge sur noir) se métamorphose de concept
+en concept par **interpolation de path SVG** (HyperFrames, GSAP/flubber — moteur déjà validé). **Les
+transitions SONT l'argument** : la courbe d'euphorie DEVIENT le trou du drawdown. Inspiration
+structurelle *La Linea* (dispositif personnage-sur-ligne + main du créateur — **jamais le design
+original, IP protégée**).
+- **Casting du trait** : la ligne = le terrain (prix, sol, corde, fusible selon la variable) · la
+  main = le pouvoir qui dessine/plie/efface · le petit personnage stylisé = le retail incarné (optionnel).
+- **Palette** : N&B + UN rouge. Le chart réel peut apparaître **en citation brève** (preuve, cf. §L3
+  formule vérifiable) mais la ligne reste le véhicule principal.
+
+### 2. Le dispositif pédagogique (leçon « C'est pas sorcier »)
+- **JAMAIS de concept en titre** — toujours une **énigme concrète** en hook (« pourquoi ton broker
+  t'offre la plateforme ? »). Le concept est la réponse.
+- **La Ligne = la maquette** : tout mécanisme se **montre en fonctionnement** avant/pendant qu'il se dit.
+- **La voix** (clone Patriarche, mais registre différent : pas le mythe — l'**anatomiste**) joue le
+  duo : OUVRE avec la question du naïf (l'ignorance légitimée, jamais moquée), RÉPOND en horloger.
+- **Ton** : la **fascination froide devant la machine** (« regarde comme c'est bien conçu ») — ni
+  indignation, ni cynisme, ni complot.
+- **Invariants rituels** : le trait, la main, l'énigme, la révélation (le seg5 = toujours la
+  **révélation mécanique**), la règle sèche.
+
+### 3. Règle de réel (complète §L0)
+Pas de personnages-vilains dans cette ligne (la Maison / le Troupeau restent dans la saga KONGRAVE).
+Des **acteurs réels nommés par catégorie** (banques centrales, desks, brokers B-book, la structure
+elle-même) et des **mécanismes documentés**. **Jamais d'accusation nominative d'une entreprise.**
+L'arc éditorial : une **enquête sérialisée** — « comment la table est faite » — chaque épisode ferme
+sa boucle et rouvre la suivante.
+
+---
+
 *Sources principales : NY Fed Staff Reports 125 & 150 (Osler) ; Equiti, Orbex, Mind Math Money,
 Trading Wyckoff, AlgoStorm, FluxCharts, Phidias (pédagogie & taxonomie, secondaires). Recherches
-vérifiées 3-votes, juillet 2026. Couche francophone (MaloFX, Bronx, zefrenchtrader, ibrahimchauvin)
-NON couverte — passe ciblée à faire.*
+vérifiées 3-votes, juillet 2026.*
+*Langue de production : **ENGLISH-FIRST** (cibles anglophones, décision 8/07). Les créateurs
+francophones (MaloFX, Bronx, zefrenchtrader, ibrahimchauvin) sont une **source d'étude pédagogique**,
+jamais une langue de production ; leur passe reste à faire (priorité basse).*
