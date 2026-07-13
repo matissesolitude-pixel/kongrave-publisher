@@ -76,7 +76,8 @@ GEN_AUDIO_TAIL = 1.6  # L-CUT : l'audio Veo continue en fade out ~1.6s PAR-DESSU
 #   "head" : gabarit legacy archivé (générique en tête). ep01-05, 07, 09, 10 ont été publiés ainsi.
 # Les offsets (captions/bulles/mots-chocs) sont calculés en TEMPS-CORPS : le générique n'entre pas
 # dans leur calcul, donc la bascule tête<->fin ne recale AUCUN offset — elle ne touche que gen_audio_fix.
-GENERIQUE_POSITION = "end"
+GENERIQUE_POSITION = "none"   # (PO 2026-07-13) générique RETIRÉ : l'épisode finit sur seg5.
+# "end"/"head" = gabarits archivés (voir _gen_end/_gen_head), réactivables en changeant cette valeur.
 GEN_END_SILENCE = 0.30   # battement de silence entre la dernière image de seg5 et le générique final
 CHAMP = ROOT / "assets" / "champ_bataille.png"
 # Seuls ces épisodes ont légitimement le champ de bataille en seg4 (destruction de
@@ -124,11 +125,70 @@ def pick_shot(seg_num, plan):
     return "profil"
 
 
-def decor_clip(dur, dst):
-    """Boucle du décor Simon pré-rendu (N&B seuil dur + fauteuil rouge), à la durée voulue."""
-    run([FF, "-y", "-v", "error", "-stream_loop", "-1", "-i", str(DECOR_LOOP),
-         "-t", f"{dur:.3f}", "-an", "-r", "30", "-c:v", "libx264", "-crf", "18",
-         "-pix_fmt", "yuv420p", str(dst)], "decor")
+# --- COUCHE 1 : variété visuelle inter-épisodes (compositing DÉTERMINISTE, coût zéro) ----------
+# But (brief PO 2026-07-13) : aucun épisode ne ressemble au précédent dans ses 2 premières secondes,
+# SANS régénération DomoAI. Toutes les variations dérivent du NUMÉRO d'épisode -> reproductible.
+# Le miroir alterne à CHAQUE épisode (ep%2) => deux épisodes consécutifs diffèrent TOUJOURS ;
+# les autres axes cyclent (mod 3/4, désynchronisés) pour enrichir sans jamais figer une combinaison.
+DECOR_FRAMES = [                       # (zoom, décalage x px, décalage y px) — cadrage du décor
+    (1.00,   0,   0),
+    (1.06,  38, -18),
+    (1.08, -42,  16),
+    (1.11,   0,  28),
+]
+DECOR_GRADES = [                       # (contraste, luminosité, vignette) — grading TRÈS léger
+    (1.00,  0.00, False),
+    (1.06, -0.02, True),
+    (0.95,  0.02, True),
+]
+PERSO_PLACES = [                       # (largeur px, x overlay, y overlay) — pieds au sol (~834)
+    (504, 384, 834),
+    (486, 300, 846),
+    (528, 452, 826),
+    (472, 352, 852),
+]
+FLASH0 = [1.0, 1.6, 2.1, 1.3]          # instant du 1er flash d'orage -> rythme des 2 premières s
+ECLAIR_OP = [0.85, 1.00, 0.92, 0.78]   # intensité de l'éclair d'ouverture
+
+
+def variety(ep):
+    z, dx, dy = DECOR_FRAMES[ep % 4]
+    gc, gb, vig = DECOR_GRADES[ep % 3]
+    pw, px, py = PERSO_PLACES[(ep + 2) % 4]        # désynchronisé du cadrage décor
+    return {
+        "mirror": ep % 2, "zoom": z, "dx": dx, "dy": dy,
+        "grade_c": gc, "grade_b": gb, "vignette": vig,
+        "perso_w": pw, "perso_x": px, "perso_y": py,
+        "flash0": FLASH0[ep % 4], "eclair_op": ECLAIR_OP[ep % 4],
+    }
+
+
+def _decor_vf(v):
+    """Chaîne de filtres cadrage/miroir/grading pour le décor (COUCHE 1)."""
+    parts = []
+    if v["mirror"]:
+        parts.append("hflip")
+    z = v["zoom"]
+    if z != 1.00 or v["dx"] or v["dy"]:
+        parts.append(f"scale=ceil(iw*{z}/2)*2:ceil(ih*{z}/2)*2")
+        parts.append(f"crop={W}:{H}:(iw-{W})/2+({v['dx']}):(ih-{H})/2+({v['dy']})")
+    if v["grade_c"] != 1.00 or v["grade_b"] != 0.00:
+        parts.append(f"eq=contrast={v['grade_c']}:brightness={v['grade_b']}")
+    if v["vignette"]:
+        parts.append("vignette=PI/5")
+    return ",".join(parts)
+
+
+def decor_clip(dur, dst, v=None):
+    """Boucle du décor Simon pré-rendu (N&B seuil dur + fauteuil rouge), à la durée voulue.
+    v (COUCHE 1) applique miroir/cadrage/grading déterministes par épisode ; None = décor brut."""
+    cmd = [FF, "-y", "-v", "error", "-stream_loop", "-1", "-i", str(DECOR_LOOP),
+           "-t", f"{dur:.3f}", "-an", "-r", "30"]
+    vf = _decor_vf(v) if v else ""
+    if vf:
+        cmd += ["-vf", vf]
+    cmd += ["-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", str(dst)]
+    run(cmd, "decor")
 
 
 def champ_png(dst):
@@ -139,8 +199,9 @@ def champ_png(dst):
     im.point(lambda v: 255 if v > 140 else 0).convert("RGB").save(dst)
 
 
-def seg_clip(seg_num, shot, dur, work, champ):
-    """Un segment : décor + perso (ou champ plein cadre pour seg4), binarisé, durée exacte."""
+def seg_clip(seg_num, shot, dur, work, champ, v=None):
+    """Un segment : décor + perso (ou champ plein cadre pour seg4), binarisé, durée exacte.
+    v (COUCHE 1) : variations de compositing déterministes par épisode (décor + placement perso)."""
     dst = work / f"seg{seg_num}.mp4"
     if seg_num == 4:
         hf = work / "seg4_hf.mp4"
@@ -158,7 +219,7 @@ def seg_clip(seg_num, shot, dur, work, champ):
              "-r", "30", "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", str(dst)], "seg4")
         return dst
     dec = work / f"dec{seg_num}.mp4"
-    decor_clip(dur, dec)
+    decor_clip(dur, dec, v)
     if shot.startswith("buste"):
         # RÈGLE GRAVÉE : buste lip-sync PROPRE à cet épisode (généré par regen_bustes.py sur
         # l'audio de CET épisode). JAMAIS le buste d'un autre épisode.
@@ -177,9 +238,13 @@ def seg_clip(seg_num, shot, dur, work, champ):
               f"crop={PANEL_W}:{PANEL_H},{PERSO_BIN}[p];"
               f"[0:v][p]overlay={PANEL_X0}:{ACT_TOP}:format=auto[v]")
     else:
-        # plein-pied : ~0.70, pieds au sol, calage ep01 (x=384,y=834)
-        ov = (f"[1:v]scale=504:-1,{PERSO_BIN}[p];"
-              f"[0:v][p]overlay=384:834:format=auto[v]")
+        # plein-pied : pieds au sol. COUCHE 1 -> échelle + position déterministes par épisode
+        # (défaut = calage ep01 x=384,y=834,scale=504 si pas de variety).
+        pw = v["perso_w"] if v else 504
+        px = v["perso_x"] if v else 384
+        py = v["perso_y"] if v else 834
+        ov = (f"[1:v]scale={pw}:-1,{PERSO_BIN}[p];"
+              f"[0:v][p]overlay={px}:{py}:format=auto[v]")
     # plein-pied bouclé (boomerang) pour couvrir toute la durée ; buste joué une fois (lip-sync)
     perso_in = ["-i", str(src)] if shot.startswith("buste") else ["-stream_loop", "-1", "-i", str(src)]
     run([FF, "-y", "-v", "error", "-i", str(dec), *perso_in,
@@ -372,10 +437,11 @@ def build(ep, e, work):
             f"(s1 {sorted(CHAMP_EPISODES)}, ou seg4_type=\"champ\" en s2)."
         )
 
+    v = variety(ep)                             # COUCHE 1 : variations déterministes par épisode
     files = []
     for s in segs:
         n = s["segment"]
-        files.append(seg_clip(n, pick_shot(n, s["plan"]), seg_dur[n], work, champ))
+        files.append(seg_clip(n, pick_shot(n, s["plan"]), seg_dur[n], work, champ, v))
     # concat corps
     ci = []
     for f in files:
@@ -443,9 +509,10 @@ def build(ep, e, work):
     Image.new("RGBA", (W, H), (255, 255, 255, 255)).save(asset / "flash.png")
     ecl = Image.open(ECLAIR).convert("RGBA")
 
-    # flashs d'orage irréguliers 4-7s + éclair sur 2
+    # flashs d'orage irréguliers 4-7s + éclair sur 2. COUCHE 1 : le 1er flash démarre à un instant
+    # propre à l'épisode (v["flash0"]) -> le rythme des 2 premières secondes diffère à chaque épisode.
     flashes = []
-    t = 2.0
+    t = v["flash0"]
     seed = ep * 7
     while t < body_dur - 0.3:
         flashes.append(round(t, 2)); t += 4 + ((seed % 4))  # 4-7s pseudo-irrégulier
@@ -487,7 +554,9 @@ def build(ep, e, work):
     # éclair (dans le ciel, derrière) sur 2 flashs
     for i, ft2 in enumerate(eclair_at):
         k += 1; nn = f"v{k}"
-        nodes.append(f"[3:v]scale=-1:820{',hflip' if i%2 else ''}[e{i}];"
+        # COUCHE 1 : intensité de l'éclair propre à l'épisode (alpha global v["eclair_op"]).
+        nodes.append(f"[3:v]scale=-1:820{',hflip' if i%2 else ''},format=rgba,"
+                     f"colorchannelmixer=aa={v['eclair_op']}[e{i}];"
                      f"[{cur}][e{i}]overlay={60 if i%2==0 else 470}:-180:enable='between(t,{ft2:.2f},{ft2+0.10:.2f})'[{nn}]")
         cur = nn
     for ft2 in flashes:
@@ -548,9 +617,20 @@ def build(ep, e, work):
 
 def gen_audio_fix(body, work, ep):
     out = ROOT / "output" / "v3" / f"EPISODE_{ep:02d}_kongrave.mp4"
+    if GENERIQUE_POSITION == "none":
+        return _gen_none(body, out, ep)
     if GENERIQUE_POSITION == "end":
         return _gen_end(body, work, out, ep)
     return _gen_head(body, work, out, ep)
+
+
+def _gen_none(body, out, ep):
+    """Gabarit SANS GÉNÉRIQUE (PO 2026-07-13) : l'épisode se termine sur seg5, point.
+    `body` porte déjà vidéo + audio auto-suffisants -> simple remux vers la sortie finale.
+    La boucle IG se fait de seg5 -> re-hook seg1 sans carton intermédiaire."""
+    body_dur = dur_of(body)
+    run([FF, "-y", "-v", "error", "-i", str(body), "-c", "copy", str(out)], "muxNone")
+    print(f"[OK] ep{ep:02d} (SANS générique) -> {out}  ({body_dur:.1f}s)")
 
 
 def _gen_end(body, work, out, ep):
