@@ -164,6 +164,68 @@ sa boucle et rouvre la suivante.
 
 ---
 
+> ⚠️ **§L6 et §L7 : extraction sourcée, MAIS la vérification adversariale 3-votes n'a PAS tourné**
+> (limite de session, 2026-07-13). Les sources **académiques primaires** citées (Barber-Odean, Odean,
+> Kahneman-Tversky, ESMA, arXiv) sont des références *landmark* — fiables. Les **définitions SMC/ICT**
+> restent « cadre ». À re-passer en vérification quand le quota le permet.
+
+## §L6 — MANIPULATION & ENTRÉES POST-SWEEP
+
+**Wyckoff = la source mère (doctrine établie).** SMC/ICT en est une réinterprétation.
+- **Spring / shakeout** (accumulation) et **Upthrust** (distribution) : casse *brève* sous le support
+  (ou au-dessus de la résistance) pour capturer la liquidité, puis **test**, puis repart dans l'autre
+  sens — piégeant les vendeurs (ou acheteurs) tardifs. Le **« Composite Man »** (Wyckoff/Pruden) =
+  l'opérateur unique qui accumule/distribue = **la main qui plie la ligne**. Cycle de vie :
+  accumulation → hausse → distribution → baisse. *C'est ça, la « main » de la ligne continue.*
+- **Turtle Soup** (Connors & Raschke, *Street Smarts*, 1995) : fade du **faux breakout** de 20 barres.
+  Règles **mécaniques et falsifiables** (nouveau plus-bas 20 j, le précédent ≥ 4 sessions avant, buy
+  stop 5-10 ticks au-dessus du plus-bas précédent, stop 1 tick sous le bas du jour). = le rare setup
+  SMC-adjacent **vraiment documenté**. **MAIS** le livre ne donne **aucun backtest rigoureux** (exemples
+  1995 triés main, discrétionnaire) : règles testables, edge à prouver indépendamment.
+- **Judas swing** (ICT, faux mouvement de début de session London/NY), **inducement (IDM)**, **sweep
+  vs grab** = **CADRE** (définitions ICT, non mesurées). Le « délibéré » retombe dans le piège d'intention
+  du §L0 — à cadrer, jamais asséner.
+
+**Ce qui départage (microstructure établie).**
+- Un **backtest walk-forward rigoureux** de signaux microstructure interprétables (mean-reversion +
+  breakout) → **pas de significativité** (p = 0,34 ; win rate 46,5 % ≈ pile ou face, p = 0,89, arXiv
+  2512.12924). → **le socle d'un edge SMC *systématique* manque. À dire honnêtement.**
+- **Résiliency du carnet** (arXiv 1602.00731) : après un gros ordre agressif, spread/profondeur
+  reviennent à la moyenne en ~20 updates ; **réversion** domine après un ordre *agressif*, **continuation**
+  après un ordre *moins agressif*. → base réelle pour « que fait le prix après un sweep ».
+
+**Entrées post-sweep** (order block strict, FVG/imbalance, OTE 0.62-0.79, breaker/mitigation, MSS/CHoCH
+comme confirmation) = **CADRE** : définitions cohérentes mais **sans base empirique/backtest indépendante
+consensuelle**. À enseigner comme « le cadre entre ainsi », jamais comme edge prouvé.
+
+## §L7 — PIÈGES & PSYCHOLOGIE (le pont vers LTTI)
+
+**La thèse :** le retail **crée** la liquidité par ses biais. Le stop mis à l'endroit « logique » (sous
+le swing low) = là où *tout le monde* le met = le carburant de la cascade (§L1). **La psychologie n'est
+pas une faiblesse morale — c'est un design exploité.** Ton : fascination froide devant la machine, jamais
+culpabilisant.
+
+- **Disposition effect** (Odean 1998, *Are Investors Reluctant to Realize Their Losses?*) : les
+  **gagnants** sont vendus ~50-65 % plus souvent que les perdants. Et les gagnants vendus **surperforment**
+  les perdants gardés de **+3,4 %** l'année suivante → couper ses gagnants et garder ses perdants est une
+  **erreur mesurée**, pas de la prudence. = le piège « je laisse courir mes pertes ».
+- **Overtrading** (Barber & Odean, *Trading Is Hazardous to Your Wealth*, 66 465 comptes) : les plus
+  actifs nettent **11,4 %** contre **17,9 %** pour le marché ; l'écart est un effet de **coûts** (net),
+  pas de mauvais stock-picking. Mécanisme = **overconfidence**. *Boys Will Be Boys* : les hommes tradent
+  **+45 %** (célibataires +67 %), −2,65 pp de rendement.
+- **Loss aversion** (Kahneman & Tversky) : λ > 1 **robuste**, MAIS la **magnitude est contestée** (méta-
+  analyses : de **1,31 à 2,25** selon la définition — pas un « ×2 » fixe). → formulation honnête : « les
+  pertes pèsent plus que les gains — le *combien* varie. »
+- **Statistique retail établie** : **74-89 % des comptes CFD perdants** (régulateurs ESMA/AMF) = le chiffre
+  citable, contre les chiffres gonflés des prop firms.
+
+## §L4 (mis à jour)
+Les trous « manipulation », « profit/entrées » et « pièges & psychologie » sont désormais couverts par
+§L6-§L7 (à re-vérifier). Restent ouverts : la **validité hors FX** (crypto/indices) et la **passe
+francophone** (source d'étude, priorité basse).
+
+---
+
 *Sources principales : NY Fed Staff Reports 125 & 150 (Osler) ; Equiti, Orbex, Mind Math Money,
 Trading Wyckoff, AlgoStorm, FluxCharts, Phidias (pédagogie & taxonomie, secondaires). Recherches
 vérifiées 3-votes, juillet 2026.*
