@@ -133,10 +133,19 @@ Les recherches ont solidement couvert la **taxonomie** (§L2) et le **pourquoi s
 **Ce que ce n'est PAS** : pas de facecam, pas de chart annoté façon SMC (= le look des 25
 concurrents), pas de personnage récurrent dessiné.
 
-### 1. Le dispositif
-Un Reel = **UN trait, zéro coupure**. Une ligne (blanc ou rouge sur noir) se métamorphose de concept
-en concept par **interpolation de path SVG** (HyperFrames, GSAP/flubber — moteur déjà validé). **Les
-transitions SONT l'argument** : la courbe d'euphorie DEVIENT le trou du drawdown. Inspiration
+### 1. Le dispositif  *(v2 assouplie — décision PO 2026-07-13)*
+**L'axiome n'est PAS « un trait mathématiquement continu ». L'axiome est : JAMAIS DE CUT SEC.**
+Chaque changement de scène passe par une **transition fluide** — on prend la moins chère qui reste
+soyeuse : morphing quand il est naturel, étirement/glissement d'un élément vers la scène suivante,
+sortie-retour du trait, main qui efface/redessine, zoom d'emport, fondu de mouvement.
+- **Le morphing intégral (interpolation de path SVG, HyperFrames/GSAP/flubber) = un effet SIGNATURE**,
+  réservé aux moments où **la transformation EST l'argument** (l'euphorie qui DEVIENT la chute) — pas
+  une contrainte imposée à chaque plan.
+- **Test de validation** : regarder l'épisode **sur téléphone**. Si l'œil ne « sort » jamais entre
+  deux scènes, c'est conforme. C'est le seul juge — pas la pureté technique du trait.
+
+Une ligne (blanc ou rouge sur noir) reste le véhicule principal, et **les transitions restent
+l'argument** quand elles le peuvent : la courbe d'euphorie DEVIENT le trou du drawdown. Inspiration
 structurelle *La Linea* (dispositif personnage-sur-ligne + main du créateur — **jamais le design
 original, IP protégée**).
 - **Casting du trait** : la ligne = le terrain (prix, sol, corde, fusible selon la variable) · la
