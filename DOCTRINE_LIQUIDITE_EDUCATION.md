@@ -135,12 +135,17 @@ concurrents), pas de personnage récurrent dessiné.
 
 ### 1. Le dispositif  *(v2 assouplie — décision PO 2026-07-13)*
 **L'axiome n'est PAS « un trait mathématiquement continu ». L'axiome est : JAMAIS DE CUT SEC.**
-Chaque changement de scène passe par une **transition fluide** — on prend la moins chère qui reste
-soyeuse : morphing quand il est naturel, étirement/glissement d'un élément vers la scène suivante,
-sortie-retour du trait, main qui efface/redessine, zoom d'emport, fondu de mouvement.
-- **Le morphing intégral (interpolation de path SVG, HyperFrames/GSAP/flubber) = un effet SIGNATURE**,
-  réservé aux moments où **la transformation EST l'argument** (l'euphorie qui DEVIENT la chute) — pas
-  une contrainte imposée à chaque plan.
+Mais la **continuité du trait reste le DÉFAUT** : on la garde chaque fois qu'elle est naturelle. Les
+transitions douces alternatives sont une **soupape** — activée quand le morphing pur devient coûteux,
+**jamais un choix de confort**.
+- **Ordre de préférence strict** : `morphing continu (path SVG)` **>** `transition douce`
+  **>** *(cut sec = INTERDIT)*. On ne descend d'un cran que si le cran du dessus n'est pas raisonnablement
+  atteignable sur ce plan.
+- **Transitions douces admises (la soupape)** : étirement/glissement d'un élément vers la scène
+  suivante, sortie-retour du trait, main qui efface/redessine, zoom d'emport, fondu de mouvement.
+- **Le morphing intégral (interpolation de path SVG, HyperFrames/GSAP/flubber)** reste **l'effet
+  SIGNATURE** aux moments où **la transformation EST l'argument** (l'euphorie qui DEVIENT la chute) — là
+  il est obligatoire, pas optionnel.
 - **Test de validation** : regarder l'épisode **sur téléphone**. Si l'œil ne « sort » jamais entre
   deux scènes, c'est conforme. C'est le seul juge — pas la pureté technique du trait.
 
