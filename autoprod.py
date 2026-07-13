@@ -156,8 +156,14 @@ def produce(e):
     dst = INBOX / f"EPISODE_{n:02d}_kongrave.mp4"
     shutil.copy(src, dst)
     sched = json.load(open(SCHEDULE)) if SCHEDULE.exists() else []
+    reserved = next((x for x in sched if x.get("episode_number") == n), None)
     sched = [x for x in sched if x.get("episode_number") != n]
-    when = next_publish_dt(sched)               # après le dernier créneau réel (+6h), pas la formule
+    if reserved and reserved.get("publish_datetime"):
+        # créneau DÉJÀ réservé (pré-planifié à la main) : on le respecte, on ne recalcule pas.
+        # sinon un épisode produit dans le désordre (pilotes pré-faits, quota) casserait l'ordre.
+        when = datetime.fromisoformat(reserved["publish_datetime"])
+    else:
+        when = next_publish_dt(sched)           # nouvel épisode : après le dernier créneau réel (+6h)
     sched.append({
         "episode_number": n,
         "filepath": f"inbox/EPISODE_{n:02d}_kongrave.mp4",

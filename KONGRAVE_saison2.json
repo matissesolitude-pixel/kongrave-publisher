@@ -1,0 +1,815 @@
+{
+  "season": 2,
+  "note": "Saison 2 KONGRAVE (schéma v4). Fusion pilotes validés ep29/30 + batch ep31-42. seg4_type explicite obligatoire. Métadonnées v4 (ltti_target/taxonomy/registre/hook_cell) tolérées+loggées.",
+  "episodes_count": 14,
+  "episodes": [
+    {
+      "number": 29,
+      "title": "THE POLITE ONE",
+      "pillar": "miroir",
+      "ltti_target": "SIRD",
+      "taxonomy": "miroir",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "ennemi",
+        "temps": "present",
+        "valence": "++"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "The market has a favorite kind of trader. It's not the reckless one. It's you — the polite one.",
+          "plan": "orage → éclair révèle perso de dos devant l'écran, immobile",
+          "mot_choc": "HOUSE GUEST",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "You never overstay. You never grab. You wait for permission… that never comes.",
+          "plan": "buste animé face cam",
+          "mot_choc": "WELL-BEHAVED",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Perfect plan. Perfect entry, spotted. Perfect exit, mapped. Zero clicks. The market counts them all.",
+          "plan": "corps profil, bras croisés devant la baie",
+          "mot_choc": "0 - 4",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "narratif",
+          "voice": "Somewhere, a worse trader took your setup. Your analysis. Your levels. He's getting paid tonight. He says thank you.",
+          "plan": "table de restaurant dressée impeccable, personne assise, un seul couvert sous une lampe — l'invité qui ne vient jamais, style Sin City encré",
+          "mot_choc": "RSVP: NO",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Your plan was never the problem. Pick your best setup. One. Click it at half size. The market hates a guest who finally sits down.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "TAKE A SEAT",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "title": "THE ARCHITECT",
+      "pillar": "education",
+      "ltti_target": "SIRX",
+      "taxonomy": "education",
+      "hook_cell": {
+        "variable": "time_delay",
+        "regard": "prospect",
+        "temps": "passe",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Three years of trading. Five systems. Ten courses. Zero proof — of anything.",
+          "plan": "orage → éclair révèle perso assis, écran éteint, carnets empilés",
+          "mot_choc": "STILL DIGGING",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "You don't lack knowledge. You lack a verdict. And a verdict needs one thing you never give it — time on ONE method.",
+          "plan": "buste animé face cam",
+          "mot_choc": "NO VERDICT",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Pick one system. Trade it thirty times. Write every result. THEN judge it. That's the whole protocol.",
+          "plan": "corps profil, main sur le menton",
+          "mot_choc": "30 TRADES",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Every time you switch, you tear the wall down… and lay the first brick again. Three years of first bricks.",
+          "plan": "PROP HyperFrames : un mur de briques qui monte jusqu'à mi-hauteur, une main le démolit, la première brique se repose, le mur remonte, redémolition — boucle. Sin City N&B + un rouge (la première brique, toujours la même, en rouge)",
+          "mot_choc": "FLOOR ONE. AGAIN.",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Stop collecting blueprints. Finish one wall. Thirty trades — then you'll know.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "ONE WALL",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "title": "THE GHOST LOSSES",
+      "pillar": "miroir",
+      "day": 8,
+      "ltti_target": "SITD",
+      "taxonomy": "miroir",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "prospect",
+        "temps": "present",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Your journal is lying to you. Your worst losses aren't in it.",
+          "plan": "orage → éclair révèle carnet ouvert sous une lampe, pages à moitié vides",
+          "mot_choc": "MISSING PAGES",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "The trades you validated… and never took. They cost more than the ones you lost.",
+          "plan": "buste animé face cam",
+          "mot_choc": "GHOSTS",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Fear doesn't show up in your P&L. It lives in the space between your plan and your click.",
+          "plan": "corps profil, main suspendue au-dessus du bureau",
+          "mot_choc": "THE GAP",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Count them for one month. The winners you watched leave without you. That column — is taller.",
+          "plan": "PROP HyperFrames : deux colonnes qui montent — briques pleines (pertes prises) vs contours fantômes en pointillés (gagnants ratés) qui montent PLUS HAUT ; la colonne fantôme vire au rouge. Flat 2D, N&B + rouge, aucun texte",
+          "mot_choc": "OFF THE BOOKS",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Half size. One validated setup. Your hand learns by firing — not by waiting.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "PULL IT",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "title": "ONE NOTCH",
+      "pillar": "autorite",
+      "day": 8,
+      "ltti_target": "OERD",
+      "taxonomy": "autorite",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "dream_outcome",
+        "regard": "desk",
+        "temps": "futur",
+        "valence": "++"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You're already good. And good is exactly where most strong traders die.",
+          "plan": "orage → éclair révèle perso debout face à la baie, posture droite",
+          "mot_choc": "PLATEAU",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "You built the engine. The ceiling isn't in your system — it's in your size on the days the room gets loud.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THE ROOM",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Professionals aren't calmer than you. They're just deaf at the right moments.",
+          "plan": "corps profil, contemple la ville",
+          "mot_choc": "DEAF ON CUE",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Your drawdowns don't come from bad trades. They come from good days — extended one size too far.",
+          "plan": "PROP HyperFrames : un trait qui monte en escaliers propres et réguliers ; une nuée de petites flèches (la foule) le pousse au-delà de la marche ; le trait dérape et retombe de deux marches. Boucle : version sourde = les flèches glissent dessus, l'escalier continue. Rouge = la marche de trop",
+          "mot_choc": "CROWD SURF",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Same size. Same frequency. Especially when everyone's winning. That's the whole upgrade.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "ONE NOTCH",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "title": "RIGHT AGAIN",
+      "pillar": "viral",
+      "day": 8,
+      "ltti_target": "SERX",
+      "taxonomy": "viral",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "time_delay",
+        "regard": "prospect",
+        "temps": "passe",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You called the top. You called the bottom. You're the most accurate broke trader I know.",
+          "plan": "orage → éclair révèle perso profil devant écrans éteints",
+          "mot_choc": "PROPHET",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Being right is a talent. Being paid needs a habit you keep abandoning — staying.",
+          "plan": "buste animé face cam",
+          "mot_choc": "DRIFTER",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Every method you drop at trade nine… dies one trade before its proof.",
+          "plan": "corps profil, main sur le menton",
+          "mot_choc": "TRADE TEN",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "A year of visions. Zero track record. The market pays repetition — inspiration is free.",
+          "plan": "PROP HyperFrames : un trait qui dessine des arcs magnifiques, chacun abandonné en plein vol avant d'atteindre le cercle-cible ; le dernier arc reste en pointillés. Le cercle-cible est rouge, jamais touché",
+          "mot_choc": "UNPAID",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Pick one thesis. Thirty executions. Then you're allowed a new idea.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "LOCKED IN",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "title": "ONE OF YOU",
+      "pillar": "story",
+      "day": 8,
+      "ltti_target": "OETX",
+      "taxonomy": "communaute",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "autres_traders",
+        "temps": "passe",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "One of you wrote me this week. Three sentences. I've read them ten times.",
+          "plan": "orage → éclair révèle bureau, téléphone posé, écran allumé dans le noir",
+          "mot_choc": "CASE FILE",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "'Best year of my life. One Friday. One pair. Gone.' — That's the whole letter.",
+          "plan": "buste animé face cam",
+          "mot_choc": "THREE LINES",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "He didn't lose to the market. He lost to the version of himself he'd stopped watching.",
+          "plan": "corps de dos, couloir sombre",
+          "mot_choc": "OFF DUTY",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "narratif",
+          "voice": "Friday afternoons are a graveyard of good years. The week's discipline dies where the finish line looks close.",
+          "plan": "bureau un vendredi soir, chaise vide encore tournée, écran allumé, veste oubliée sur le dossier — style Sin City encré, aucun texte ni chiffre",
+          "mot_choc": "SO CLOSE",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Your story might become an episode too. Tell me what wiped you out — comment GAME.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "YOUR TURN",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 35,
+      "title": "THE VALVE",
+      "pillar": "education",
+      "day": 9,
+      "ltti_target": "OITD",
+      "taxonomy": "education",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "prospect",
+        "temps": "futur",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Thursday, you're a machine. Friday afternoon, the machine starts humming. You already know what Saturday's journal says.",
+          "plan": "orage → éclair révèle perso assis, épaules tendues, poings sur le bureau",
+          "mot_choc": "PRESSURE GAUGE",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Pressure doesn't break you at random. It books an appointment — same day, same hour, every time.",
+          "plan": "buste animé face cam",
+          "mot_choc": "SAME HOUR",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Rule one: know your rupture time. Rule two: close the session one hour before it. Rule three: never negotiate rule two.",
+          "plan": "corps profil, pluie sur la vitre",
+          "mot_choc": "THE VALVE",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Cut early, and you lose one hour of trading. Cut late — and you refund three weeks.",
+          "plan": "PROP HyperFrames : un trait horizontal qui vibre de plus en plus fort ; cycle 1 : une soupape rouge s'ouvre, la vibration retombe, le trait continue ; cycle 2 : pas de soupape, le trait éclate en fragments. Deux cycles lisibles, aucun texte",
+          "mot_choc": "CHEAP HOUR",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Set the alarm. Leave before the whistle. The best trade of your week is the hour you didn't play.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE WHISTLE",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "title": "THE AUDIENCE",
+      "pillar": "story",
+      "day": 9,
+      "ltti_target": "SETD",
+      "taxonomy": "story",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "collegues",
+        "temps": "present",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "There's a trader who wins every argument and loses every entry. His enemy has a thousand eyes.",
+          "plan": "orage → éclair révèle perso de dos face à un mur d'écrans",
+          "mot_choc": "SPOTLIGHT",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Alone, his hand is steady. Add one witness — the chart stays the same. The trader doesn't.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ONE WITNESS",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "He's not scared of losing money. He's scared of losing face. The market only charges for one of those.",
+          "plan": "corps profil, regard vers le bas",
+          "mot_choc": "TWO PRICES",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "narratif",
+          "voice": "The audience he performs for doesn't exist. Nobody replays your trades. Nobody remembers your losses. The theater is empty.",
+          "plan": "théâtre vide vu de la scène, rangées de fauteuils déserts dans la pénombre, UN fauteuil rouge au centre — style Sin City encré, aucun texte",
+          "mot_choc": "NO SHOW",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Trade like nobody's watching — because nobody is. Post the analysis after the fill. Or never.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "CURTAIN",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 37,
+      "title": "THE SPINE",
+      "pillar": "education",
+      "day": 9,
+      "ltti_target": "OIRX",
+      "taxonomy": "education",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "risk",
+        "regard": "prospect",
+        "temps": "present",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "You read the market better than most. You just can't prove it — not even to yourself.",
+          "plan": "orage → éclair révèle perso penché vers l'écran, détendu, une main dans la poche",
+          "mot_choc": "NO EVIDENCE",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Feel is real. Unmeasured feel is just luck — with confidence.",
+          "plan": "buste animé face cam",
+          "mot_choc": "LUCKY?",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "One rule, written. Not a cage — a spine. Your instinct needs bones to stand on.",
+          "plan": "corps profil, bras croisés",
+          "mot_choc": "BACKBONE",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Same wave, two endings. The difference is three fixed points — entry rule, exit rule, size rule. Everything else stays yours.",
+          "plan": "PROP HyperFrames : une vague fluide qui surfe magnifiquement puis se dissout en points épars ; trois nœuds rouges apparaissent, la vague se reforme autour d'eux et tient. Deux passes lisibles, aucun texte",
+          "mot_choc": "3 POINTS",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Write the three. Keep the feel. Two identical weeks — then you'll finally know how good you are.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "PROOF",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 38,
+      "title": "THE MAP",
+      "pillar": "viral",
+      "day": 9,
+      "ltti_target": "OETX",
+      "taxonomy": "viral",
+      "registre": "correlation",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "ennemi",
+        "temps": "present",
+        "valence": "++"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Your stop isn't hidden. It's parked where everyone parks — just past the round number.",
+          "plan": "orage → éclair révèle perso immobile devant un écran, poing serré",
+          "mot_choc": "PUBLIC PARKING",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Stops cluster at the obvious. Order-book studies showed it decades ago — the market's oldest open secret.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ON RECORD",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "When price reaches the cluster, stops fire in waves — each one pushing into the next. Intentional or not… your stop doesn't care.",
+          "plan": "corps profil, contemple les écrans",
+          "mot_choc": "THE WAVE",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Anger parks your stop at the obvious level. The cascade doesn't hunt you — it just starts where everyone stands.",
+          "plan": "PROP HyperFrames — AUDITION LIGNE CONTINUE : un trait-prix approche un niveau rond ; juste derrière, une rangée de points rouges (les stops) ; le trait touche, les points tombent en cascade domino, le trait accélère à travers, puis SE MÉTAMORPHOSE sans coupure en ligne plate et calme. UN seul trait du début à la fin, zéro cut, aucun texte",
+          "mot_choc": "FRONT ROW",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Place the stop where the structure says — not where the crowd stands. And never right past the round.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "OFF THE GRID",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 39,
+      "title": "SUBTRACT",
+      "pillar": "miroir",
+      "day": 10,
+      "ltti_target": "SITX",
+      "taxonomy": "miroir",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "effort",
+        "regard": "prospect",
+        "temps": "present",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Ten tabs. Four methods. Two mentors arguing in your head. And one chart you can no longer see.",
+          "plan": "orage → éclair révèle perso assis, front dans la main, écrans multiples",
+          "mot_choc": "STATIC",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "You're not confused because you know too little. You're buried — because you never throw anything away.",
+          "plan": "buste animé face cam",
+          "mot_choc": "HOARDER",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "One pair. One setup. One rule. Everything else goes in a box for ninety days.",
+          "plan": "corps profil, geste calme de la main",
+          "mot_choc": "THE BOX",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Clarity isn't something you add. It's what's left — when you stop adding.",
+          "plan": "PROP HyperFrames : un trait emmêlé en énorme nœud ; une main tire les fils un par un, chaque fil retiré se dissout, jusqu'à UN trait propre qui reste — et vire au rouge. Aucun texte",
+          "mot_choc": "LESS",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Subtract until the chart goes quiet. You'll hear your own read for the first time.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "CLEAR",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 40,
+      "title": "SPECTATOR",
+      "pillar": "education",
+      "day": 10,
+      "ltti_target": "SERD",
+      "taxonomy": "curiosite",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "likelihood",
+        "regard": "collegues",
+        "temps": "present",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "The best analyst in every group chat has the same account balance. Ever wondered why?",
+          "plan": "orage → éclair révèle perso profil, téléphone à la main, lueur bleue",
+          "mot_choc": "COINCIDENCE?",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Analysis is free. Positions cost. The distance between the two has a name — spectating.",
+          "plan": "buste animé face cam",
+          "mot_choc": "ENTRY FEE",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "The market doesn't pay the best read. It pays the read with a position attached.",
+          "plan": "corps profil, bras croisés face à la baie",
+          "mot_choc": "ATTACHED",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "narratif",
+          "voice": "Best seat in the house. Perfect view of every play. Zero minutes on the field. The scoreboard doesn't know his name.",
+          "plan": "stade vide vu du terrain la nuit, gradins déserts, UNE silhouette assise tout en haut, projecteurs sur le terrain intact — style Sin City encré, aucun texte ni chiffre",
+          "mot_choc": "D.N.P.",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Your next analysis comes with an order ticket — or it doesn't leave your desk.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "TICKET FIRST",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 41,
+      "title": "THE PEAK",
+      "pillar": "education",
+      "day": 10,
+      "ltti_target": "OERX",
+      "taxonomy": "education",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "nightmare",
+        "regard": "prospect",
+        "temps": "futur",
+        "valence": "--"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "Three wins in a row. You feel bulletproof. Read this before the fourth.",
+          "plan": "orage → éclair révèle perso debout, bras ouverts face aux écrans, posture conquérante",
+          "mot_choc": "HOT HAND",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Your biggest drawdown isn't waiting after your losses. It's waiting after your best week.",
+          "plan": "buste animé face cam",
+          "mot_choc": "AMBUSH",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Step one: after two wins, size stays flat. Step two: after three, size drops. Step three: the day you feel invincible — half.",
+          "plan": "corps profil, main qui descend lentement",
+          "mot_choc": "REVERSE GEAR",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Confidence compounds faster than capital. Cut the size before the peak cuts it for you.",
+          "plan": "PROP HyperFrames : un trait qui monte de plus en plus raide, un marqueur rouge grossit avec la pente, puis falaise sèche ; second cycle : au sommet, le marqueur rétrécit volontairement, le trait plonge peu — et repart plus haut. Deux cycles lisibles, aucun texte",
+          "mot_choc": "SUMMIT TAX",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Celebrate with discipline — not with size. Invincible is a feeling. Flat is a decision.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "STAY FLAT",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    },
+    {
+      "number": 42,
+      "title": "THE FILTER",
+      "pillar": "autorite",
+      "day": 10,
+      "ltti_target": "OIRD",
+      "taxonomy": "autorite",
+      "registre": "psycho",
+      "hook_cell": {
+        "variable": "ease",
+        "regard": "prospect",
+        "temps": "present",
+        "valence": "++"
+      },
+      "segments": [
+        {
+          "segment": 1,
+          "type": "hook",
+          "voice": "I refuse more trades than I take. The refusals pay for everything.",
+          "plan": "orage → éclair révèle perso assis, calme, une seule lampe",
+          "mot_choc": "DECLINED",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 2,
+          "type": "reveal",
+          "voice": "Volume feels like work. Selection is work. The market pays the second one.",
+          "plan": "buste animé face cam",
+          "mot_choc": "HAND-PICKED",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 3,
+          "type": "lecon",
+          "voice": "Grade every setup before entry — A, B, or C. Take the A. Archive the rest, unfired.",
+          "plan": "corps profil, penché sur le bureau",
+          "mot_choc": "TRIAGE",
+          "mot_choc_type": "bulle_dialogue"
+        },
+        {
+          "segment": 4,
+          "type": "preuve",
+          "seg4_type": "prop",
+          "voice": "Nine setups knocked today. One had the grade. One was enough.",
+          "plan": "PROP HyperFrames : un tapis roulant de formes qui défilent vers une porte rouge ; la porte ne laisse passer qu'UNE forme parfaite, les autres tombent hors champ ; la forme passée atterrit exactement sur sa cible. Aucun texte",
+          "mot_choc": "ONE OF NINE",
+          "mot_choc_type": "impact_inversion"
+        },
+        {
+          "segment": 5,
+          "type": "cta",
+          "voice": "Refuse more. Save the click for the A. Half the volume — all of the edge.",
+          "plan": "buste animé regard caméra",
+          "mot_choc": "THE GATE",
+          "mot_choc_type": "impact_inversion"
+        }
+      ]
+    }
+  ]
+}

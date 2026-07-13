@@ -6,6 +6,7 @@ autoprod.py ET build_episode.py — le routage ne s'infère jamais deux fois de 
 Schéma v4 (ep29+) — chaque épisode porte :
   "ltti_target": "SIRD"        # un des 16 codes LTTI      — MÉTADONNÉE (tolérée, loggée)
   "taxonomy": "miroir"         # taxonomie éditoriale       — MÉTADONNÉE (tolérée, loggée)
+  "registre": "psycho"         # registre éditorial         — MÉTADONNÉE (tolérée, loggée)
   "hook_cell": {variable, regard, temps, valence}          — MÉTADONNÉE (tolérée, loggée)
   "seg4_type": "prop"|"narratif"|"champ"                   — ROUTAGE (obligatoire en s2)
 
@@ -71,7 +72,7 @@ def resolve_seg4_type(episode, n):
 
 def log_s2_metadata(episode, n):
     """Métadonnées v4 : loggées et validées en douceur (warning), JAMAIS bloquantes."""
-    present = {k: episode[k] for k in ("ltti_target", "taxonomy", "hook_cell") if k in episode}
+    present = {k: episode[k] for k in ("ltti_target", "taxonomy", "registre", "hook_cell") if k in episode}
     if not present:
         return
     lt = episode.get("ltti_target")
