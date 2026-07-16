@@ -31,6 +31,7 @@ import argparse
 import json
 import shutil
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
@@ -195,12 +196,25 @@ def run(dry_run: bool = False, force: bool = False) -> int:
         _append_log({"episode": ep.name, "status": "error", "error": str(exc), "logged_at": _iso(now)})
         return 0
 
-    try:
-        pub = publish_episode(mp4.resolve(), caption, dry_run=dry_run)
-    except (ig_api.IgApiError, PublishError) as exc:
-        print(f"[ligne] Échec publication {ep.name} : {exc}", file=sys.stderr)
-        notify.send(f"❌ LIGNE {ep.name} : échec publication.\n{exc}")
-        _append_log({"episode": ep.name, "status": "error", "error": str(exc), "logged_at": _iso(now)})
+    # Meta renvoie parfois un ProcessingFailedError INTERMITTENT à l'upload (constaté : un
+    # même fichier échoue puis passe au retry). On retente jusqu'à 3× sur cette erreur-là
+    # uniquement ; toute autre erreur casse tout de suite (pas de retry aveugle).
+    pub = last_exc = None
+    for attempt in range(1, 4):
+        try:
+            pub = publish_episode(mp4.resolve(), caption, dry_run=dry_run)
+            break
+        except (ig_api.IgApiError, PublishError) as exc:
+            last_exc = exc
+            if "ProcessingFailedError" in str(exc) and attempt < 3:
+                print(f"[ligne] ProcessingFailedError (tentative {attempt}/3) — retry dans 25s…", file=sys.stderr)
+                time.sleep(25)
+                continue
+            break
+    if pub is None:
+        print(f"[ligne] Échec publication {ep.name} : {last_exc}", file=sys.stderr)
+        notify.send(f"❌ LIGNE {ep.name} : échec publication (après retries).\n{last_exc}")
+        _append_log({"episode": ep.name, "status": "error", "error": str(last_exc), "logged_at": _iso(now)})
         return 0
 
     if dry_run:
