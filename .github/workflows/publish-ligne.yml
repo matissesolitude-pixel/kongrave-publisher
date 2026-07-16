@@ -1,0 +1,77 @@
+name: LIGNE auto-publish (file)
+
+# Publie LIGNE depuis une FILE (ligne/queue/), pas un planning.
+# Chaque jour à 18h30 Paris : prend le PLUS ANCIEN épisode de la file, le publie
+# sur @kongrave_ (mêmes secrets que la saga), le déplace en ligne/published/.
+#
+# 18h30 Paris toute l'année : deux crons UTC (été CEST=UTC+2, hiver CET=UTC+1).
+# Les DEUX se déclenchent chaque jour, mais publish_ligne.py ne publie QUE lorsque
+# l'heure de Paris vaut 18h -> un seul des deux passe la fenêtre. La cadence (24h)
+# empêche de toute façon deux posts le même jour.
+
+on:
+  schedule:
+    - cron: "30 16 * * *"      # 18h30 Paris en été (CEST)
+    - cron: "30 17 * * *"      # 18h30 Paris en hiver (CET)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run : crée le conteneur mais NE PUBLIE PAS, ne déplace pas"
+        type: boolean
+        default: false
+      force:
+        description: "Force : ignore la fenêtre horaire ET la cadence"
+        type: boolean
+        default: false
+
+# Un seul run à la fois (un upload peut être long).
+concurrency:
+  group: ligne-publish
+  cancel-in-progress: false
+
+# Nécessaire pour committer le déplacement queue->published + le journal.
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Dépendances
+        run: pip install -r requirements.txt
+
+      - name: Publier le plus ancien épisode de la file
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GRAPH_VERSION: v20.0
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          echo "publish_ligne.py $ARGS"
+          python publish_ligne.py $ARGS
+
+      - name: Persister le déplacement + le journal
+        if: ${{ github.event.inputs.dry_run != 'true' && always() }}
+        run: |
+          if [ -n "$(git status --porcelain ligne/)" ]; then
+            git config user.name  "kongrave-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A ligne/
+            git commit -m "ligne: publication $(date -u +%FT%TZ) [skip ci]"
+            git push
+          else
+            echo "Aucune publication — rien à committer."
+          fi
