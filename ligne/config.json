@@ -1,3 +1,4 @@
 {
-  "cadence_hours": 24
+  "cadence_hours": 24,
+  "paused": true
 }

@@ -77,6 +77,13 @@ def _cadence_hours() -> float:
         return 24.0
 
 
+def _is_paused() -> bool:
+    """Publication AUTO en pause ? Gate manuel/auto : quand True, le run PLANIFIÉ ne
+    publie rien ; seuls --dry-run et --force (manuels) passent. (Pilote L1 : paused=true,
+    on repasse à false après le premier vrai run pour l'automatique.)"""
+    return bool(_load_json(CONFIG_PATH, {}).get("paused", False))
+
+
 def _load_log() -> list:
     data = _load_json(LOG_PATH, [])
     return data if isinstance(data, list) else []
@@ -148,6 +155,11 @@ def _episode_files(folder: Path):
 def run(dry_run: bool = False, force: bool = False) -> int:
     now = _now_utc()
     paris = now.astimezone(PARIS)
+
+    # GATE manuel/auto : en pause, le run PLANIFIÉ ne publie rien (dry-run/force passent).
+    if _is_paused() and not force and not dry_run:
+        print("[ligne] Publication AUTO en pause (config.json paused=true) — rien à faire.")
+        return 0
 
     # FENÊTRE : hors 18h Paris, on ne fait rien (le cron double couvre été/hiver).
     if not force and not dry_run and paris.hour != PUBLISH_HOUR_PARIS:
