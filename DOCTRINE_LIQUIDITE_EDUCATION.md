@@ -168,6 +168,18 @@ original, IP protégée**).
   indignation, ni cynisme, ni complot.
 - **Invariants rituels** : le trait, la main, l'énigme, la révélation (le seg5 = toujours la
   **révélation mécanique**), la règle sèche.
+- **AUCUN générique** *(décision PO 2026-07-13, gravée)* — contrairement à la saga KONGRAVE, la Ligne
+  n'a PAS de générique de fin. L'épisode se termine sur la dernière scène (la règle + la micro-pulsation
+  de la ligne) ; la **boucle Instagram ramène directement à l'énigme d'ouverture**. L'énigme d'ouverture
+  EST la signature de la Ligne — pas un logo.
+- **CANON VOIX** *(décision PO 2026-07-13, gravée)* — la Ligne quitte le clone Patriarche : **voix Ligne =
+  `George` (premade ElevenLabs UK, voice_id `JBFqnCBsd6RMkjVDRZzb`)**, registre enseignant passionné /
+  conteur documentaire. **Saga KONGRAVE = clone Patriarche `5wFwpkZR2Yf6aS6EXd8M`. The Week = clone
+  Patriarche.** La Ligne est un format 100 % autonome — seul le compte Instagram les relie.
+- **DA v3 « CLARTÉ D'ABORD »** *(décision PO 2026-07-13)* — la clarté EST la DA. Motion 2D flat pédagogique,
+  **fond CLAIR** (papier chaud), couleur **fonctionnelle** (max 2 désaturées/scène : ton flux vs le leur),
+  **labels courts dans le schéma** (YOUR ORDER, THEIR BOOK…), **plus aucun burst ni caption jaune**. Test
+  de validation : chaque scène **muette** doit se comprendre. Palette + conventions : `ligne/DA_LIGNE.md`.
 
 ### 3. Règle de réel (complète §L0)
 Pas de personnages-vilains dans cette ligne (la Maison / le Troupeau restent dans la saga KONGRAVE).
@@ -175,6 +187,56 @@ Des **acteurs réels nommés par catégorie** (banques centrales, desks, brokers
 elle-même) et des **mécanismes documentés**. **Jamais d'accusation nominative d'une entreprise.**
 L'arc éditorial : une **enquête sérialisée** — « comment la table est faite » — chaque épisode ferme
 sa boucle et rouvre la suivante.
+
+## §L5.2 — DOCTRINE VISUELLE & TECHNIQUE (gravée, validée L1, vaut L2-L11)
+
+*DA « Clarté d'abord » + moteur de production. Référence détaillée : `ligne/DA_LIGNE.md`.*
+
+- **Fond CLAIR** (papier `#F2EFE7`), **2D flat pédagogique**, trait encre `#20242A` épais (~10px), centrage axe médian x=540.
+- **Couleur FONCTIONNELLE, max 2/scène** : `--you #1E5F6E` (toi / ton flux) vs `--them #8A5323` (eux / le broker / leur livre). Désaturées, **constantes entre épisodes** (jamais inverser la sémantique).
+- **Labels courts DANS le schéma** (YOUR ORDER, THEIR BOOK, 10 ACCOUNTS…), gros/gras/contrastés, en **zones réservées** — contrôle de collision : **aucune ligne ne traverse un texte, deux éléments ne se dessinent jamais l'un sur l'autre**.
+- **PAS de burst / mot-choc, PAS de caption jaune saga, PAS de générique** (fin sur la règle, la boucle IG ramène à l'énigme = signature).
+- **Voix = George** (premade ElevenLabs UK `JBFqnCBsd6RMkjVDRZzb`, enseignant passionné), speed 1.12.
+- **SYNC MOT-À-MOT OBLIGATOIRE** : chaque texte/élément apparaît sur le mot exact prononcé (timestamps ElevenLabs `with-timestamps` → `words.json`, helper `wt()`). Jamais des fractions de scène. L'écran n'est jamais vide au démarrage.
+- **RÈGLE ABSOLUE — ZÉRO FRAME MORTE** : *tant que la voix parle, quelque chose se construit, se transforme, respire ou se déplace.* Trous comblés par : avancer l'élément suivant, faire vivre l'élément présent (`breathe`/`drift` — respiration/dérive lente, amplitude faible), étaler le tracé, ou un mouvement de sens (le prix qui évolue, le point qui avance). **Jamais de remplissage gratuit** : le mouvement sert le propos. **Corollaire (transformation) :** quand un élément doit se transformer, la **transformation elle-même occupe la fenêtre de voix** (grossir→segmenter→tomber, étalé) — on ne fait jamais patienter un élément avec un mouvement décoratif avant de le transformer d'un coup. Audit : passer la timeline au crible (diff pixel frame-à-frame croisé aux fenêtres de voix).
+## §L5.5-LAVOISIER — RIEN NE SE PERD, RIEN NE SE CRÉE, TOUT SE TRANSFORME (canon, cœur du format, gravé 2026-07-14)
+
+*Remplace toutes les règles antérieures de transition et de continuité. C'est le cœur de la Ligne.*
+
+**RÈGLE ABSOLUE : aucun élément n'apparaît de nulle part, aucun ne disparaît dans le vide.** Toute matière vient de quelque chose et devient quelque chose.
+1. **NAISSANCE** — un élément arrive TOUJOURS de quelque part : il se détache d'un autre (le point du `?` devient la balle) · se dessine depuis un ancrage existant · entre par le bord du cadre · **sort de la balle-pivot**. INTERDIT : fade-in ex nihilo, pop, scale-depuis-zéro au milieu du vide.
+2. **MORT** — un élément part TOUJOURS quelque part : il se **rétracte dans la balle** · se transforme en l'élément suivant · sort par le bord · **tombe avec physique** (détruit, pas effacé). INTERDIT : fade-out, `autoAlpha:0` sans destination.
+3. **LA BALLE-PIVOT = le réservoir de matière** — née du point du `?` au hook, elle **absorbe** les éléments en fin de scène, les **redéploie** au début de la suivante, et vit jusqu'à la dernière image. **Elle EST le prix**, l'acteur permanent de tous les mécanismes (roule sur la courbe, déclenche les stops, se fait piéger, repart). Implémentée au DRIVER (`collapse`/`deploy` génériques), pas dans chaque archétype.
+4. **CONSÉQUENCE** — un épisode = **UN SEUL PLAN-SÉQUENCE** de matière continue. Aucun cut, aucun écran vide, aucune apparition arbitraire. Le spectateur suit un flux, il ne se réoriente jamais.
+
+**Moteur pivot** : `ligne/engine/index_pivot.html` (L3+). L1/L2 gardent `index.html` (figés). Si validé, devient le moteur standard.
+
+## §L5.5 — LA VIE EST NARRATIVE, PAS DÉCORATIVE (canon, gravé 2026-07-13)
+
+- **À chaque instant, l'image AVANCE** : quelque chose se construit, se transforme, progresse vers son but, ou révèle. **INTERDIT** : oscillation / pulsation / dérive / respiration d'un objet statique utilisée comme remplissage (= frame morte déguisée).
+- **Combler une fenêtre de voix, par ordre** : 1. ÉTALER la construction (l'action primaire occupe toute la fenêtre) · 2. AVANCER (le prix monte vers le niveau, la foule converge, la cascade se propage — le mouvement EST le propos) · 3. ANTICIPER (la scène suivante commence 0,3-0,5s avant la fin de la précédente) · 4. ENRICHIR (un détail se précise). Si aucune ne remplit → **le copy est trop long, on le réécrit.**
+- **Nuance — pause tolérée** : une pause **intentionnelle et courte (≤1,5s)** est autorisée (avant une révélation, sur un silence, à la fin d'une démo — le temps que l'image « prenne ») ; un mouvement doux y est admis (suspension, pas vide). **Interdit** : la respiration comme remplissage sur une longue fenêtre faute d'idée.
+- **LE SCANNER EST UN TEST (fail-loud)** : `build_ligne.py` scanne les fenêtres de voix après rendu ; **>1,5s sans progression → le build ÉCHOUE** avec la liste. La doctrine n'est pas une consigne, c'est un gate. *(Limite connue : le scanner pixel ne « voit » pas l'avance lente d'un petit élément — les éléments qui avancent doivent laisser une traînée dessinée / être assez visibles.)*
+- **CONTINUITÉ DE MATIÈRE — jamais d'écran vide** : à aucun moment, entre aucune scène, l'écran n'est vide. Un élément de la scène N **devient** un élément de la scène N+1 (le `?` devient la balle / le niveau / le premier trait). Si aucune transformation n'est naturelle, la scène N+1 **commence à se construire AVANT** que la N finisse (chevauchement). Le scanner échoue aussi sur les **écrans quasi-vides** (<0,4% d'encre pendant la voix).
+- **PHYSIQUE — easings mous BANNIS partout** : un objet lourd tombe vite (`power4.in`/gravité), un objet qui frappe **rebondit** (`bounce.out` — rebonds décroissants, timing qui se resserre), un objet qui balaie **ne saccade pas** (fauchage continu, les éléments tombent dans son sillage). Rythme balle : chute brutale → rebonds → attaque continue.
+- **SCÈNE FINALE UNIQUE** : la clôture d'un épisode **ne réutilise JAMAIS la forme du précédent** (le `fork` reste au catalogue mais pas deux fois de suite). Sa forme découle de la RÈGLE de l'épisode. Ex. brique **`replay`** : on rejoue le mécanisme avec le bon geste, le résultat change (démonstration, pas énoncé).
+
+## §L5.4 — RÉPARTITION MOTEUR / JSON (canon, gravé 2026-07-13)
+
+- **MOTEUR** (`ligne/engine/` + `build_ligne.py`) = tout ce qui est **COMMUN et INVARIANT** : centrage, zones réservées, sync mot-à-mot, zéro frame morte, palette, typo, épaisseurs, rythme de tracé, transitions, filigrane, safe zones — **toute l'esthétique**. Un changement ici s'applique **rétroactivement à TOUS les épisodes**.
+- **JSON** (`ligne/episodes/<id>.json`) = ce qui est **PROPRE à l'épisode** : le copy (voix), la séquence, les paramètres de scènes (labels, n…), les **mots-déclencheurs** (sync). Plus la **SPEC d'une brique neuve** (uniquement la première fois, section `SPECS_BRIQUES_NEUVES`).
+- Une brique neuve, une fois codée, **REJOINT le moteur** : les épisodes suivants l'invoquent par son **nom**, sans jamais la redécrire.
+- **Le JSON ne contient JAMAIS de couleur, position, timing, taille.** Tout réglage esthétique va dans le moteur, jamais dans l'épisode.
+- **Catalogue d'archétypes (10)** : hook · routing · mirror · count · faceoff · fork (socle L1) + **crowd · cluster · cascade · aftermath** (ajoutés L2 ; cascade = mécanisme central, resservira). À venir : doors · scale · zoom · gap · merge · stack · coin (cible 15-20).
+
+## §L5.3 — VARIÉTÉ & DURÉE (canon, gravé 2026-07-13)
+
+- **Nombre & ordre de scènes LIBRES** (4 à 8 scènes) : la structure suit le **copywriting**, jamais l'inverse. Le moteur (`ligne/engine/`) accepte N scènes dans n'importe quel ordre d'archétypes.
+- **Jamais deux épisodes CONSÉCUTIFS avec la même SÉQUENCE d'archétypes.** (À vérifier à chaque nouvel épisode contre le précédent.)
+- **La bibliothèque doit GROSSIR** — cible **15-20 archétypes**. Chaque épisode qui exige une forme neuve l'**ajoute au catalogue** (nouvel archétype dans le moteur). **Ne jamais forcer un contenu dans une brique existante** — le signaler et créer la brique. Archétypes actuels (6) : hook · routing · mirror · count · faceoff · fork.
+- **Durée LIBRE (45s à 90s+)**, dictée par la matière — jamais par un gabarit. Un épisode simple boucle court ; une enquête à étages prend le temps qu'il faut. **Test de coupe** : chaque tranche doit contenir un **étage de révélation** ; si on peut retirer 15s sans perdre un étage, on les retire.
+
+- **Moteur** : HyperFrames 0.7.56 (`PRODUCER_FORCE_SCREENSHOT=true`), GSAP + reveals via `tl.set()` dans le temps (jamais `gsap.set` au parse → points parasites). 1080×1920, 30fps.
 
 ---
 
