@@ -18,5 +18,11 @@
     "status": "error",
     "error": "Création du conteneur — HTTP 400 : (#10) Requires instagram_content_publish permission to manage the object",
     "logged_at": "2026-07-17T21:09:56.997609+00:00"
+  },
+  {
+    "episode": "L05",
+    "status": "error",
+    "error": "Création du conteneur — HTTP 400 : (#10) Requires instagram_content_publish permission to manage the object",
+    "logged_at": "2026-07-17T21:11:38.533001+00:00"
   }
 ]
