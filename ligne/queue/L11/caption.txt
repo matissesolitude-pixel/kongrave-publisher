@@ -1,0 +1,9 @@
+There's a line on your chart you never drew. If price touches it, your trade is closed — not by you.
+
+The liquidation level isn't placed by luck. Its distance is decided by one thing: your size. You can't delete it. But you decide where it stands.
+
+Comment "LINE" for the full series.
+
+THE LINE — of all the lines on your chart, this is the only one that can erase you.
+
+#trading #trader #liquidation #leverage #daytrading #forex #riskmanagement #tradingeducation #margin #priceaction
