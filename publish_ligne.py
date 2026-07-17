@@ -162,11 +162,8 @@ def run(dry_run: bool = False, force: bool = False) -> int:
         print("[ligne] Publication AUTO en pause (config.json paused=true) — rien à faire.")
         return 0
 
-    # FENÊTRE : hors 18h Paris, on ne fait rien (le cron double couvre été/hiver).
-    if not force and not dry_run and paris.hour != PUBLISH_HOUR_PARIS:
-        print(f"[ligne] {paris.isoformat()} — hors fenêtre {PUBLISH_HOUR_PARIS}h Paris, rien à faire.")
-        return 0
-
+    # CADENCE = seul garde-fou temporel (6/jour = cron toutes les 4h + cadence_hours=4).
+    # Plus de fenêtre d'heure unique : le cron cadence les créneaux, la cadence empêche le double-post.
     cadence = _cadence_hours()
     log = _load_log()
     last = _last_publish(log)

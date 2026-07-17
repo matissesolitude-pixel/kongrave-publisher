@@ -1,0 +1,50 @@
+name: KONGRAVE notify episode (Ligne)
+
+# Envoie sur Telegram (conversation kongrave, mêmes secrets que la saga) le(s)
+# mp4 en file — à la fabrication, AVANT publication. Tourne en CI car le token
+# vit dans les GitHub Secrets, pas en local. workflow_dispatch : sur demande.
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder:
+        description: "Dossier de file à envoyer (ex: L09) ou 'all'"
+        default: "all"
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Envoi des épisodes en file sur Telegram
+        env:
+          FOLDER: ${{ github.event.inputs.folder }}
+        run: |
+          python - <<'PY'
+          import os, sys
+          from pathlib import Path
+          import notify
+          folder = (os.environ.get("FOLDER") or "all").strip()
+          base = Path("ligne/queue")
+          dirs = ([d for d in sorted(base.iterdir()) if d.is_dir() and d.name.startswith("L0")]
+                  if folder == "all" else [base / folder])
+          any_fail = False
+          for d in dirs:
+              mp4s = sorted(d.glob("*.mp4"))
+              if not mp4s:
+                  print(f"{d.name}: pas de mp4 — ignoré"); continue
+              cap = d / "caption.txt"
+              head = cap.read_text(encoding="utf-8").splitlines()[0] if cap.is_file() else ""
+              msg = f"🟢 {d.name} — nouvel épisode LIGNE, à valider.\n{head}"
+              ok = notify.send_video(msg, str(mp4s[0]))
+              print(f"{d.name}: {'envoyé ✅' if ok else 'échec ❌'}")
+              any_fail = any_fail or not ok
+          sys.exit(1 if any_fail else 0)
+          PY

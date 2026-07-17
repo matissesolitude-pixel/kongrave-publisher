@@ -51,6 +51,45 @@ def send(message: str) -> bool:
         return False
 
 
+def _post(method: str, data: dict, files=None) -> bool:
+    """POST générique vers l'API bot. Jamais d'exception : log + False."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        print(f"[notify] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID absent — {method} ignoré.", file=sys.stderr)
+        return False
+    url = f"{TELEGRAM_API}/bot{token}/{method}"
+    try:
+        resp = requests.post(url, data={**data, "chat_id": chat_id}, files=files, timeout=180)
+        if resp.status_code >= 400:
+            print(f"[notify] {method} HTTP {resp.status_code}: {resp.text}", file=sys.stderr)
+            return False
+        return True
+    except requests.RequestException as exc:
+        print(f"[notify] {method} impossible : {exc}", file=sys.stderr)
+        return False
+
+
+def send_video(caption: str, path) -> bool:
+    """Envoie un mp4 (sendVideo) avec légende. False si token absent / échec."""
+    try:
+        with open(path, "rb") as f:
+            return _post("sendVideo", {"caption": caption[:1024], "supports_streaming": "true"}, {"video": f})
+    except OSError as exc:
+        print(f"[notify] sendVideo lecture impossible : {exc}", file=sys.stderr)
+        return False
+
+
+def send_photo(caption: str, path) -> bool:
+    """Envoie une image (sendPhoto) avec légende."""
+    try:
+        with open(path, "rb") as f:
+            return _post("sendPhoto", {"caption": caption[:1024]}, {"photo": f})
+    except OSError as exc:
+        print(f"[notify] sendPhoto lecture impossible : {exc}", file=sys.stderr)
+        return False
+
+
 if __name__ == "__main__":
     # Test manuel : python notify.py "message de test"
     msg = sys.argv[1] if len(sys.argv) > 1 else "Test notify.py — KONGRAVE publisher ✅"

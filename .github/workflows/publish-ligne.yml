@@ -11,8 +11,7 @@ name: LIGNE auto-publish (file)
 
 on:
   schedule:
-    - cron: "30 16 * * *"      # 18h30 Paris en été (CEST)
-    - cron: "30 17 * * *"      # 18h30 Paris en hiver (CET)
+    - cron: "30 */4 * * *"     # toutes les 4h = 6 créneaux/jour (cadence_hours=4 gère l'espacement)
   workflow_dispatch:
     inputs:
       dry_run:
