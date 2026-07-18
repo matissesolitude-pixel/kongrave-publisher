@@ -84,5 +84,13 @@
     "status": "error",
     "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
     "logged_at": "2026-07-18T21:46:24.387740+00:00"
+  },
+  {
+    "episode": "L06",
+    "status": "success",
+    "media_id": "18098654755965160",
+    "container_id": "18138900601557833",
+    "published_at": "2026-07-18T21:51:40.788350+00:00",
+    "logged_at": "2026-07-18T21:51:40.788350+00:00"
   }
 ]
