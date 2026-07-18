@@ -26,6 +26,6 @@ jobs:
           print("=== 2) comptes publicitaires ? ==="); acc = get("me/adaccounts", "id,name,account_id"); print(json.dumps(acc, indent=2))
           print("=== 3) reels sous promo (par compte) ? ===")
           for a in acc.get("data", []):
-              ads = get(f"{a['id']}/ads", "name,status,effective_instagram_media_id")
+              ads = get(f"{a['id']}/ads", "name,status,creative{effective_instagram_media_id,instagram_permalink_url,effective_object_story_id}&limit=50")
               print(f"--- {a.get('name')} ({a['id']}) ---"); print(json.dumps(ads, indent=2))
           PY
