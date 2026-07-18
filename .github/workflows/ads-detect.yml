@@ -1,6 +1,5 @@
 name: KONGRAVE detect boosts (diagnostic)
 
-# Interroge l'API Ads avec META_ACCESS_TOKEN : token valide ? comptes pub ? reels sous promo ?
 on:
   workflow_dispatch:
 
@@ -10,22 +9,29 @@ jobs:
     env:
       META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
     steps:
-      - name: Diagnostic Ads API
+      - name: Diagnostic Ads API (business + ACTIVE)
         run: |
           python - <<'PY'
           import os, json, urllib.request, urllib.error
-          T = os.environ["META_ACCESS_TOKEN"]
-          BASE = "https://graph.facebook.com/v20.0"
-          def get(path, fields=""):
-              url = f"{BASE}/{path}?access_token={T}" + (f"&fields={fields}" if fields else "")
-              try:
-                  return json.load(urllib.request.urlopen(url))
-              except urllib.error.HTTPError as e:
-                  return {"__error__": e.read().decode()[:400]}
-          print("=== 1) token valide ? ==="); print(json.dumps(get("me", "id,name")))
-          print("=== 2) comptes publicitaires ? ==="); acc = get("me/adaccounts", "id,name,account_id"); print(json.dumps(acc, indent=2))
-          print("=== 3) reels sous promo (par compte) ? ===")
-          for a in acc.get("data", []):
-              ads = get(f"{a['id']}/ads", "name,status,creative{effective_instagram_media_id,instagram_permalink_url,effective_object_story_id}&limit=50")
-              print(f"--- {a.get('name')} ({a['id']}) ---"); print(json.dumps(ads, indent=2))
+          T = os.environ["META_ACCESS_TOKEN"]; BASE = "https://graph.facebook.com/v20.0"
+          def get(path, extra=""):
+              url = f"{BASE}/{path}?access_token={T}" + (("&"+extra) if extra else "")
+              try: return json.load(urllib.request.urlopen(url))
+              except urllib.error.HTTPError as e: return {"__error__": e.read().decode()[:300]}
+          KONG = {"18065574734720592":"L5","18117332087494327":"L1"}
+          accts = {}
+          for a in get("me/adaccounts", "fields=id,name").get("data", []): accts[a["id"]] = a.get("name","")
+          for b in get("me/businesses", "fields=id,name").get("data", []):
+              for k in ("owned_ad_accounts","client_ad_accounts"):
+                  for a in get(f"{b['id']}/{k}", "fields=id,name").get("data", []): accts[a["id"]] = a.get("name","")
+          print("=== comptes pub decouverts ==="); print("\n".join(f"{i} — {n}" for i,n in accts.items()))
+          print("\n=== pubs ACTIVE + media promu ===")
+          for acc in accts:
+              ads = get(f"{acc}/ads", "fields=name,creative{effective_instagram_media_id,instagram_permalink_url}&effective_status=[\"ACTIVE\"]&limit=100")
+              if ads.get("__error__"): print(f"[{acc}] ERREUR: {ads['__error__']}"); continue
+              for ad in ads.get("data", []):
+                  cr = ad.get("creative",{}) or {}
+                  mid = cr.get("effective_instagram_media_id",""); perm = cr.get("instagram_permalink_url","")
+                  tag = f"  >>> KONGRAVE {KONG[mid]}" if mid in KONG else ""
+                  print(f"[{acc}] {ad.get('name','')[:28]} | media={mid} | {perm}{tag}")
           PY
