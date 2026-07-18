@@ -1,0 +1,31 @@
+name: KONGRAVE detect boosts (diagnostic)
+
+# Interroge l'API Ads avec META_ACCESS_TOKEN : token valide ? comptes pub ? reels sous promo ?
+on:
+  workflow_dispatch:
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    env:
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+    steps:
+      - name: Diagnostic Ads API
+        run: |
+          python - <<'PY'
+          import os, json, urllib.request, urllib.error
+          T = os.environ["META_ACCESS_TOKEN"]
+          BASE = "https://graph.facebook.com/v20.0"
+          def get(path, fields=""):
+              url = f"{BASE}/{path}?access_token={T}" + (f"&fields={fields}" if fields else "")
+              try:
+                  return json.load(urllib.request.urlopen(url))
+              except urllib.error.HTTPError as e:
+                  return {"__error__": e.read().decode()[:400]}
+          print("=== 1) token valide ? ==="); print(json.dumps(get("me", "id,name")))
+          print("=== 2) comptes publicitaires ? ==="); acc = get("me/adaccounts", "id,name,account_id"); print(json.dumps(acc, indent=2))
+          print("=== 3) reels sous promo (par compte) ? ===")
+          for a in acc.get("data", []):
+              ads = get(f"{a['id']}/ads", "name,status,effective_instagram_media_id")
+              print(f"--- {a.get('name')} ({a['id']}) ---"); print(json.dumps(ads, indent=2))
+          PY
