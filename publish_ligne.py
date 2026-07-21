@@ -29,12 +29,16 @@ Options :
 
 import argparse
 import json
+import os
+import re
 import shutil
 import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
+
+import requests
 
 try:
     from zoneinfo import ZoneInfo
@@ -52,6 +56,9 @@ QUEUE_DIR = LIGNE_DIR / "queue"
 PUBLISHED_DIR = LIGNE_DIR / "published"
 CONFIG_PATH = LIGNE_DIR / "config.json"
 LOG_PATH = LIGNE_DIR / "publish_log.json"
+BLOCKED_PATH = LIGNE_DIR / "blocked.json"     # filet passif : épisodes retirés par ❌ / "STOP Lxx"
+OFFSET_PATH = LIGNE_DIR / "tg_offset.json"    # dernier update_id Telegram consommé
+BLOCKED_DIR = LIGNE_DIR / "_blocked"          # les épisodes bloqués y sont déplacés (hors file)
 
 PUBLISH_HOUR_PARIS = 18       # publie quand il est 18h à Paris (le cron cadre la fenêtre)
 CADENCE_GRACE_H = 0.5         # marge anti-gigue sur la cadence
@@ -97,6 +104,69 @@ def _append_log(entry: dict) -> None:
     tmp = LOG_PATH.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(log, ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(LOG_PATH)  # écriture atomique
+
+
+def _save_json(path: Path, data) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(path)
+
+
+# --------------------------------------------------------------------------- #
+# FILET PASSIF Telegram — silence = validé. Un ❌ (bouton) ou "STOP Lxx" RETIRE.
+# --------------------------------------------------------------------------- #
+def _blocked_set() -> set:
+    data = _load_json(BLOCKED_PATH, [])
+    return set(data) if isinstance(data, list) else set()
+
+
+def _ingest_blocks() -> None:
+    """Lit les updates Telegram (bouton ❌ 'block:Lxx' ou message 'STOP Lxx') et alimente
+    blocked.json. AUCUN update = rien bloqué = publication normale (filet PASSIF). L'offset
+    consommé est persisté (tg_offset.json) pour ne traiter chaque update qu'une fois."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        return
+    off = 0
+    o = _load_json(OFFSET_PATH, {})
+    if isinstance(o, dict):
+        off = int(o.get("offset", 0) or 0)
+    try:
+        r = requests.get(
+            f"https://api.telegram.org/bot{token}/getUpdates",
+            params={"offset": off + 1, "timeout": 0,
+                    "allowed_updates": json.dumps(["message", "callback_query"])},
+            timeout=25,
+        )
+        updates = r.json().get("result", []) if r.status_code < 400 else []
+    except (requests.RequestException, ValueError) as exc:
+        print(f"[ligne] getUpdates impossible ({exc}) — filet passif ignoré ce run.", file=sys.stderr)
+        return
+    blocked = _blocked_set()
+    max_off = off
+    for u in updates:
+        max_off = max(max_off, int(u.get("update_id", off)))
+        ep = None
+        cq = u.get("callback_query")
+        if cq and str(cq.get("data", "")).startswith("block:"):
+            ep = cq["data"].split(":", 1)[1].strip().upper()
+            try:  # ACK du bouton (retire le spinner côté Telegram)
+                requests.post(f"https://api.telegram.org/bot{token}/answerCallbackQuery",
+                              data={"callback_query_id": cq.get("id", ""),
+                                    "text": f"{ep} bloqué — ne sera pas publié."}, timeout=15)
+            except requests.RequestException:
+                pass
+        else:
+            txt = (u.get("message") or {}).get("text", "") or ""
+            m = re.search(r"(?:stop|bloqu\w*|❌)\s*[:#]?\s*(L\d+)", txt, re.I)
+            if m:
+                ep = m.group(1).upper()
+        if ep:
+            blocked.add(ep)
+            print(f"[ligne] filet passif : {ep} BLOQUÉ (retiré de la publication).")
+    _save_json(OFFSET_PATH, {"offset": max_off})
+    _save_json(BLOCKED_PATH, sorted(blocked))
 
 
 # --------------------------------------------------------------------------- #
@@ -175,7 +245,27 @@ def run(dry_run: bool = False, force: bool = False) -> int:
             print(f"[ligne] Cadence non écoulée ({elapsed:.1f}h < {cadence}h) — refus de publier.")
             return 0
 
-    ep = _oldest_episode()
+    # FILET PASSIF : intègre les ❌ reçus depuis Telegram, puis sélectionne le plus ancien NON bloqué.
+    if not dry_run:
+        _ingest_blocks()
+    blocked = _blocked_set()
+    ep = None
+    while True:
+        ep = _oldest_episode()
+        if ep is None:
+            break
+        if ep.name.upper() in blocked:
+            BLOCKED_DIR.mkdir(parents=True, exist_ok=True)
+            dest_b = BLOCKED_DIR / ep.name
+            if dest_b.exists():
+                shutil.rmtree(dest_b)
+            shutil.move(str(ep), str(dest_b))
+            print(f"[ligne] {ep.name} bloqué (filet passif) — retiré de la file.")
+            if not dry_run:
+                notify.send(f"❌ LIGNE : {ep.name} retiré de la file (bloqué), non publié.")
+            continue
+        break
+
     if ep is None:
         # FAIL LOUD : c'est l'heure de publier mais la file est vide.
         msg = ("⚠️ LIGNE : file vide à l'heure de publier — rien publié.\n"

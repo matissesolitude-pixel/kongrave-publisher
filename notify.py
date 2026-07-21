@@ -10,6 +10,7 @@ Config (dans .env.local, à côté de ce fichier) :
 Si l'un des deux manque, send() devient un no-op silencieux (avec un warning stderr).
 """
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -70,14 +71,22 @@ def _post(method: str, data: dict, files=None) -> bool:
         return False
 
 
-def send_video(caption: str, path) -> bool:
-    """Envoie un mp4 (sendVideo) avec légende. False si token absent / échec."""
+def send_video(caption: str, path, reply_markup=None) -> bool:
+    """Envoie un mp4 (sendVideo) avec légende + clavier inline optionnel. False si token absent / échec."""
+    data = {"caption": caption[:1024], "supports_streaming": "true"}
+    if reply_markup is not None:
+        data["reply_markup"] = json.dumps(reply_markup)
     try:
         with open(path, "rb") as f:
-            return _post("sendVideo", {"caption": caption[:1024], "supports_streaming": "true"}, {"video": f})
+            return _post("sendVideo", data, {"video": f})
     except OSError as exc:
         print(f"[notify] sendVideo lecture impossible : {exc}", file=sys.stderr)
         return False
+
+
+def block_button(episode: str) -> dict:
+    """Clavier inline [❌ Bloquer Lxx] — filet PASSIF : silence = publié, ce bouton RETIRE."""
+    return {"inline_keyboard": [[{"text": f"❌ Bloquer {episode}", "callback_data": f"block:{episode}"}]]}
 
 
 def send_photo(caption: str, path) -> bool:

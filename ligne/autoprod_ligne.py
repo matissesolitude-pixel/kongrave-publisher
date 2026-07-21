@@ -96,7 +96,8 @@ def notify_video(msg: str, path: Path):
         if notify:
             try:
                 if hasattr(notify, "send_video"):
-                    notify.send_video(msg, path)
+                    rm = notify.block_button(n) if hasattr(notify, "block_button") else None
+                    notify.send_video(msg, path, reply_markup=rm)
                 else:
                     notify.send(msg)
             except Exception as exc:
@@ -199,7 +200,8 @@ def make_one(jp: Path) -> bool:
     else:
         print(f"[{eid}] ⚠️ pas de champ 'caption' dans le JSON — déposé SANS caption.txt.", file=sys.stderr)
 
-    notify_video(f"🟢 {n} FABRIQUÉ — en file, à valider.\n{title}", dst)
+    notify_video(f"🟢 {n} en file — se publiera au créneau (silence = OK).\n"
+                 f"❌ bouton ou réponds « STOP {n} » pour le retirer.\n{title}", dst)
     print(f"[{eid}] → {dst}  (caption: {'oui' if cap else 'NON'})")
     return True
 
