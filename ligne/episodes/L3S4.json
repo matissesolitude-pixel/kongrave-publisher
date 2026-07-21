@@ -1,0 +1,9 @@
+{
+  "id": "L3S4",
+  "engine": "l3s4",
+  "title": "L3 S4 — le second nombre n'existe pas (une barre sans bord)",
+  "voice": [
+    "Except most of you only set one. The other stays open. That's not a big loss. That's no number at all."
+  ],
+  "scenes": [ { "id": "no_number" } ]
+}

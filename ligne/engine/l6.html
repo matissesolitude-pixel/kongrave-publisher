@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L6 « THE INVISIBLE FEE » — le FUSIL = un trait de prix unique qui cache DEUX prix (spread) puis DEUX coûts (slippage),
+       et se referme en trait unique (S5) — mais le spectateur sait. « TOI » = une JAUGE verticale teal (ta position). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=clamp(p,0,1)-1; return 1+(s+1)*q*q*q+s*q*q; };
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){ f=clamp(f,0,1); const A=h2(a),B=h2(b); return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`; }
+    const pulse=(u,per,lo,hi)=>lo+(hi-lo)*(0.5+0.5*Math.sin(u/per*2*Math.PI));
+    function setBox(el,cx,cy,w,h){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',(cy-h/2).toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',h.toFixed(1)); }
+    function setGauge(el,cx,w,top,base){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',top.toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',Math.max(0,base-top).toFixed(1)); }
+
+    // ── CASTING ──
+    const PY=960;                                             // hauteur du trait de prix (S1)
+    const priceLine=mk('line',{x1:60,y1:PY,x2:1020,y2:PY,stroke:INK,'stroke-width':7,'stroke-linecap':'butt','stroke-dasharray':'26 18',opacity:0});  // LE TRAIT (le fusil), feed vivant
+    const priceBot =mk('line',{x1:60,y2:PY,x2:1020,y1:PY,stroke:INK,'stroke-width':7,'stroke-linecap':'butt','stroke-dasharray':'26 18',opacity:0});  // 2e ligne (S2+ : buy)
+    const gauge=mk('rect',{fill:YOU,rx:3,opacity:0});                                   // TOI (jauge verticale)
+    const point=mk('circle',{r:22,fill:YOU,opacity:0});                                 // le point qui entre (S2/S3)
+    const ring =mk('circle',{r:30,fill:'none',stroke:INK,'stroke-width':6,opacity:0});  // la cible (S3 : où tu as cliqué)
+    const slip =mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'7 6',opacity:0}); // le slippage (pointillé)
+    // S4 — DIPTYQUE : deux bandes (calme / rapide), lignes qui défilent (dashoffset)
+    const cTop=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'22 22',opacity:0}), cBot=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'22 22',opacity:0});
+    const fTop=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'22 22',opacity:0}), fBot=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'22 22',opacity:0});
+    const cPt=mk('circle',{r:20,fill:YOU,opacity:0}), fPt=mk('circle',{r:20,fill:YOU,opacity:0});
+    const cSlip=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'7 6',opacity:0}), fSlip=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'7 6',opacity:0});
+
+    // ── §M15 : LA QUESTION ──
+    const QLINES=['WHY ARE YOU','ALREADY DOWN'];
+    const FS=88, lineH=112, y0=340, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+2*lineH+150, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0}); qMark.textContent='?';
+
+    // ── ÉTIQUETTES (densité L1 : chaque rôle nommé ; clamp §M18 r2 : jamais hors cadre) ──
+    const lab=mk('text',{x:CX,y:250,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){ return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0}); }
+    const capPrice=caption(), capYou=caption(), capSell=caption(), capBuy=caption(), capRing=caption(), capSlip=caption(), capSpread=caption(), capCalm=caption(), capFast=caption();
+    const ALLCAPS=[capPrice,capYou,capSell,capBuy,capRing,capSlip,capSpread,capCalm,capFast];
+    function putCap(el,txt,cx,y,color,op){ el.textContent=txt; const hw=txt.length*(+el.getAttribute('font-size'))*0.30, x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1)); el.setAttribute('y',y); el.setAttribute('fill',color); el.setAttribute('opacity',clamp(op,0,1).toFixed(3)); }
+    function hideCaps(){ for(const e of ALLCAPS) e.setAttribute('opacity',0); }
+    function hideQ(){ for(const e of qEls) e.setAttribute('opacity',0); qMark.setAttribute('opacity',0); }
+
+    // ══════════ S1 — LA QUESTION · le trait de prix + ta jauge déjà amputée (le péage pris d'avance) ══════════
+    const GX=300, GW=90, GBASE=1280, GTOP=990;               // jauge « toi »
+    function s1(lf,t,s){
+      const u=t-s;
+      // question POP + ? (tenue puis fade)
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(k===0?0.18:u-(0.1+k*0.34)), ap=clamp(qt/0.18,0,1), sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));
+        qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qm=u-1.0, qap=clamp(qm/0.2,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));
+      qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // 1) le TRAIT DE PRIX se trace pleine largeur (1.6-2.6s), encre
+      const dp=clamp((u-1.6)/1.0,0,1);
+      priceLine.setAttribute('opacity',dp>0?1:0); priceLine.setAttribute('x2',lerp(60,1020,eOut(dp)).toFixed(1)); priceLine.setAttribute('y1',PY); priceLine.setAttribute('y2',PY);
+      priceBot.setAttribute('opacity',0);
+      // 2) la JAUGE (toi) monte (2.6-3.0) puis son SOMMET SNAP -30px (~3.05) = le péage pris d'avance, sans que rien ne bouge
+      const grow=clamp((u-2.6)/0.4,0,1); let gtop=lerp(GBASE,GTOP,eOut(grow));
+      gtop += 30*clamp((u-3.05)/0.1,0,1);
+      gauge.setAttribute('opacity',grow>0?1:0); setGauge(gauge,GX,GW,gtop,GBASE);
+      // étiquettes
+      hideCaps();
+      putCap(capPrice,'PRICE',930,930,INK,(u-3.4)/0.4);
+      putCap(capYou,'YOU',GX,GBASE+48,YOU,(u-3.8)/0.4);
+    }
+    function hideShapes(){ for(const el of [priceLine,priceBot,gauge,point,ring,slip,cTop,cBot,fTop,fBot,cPt,fPt,cSlip,fSlip]) el.setAttribute('opacity',0); }
+    function pxline(el,x1,x2,y){ el.setAttribute('opacity',1); el.setAttribute('x1',x1.toFixed(1)); el.setAttribute('x2',x2.toFixed(1)); el.setAttribute('y1',y.toFixed(1)); el.setAttribute('y2',y.toFixed(1)); }
+
+    // ══════════ S2 — THE SPREAD (une ligne en cachait deux ; entrer = payer l'écart) ══════════
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideShapes();
+      const sellY=PY-45, buyY=PY+45;
+      const rv=clamp((u-0.5)/1.5,0,1), e=eOut(rv);                 // révélation : le trait unique se dédouble
+      priceLine.setAttribute('stroke-width',7); pxline(priceLine,60,1020,lerp(PY,sellY,e));
+      pxline(priceBot,60,1020,lerp(PY,buyY,e)); priceBot.setAttribute('opacity',rv>0?1:0);
+      // le point (BUY) SAUTE sur SELL (entrer) puis RETOMBE sur BUY (il paie le spread), clignote à la retombée
+      const jp=clamp((u-2.0)/0.7,0,1), dp2=clamp((u-2.8)/0.6,0,1); let py2=buyY;
+      if(u>=2.0) py2=lerp(buyY,sellY,eOut(jp)); if(u>=2.8) py2=lerp(sellY,buyY,eOut(dp2));
+      const flash=(u>2.8&&u<3.4)?(0.5+0.5*Math.sin((u-2.8)/0.6*Math.PI)):0;
+      point.setAttribute('opacity',u>1.9?1:0); point.setAttribute('r',22); point.setAttribute('cx',300); point.setAttribute('cy',py2.toFixed(1)); point.setAttribute('fill',mix(YOU,PAPER,flash*0.6));
+      putCap(capSell,'SELL',930,sellY-28,INK,(rv-0.3)/0.3);
+      putCap(capBuy,'BUY',930,buyY+48,INK,(rv-0.3)/0.3);
+      putCap(capSpread,'THE SPREAD',175,PY+12,BRUN,(u-3.4)/0.4);
+    }
+    // ══════════ S3 — SLIPPAGE (visé là, servi ailleurs ; l'écart reste affiché) ══════════
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideShapes();
+      const sl=clamp((u-0.8)/1.0,0,1), e=eIn(sl), shift=130*e, spread=45+45*e;   // les lignes glissent + s'écartent
+      pxline(priceLine,60-shift,1020-shift,PY-spread); priceLine.setAttribute('stroke-width',7);
+      pxline(priceBot,60-shift,1020-shift,PY+spread);
+      const ringX=430, ringY=PY-45;                                              // la cible = où tu as cliqué (fixe)
+      ring.setAttribute('opacity',clamp(u/0.8,0,1).toFixed(3)); ring.setAttribute('cx',ringX); ring.setAttribute('cy',ringY);
+      const ptX=ringX+160, ptY=ringY-120, land=clamp((u-1.8)/1.0,0,1);           // servi ailleurs (140px+, plus haut)
+      point.setAttribute('opacity',u>1.8?1:0); point.setAttribute('fill',YOU); point.setAttribute('r',22);
+      point.setAttribute('cx',lerp(ringX,ptX,eOut(land)).toFixed(1)); point.setAttribute('cy',lerp(ringY,ptY,eOut(land)).toFixed(1));
+      const slp=clamp((u-2.2)/0.6,0,1);                                          // le pointillé slippage se trace + reste
+      slip.setAttribute('opacity',u>2.2?1:0); slip.setAttribute('x1',ringX); slip.setAttribute('y1',ringY); slip.setAttribute('x2',lerp(ringX,ptX,slp).toFixed(1)); slip.setAttribute('y2',lerp(ringY,ptY,slp).toFixed(1));
+      putCap(capRing,'YOU AIMED',ringX,ringY+58,INK,(u-0.5)/0.4);
+      putCap(capSlip,'SLIPPAGE',ptX,ptY-45,BRUN,(u-2.8)/0.4);
+    }
+    // ══════════ S4 — DIPTYQUE (calme = petit écart/slippage ; rapide = énorme, mange le trade) ══════════
+    function bandRender(top,bot,pt,sl,cy,gap,scroll,u,slipLen){
+      const ty=cy-gap/2, by=cy+gap/2;
+      pxline(top,60,1020,ty); top.setAttribute('stroke-dashoffset',(-scroll).toFixed(1));
+      pxline(bot,60,1020,by); bot.setAttribute('stroke-dashoffset',(-scroll).toFixed(1));
+      const land=clamp((u-1.0)/1.0,0,1);
+      pt.setAttribute('opacity',u>1.0?1:0); pt.setAttribute('cx',480); pt.setAttribute('cy',lerp(by,by-slipLen,eOut(land)).toFixed(1));
+      sl.setAttribute('opacity',u>1.2?1:0); sl.setAttribute('x1',480); sl.setAttribute('y1',by.toFixed(1)); sl.setAttribute('x2',480); sl.setAttribute('y2',lerp(by,by-slipLen,clamp((u-1.2)/0.8,0,1)).toFixed(1));
+    }
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideShapes();
+      bandRender(cTop,cBot,cPt,cSlip,700,40,u*30,u,20);                          // CALME : écart fin, slippage minuscule
+      const fgap=40+60*(1+Math.sin(u*1.6));                                      // RAPIDE : l'écart RESPIRE 40->160
+      bandRender(fTop,fBot,fPt,fSlip,1250,fgap,u*150,u,230);                     // slippage énorme
+      putCap(capCalm,'CALM',150,640,BRUN,(u-0.4)/0.4);
+      putCap(capFast,'FAST',150,1145,BRUN,(u-0.4)/0.4);
+      putCap(capSlip,'SLIPPAGE',600,1090,BRUN,(u-1.6)/0.4);
+    }
+    // ══════════ S5 — RECLOSE (le péage décompté d'avance ; le trait redevient unique — mais on sait) ══════════
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideShapes();
+      const sellY=PY-45, buyY=PY+45;
+      const grow=clamp((u-0.5)/1.2,0,1);                                         // la jauge naît DÉJÀ amputée (encoche -30 pris d'avance)
+      gauge.setAttribute('opacity',grow>0?1:0); setGauge(gauge,GX,GW,lerp(GBASE,GTOP+30,eOut(grow)),GBASE);
+      const close=clamp((u-2.0)/1.5,0,1), e=eOut(close);                         // les deux lignes se referment en UNE, épaisse
+      pxline(priceLine,60,1020,lerp(sellY,PY,e)); priceLine.setAttribute('stroke-width',lerp(7,13,e).toFixed(1));
+      pxline(priceBot,60,1020,lerp(buyY,PY,e)); priceBot.setAttribute('opacity',close<1?1:0);
+      putCap(capPrice,'ONE PRICE — HIDES TWO',540,PY-42,INK,(u-2.8)/0.4);
+      putCap(capYou,'NET OF FEES',GX,GBASE+48,YOU,(u-1.6)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5};
+    const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1);
+      // §M18 « LA VIE » : le prix est un FEED vivant — les traits défilent en continu (le marché tourne)
+      const mo=((-t*95)%44).toFixed(1); priceLine.setAttribute('stroke-dashoffset',mo); priceBot.setAttribute('stroke-dashoffset',mo);
+      hideCaps();
+      SCENEFN[i](lf,t,SC[i].s); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

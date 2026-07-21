@@ -1,0 +1,135 @@
+{
+  "id": "L2",
+  "title": "THE PARKING LOT",
+  "note_briques_neuves": "Sequence hook -> crowd -> cluster -> cascade -> aftermath -> REPLAY. 5 briques neuves: crowd/cluster/cascade/aftermath/replay. La scene finale (replay) est propre a l'episode - elle DEMONTRE la regle en rejouant le mecanisme, elle ne l'enonce pas via un gabarit fork.",
+  "voice": [
+    "Why does your stop always get hit… right before the move you predicted? Not sometimes. Always.",
+    "Because you didn't choose that level. A hundred traders looked at the same chart, and every single one of them pointed at the same spot. Just past the round number. Just under the low.",
+    "This isn't a theory. Real order-book data — a major dealer, thousands of orders — showed it decades ago. Stop-losses pile up just beyond the round number. Take-profits sit on it. Everyone parks in the same lot.",
+    "So when price finally touches that level, it doesn't hit one stop. It hits all of them. And every stop that fires becomes a market order… pushing price into the next one. Each fall triggers the fall behind it.",
+    "Seconds later, it's over. The lot is empty. And price turns — and goes exactly where you said it would go. Without you.",
+    "So replay it. Place your stop off to the side — where you're actually wrong. Price touches the level, the cascade fires, sweeps them all… but your stop survives. This time, you're in."
+  ],
+  "scenes": [
+    {
+      "type": "hook",
+      "lines": [
+        "WHY DOES",
+        "YOUR STOP",
+        "ALWAYS DIE?"
+      ],
+      "prop": "chart",
+      "stop_label": "YOUR STOP",
+      "resolve": "?",
+      "sync": {
+        "lines": [
+          "why",
+          "stop",
+          "always"
+        ],
+        "prop": "hit",
+        "so": "predicted",
+        "resolve": "always:2"
+      }
+    },
+    {
+      "type": "crowd",
+      "n": 24,
+      "crowd_label": "EVERY TRADER",
+      "target_label": "THE OBVIOUS LEVEL",
+      "converge": true,
+      "sync": {
+        "appear": "hundred",
+        "look": "chart",
+        "converge": "pointed",
+        "target": "number",
+        "settle": "low"
+      }
+    },
+    {
+      "type": "cluster",
+      "level_label": "THE ROUND NUMBER",
+      "above_label": "STOPS",
+      "on_label": "TAKE-PROFITS",
+      "density": "high",
+      "empty_elsewhere": true,
+      "sync": {
+        "level": "data",
+        "above": "pile",
+        "on": "sit",
+        "verdict": "parks"
+      }
+    },
+    {
+      "type": "cascade",
+      "n": 14,
+      "chain": true,
+      "accelerate": true,
+      "label": "EACH ONE TRIGGERS THE NEXT",
+      "sync": {
+        "touch": "touches",
+        "first": "one",
+        "chain": "all",
+        "accelerate": "pushing",
+        "label": "behind"
+      }
+    },
+    {
+      "type": "aftermath",
+      "empty_label": "THE LOT IS EMPTY",
+      "move_label": "THE MOVE YOU CALLED",
+      "left_behind": true,
+      "left_behind_label": "YOU",
+      "sync": {
+        "empty": "empty",
+        "turn": "turns",
+        "move": "exactly",
+        "left_behind": "without"
+      }
+    },
+    {
+      "type": "replay",
+      "mechanism": "THE SAME TRAP",
+      "correct_placement": "YOUR STOP",
+      "outcome_changes": "YOU'RE STILL IN",
+      "sync": {
+        "replay": "replay",
+        "place": "place",
+        "trigger": "fires",
+        "survive": "survives"
+      }
+    }
+  ],
+  "SPECS_BRIQUES_NEUVES": {
+    "crowd": {
+      "raconte": "Une foule regarde le meme graphique et pointe tous le meme endroit. C'est l'origine du probleme : le niveau n'est pas TON choix.",
+      "visuel": "N petites figures (n parametrable, ~24) apparaissent dispersees dans le cadre. Une courbe de prix simple existe au centre avec un niveau horizontal. Les figures se tournent toutes vers elle, puis une fleche/regard part de chacune et CONVERGE vers UN SEUL point (juste au-dela du niveau). Le point de convergence s'illumine. Labels : crowd_label (la foule), target_label (la cible).",
+      "params": "n, crowd_label, target_label, converge",
+      "sync": "appear, look, converge, target, settle"
+    },
+    "cluster": {
+      "raconte": "Le fait Osler : les stops s'entassent JUSTE AU-DELA du chiffre rond, les take-profits SUR le rond. Le reste du graphique est vide.",
+      "visuel": "Une ligne horizontale (level_label). SUR la ligne : quelques marqueurs (on_label = take-profits). JUSTE AU-DESSUS : un amas DENSE de marqueurs empiles (above_label = stops). Ailleurs : le vide total. Le contraste densite/vide EST la demonstration. Un zoom/loupe peut accentuer l'amas.",
+      "params": "level_label, above_label, on_label, density, empty_elsewhere",
+      "sync": "level, above, on, verdict"
+    },
+    "cascade": {
+      "raconte": "Le mecanisme central : chaque stop declenche devient un ordre marche qui pousse vers le suivant. Feedback auto-renforcant.",
+      "visuel": "Le prix touche le niveau. Le premier marqueur de l'amas TOMBE. Sa chute pousse le prix un cran plus loin -> le suivant tombe -> et ainsi de suite EN CHAINE, avec ACCELERATION (chaque chute plus rapide que la precedente, domino qui s'emballe). Le trait de prix accelere visiblement a travers la zone. n marqueurs.",
+      "params": "n, chain, accelerate, label",
+      "sync": "touch, first, chain, accelerate, label"
+    },
+    "aftermath": {
+      "raconte": "La zone est videe, le prix repart dans la direction annoncee - sans le trader.",
+      "visuel": "La zone de l'amas est maintenant VIDE (empty_label). Le trait de prix RETOURNE et part franchement dans la direction opposee (move_label) - trajectoire propre, sans obstacle. UN marqueur reste au sol, gris, immobile (left_behind_label). La courbe s'eloigne, le marqueur ne bouge pas. L'image finale : la distance entre la courbe partie et le point reste.",
+      "params": "empty_label, move_label, left_behind, left_behind_label",
+      "sync": "empty, turn, move, left_behind"
+    },
+    "replay": {
+      "raconte": "On rejoue le mecanisme (cascade) avec le bon geste; le resultat change. Demonstration de la regle, pas enonce abstrait.",
+      "visuel": "L'amas de stops revient. TON marqueur est place AILLEURS (a l'ecart). Le prix monte, touche, la cascade balaie l'amas... ton marqueur reste intact et rejoint le move. Cette fois TU ES DEDANS.",
+      "params": "mechanism, correct_placement, outcome_changes",
+      "sync": "replay, place, trigger, survive"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "id": "L8",
+  "engine": "l8",
+  "title": "L8 — WHO IS THE HOUSE?",
+  "voice": [
+    "You click buy. Somewhere, instantly, someone takes the other side. You never see them. You never ask who. But that question — who sold to you — decides more than you think.",
+    "Sometimes your order goes out to the real market, and matches with another trader who wanted the opposite. Fair. Neutral. Your broker just carries the message and takes a small cut for the trip.",
+    "But sometimes the order never leaves the building. Your broker takes the other side themselves. You want to buy — they sell to you, from their own book. Now you have a position. And so do they. The exact opposite of yours.",
+    "Look at what that means. If your broker holds the opposite of your trade, then your loss is their gain. When you lose, they win — directly. Not a fee. The whole amount. Your bad trade becomes their good one.",
+    "This isn't illegal, and it isn't always bad — it's a business model. But it's one you should know you're inside. When the house can take the other side of your bet, ask one question before you trust the table: who profits when I lose?"
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Quand il clique 'acheter', quelqu'un vend. Qui ? La reponse compte plus qu'on ne croit.",
+      "question": "WHEN YOU BUY — WHO SELLS?",
+      "cast": {
+        "you": { "type": "ball", "d": 150, "x": 300, "note": "boule teal = toi" },
+        "order": { "type": "arrow", "note": "une fleche d'ordre qui part de toi. le fusil." }
+      },
+      "beats": [
+        { "t": "0-1.6", "do": "question POP ligne/ligne, ? 200px, back.out(2)" },
+        { "t": "1.6-2.6", "do": "DRAW-ON: la boule teal (toi) a gauche. une FLECHE d'ordre part d'elle vers la droite — mais s'arrete au milieu, en suspens. ou va-t-elle ?" },
+        { "t": "2.6-10", "do": "TENUE. la fleche en suspens, la destination inconnue. le ? tenu puis fade." }
+      ],
+      "camera": "fixe",
+      "dod": "question + la boule (toi) + une fleche d'ordre en suspens vers l'inconnu",
+      "fusil": "une fleche d'ordre. sa DESTINATION change tout — on montre les deux."
+    },
+    {
+      "id": "s2",
+      "clarity": "Parfois l'ordre va au vrai marche, et rencontre un autre trader qui voulait l'inverse. Neutre.",
+      "label": "A — to the market",
+      "beats": [
+        { "t": "0", "do": "coupe. la boule (toi) a gauche, sa fleche d'ordre." },
+        { "t": "0.5-2", "do": "la fleche TRAVERSE une figure fil-de-fer neutre au centre (LE BROKER) — elle passe A TRAVERS, ressort de l'autre cote, et atteint une AUTRE figure a droite (un autre trader) qui avait une fleche INVERSE. les deux fleches se rencontrent, s'annulent: un match." },
+        { "t": "2-3", "do": "le broker (centre) preleve un petit disque encre (sa commission) au passage — petit, discret." },
+        { "t": "3-14", "do": "TENUE. toi <-> autre trader, le broker au milieu juste passeur. NEUTRE. il gagne son petit cut, peu importe qui a raison." }
+      ],
+      "camera": "fixe",
+      "dod": "ta fleche traverse le broker et matche un autre trader ; le broker prend un petit cut neutre",
+      "turn": "l'ordre va dehors, matche quelqu'un qui voulait l'inverse. le broker est neutre."
+    },
+    {
+      "id": "s3",
+      "clarity": "Parfois l'ordre ne sort jamais. Le broker prend l'autre cote lui-meme. Vous avez chacun une position inverse.",
+      "label": "B — the house takes it",
+      "beats": [
+        { "t": "0", "do": "coupe. meme depart: la boule (toi), ta fleche d'ordre, le broker (figure) au centre." },
+        { "t": "0.5-2", "do": "cette fois la fleche N'ATTEINT PAS l'autre cote: elle S'ARRETE au broker. le broker se RETOURNE et devient la contrepartie. il n'y a pas de troisieme figure — le marche exterieur a disparu." },
+        { "t": "2-3.5", "do": "DEUX positions apparaissent: pres de toi une jauge teal (ta position), pres du broker une jauge INVERSE (encre) — exactement le miroir de la tienne. label 'his position = opposite of yours'." },
+        { "t": "3.5-14", "do": "TENUE. toi et le broker, face a face, positions inverses. l'ordre n'est jamais sorti du batiment." }
+      ],
+      "camera": "fixe",
+      "dod": "la fleche s'arrete au broker qui devient la contrepartie ; deux jauges inverses",
+      "turn": "l'ordre n'est jamais sorti. le broker EST ta contrepartie. vous etes inverses."
+    },
+    {
+      "id": "s4",
+      "clarity": "Si le broker tient l'inverse de ton trade, ta perte est son gain. Quand tu perds, il gagne — directement.",
+      "beats": [
+        { "t": "0", "do": "coupe. les deux jauges inverses de S3: toi (teal) + le broker (encre), face a face." },
+        { "t": "0.5-2", "do": "le prix bouge CONTRE toi: ta jauge teal DIMINUE (se delave, la perte). AU MEME INSTANT, EN MIROIR EXACT, la jauge du broker AUGMENTE (encre pleine, plus dense)." },
+        { "t": "2-3.5", "do": "ce que tu PERDS (la portion delavee de ta jauge) GLISSE litteralement vers la jauge du broker et s'y AJOUTE. pas un pourcentage: LE MONTANT ENTIER. ta perte = son gain, piece pour piece." },
+        { "t": "3.5-14", "do": "TENUE. ta jauge reduite et grise, la sienne grossie. le transfert direct visible. 'your bad trade is his good one'." }
+      ],
+      "camera": "fixe",
+      "dod": "ta perte glisse directement dans le gain du broker, montant pour montant",
+      "turn": "quand tu perds, il gagne — pas une commission, le montant entier."
+    },
+    {
+      "id": "s5",
+      "clarity": "Ce n'est pas illegal, c'est un modele. Mais il faut le savoir : qui gagne quand je perds ?",
+      "beats": [
+        { "t": "0", "do": "coupe. retour a la boule (toi) seule, avec sa fleche d'ordre en suspens — comme en S1." },
+        { "t": "0.5-2", "do": "DECHARGE: la fleche d'ordre se DEDOUBLE en fantome — les DEUX destinations montrees en surimpression: vers le marche (neutre) OU vers le broker (contrepartie). TU ne sais pas laquelle, sauf si tu demandes." },
+        { "t": "2-3.5", "do": "une question s'ecrit sous la boule (seul texte autorise avec la question d'ouverture): 'WHO PROFITS WHEN I LOSE?' (Helvetica 800, plus petit)." },
+        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la boule, la fleche aux deux destinations possibles, la question. immobile." }
+      ],
+      "camera": "fixe",
+      "dod": "la fleche aux deux destinations + la question 'who profits when i lose?'",
+      "fusil_decharge": "la fleche d'ordre en suspens de S1 revele ses deux destinations possibles (S5) — et la question a se poser."
+    }
+  ],
+  "total": 57.6,
+  "_rules": {
+    "doctrine": "B-book presente comme MODELE, pas comme arnaque ('this isn't illegal, it's a business model'). Mecanique du conflit d'interet, jamais accusation nominative. Pas de nom de broker.",
+    "fusil": "une fleche d'ordre (S1) dont la destination — marche neutre (S2) ou broker contrepartie (S3) — decide si ta perte enrichit quelqu'un (S4), revelee en deux destinations (S5).",
+    "figures": "broker + autre trader = fil-de-fer. toi = boule teal, jamais une figure.",
+    "interdits": "pas de chiffre; le broker n'est pas 'brun' (pas un mechant — une structure); pas de nom de broker; bas du cadre vide.",
+    "police": "Helvetica Neue 800 uppercase ls1px #20242A.",
+    "circuit": "M24: frames DoD d'abord."
+  }
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L12 « THE CROWD AT ONE PRICE » — la nappe de stops au-dessus d'un double sommet. FUSIL : le vide au-dessus des sommets (S1)
+       révèle sa nappe (S3), vidée mécaniquement (S4), et TON stop en sort (S5). Doctrine : clustering établi, JAMAIS d'intention,
+       aucun chasseur, aucun brun. §perf : la crête entre dans la 1re seconde (accroche). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+
+    // ── CASTING ── crête à deux sommets égaux (line-art), ligne d'égalité, point-prix, nappe de capuchons (stops)
+    const PKY=900, VALY=1030, P1X=380, P2X=700;
+    const CREST=`M 120 1150 L ${P1X} ${PKY} L ${CX} ${VALY} L ${P2X} ${PKY} L 960 1150`;
+    const crest=mk('path',{d:CREST,fill:'none',stroke:INK,'stroke-width':12,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const eqline=mk('line',{x1:280,y1:PKY,x2:800,y2:PKY,stroke:INK,'stroke-width':6,opacity:0});
+    const pt=mk('circle',{r:24,fill:INK,opacity:0});
+    const SHELFY=PKY-46, NCAP=8, caps=[]; for(let i=0;i<NCAP;i++) caps.push(mk('line',{stroke:(i===0?YOU:INK),'stroke-width':(i===0?9:6),'stroke-linecap':'round',opacity:0}));
+    function crestY(x){ // y du prix le long de la crête (approx segments)
+      const P=[[120,1150],[P1X,PKY],[CX,VALY],[P2X,PKY],[960,1150]];
+      for(let i=0;i<P.length-1;i++){const[a,ya]=P[i],[b,yb]=P[i+1]; if(x>=a&&x<=b) return ya+(yb-ya)*(x-a)/(b-a);}
+      return PKY;
+    }
+    function capX(i){ return 350+i*56; }   // nappe étalée au-dessus des sommets
+
+    const QLINES=['TWO EQUAL TOPS','WHAT’S REALLY','UP THERE'];
+    const FS=84,lineH=104,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+110,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':180,opacity:0});qMark.textContent='?';
+
+    const lab=mk('text',{x:CX,y:1500,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0});}
+    const capYouL=caption(),capShelf=caption();
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function hideCaps(){capYouL.setAttribute('opacity',0);capShelf.setAttribute('opacity',0);}
+    function hideQ(){for(const e of qEls)e.setAttribute('opacity',0);qMark.setAttribute('opacity',0);}
+    function setCap(el,cx,y,w,op){el.setAttribute('x1',cx-w/2);el.setAttribute('x2',cx+w/2);el.setAttribute('y1',y.toFixed(1));el.setAttribute('y2',y.toFixed(1));el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function hideShelf(){for(const c of caps)c.setAttribute('opacity',0);}
+    function travel(u,period){const x=140+((u/period)%1)*800; pt.setAttribute('opacity',1); pt.setAttribute('cx',x.toFixed(1)); pt.setAttribute('cy',crestY(x).toFixed(1)); return x;}
+
+    // S1 — accroche : la crête (double sommet) se trace DÈS le début, un point la parcourt
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideShelf();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // §perf : la crête entre en frame 1 (accroche visuelle), pas d'attente
+      const dc=clamp(u/1.2,0,1); crest.setAttribute('opacity',1); const L=2400; crest.setAttribute('stroke-dasharray',L); crest.setAttribute('stroke-dashoffset',(L*(1-dc)).toFixed(0));
+      eqline.setAttribute('opacity',clamp((u-1.4)/0.6,0,1)*0.7);
+      if(u>1.4) travel(u,4.0); else pt.setAttribute('opacity',0);
+    }
+    // S2 — TA jauge : ta vente, ton stop juste au-dessus du mur
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShelf();
+      crest.setAttribute('stroke-dasharray','none'); crest.setAttribute('opacity',1); crest.setAttribute('stroke-dashoffset',0);
+      eqline.setAttribute('opacity',0.7);
+      travel(u,4.0);
+      const app=clamp((u-0.3)/1.0,0,1);
+      setCap(caps[0], P1X, SHELFY, 90, app);   // TON capuchon (teal), au-dessus du sommet gauche
+      putCap(capYouL,'YOUR STOP',P1X,SHELFY-30,YOU,(u-1.0)/0.4);
+    }
+    // S3 — tout le monde a le même stop : une NAPPE se forme au-dessus des sommets
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      crest.setAttribute('opacity',1); crest.setAttribute('stroke-dasharray','none'); crest.setAttribute('stroke-dashoffset',0); eqline.setAttribute('opacity',0.7); travel(u,4.0);
+      for(let i=0;i<NCAP;i++){ const t0=i*0.12, app=clamp((u-t0)/0.25,0,1); const puls=(app>=1)?2*Math.sin(u*3+i):0;
+        setCap(caps[i], capX(i), SHELFY+puls, i===0?90:80, app); if(i===0) caps[0].setAttribute('stroke',YOU); }
+      putCap(capShelf,'EVERYONE’S STOP — SAME PLACE',CX,SHELFY-40,INK,(u-2.0)/0.4);
+    }
+    // S4 — le prix monte juste assez pour tout ramasser, puis redescend. mécanique.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      crest.setAttribute('opacity',1); crest.setAttribute('stroke-dasharray','none'); crest.setAttribute('stroke-dashoffset',0); eqline.setAttribute('opacity',0.7);
+      // le prix remonte le 2e versant, dépasse les sommets d'un tick (SNAP ~1.3s), puis redescend
+      let px, py;
+      if(u<1.3){ px=lerp(P2X,CX+40,eOut(clamp((u)/1.3,0,1))); py=lerp(crestY(P2X), SHELFY-18, eIn(clamp(u/1.3,0,1))); }
+      else if(u<4.5){ const dn=eOut(clamp((u-1.3)/3.2,0,1)); px=CX+40; py=lerp(SHELFY-18, crestY(CX+40), dn); }
+      else { px=140+(((u-4.5)/4.2)%1)*800; py=crestY(px); }   // le prix redescendu CONTINUE de parcourir la crête (mécanique)
+      pt.setAttribute('opacity',1); pt.setAttribute('cx',px.toFixed(1)); pt.setAttribute('cy',py.toFixed(1));
+      // les capuchons se détachent EN CASCADE quand le prix passe (1.3s+) et se dissolvent
+      for(let i=0;i<NCAP;i++){ const t0=1.3+i*0.06, g=clamp((u-t0)/0.5,0,1); const cy=SHELFY-40*g; setCap(caps[i], capX(i), cy, (i===0?90:80), (1-g)*(u>0.2?1:0)); if(i===0) caps[0].setAttribute('stroke',YOU); }
+      putCap(capShelf,'SWEPT — THEN BACK DOWN',CX,SHELFY-40,DEAD,(u-3.0)/0.4);
+    }
+    // S5 — le pattern est bondé : TON stop sort de la foule, à une hauteur à toi
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShelf();
+      crest.setAttribute('opacity',1); crest.setAttribute('stroke-dasharray','none'); crest.setAttribute('stroke-dashoffset',0); eqline.setAttribute('opacity',0.7);
+      travel(u,4.5);
+      // ton capuchon seul, il clignote puis GLISSE à une hauteur décalée (à toi)
+      const move=eOut(clamp((u-1.5)/1.5,0,1));
+      const cy=lerp(SHELFY, PKY-150, move), cx=lerp(P1X, 250, move);
+      const blink=(u<1.5)?(0.55+0.45*Math.sin(u*6)):1;
+      setCap(caps[0], cx, cy, 90, blink); caps[0].setAttribute('stroke',YOU);
+      putCap(capYouL,'YOUR STOP — YOUR PLACE',cx,cy-30,YOU,(u-2.6)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

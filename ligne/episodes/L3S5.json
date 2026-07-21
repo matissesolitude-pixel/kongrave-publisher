@@ -1,0 +1,9 @@
+{
+  "id": "L3S5",
+  "engine": "l3s5",
+  "title": "L3 S5 — le geste (tu écris le second nombre)",
+  "voice": [
+    "The line is the second number. You write it, or you don't have one. Leverage is a tool. The line is the decision."
+  ],
+  "scenes": [ { "id": "le_geste" } ]
+}

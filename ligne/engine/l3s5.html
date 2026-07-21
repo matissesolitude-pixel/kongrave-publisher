@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L3 S5 « LE GESTE » — grammaire JAUGE VERTICALE. On reprend la barre grise infinie de S4. UN TRAIT HORIZONTAL
+       (le PLAFOND) s'écrit à une hauteur choisie = la 2e butée. SNAP : au-dessus s'efface, ce qui reste CLAQUE en teal
+       et se densifie -> un nombre fini. La marge revient à côté (2 jauges $). Puis démorph : elles FUSIONNENT -> la balle. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', AXIS='#C8CBC2', DEAD='#474D50';
+    const CX=540, BASE_Y=1560, GW=200, WY=720;                                   // WY = hauteur où le plafond s'écrit
+    const fHold=0.14, fWrite=0.32, fClose=0.44, fReturn=0.60, fRappel=0.74, fFuse0=0.82, fFuse1=0.93;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    function mix(a,b,f){const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*f)).join(',')})`;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+
+    const gTick=mk('g',{}); const TK=[]; const TW=1120;
+    for(let i=0;i<16;i++){ const bx=i*70, h=18+((i*37)%44); TK.push({bx,h,el:mk('line',{stroke:AXIS,'stroke-width':4,'stroke-linecap':'round',opacity:0},gTick)}); }
+    const axis=mk('line',{x1:120,y1:BASE_Y,x2:960,y2:BASE_Y,stroke:AXIS,'stroke-width':6,'stroke-linecap':'round'});
+    const blockA=mk('rect',{}), blockB=mk('rect',{fill:YOU,opacity:0});
+    const capAb=mk('rect',{fill:INK,height:14}), writeLine=mk('line',{stroke:INK,'stroke-width':14,'stroke-linecap':'round',opacity:0});   // butée bas + plafond écrit
+    const capBb=mk('rect',{fill:INK,height:14,opacity:0}), capBt=mk('rect',{fill:INK,height:14,opacity:0});
+    const dA=mk('text',{'text-anchor':'middle',fill:PAPER,'font-family':'Georgia, serif','font-weight':'bold','font-size':120,opacity:0},null); dA.textContent='$';
+    const dB=mk('text',{'text-anchor':'middle',fill:PAPER,'font-family':'Georgia, serif','font-weight':'bold','font-size':120,opacity:0},null); dB.textContent='$';
+
+    function boxTB(el,cx,w,top,bot,rx){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',top.toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',(bot-top).toFixed(1)); el.setAttribute('rx',(rx||0).toFixed(1)); }
+    function hcap(el,cx,w,y,op){ el.setAttribute('x',(cx-w/2-9).toFixed(1)); el.setAttribute('y',(y-7).toFixed(1)); el.setAttribute('width',(w+18).toFixed(1)); el.setAttribute('opacity',op); }
+
+    const clock={t:0};
+    function render(){
+      const t=clock.t, f=t/TOTAL;
+      const drift=(t*80)%TW, tko=lerp(0.42,0.12,clamp((f-fRappel)/(fFuse1-fRappel),0,1));
+      for(const k of TK){ let x=((k.bx-drift)%TW+TW)%TW; const on=x<=1080; k.el.setAttribute('opacity',on?tko:0);
+        if(on){ k.el.setAttribute('x1',x.toFixed(1)); k.el.setAttribute('x2',x.toFixed(1)); k.el.setAttribute('y1',(BASE_Y+64).toFixed(1)); k.el.setAttribute('y2',(BASE_Y+64+k.h).toFixed(1)); } }
+      axis.setAttribute('opacity',lerp(1,0.35,clamp((f-fRappel)/(fFuse1-fRappel),0,1)));
+      // ── JAUGE A : barre grise infinie -> (plafond écrit) claque teal + densifie -> se décale -> fusionne ──
+      let aCx=540,aTop=-200,aBot=BASE_Y,aW=12,aRx=0,aCol=DEAD;
+      if(f<fWrite){}
+      else if(f<fClose){ const g=(f-fWrite)/(fClose-fWrite); aTop=lerp(-200,WY,eOut(g)); aW=lerp(12,GW,eOut(g)); aCol=mix(DEAD,YOU,eIn(g)); }   // SNAP
+      else if(f<fReturn){ const g=(f-fClose)/(fReturn-fClose); aCx=lerp(540,430,eOut(g)); aTop=WY; aW=GW; aCol=YOU; }
+      else { aCx=430; aTop=WY; aW=GW; aCol=YOU; }
+      // ── FUSION -> BALLE (démorph de sortie) ──
+      let fusing=false;
+      if(f>=fFuse0){ fusing=true; const fu=clamp((f-fFuse0)/(fFuse1-fFuse0),0,1);
+        if(fu<0.5){ const g=fu*2; aCx=lerp(430,540,g); aTop=WY; aBot=BASE_Y; aW=GW; aRx=0; aCol=YOU;
+          boxTB(blockB,lerp(650,540,g),GW,1040,BASE_Y,0); blockB.setAttribute('opacity',1); blockB.setAttribute('fill',YOU);
+        } else { const g=(fu-0.5)*2; aCx=540; aTop=lerp(WY,780,g); aBot=lerp(BASE_Y,1220,g); aW=lerp(GW,440,g); aRx=lerp(0,220,g); aCol=YOU;
+          blockB.setAttribute('opacity',0);
+        }
+      }
+      boxTB(blockA,aCx,aW,aTop,aBot,aRx); blockA.setAttribute('fill',aCol);
+      // butée BAS de A (+ plafond écrit)
+      const bf=fusing?clamp(1-(f-fFuse0)/(fFuse1-fFuse0)*2.6,0,1):1;
+      hcap(capAb,aCx,aW,aBot,(f<fClose?clamp((f-fWrite)/(fClose-fWrite),0,1):1)*bf);
+      // plafond : s'écrit gauche->droite pendant fWrite, puis = bord haut (suit aCx)
+      if(f>=fHold){ let wl=1, x1,x2; const yTop=(f<fClose)?WY:aTop;
+        if(f<fWrite){ const wr=clamp((f-fHold)/(fWrite-fHold),0,1); x1=CX-110; x2=CX-110+220*wr; }
+        else { x1=aCx-110; x2=aCx+110; }
+        writeLine.setAttribute('x1',x1.toFixed(1)); writeLine.setAttribute('x2',x2.toFixed(1));
+        writeLine.setAttribute('y1',yTop.toFixed(1)); writeLine.setAttribute('y2',yTop.toFixed(1)); writeLine.setAttribute('opacity',bf);
+      } else writeLine.setAttribute('opacity',0);
+      // $ sur A
+      dA.setAttribute('x',aCx.toFixed(1)); dA.setAttribute('y',(aBot-90).toFixed(1)); dA.setAttribute('opacity',(f<fReturn?0:clamp((f-fReturn)/0.1,0,1))*bf);
+      // ── JAUGE B (la marge) : RAPPEL à côté (capuchons haut+bas + $) ──
+      if(!fusing){ const rp=clamp((f-fRappel)/(0.06+fRappel-fRappel),0,1)*(f>=fRappel?1:0), on=(f>=fRappel);
+        const o=on?clamp((f-fRappel)/0.06,0,1):0;
+        boxTB(blockB,650,GW,1040,BASE_Y,0); blockB.setAttribute('opacity',o); blockB.setAttribute('fill',YOU);
+        hcap(capBb,650,GW,BASE_Y,o); hcap(capBt,650,GW,1040,o); dB.setAttribute('x',650); dB.setAttribute('y',BASE_Y-90); dB.setAttribute('opacity',o);
+      } else { const bf2=clamp(1-(f-fFuse0)/(fFuse1-fFuse0)*2.6,0,1); hcap(capBb,540,GW,BASE_Y,0); capBb.setAttribute('opacity',0); capBt.setAttribute('opacity',0); dB.setAttribute('opacity',0); }
+    }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

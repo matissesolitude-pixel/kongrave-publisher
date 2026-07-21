@@ -1,0 +1,10 @@
+{
+  "id": "L3S1",
+  "engine": "hand-craft",
+  "title": "L3 S1 — naissance (validation)",
+  "voice": [
+    "Why do the pros use more leverage than you?",
+    "Watch closely."
+  ],
+  "scenes": [ { "id": "s1_naissance" }, { "id": "_pause" } ]
+}

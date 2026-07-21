@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L7 « THE FLOOR AND THE SKY » — le FUSIL = un point (le prix) : en descendant il touche un SOL (zéro, S2), en montant il ne
+       touche AUCUN plafond (S3) ; c'est TA ligne qui pose le plafond manquant (S5). §L0 : structure du prix, jamais le solde du compte. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=clamp(p,0,1)-1; return 1+(s+1)*q*q*q+s*q*q; };
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){ f=clamp(f,0,1); const A=h2(a),B=h2(b); return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`; }
+    function setBox(el,cx,cy,w,h){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',(cy-h/2).toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',h.toFixed(1)); }
+
+    // ── CASTING ──
+    const PX=CX, P0Y=1080;                                     // le point (prix) : position de départ (identique S2/S3)
+    const AXY=1560;                                            // l'axe bas = le ZÉRO (révélé S2)
+    const axis=mk('line',{x1:80,y1:AXY,x2:1000,y2:AXY,stroke:INK,'stroke-width':6,opacity:0});
+    const pt=mk('circle',{r:45,fill:YOU,opacity:0});          // LE PRIX (le fusil)
+    const arrUp=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const arrDn=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    // stries (le monde qui bouge pendant que le point monte/descend)
+    const STRN=6, stries=[]; for(let i=0;i<STRN;i++) stries.push(mk('line',{stroke:INK,'stroke-width':4,opacity:0}));
+    const comet=mk('path',{fill:YOU,opacity:0});                       // S3 : la comète (nez rond en bas, queue vers le haut, hors cadre)
+    // S4 — DIPTYQUE : deux colonnes (BUY / SHORT), barres gain(teal)/perte(gris), une bornée + une ouverte
+    const buyGain=mk('rect',{fill:YOU,rx:3,opacity:0}), buyLoss=mk('rect',{fill:DEAD,rx:3,opacity:0});
+    const shGain =mk('rect',{fill:YOU,rx:3,opacity:0}), shLoss =mk('rect',{fill:DEAD,rx:3,opacity:0});
+    const buyArr=mk('path',{fill:INK,opacity:0}), shArr=mk('path',{fill:INK,opacity:0});                 // têtes de flèche (ouvert = sans fin)
+    const buyFloor=mk('line',{stroke:INK,'stroke-width':7,opacity:0}), shFloor=mk('line',{stroke:INK,'stroke-width':7,opacity:0}); // le zéro (borne)
+    const stopLine=mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0});          // S5 : TA ligne (le plafond que tu poses)
+
+    // ── §M15 : LA QUESTION ──
+    const QLINES=['IS BUYING THE','MIRROR OF','SELLING'];
+    const FS=88, lineH=112, y0=300, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+3*lineH+150, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0}); qMark.textContent='?';
+
+    // ── ÉTIQUETTES (densité L1 + clamp §M18 r2) ──
+    const lab=mk('text',{x:CX,y:230,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){ return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0}); }
+    const capPrice=caption(), capZero=caption(), capBuy=caption(), capShort=caption(), capA=caption(), capB=caption(), capLine=caption();
+    const ALLCAPS=[capPrice,capZero,capBuy,capShort,capA,capB,capLine];
+    function putCap(el,txt,cx,y,color,op){ el.textContent=txt; const hw=txt.length*(+el.getAttribute('font-size'))*0.30, x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1)); el.setAttribute('y',y); el.setAttribute('fill',color); el.setAttribute('opacity',clamp(op,0,1).toFixed(3)); }
+    function hideCaps(){ for(const e of ALLCAPS) e.setAttribute('opacity',0); }
+    function hideQ(){ for(const e of qEls) e.setAttribute('opacity',0); qMark.setAttribute('opacity',0); }
+
+    // ══════════ S1 — LA QUESTION · un point (le prix), avant de choisir une direction ══════════
+    function s1(lf,t,s){
+      const u=t-s; striesAnim(u,u>1.4,110);
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(k===0?0.18:u-(0.1+k*0.32)), ap=clamp(qt/0.18,0,1), sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));
+        qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qm=u-1.05, qap=clamp(qm/0.2,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));
+      qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // le POINT (prix) apparaît au centre (1.6-2.2s)
+      const pin=clamp((u-1.6)/0.6,0,1), psc=0.6+0.4*backOut(pin);
+      pt.setAttribute('opacity',pin>0?1:0); pt.setAttribute('r',(45*psc).toFixed(1)); pt.setAttribute('cx',PX); pt.setAttribute('cy',P0Y);
+      // deux flèches FANTÔMES (haut/bas) : les deux directions possibles, très légères, puis s'effacent (1.9-3.2s)
+      const af=clamp((u-1.9)/0.4,0,1)*clamp(1-(u-2.8)/0.4,0,1)*0.30;
+      arrUp.setAttribute('d',`M ${CX-26} ${P0Y-118} L ${CX} ${P0Y-150} L ${CX+26} ${P0Y-118}`); arrUp.setAttribute('opacity',clamp(af,0,1).toFixed(3));
+      arrDn.setAttribute('d',`M ${CX-26} ${P0Y+118} L ${CX} ${P0Y+150} L ${CX+26} ${P0Y+118}`); arrDn.setAttribute('opacity',clamp(af,0,1).toFixed(3));
+      axis.setAttribute('opacity',0);
+      hideCaps(); putCap(capPrice,'THE PRICE',PX,P0Y+90,INK,(u-2.4)/0.4);
+    }
+    function hideAll7(){ for(const el of [axis,pt,comet,buyGain,buyLoss,shGain,shLoss,buyArr,shArr,buyFloor,shFloor,stopLine,arrUp,arrDn]) el.setAttribute('opacity',0); for(const st of stries) st.setAttribute('opacity',0); pt.removeAttribute('transform'); lab.setAttribute('opacity',0); }
+    function striesAnim(u,on,speed){ for(let i=0;i<STRN;i++){ const x=150+i*155, y=((u*speed+i*130)%960)-100;
+      stries[i].setAttribute('opacity',on?0.20:0); stries[i].setAttribute('x1',x); stries[i].setAttribute('x2',x); stries[i].setAttribute('y1',y.toFixed(1)); stries[i].setAttribute('y2',(y+80).toFixed(1)); } }
+    function drawCol(cx,upBar,dnBar,arr,floor,inb,upIsGain){ const CYc=900, W=72, FL=1350;
+      const upTop=lerp(CYc,235,inb); upBar.setAttribute('opacity',1); upBar.setAttribute('fill',upIsGain?YOU:DEAD); setBox(upBar,cx,(CYc+upTop)/2,W,CYc-upTop);
+      arr.setAttribute('opacity',inb>0.5?1:0); arr.setAttribute('fill',upIsGain?YOU:DEAD); arr.setAttribute('d',`M ${cx-46} ${upTop.toFixed(1)} L ${cx} ${(upTop-56).toFixed(1)} L ${cx+46} ${upTop.toFixed(1)} Z`);
+      const dnBot=lerp(CYc,FL,inb); dnBar.setAttribute('opacity',1); dnBar.setAttribute('fill',upIsGain?DEAD:YOU); setBox(dnBar,cx,(CYc+dnBot)/2,W,dnBot-CYc);
+      floor.setAttribute('opacity',inb>0.5?1:0); floor.setAttribute('x1',cx-72); floor.setAttribute('x2',cx+72); floor.setAttribute('y1',FL); floor.setAttribute('y2',FL); }
+
+    // ══════════ S2 — YOU BUY (le pire cas a un SOL : ça tombe, ça s'arrête à zéro) ══════════
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll7();
+      axis.setAttribute('opacity',1); axis.setAttribute('stroke-width',lerp(6,14,clamp(u/1.0,0,1)).toFixed(1));
+      const desc=clamp((u-0.5)/1.6,0,1), e=eIn(desc), endY=AXY-45, py=Math.min(lerp(P0Y,endY,e),endY);
+      striesAnim(u,true,140);
+      pt.setAttribute('opacity',1); pt.setAttribute('fill',YOU); pt.setAttribute('r',45); pt.setAttribute('cx',PX); pt.setAttribute('cy',py.toFixed(1));
+      lab.textContent='YOU BUY — WORST CASE'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min(u/0.4,1-(u-3.4)/0.5),0,1).toFixed(3));
+      putCap(capZero,'ZERO',930,AXY-28,INK,(u-0.3)/0.4);
+      putCap(capPrice,'THE PRICE',PX,py-72,YOU,(u-2.6)/0.4);
+      putCap(capB,'THE FLOOR',PX,AXY+60,BRUN,(u-2.4)/0.4);
+    }
+    // ══════════ S3 — SELL SHORT (le pire cas n'a PAS de plafond : ça monte, ça sort du cadre) ══════════
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll7();
+      striesAnim(u,true,540);
+      const rise=clamp((u-0.6)/2.6,0,1), e=eIn(rise), noseY=lerp(P0Y,200,e), R=45;
+      const tailLen=lerp(0,1500,eIn(clamp((u-0.8)/2.2,0,1))), tailY=noseY-tailLen;   // comète : nez rond (bas) + queue vers le haut hors cadre
+      comet.setAttribute('opacity',u>0.6?1:0); comet.setAttribute('fill',YOU);
+      comet.setAttribute('d',`M ${PX-R} ${noseY.toFixed(1)} A ${R} ${R} 0 0 1 ${PX+R} ${noseY.toFixed(1)} L ${PX} ${tailY.toFixed(1)} Z`);
+      pt.setAttribute('opacity',u<0.7?1:0); pt.setAttribute('r',45); pt.setAttribute('cx',PX); pt.setAttribute('cy',P0Y); pt.setAttribute('fill',YOU);
+      lab.textContent='YOU SELL SHORT — WORST CASE'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min(u/0.4,1-(u-3.6)/0.5),0,1).toFixed(3));
+      putCap(capB,'NO CEILING',PX,330,BRUN,(u-2.4)/0.4);
+    }
+    // ══════════ S4 — DIPTYQUE (buy : perte bornée/gain ouvert · short : gain borné/perte ouverte) ══════════
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll7();
+      const inb=clamp(u/0.9,0,1); striesAnim(u,true,165);
+      drawCol(300, buyGain,buyLoss,buyArr,buyFloor, inb, true);    // BUY : haut = gain (teal, ouvert)
+      drawCol(780, shLoss, shGain, shArr, shFloor, inb, false);    // SHORT : haut = perte (gris, ouverte)
+      putCap(capBuy,'BUY',300,1445,BRUN,(u-0.4)/0.4);
+      putCap(capShort,'SHORT',780,1445,BRUN,(u-0.4)/0.4);
+      putCap(capA,'GAIN OPEN',300,170,YOU,(u-1.0)/0.4);      // le côté ouvert (haut) = l'histoire
+      putCap(capB,'LOSS OPEN',780,170,DEAD,(u-1.0)/0.4);     // le danger : perte sans plafond
+      putCap(capZero,'CAPPED AT ZERO',540,1400,INK,(u-1.4)/0.4);
+    }
+    // ══════════ S5 — YOUR LINE (le pire cas n'a pas de sol → TU poses le plafond manquant) ══════════
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll7();
+      const cx=CX, CYc=900, W=82, FL=1350, lineY=560; striesAnim(u,true,90);
+      shGain.setAttribute('opacity',1); shGain.setAttribute('fill',YOU); setBox(shGain,cx,(CYc+FL)/2,W,FL-CYc);   // gain borné (teal) en bas
+      shFloor.setAttribute('opacity',1); shFloor.setAttribute('x1',cx-82); shFloor.setAttribute('x2',cx+82); shFloor.setAttribute('y1',FL); shFloor.setAttribute('y2',FL);
+      const erase=clamp((u-2.0)/1.0,0,1), lossTop=lerp(235,lineY,erase);                                          // la perte ouverte, plafonnée par ta ligne
+      shLoss.setAttribute('opacity',1); shLoss.setAttribute('fill',DEAD); setBox(shLoss,cx,(lossTop+CYc)/2,W,CYc-lossTop);
+      shArr.setAttribute('opacity',(erase<0.5?1-erase*2:0).toFixed(3)); shArr.setAttribute('fill',DEAD); shArr.setAttribute('d',`M ${cx-46} ${lossTop.toFixed(1)} L ${cx} ${(lossTop-56).toFixed(1)} L ${cx+46} ${lossTop.toFixed(1)} Z`);
+      const trace=clamp((u-0.5)/1.5,0,1);                                                                          // TA ligne se trace en travers
+      stopLine.setAttribute('opacity',trace>0?1:0); stopLine.setAttribute('x1',lerp(cx,cx-280,trace).toFixed(1)); stopLine.setAttribute('x2',lerp(cx,cx+280,trace).toFixed(1)); stopLine.setAttribute('y1',lineY); stopLine.setAttribute('y2',lineY);
+      putCap(capShort,'SHORT',cx,FL+60,BRUN,(u-0.3)/0.4);
+      putCap(capLine,'YOUR LINE',cx+360,lineY,INK,(u-1.8)/0.4);
+      putCap(capB,'THE FLOOR YOU BUILD',cx,FL+120,YOU,(u-2.8)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5};
+    const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1); hideCaps(); SCENEFN[i](lf,t,SC[i].s); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

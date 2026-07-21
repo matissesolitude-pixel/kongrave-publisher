@@ -1,0 +1,137 @@
+{
+  "id": "L10",
+  "engine": "l10",
+  "title": "L10 — THE MULTIPLIER",
+  "voice": [
+    "A trader put down 100 and lost 500 on a move he'd barely notice. He didn't get scammed. He used the one tool that turns a scratch into a wound — and most people turn it up without knowing. Here's what it really does.",
+    "Leverage. The broker lets you control a position much bigger than your stake. Put down one hundred, control a thousand. Your money is just the deposit — the exposure is ten times the size.",
+    "And the market doesn't move your deposit. It moves the exposure. A five percent move on a thousand is fifty — half your stake, gone, on a move you'd barely notice without leverage.",
+    "The multiplier works both ways, and everyone hears that and nods. But here's what the nod misses: it doesn't multiply your gains and losses equally. It multiplies the SPEED at which you reach your limit. And your limit is your deposit.",
+    "Leverage isn't free money and it isn't a scam. It's a magnifying glass — it makes small moves enormous. So before you size up, ask the only question that matters: not how much can I win — how fast can I be done?"
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Il a mise 100, le marche bouge a peine, et tout est parti. Comment un si petit mouvement vide la mise ?",
+      "question": "HOW DOES A TINY MOVE WIPE YOU OUT?",
+      "cast": {
+        "stake": {
+          "type": "block",
+          "side": 110,
+          "note": "un petit bloc teal = ta mise. le fusil."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.4",
+          "do": "DRAW-ON: un PETIT bloc teal au centre (ta mise). modeste, net."
+        },
+        {
+          "t": "2.4-10",
+          "do": "TENUE VIVANTE: derriere le petit bloc, une OMBRE naissante s'etire imperceptiblement (prefigure S2). le ? tenu puis fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "question + un petit bloc teal seul",
+      "fusil": "le petit bloc — on va voir l'ombre geante qu'il projette."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le broker te laisse controler une position dix fois plus grosse que ta mise. Ta mise n'est qu'un depot.",
+      "label": "deposit vs exposure",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "derriere le petit bloc, une OMBRE se dessine: un contour 10x plus grand (encre, trait), meme forme. le petit bloc est pose devant, minuscule. labels 'yours: 100' INTERDIT — pas de chiffre: labels 'your stake' / 'your exposure'."
+        },
+        {
+          "t": "2-3",
+          "do": "le contour se REMPLIT d'un teal tres pale (l'exposition existe, mais elle n'est pas a toi)."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: un trait de prix oscille doucement au fond; a chaque oscillation le GEANT fremit — l'exposition VIT. le petit bloc, lui, immobile: il ne sent rien... encore."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le petit bloc (stake) devant son contour geant (exposure)",
+      "turn": "ta mise est un depot. ce qui existe vraiment, c'est le geant derriere."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le marche ne bouge pas ta mise — il bouge l'exposition. Un petit mouvement du geant mange la moitie du petit.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "un trait de prix effleure le GEANT (l'exposition): le geant perd une FINE tranche de son sommet — 5% a peine, imperceptible a son echelle."
+        },
+        {
+          "t": "1.5-3",
+          "do": "la tranche perdue GLISSE et vient se poser sur le PETIT bloc — et a son echelle a lui, elle est ENORME: elle couvre la moitie du bloc, qui se delave de moitie (gris)."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: le trait de prix continue d'osciller; le geant fremit, et le petit TREMBLE en echo AMPLIFIE a chaque oscillation. meme evenement, deux echelles — en continu."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la fine tranche du geant qui, posee sur le petit, en delave la moitie",
+      "turn": "5% du geant = 50% de toi. le mouvement se mesure a l'echelle du geant, la perte a la tienne."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le levier ne multiplie pas les gains et les pertes pareil : il multiplie la VITESSE a laquelle tu atteins ta limite — ton depot.",
+      "note": "diptyque vitesse. meme mouvement de prix, deux leviers.",
+      "beats": [
+        {
+          "t": "0-13",
+          "do": "SPLIT VERTICAL. HAUT 'no leverage': un petit bloc, le trait de prix oscille, le bloc se delave par crans MINUSCULES — a ce rythme il faudrait des heures pour le vider. respiration."
+        },
+        {
+          "t": "0-13",
+          "do": "BAS 'x10': le MEME trait, memes oscillations, mais chaque cran mange 10x — le bloc se vide en QUELQUES oscillations, delave, puis un trait vertical net tombe dessus: fin de partie. la limite atteinte. le haut, lui, oscille encore."
+        }
+      ],
+      "camera": "fixe, split",
+      "dod": "haut: erosion lente continue ; bas: vide en quelques crans + le trait de fin",
+      "turn": "le levier ne change pas le marche. il change la vitesse a laquelle TU es fini."
+    },
+    {
+      "id": "s5",
+      "clarity": "Le levier est une loupe : il rend les petits mouvements enormes. La question n'est pas combien gagner — c'est a quelle vitesse tu peux etre fini.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: retour au petit bloc + son contour geant de S2. le contour SE REDIMENSIONNE sous nos yeux — x10, x5, x2 — comme un curseur qu'on regle. a chaque taille, la tranche de S3 rejoue en fantome: plus le contour est petit, plus la tranche posee sur toi est fine."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le contour s'arrete a une taille MODESTE (x2). la tranche fantome est fine. tenable. c'est un CHOIX, pas une fatalite."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: le petit bloc, son contour choisi, la tranche fine. immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le contour-levier comme un curseur qu'on regle, arrete sur une taille tenable",
+      "fusil_decharge": "le petit bloc de S1 retrouve son ombre — mais cette fois c'est TOI qui choisis la taille de l'ombre."
+    }
+  ],
+  "total": 59.0,
+  "caption": "You put down 100 and it's gone — wiped out by a move you'd barely notice on the chart. That's leverage. It doesn't multiply your money. It multiplies the speed you reach zero.\n\nComment \"LINE\" for the series on how the machine actually works.\n\nTHE LINE — size is a choice.\n\n#trading #trader #leverage #daytrading #forex #riskmanagement #tradingeducation #priceaction #margin #investing",
+  "_rules": {
+    "garde_fou": "JAMAIS 'perdre plus que son depot' (protection solde negatif Europe). Le pire cas montre = le depot vide (le trait de fin), pas une dette.",
+    "fusil": "le petit bloc (S1) decouvre son ombre geante (S2), subit la tranche (S3), et finit par CHOISIR la taille de l'ombre (S5).",
+    "interdits": "aucun chiffre a l'ecran (les rapports se montrent par la TAILLE); bas du cadre vide.",
+    "circuit": "M24 frames DoD d'abord.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · eux/brun #8A5323 (UNIQUEMENT s'il y a un camp adverse — aucun dans cet episode: structures neutres = encre) · perte/gris #474D50",
+    "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
+    "hook_v1_archived": "Here's a riddle. A trader puts one hundred on the table. The market moves five percent against him. He loses five hundred. How do you lose five times what you put down?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  }
+}

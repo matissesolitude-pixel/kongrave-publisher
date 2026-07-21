@@ -1,0 +1,10 @@
+{
+  "id": "L3OPEN",
+  "engine": "l3open",
+  "title": "L3 ouverture — le compte, le levier, la marge parquée",
+  "voice": [
+    "Why do the pros use more leverage than you do?",
+    "Because leverage doesn't decide what you lose. It only decides how much cash sits locked as margin. It takes nothing. It parks something."
+  ],
+  "scenes": [ { "id": "question" }, { "id": "margin" } ]
+}

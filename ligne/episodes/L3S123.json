@@ -1,0 +1,11 @@
+{
+  "id": "L3S123",
+  "engine": "hand-craft",
+  "title": "L3 S1+S2+S3 — validation S3 (la chute)",
+  "voice": [
+    "Why do the pros use more leverage than you?",
+    "Because leverage never takes your money. It parks a piece of it, and lets you carry something much bigger.",
+    "What decides your loss is not the size of what you carry. It's how far it can fall before you stop it."
+  ],
+  "scenes": [ { "id": "s1_naissance" }, { "id": "s2_la_caution" }, { "id": "s3_la_chute" } ]
+}

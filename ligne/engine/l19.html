@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L19 « THE TRADE YOU MISS » — un tracé monte vers une CIBLE, la boule teal (toi) reste en bas, spectatrice (S1). Le compte a deux
+       colonnes : 'taken' pleine et éclairée, 'let go' vide et sombre (S2). Dans la colonne sombre, une brique FANTÔME creuse — le rouge
+       glisse dessus sans accrocher, mais le manque est réel (S3). La brique pulse : une onde POUSSE la boule vers un mauvais trade qui
+       s'effondre, la boule se délave (S4). Décharge : deux briques fantômes — discipline (coche teal) vs peur-puis-chasse (gris) ; la
+       boule se pose près de la discipline (S5). Doctrine : aucun chiffre ; TOI=boule teal (jamais une figure) ; gris=délavage de perte ; bas vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── LE TRACÉ + LA CIBLE (S1) ──
+    const PATH=[[250,1130],[350,1035],[450,1075],[570,895],[690,930],[845,665]];
+    const path=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    function drawPath(el,pts,frac,op){const n=Math.max(2,Math.round(2+(pts.length-2)*clamp(frac,0,1)));const s=pts.slice(0,n).map(p=>p.join(',')).join(' ');el.setAttribute('points',s);setOp(el,op);}
+    const target=mk('circle',{cx:845,cy:665,r:30,fill:'none',stroke:INK,'stroke-width':5,opacity:0});
+    const targetDot=mk('circle',{cx:845,cy:665,r:9,fill:INK,opacity:0});
+
+    // ── LA BOULE (toi) ──
+    const ball=mk('circle',{r:27,fill:YOU,opacity:0});
+    function setBall(x,y,wash,op){ball.setAttribute('cx',x.toFixed(1));ball.setAttribute('cy',y.toFixed(1));ball.setAttribute('fill',mix(YOU,DEAD,wash||0));setOp(ball,op);}
+
+    // ── DEUX COLONNES (S2) ──
+    const LX=400, RX=700, colY0=720, colY1=1150, NB=5, brickH=(colY1-colY0-(NB-1)*14)/NB;
+    const halo=mk('ellipse',{cx:LX,cy:(colY0+colY1)/2,rx:150,ry:250,fill:YOU,'fill-opacity':0.10,opacity:0});
+    const leftBricks=[]; for(let i=0;i<NB;i++)leftBricks.push(mk('rect',{x:LX-90,y:colY0+i*(brickH+14),width:180,height:brickH,rx:5,fill:INK,opacity:0}));
+    const rightFrame=mk('rect',{x:RX-90,y:colY0,width:180,height:colY1-colY0,rx:6,fill:'none',stroke:INK,'stroke-width':4,opacity:0});
+    function hideCols(){setOp(halo,0);for(const b of leftBricks)setOp(b,0);setOp(rightFrame,0);}
+
+    // ── BRIQUES FANTÔMES (S3/S4/S5) : contour pointillé, creuses ──
+    function ghost(){return mk('rect',{width:180,height:brickH,rx:5,fill:'none',stroke:INK,'stroke-width':4,'stroke-dasharray':'12 9',opacity:0});}
+    const ghA=ghost(), ghB=ghost();
+    function putGhost(g,cx,cy,op){g.setAttribute('x',cx-90);g.setAttribute('y',cy-brickH/2);setOp(g,op);}
+    const redWash=mk('rect',{width:180,height:brickH,rx:5,fill:DEAD,'fill-opacity':0.5,opacity:0});     // le "rouge"(gris de perte) qui glisse sans accrocher
+
+    // ── ONDE (S4) + NOUVEAU TRACÉ qui s'effondre ──
+    const wave=mk('circle',{fill:'none',stroke:DEAD,'stroke-width':5,opacity:0});
+    const NEW=[[430,1080],[520,1000],[610,1030],[700,940],[780,980]];
+    const newPath=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+
+    // ── MARQUES S5 : coche teal / croix grise ──
+    const check=mk('path',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const cross=mk('path',{fill:'none',stroke:DEAD,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    function setCheck(cx,cy,op){check.setAttribute('d',`M ${cx-26} ${cy} L ${cx-6} ${cy+22} L ${cx+30} ${cy-24}`);setOp(check,op);}
+    function setCross(cx,cy,op){cross.setAttribute('d',`M ${cx-22} ${cy-22} L ${cx+22} ${cy+22} M ${cx+22} ${cy-22} L ${cx-22} ${cy+22}`);setOp(cross,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['HOW DO YOU LOSE','A TRADE YOU NEVER TOOK'];
+    const FS=72,lineH=98,y0=250,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+110,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':180,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capTop=caption(48),capL=caption(38),capR=caption(38),capB=caption(46);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capTop,capL,capR,capB])setOp(e,0);}
+    function hideMain(){setOp(path,0);setOp(target,0);setOp(targetDot,0);}
+    function hideGhosts(){setOp(ghA,0);setOp(ghB,0);setOp(redWash,0);setOp(wave,0);setOp(newPath,0);setOp(check,0);setOp(cross,0);}
+
+    // ═══ S1 — le tracé monte vers la cible ; la boule teal reste en bas, spectatrice ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideCols(); hideGhosts();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const dr=clamp((u-1.6)/1.2,0,1); drawPath(path,PATH,dr,clamp((u-1.6)/0.4,0,1));
+      const tg=clamp((u-2.6)/0.5,0,1); setOp(target,tg);setOp(targetDot,tg);
+      target.setAttribute('r',(30+4*Math.sin(u*3)).toFixed(1));                 // la cible respire
+      setBall(250,1180+4*Math.sin(u*2),0, clamp((u-1.8)/0.4,0,1));               // la boule immobile, spectatrice
+    }
+    // ═══ S2 — deux colonnes : 'taken' pleine éclairée vs 'let go' vide et sombre ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGhosts(); hideMain();
+      const app=clamp(u/1.0,0,1);
+      for(let i=0;i<NB;i++){const puls=(i===2)?(0.55+0.45*Math.sin(u*3)):1; setOp(leftBricks[i],clamp((u-0.2-i*0.12)/0.4,0,1)*puls);}
+      setOp(rightFrame,clamp((u-0.6)/0.5,0,1));
+      halo.setAttribute('rx',(150+18*Math.sin(u*1.5)).toFixed(1));halo.setAttribute('ry',(250+22*Math.sin(u*1.5)).toFixed(1)); // le projecteur respire (vie continue)
+      setOp(halo,clamp((u-2.0)/0.8,0,1)*(0.7+0.3*Math.sin(u*2)));               // projecteur sur 'taken'
+      putCap(capL,'TAKEN',LX,colY0-30,INK,clamp((u-0.4)/0.5,0,1));
+      putCap(capR,'LET GO',RX,colY0-30,DEAD,clamp((u-0.8)/0.5,0,1));
+      putCap(capB,'ONE COLUMN YOU NEVER OPEN',CX,colY1+80,INK,clamp((u-2.4)/0.6,0,1));
+    }
+    // ═══ S3 — une brique FANTÔME creuse ; le rouge glisse sans accrocher, mais le manque est réel ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMain(); setOp(wave,0);setOp(newPath,0);setOp(check,0);setOp(cross,0);setOp(ghB,0);
+      // colonnes maintenues (contexte)
+      for(const b of leftBricks)setOp(b,0.9); setOp(rightFrame,1); setOp(halo,0);
+      putCap(capL,'TAKEN',LX,colY0-30,INK,0.8); putCap(capR,'LET GO',RX,colY0-30,DEAD,1);
+      const gcy=940; putGhost(ghA,RX,gcy,clamp(u/0.8,0,1));
+      ghA.setAttribute('fill','none'); ghA.setAttribute('stroke',INK);
+      ghA.setAttribute('stroke-dashoffset',(u*20).toFixed(0));                  // le contour vit
+      // le "rouge" (gris de perte) balaie la brique et s'efface (n'accroche pas) — en boucle
+      const cyc=(u*0.5)%1; const rx=lerp(RX-90-180, RX-90, eOut(clamp(cyc/0.6,0,1)));
+      redWash.setAttribute('x',rx.toFixed(1));redWash.setAttribute('y',gcy-brickH/2);setOp(redWash, u>1.6? clamp(1-cyc/0.6,0,1)*0.5 :0);
+      putCap(capB,'NEVER RED — STILL REAL',CX,colY1+80,INK,clamp((u-2.2)/0.6,0,1));
+    }
+    // ═══ S4 — la brique pulse : une onde pousse la boule vers un mauvais trade qui s'effondre ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMain(); hideCols(); setOp(check,0);setOp(cross,0);setOp(ghB,0);setOp(redWash,0);
+      const gcy=900, gcx=RX; const puls=1+0.05*Math.sin(u*10);
+      putGhost(ghA,gcx,gcy,1); ghA.setAttribute('fill','none'); ghA.setAttribute('stroke',INK); ghA.setAttribute('transform',`translate(${gcx*(1-puls)} ${gcy*(1-puls)}) scale(${puls})`); ghA.setAttribute('stroke-dashoffset',(u*24).toFixed(0));
+      // onde : part de la brique vers la boule (en boucle)
+      const wc=(u*0.7)%1; wave.setAttribute('cx',gcx);wave.setAttribute('cy',gcy);wave.setAttribute('r',(20+wc*300).toFixed(0));setOp(wave, u>0.05? (1-wc)*0.6:0.4);
+      // la boule : poussée de sa position vers le nouveau tracé (1.5-3), qui s'effondre (3-4.5)
+      const push=clamp((u-1.5)/1.5,0,1); const bx=lerp(250,NEW[0][0],eInOut(push)), by=lerp(1180,NEW[0][1],eInOut(push));
+      const collapse=clamp((u-3.0)/1.5,0,1);
+      drawPath(newPath,NEW,clamp((u-1.5)/0.8,0,1), clamp((u-1.4)/0.4,0,1)*(1-0.5*collapse));
+      newPath.setAttribute('transform',`translate(0 ${(collapse*160).toFixed(0)})`); newPath.setAttribute('stroke',mix(INK,DEAD,collapse));
+      setBall(bx, by+collapse*160+5*Math.sin(u*2), 0.5*collapse, 1);
+      putCap(capTop,'THE PAIN OF A MISS',CX,180,INK,clamp((u-0.2)/0.5,0,1)*clamp(1-(u-2.6)/0.6,0,1));
+      putCap(capB,'IT MAKES YOU TAKE A WORSE ONE',CX,1330,INK,clamp((u-3.2)/0.6,0,1));
+    }
+    // ═══ S5 — DÉCHARGE : discipline (coche) vs peur-puis-chasse (gris) ; la boule se pose près de la discipline ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMain(); hideCols(); setOp(wave,0);setOp(newPath,0);setOp(redWash,0);
+      const gcy=860, ax=CX-175, bx=CX+175; const app=clamp(u/0.3,0,1);
+      putGhost(ghA,ax,gcy,app); putGhost(ghB,bx,gcy,app); ghA.setAttribute('transform','');
+      // discipline = la brique CHOISIE : remplie teal, pulse doux (encre + vie continue)
+      ghA.setAttribute('fill',YOU); ghA.setAttribute('fill-opacity',(0.12+0.06*Math.sin(u*2)).toFixed(3)); ghA.setAttribute('stroke',YOU);
+      ghB.setAttribute('fill','none'); ghB.setAttribute('stroke',DEAD);
+      ghA.setAttribute('stroke-dashoffset',(u*16).toFixed(0)); ghB.setAttribute('stroke-dashoffset',(-u*16).toFixed(0));
+      setCheck(ax,gcy,clamp((u-0.8)/0.5,0,1)); setCross(bx,gcy,clamp((u-1.1)/0.5,0,1));
+      putCap(capL,'DISCIPLINE',ax,gcy+brickH/2+56,YOU,clamp((u-1.0)/0.5,0,1));
+      putCap(capR,'FEAR, THEN CHASED',bx,gcy+brickH/2+56,DEAD,clamp((u-1.3)/0.5,0,1));
+      // la boule (nette) se pose calmement sous la brique-discipline, respire en continu
+      const settle=clamp((u-1.8)/1.4,0,1); const byx=lerp(CX,ax,eInOut(settle)), byy=lerp(1120,gcy+brickH/2+150,eInOut(settle));
+      setBall(byx, byy+8*Math.sin(u*1.6), 0, 1);
+      putCap(capB,'KNOW WHICH ONE IT WAS',CX,1240,INK,clamp((u-2.4)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

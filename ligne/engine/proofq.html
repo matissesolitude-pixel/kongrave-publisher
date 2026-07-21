@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;--them:#8A5323;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+    .head{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:64px;letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+  </style>
+</head>
+<body>
+  <!-- DEMO : le "?" est SOUS la question, sur sa propre ligne, centré. Son POINT (même couleur = encre)
+       est un objet séparé. Le point se détache, grossit, CHANGE DE COULEUR (rôle) et morphe en avion. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const SC=__SCENES__, TOTAL=__TOTAL__, WORDS=__WORDS__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const INK='#20242A', YOU='#1E5F6E', THEM='#8A5323';
+    function wt(i,nd,fb){nd=String(nd).toLowerCase();for(const w of(WORDS[i]||[])){const t=w.w.toLowerCase().replace(/[^a-z0-9]/g,'');if(t===nd||t.startsWith(nd))return SC[i].s+w.s;}return SC[i].s+(fb==null?0.1:fb)*SC[i].d;}
+    function W(i,tok,fb){return tok==null?SC[i].s+(fb==null?0.1:fb)*SC[i].d:wt(i,tok,fb);}
+    function at(i,f){return SC[i].s+f*SC[i].d;} function vend(i){return SC[i].s+SC[i].v;}
+    function mk(tag,a,cls){const e=document.createElementNS(NS,tag);if(cls)e.setAttribute('class',cls);for(const k in(a||{}))e.setAttribute(k,a[k]);e.setAttribute('opacity','0');SVG.appendChild(e);return e;}
+    function arm(el){const L=el.getTotalLength();el.style.strokeDasharray=L;el.style.strokeDashoffset=L;el.__L=L;}
+    function draw(el,t,dur,e){tl.set(el,{autoAlpha:1},t);tl.fromTo(el,{strokeDashoffset:el.__L},{strokeDashoffset:0,duration:dur,ease:e||'power1.inOut'},t);}
+    function morph(el,fromD,toD,t,dur,ease){const it=flubber.interpolate(fromD,toD,{maxSegmentLength:6});const o={p:0};
+      tl.to(o,{p:1,duration:dur,ease:ease||'power2.inOut',onUpdate:function(){el.setAttribute('d',it(o.p));}},t);return t+dur;}
+    function circleD(cx,cy,r){const k=0.5523*r;return `M ${cx} ${cy-r} C ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy} C ${cx+r} ${cy+k} ${cx+k} ${cy+r} ${cx} ${cy+r} C ${cx-k} ${cy+r} ${cx-r} ${cy+k} ${cx-r} ${cy} C ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r} Z`;}
+    function planeD(cx,cy,s){return `M ${cx} ${cy-95*s} L ${cx+96*s} ${cy+72*s} L ${cx+24*s} ${cy+46*s} L ${cx+15*s} ${cy+100*s} L ${cx} ${cy+72*s} L ${cx-15*s} ${cy+100*s} L ${cx-24*s} ${cy+46*s} L ${cx-96*s} ${cy+72*s} Z`;}
+    const tl=gsap.timeline({paused:true});
+    const CX=540;
+
+    // LE POINT = la balle, un <path> séparé, de la MÊME COULEUR que le "?" (encre). C'est le même objet.
+    const dot=mk('path',{d:circleD(CX,250,15)},null); dot.setAttribute('fill',INK);
+
+    /* ---------- S0 : question (lignes centrées) + "?" SEUL sur sa ligne, EN DESSOUS, centré ---------- */
+    (function question(){
+      const i=0, q='WHERE DOES YOUR MONEY GO';
+      const words=q.split(' ');
+      const FS=64, chW=FS*0.62, GAP=1.7, maxW=930, lineH=110, slot=w=>(w.length+GAP)*chW;
+      const rows=[[]]; let rw=0; words.forEach(w=>{const ww=slot(w);if(rw+ww>maxW&&rows[rows.length-1].length){rows.push([]);rw=0;}rows[rows.length-1].push(w);rw+=ww;});
+      const y0=708; const wEls=[];
+      rows.forEach((ln,li)=>{const ws=ln.map(slot),tot=ws.reduce((a,b)=>a+b,0);let x=CX-tot/2;
+        ln.forEach((w,ci)=>{const cx=x+ws[ci]/2;const e=mk('text',{x:cx,y:y0+li*lineH,'text-anchor':'middle'},'head');e.textContent=w;gsap.set(e,{scale:0.82,transformOrigin:'50% 50%'});wEls.push(e);x+=ws[ci];});});
+      // LE "?" : une COURBE seule, CENTRÉE sur x=540, sur sa PROPRE LIGNE, EN DESSOUS de la question.
+      const tyQ=1040;   // bas du "?" (là où est le point) — bien sous "MONEY GO" (~818)
+      const hook=mk('path',{d:`M ${CX-44} ${tyQ-92} C ${CX-44} ${tyQ-142} ${CX+50} ${tyQ-142} ${CX+50} ${tyQ-96} C ${CX+50} ${tyQ-62} ${CX+4} ${tyQ-56} ${CX} ${tyQ-30}`},null);
+      hook.setAttribute('fill','none'); hook.setAttribute('stroke',INK); hook.setAttribute('stroke-width','30'); hook.setAttribute('stroke-linecap','round'); hook.setAttribute('stroke-linejoin','round'); arm(hook);
+      window.__hook=hook; window.__tyQ=tyQ;
+      const vw=WORDS[i]||[];
+      wEls.forEach((e,k)=>{const t=vw[k]!=null?SC[i].s+vw[k].s:at(i,0.05+k*0.1);tl.to(e,{autoAlpha:1,scale:1,duration:0.16,ease:'back.out(2)'},t);});
+      // la courbe du "?" se trace sur le dernier mot ; le POINT (encre) apparaît dessous, centré, séparé
+      const tQ=W(i,'go',0.7);
+      draw(hook,tQ,0.42,'power2.out');
+      tl.set(dot,{attr:{d:circleD(CX,tyQ,15)},autoAlpha:1},tQ+0.3);
+    })();
+
+    /* ---------- S1 : le point se DÉTACHE, grossit, CHANGE DE RÔLE (couleur) et morphe en avion ---------- */
+    (function separate(){
+      const i=1; const hook=window.__hook, tyQ=window.__tyQ;
+      const t0=at(i,0.04);
+      // la question s'efface ; la COURBE du "?" s'efface ; LE POINT (encre) RESTE
+      SVG.querySelectorAll('text.head').forEach((e,k)=>tl.to(e,{autoAlpha:0,scale:0.15,duration:0.3,ease:'power2.in'},t0+0.01*k));
+      tl.to(hook,{autoAlpha:0,duration:0.3,ease:'power2.in'},t0+0.05);
+      // le point se DÉTACHE : il descend au centre et GROSSIT (toujours encre — il est encore "le point")
+      tl.to(dot,{attr:{d:circleD(CX,900,15)},duration:0.4,ease:'power2.inOut'},t0);
+      tl.to(dot,{attr:{d:circleD(CX,900,34)},duration:0.45,ease:'back.out(1.4)'},t0+0.42);
+      // CHANGEMENT DE RÔLE = CHANGEMENT DE COULEUR (progressif) : il devient TON argent -> teal
+      const tRole=W(i,'moves',0.42);
+      tl.to(dot,{fill:YOU,duration:0.5,ease:'power1.inOut'},tRole);
+      // ...puis il MORPHE en avion (ton argent s'envole) et s'envole
+      const tPlane=tRole+0.35;
+      morph(dot,circleD(CX,900,34),planeD(CX,900,1),tPlane,0.55,'power3.inOut');
+      const tFly=tPlane+0.62;
+      tl.to(dot,{y:-1250,x:150,rotation:20,transformOrigin:'50% 50%',duration:vend(i)-tFly,ease:'power2.in'},tFly);
+    })();
+
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

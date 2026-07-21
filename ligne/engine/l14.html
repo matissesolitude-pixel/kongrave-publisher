@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L14 « THE SIZE IS THE RISK » — deux jauges JUMELLES (S1) qui PIVOTENT pour révéler leur PROFONDEUR = la taille de position :
+       tranche fine (A) vs bloc épais 10× (B) derrière des façades identiques (S2). Même stop touché → éraflure (S3) vs entaille (S4)
+       sur le compte. Règle : distance × taille (S5), et une seule des deux dimensions est à toi. Boîtes ISOMÉTRIQUES : façade = la
+       distance (identique) ; profondeur = la taille (la vraie variable). Doctrine : aucun chiffre (rapports par l'ÉPAISSEUR),
+       aucune couleur chaude (perte = GRIS), bas du cadre vide, structures neutres = encre. §perf : les 2 jauges entrent frame 1. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+
+    // ── BOÎTE ISOMÉTRIQUE (façade + top + side) : façade=distance, profondeur=taille ──
+    const IDX=0.72, IDY=0.46;   // vecteur iso (up-right)
+    function newBox(){ return { side:mk('polygon',{fill:YOU,'fill-opacity':0.62,stroke:INK,'stroke-width':2,opacity:0}), top:mk('polygon',{fill:YOU,'fill-opacity':0.34,stroke:INK,'stroke-width':2,opacity:0}), front:mk('rect',{fill:YOU,'fill-opacity':0.90,stroke:INK,'stroke-width':3,opacity:0}) }; }
+    function drawBox(b,cx,by,w,h,depth,ap,frontOp){
+      const dx=depth*IDX*clamp(ap,0,1), dy=depth*IDY*clamp(ap,0,1);
+      const x0=cx-w/2, y0=by-h;
+      b.front.setAttribute('x',x0); b.front.setAttribute('y',y0); b.front.setAttribute('width',w); b.front.setAttribute('height',h); b.front.setAttribute('opacity',frontOp.toFixed(3));
+      const showD=(dx>1)?1:0;
+      b.top.setAttribute('points',`${x0},${y0} ${(x0+dx).toFixed(1)},${(y0-dy).toFixed(1)} ${(x0+w+dx).toFixed(1)},${(y0-dy).toFixed(1)} ${x0+w},${y0}`); b.top.setAttribute('opacity',(showD*frontOp).toFixed(3));
+      b.side.setAttribute('points',`${x0+w},${y0} ${(x0+w+dx).toFixed(1)},${(y0-dy).toFixed(1)} ${(x0+w+dx).toFixed(1)},${(y0-dy+h).toFixed(1)} ${x0+w},${by}`); b.side.setAttribute('opacity',(showD*frontOp).toFixed(3));
+    }
+    function hideBox(b){ b.front.setAttribute('opacity',0); b.top.setAttribute('opacity',0); b.side.setAttribute('opacity',0); }
+    const boxA=newBox(), boxB=newBox();
+
+    // ── CAP (stop) + prix (marché indifférent, oscille en continu) + distance ──
+    const capA=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const capB=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const dist=mk('line',{stroke:YOU,'stroke-width':10,'stroke-linecap':'round',opacity:0,'stroke-dasharray':'2 16'});
+    const price=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    function setLine(el,x1,x2,y,op){el.setAttribute('x1',x1);el.setAttribute('x2',x2);el.setAttribute('y1',y.toFixed(1));el.setAttribute('y2',y.toFixed(1));el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+
+    // ── COMPTES (barre = compte ; une lamelle/tranche se détache en gris) ──
+    function newAcct(){ return { bar:mk('rect',{fill:YOU,'fill-opacity':0.9,stroke:INK,'stroke-width':2,opacity:0}), loss:mk('rect',{fill:DEAD,stroke:INK,'stroke-width':2,opacity:0}) }; }
+    const acA=newAcct(), acB=newAcct();
+    const ACT=770, ACB=1210, ACH=ACB-ACT, ACW=80;
+    function drawAcct(a,cx,fLoss,ap){       // compte = barre pleine hauteur ; la perte est un bandeau GRIS attaché en HAUT (comparable d'une barre à l'autre)
+      const x=cx-ACW/2; const lossH=ACH*fLoss; const keepH=ACH-lossH;
+      a.bar.setAttribute('x',x); a.bar.setAttribute('y',(ACT+lossH).toFixed(1)); a.bar.setAttribute('width',ACW); a.bar.setAttribute('height',keepH.toFixed(1)); a.bar.setAttribute('opacity',ap.toFixed(3));
+      a.loss.setAttribute('x',x); a.loss.setAttribute('y',ACT); a.loss.setAttribute('width',ACW); a.loss.setAttribute('height',lossH.toFixed(1)); a.loss.setAttribute('opacity',((lossH>1?1:0)*ap).toFixed(3));
+    }
+    function hideAcct(a){ a.bar.setAttribute('opacity',0); a.loss.setAttribute('opacity',0); }
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['SAME TRADE. SAME STOP.','WHY DID ONLY ONE BLEED'];
+    const FS=76,lineH=98,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+140,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)e.setAttribute('opacity',0);qMark.setAttribute('opacity',0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':40,'letter-spacing':'1.5',opacity:0});}
+    const capL=caption(),capR=caption(),capTop=caption();
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function hideCaps(){capL.setAttribute('opacity',0);capR.setAttribute('opacity',0);capTop.setAttribute('opacity',0);}
+
+    const AX=330, BX=750, BY=1210, FW=150, FH=430, DA=30, DB=170;
+    function breath(u,ph){return 1+0.014*Math.sin(u*1.7+ph);}   // respiration synchrone
+    function priceOsc(u,cy,amp){return cy+amp*Math.sin(u*1.5);} // marché indifférent
+
+    // ═══ S1 — deux jauges JUMELLES parfaites, respiration synchrone, la différence est invisible ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAcct(acA); hideAcct(acB); dist.setAttribute('opacity',0);
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // §perf : les deux jauges (façades identiques) entrent frame 1
+      const a=clamp(u/1.0,0,1); const br=breath(u,0);
+      drawBox(boxA,AX,BY,FW,FH*br,DA,0,a); drawBox(boxB,BX,BY,FW,FH*br,DB,0,a);   // ap=0 : profondeur cachée -> jumelles
+      setLine(capA,AX-FW/2-14,AX+FW/2+14,BY-FH-14,a*0.9); setLine(capB,BX-FW/2-14,BX+FW/2+14,BY-FH-14,a*0.9);
+      if(u>1.6){ const py=priceOsc(u,BY-FH*0.5,50); setLine(price, 220, 860, py, 0.8);} else price.setAttribute('opacity',0);
+    }
+    // ═══ S2 — distance identique surlignée, puis PIVOT : profondeurs opposées révélées (fine vs épaisse) ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideAcct(acA); hideAcct(acB);
+      const br=breath(u,0);
+      // distance entrée->stop surlignée (identique des deux côtés) — sur A d'abord, portée aux deux
+      const dop=clamp((u-0.2)/0.6,0,1)*clamp(1-(u-2.0)/0.6,0,1);
+      dist.setAttribute('x1',AX); dist.setAttribute('x2',AX); dist.setAttribute('y1',BY-FH+20); dist.setAttribute('y2',BY-40); dist.setAttribute('opacity',(dop*0.9).toFixed(3));
+      putCap(capTop,'THE DISTANCE — SAME FOR BOTH',CX,700,INK,dop);
+      // PIVOT : ap 0->1 (révèle la profondeur) à partir de u=2
+      const piv=eOut(clamp((u-2.0)/1.5,0,1));
+      drawBox(boxA,AX,BY,FW,FH*br,DA,piv,1); drawBox(boxB,BX,BY,FW,FH*br,DB,piv,1);
+      setLine(capA,AX-FW/2-14,AX+FW/2+14,BY-FH-14,0.9); setLine(capB,BX-FW/2-14,BX+FW/2+14,BY-FH-14,0.9);
+      putCap(capL,'SMALL SIZE',AX,BY+70,INK,(u-2.6)/0.5); putCap(capR,'BIG SIZE',BX+DB*IDX*0.5,BY+70,INK,(u-2.6)/0.5);
+      // marché indifférent : le prix oscille devant les deux façades
+      const py=priceOsc(u,BY-FH*0.5,55); setLine(price, 200, 900, py, 0.8);
+    }
+    // ═══ S3 — A : le stop touche, une LAMELLE fine part, le compte reste quasi intact (98%) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBox(boxB); capB.setAttribute('opacity',0); dist.setAttribute('opacity',0); hideAcct(acB);
+      const br=breath(u,0);
+      drawBox(boxA,AX,BY,FW,FH*br,DA,1,1); setLine(capA,AX-FW/2-14,AX+FW/2+14,BY-FH-14,0.9);
+      // le prix descend jusqu'au cap -> SNAP (u~1.5), puis le marché continue d'osciller
+      let py; if(u<1.5){ py=lerp(BY-FH*0.5, BY-FH-14, eIn(clamp(u/1.5,0,1))); } else { py=priceOsc(u-1.5,BY-FH*0.35,40); }
+      setLine(price, AX-FW/2-40, AX+FW/2+40, py, 0.85);
+      // compte A à droite : bandeau gris FIN (2%) — une éraflure. le compte reste quasi intact.
+      const hit=clamp((u-1.5)/0.4,0,1);
+      drawAcct(acA, 730, 0.02*hit, 1);
+      putCap(capL,'SMALL SIZE',AX,BY+70,INK,1);                              // étiquette boîte (bas gauche)
+      putCap(capR,'HIS ACCOUNT — A SCRATCH',730,ACT-30,DEAD,(u-1.8)/0.5);    // étiquette compte (au-dessus, droite)
+    }
+    // ═══ S4 — B : MÊME stop, MÊME distance — une TRANCHE ÉPAISSE part (10%), le compte ACCUSE. côte à côte : éraflure vs entaille ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); dist.setAttribute('opacity',0); hideBox(boxA); capA.setAttribute('opacity',0);
+      const br=breath(u,0);
+      // focus B (bloc épais) à gauche ; il s'efface pendant la comparaison
+      const boxFade=clamp(1-(u-3.5)/1.0,0,1);
+      if(boxFade>0.02){ drawBox(boxB,AX,BY,FW,FH*br,DB,1,boxFade); setLine(capB,AX-FW/2-14,AX+FW/2+14,BY-FH-14,0.9*boxFade); } else { hideBox(boxB); capB.setAttribute('opacity',0); }
+      // le prix descend -> SNAP (identique à A), puis oscille
+      let py; if(u<1.5){ py=lerp(BY-FH*0.5, BY-FH-14, eIn(clamp(u/1.5,0,1))); } else { py=priceOsc(u-1.5,BY-FH*0.35,40); }
+      setLine(price, AX-FW/2-40, AX+FW/2+DB*IDX+40, py, 0.85*Math.max(boxFade,0.4));
+      // compte B : bandeau gris ÉPAIS (10%), impact (settle M22)
+      const hit=clamp((u-1.5)/0.4,0,1);
+      const settle=(u>1.5&&u<2.3)?(-14*Math.exp(-5*(u-1.5))*Math.sin(22*(u-1.5))):0;
+      acB.bar.setAttribute('transform',`translate(0 ${settle.toFixed(1)})`); acB.loss.setAttribute('transform',`translate(0 ${settle.toFixed(1)})`);
+      drawAcct(acB, 720, 0.10*hit, 1);
+      putCap(capR,'B: GASH',720,ACT-30,DEAD,(u-1.9)/0.5);
+      // tail : le compte A (éraflure) glisse à côté — MÊME trade, la profondeur a tout décidé
+      const cmp=clamp((u-3.5)/1.0,0,1);
+      if(cmp>0){ drawAcct(acA, 430, 0.02, cmp); putCap(capL,'A: SCRATCH',430,ACT-30,INK,cmp); }
+      else hideAcct(acA);
+    }
+    // ═══ S5 — DÉCHARGE : une jauge en 3/4 montre distance ET profondeur ; le curseur de taille coulisse -> MODÉRÉE. Tenue. ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBox(boxB); capB.setAttribute('opacity',0); hideAcct(acA); hideAcct(acB);
+      acB.bar.setAttribute('transform','translate(0 0)');
+      const br=breath(u,0);
+      // la profondeur coulisse : épaisse -> fine -> s'arrête sur modérée ; la façade (distance) ne bouge pas
+      let depth; if(u<2.0){ depth=DB; } else if(u<3.5){ const k=eOut(clamp((u-2.0)/1.5,0,1)); depth=lerp(DB,DA,k); } else { const k=clamp((u-3.5)/0.6,0,1); depth=lerp(DA,95,k); }
+      const piv=0.78;   // vue 3/4 : les deux dimensions visibles ensemble
+      const BXX=470; drawBox(boxA,BXX,BY,FW,FH*br,depth,piv,1); setLine(capA,BXX-FW/2-14,BXX+FW/2+14,BY-FH-14,0.9);
+      // surlignage distance (façade) — pointillé vertical
+      const dA=clamp((u-0.3)/0.5,0,1);
+      dist.setAttribute('x1',BXX); dist.setAttribute('x2',BXX); dist.setAttribute('y1',BY-FH+20); dist.setAttribute('y2',BY-40); dist.setAttribute('opacity',(dA*0.8).toFixed(3));
+      putCap(capTop,'DISTANCE × SIZE = YOUR REAL RISK',CX,700,INK,clamp((u-0.4)/0.6,0,1));
+      // façade = distance (le marché la fixe) — à gauche ; profondeur = taille (toi) — à droite
+      putCap(capL,'MARKET SETS THIS',300,BY+70,INK,clamp((u-1.0)/0.6,0,1));
+      putCap(capR,'YOU SET THIS',BXX+FW/2+depth*IDX*0.5+120,850,YOU,clamp((u-1.8)/0.6,0,1));
+      // marché : prix en bas de façade (image finale VIVANTE), loin des étiquettes
+      const py=priceOsc(u,BY-95,24); setLine(price, BXX-FW/2-40, BXX+FW/2+40, py, 0.75);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

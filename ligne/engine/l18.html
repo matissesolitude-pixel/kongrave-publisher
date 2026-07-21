@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L18 « THE CANDLE IS A STORY, COMPRESSED » — une bougie encre semble un verdict simple (S1, elle frémit). Elle se DÉPLIE
+       horizontalement en une fenêtre de temps : dedans, un trajet de prix zigzague violemment ; la bougie ne garde que 4 faits —
+       OPEN, CLOSE, HIGH, LOW (S2). Repli : la bougie paraît CALME ; re-dépli : elle cache un plongeon + une reprise (S3). La MÈCHE :
+       le prix charge le long de la mèche puis rend tout le terrain ; courte vs longue mèche (S4). Décharge : la bougie transparente
+       montre son histoire — corps = la fin, mèches = la lutte ; la ligne droite imaginée est barrée, elle n'a jamais existé (S5).
+       Doctrine : PAS DE ROUGE NI DE VERT (bougie en ENCRE, hausse/baisse par position open/close) ; aucun chiffre ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LA FENÊTRE DE TEMPS + LE TRAJET RÉEL (zigzag) ──  la bougie ne garde que 4 faits de ce trajet
+    const WX0=180, WX1=900, WYt=610, WYb=1170;
+    // vertices : (fx across, lv niveau 0=bas 1=haut).  OPEN=0, CLOSE=dernier, HIGH=max lv, LOW=min lv
+    const VERTS=[[0.00,0.40],[0.12,0.60],[0.22,0.32],[0.34,0.80],[0.46,0.22],[0.58,0.95],[0.70,0.52],[0.80,0.15],[0.90,0.72],[1.00,0.66]];
+    const NV=VERTS.length, IOPEN=0, ICLOSE=NV-1;
+    let IH=0,IL=0; VERTS.forEach((v,i)=>{if(v[1]>VERTS[IH][1])IH=i; if(v[1]<VERTS[IL][1])IL=i;});
+    const lvlY=lv=>lerp(WYb,WYt,lv);
+    const vx=(i,uf)=>lerp(CX, lerp(WX0,WX1,VERTS[i][0]), uf);
+    const vy=i=>lvlY(VERTS[i][1]);
+    const BODYW=120;
+
+    // le trajet zigzaguant (déplié selon uf)
+    const zig=mk('polyline',{fill:'none',stroke:INK,'stroke-width':5,'stroke-linejoin':'round',opacity:0});
+    function drawZig(uf,op){const pts=[];for(let i=0;i<NV;i++)pts.push(vx(i,uf).toFixed(1)+','+vy(i).toFixed(1));zig.setAttribute('points',pts.join(' '));setOp(zig,op);}
+    // point voyageur (le trajet rejoue en boucle) : position le long de la polyline pour param p∈[0,1]
+    const travel=mk('circle',{r:11,fill:YOU,opacity:0});
+    function setTravel(p,uf,op){const s=clamp(p,0,1)*(NV-1);const i=Math.min(NV-2,Math.floor(s)),f=s-i;
+      const x=lerp(vx(i,uf),vx(i+1,uf),f),y=lerp(vy(i),vy(i+1),f);travel.setAttribute('cx',x.toFixed(1));travel.setAttribute('cy',y.toFixed(1));setOp(travel,op);}
+
+    // ── LA BOUGIE (corps + mèches) à CX — S1 pleine, S3 calme, S5 transparente ──
+    const body=mk('rect',{x:CX-BODYW/2,rx:3,fill:INK,stroke:INK,'stroke-width':3,opacity:0});
+    const wickU=mk('line',{x1:CX,x2:CX,stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const wickL=mk('line',{x1:CX,x2:CX,stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const openY=vy(IOPEN), closeY=vy(ICLOSE), highY=vy(IH), lowY=vy(IL);
+    const bodyTop=Math.min(openY,closeY), bodyBot=Math.max(openY,closeY);
+    function setCandle(op,filled,jit){const jx=jit||0;
+      body.setAttribute('x',CX-BODYW/2+jx);body.setAttribute('y',bodyTop);body.setAttribute('width',BODYW);body.setAttribute('height',bodyBot-bodyTop);
+      body.setAttribute('fill',filled?INK:'none');body.setAttribute('fill-opacity',filled?1:0);setOp(body,op);
+      wickU.setAttribute('x1',CX+jx);wickU.setAttribute('x2',CX+jx);wickU.setAttribute('y1',bodyTop);wickU.setAttribute('y2',highY);setOp(wickU,op);
+      wickL.setAttribute('x1',CX+jx);wickL.setAttribute('x2',CX+jx);wickL.setAttribute('y1',bodyBot);wickL.setAttribute('y2',lowY);setOp(wickL,op);}
+    function hideCandle(){setOp(body,0);setOp(wickU,0);setOp(wickL,0);}
+
+    // ── LES 4 FAITS (OPEN/CLOSE/HIGH/LOW) — allumés en S2 ──
+    const KP=[IOPEN,ICLOSE,IH,IL], KLAB=['OPEN','CLOSE','HIGH','LOW'];
+    const kp=KP.map(()=>mk('circle',{r:13,fill:YOU,stroke:PAPER,'stroke-width':3,opacity:0}));
+    const klbl=KLAB.map(s=>{const e=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':34,'letter-spacing':'1',fill:INK,opacity:0});e.textContent=s;return e;});
+    function setKP(uf,op){for(let k=0;k<4;k++){const i=KP[k],x=vx(i,uf),y=vy(i);kp[k].setAttribute('cx',x.toFixed(1));kp[k].setAttribute('cy',y.toFixed(1));setOp(kp[k],op);
+      const above=(k>=2? (k===2):(y<900)); const ly=above? y-30:y+46; klbl[k].setAttribute('x',x.toFixed(1));klbl[k].setAttribute('y',ly.toFixed(1));setOp(klbl[k],op);}}
+    function hideKP(){for(let k=0;k<4;k++){setOp(kp[k],0);setOp(klbl[k],0);}}
+
+    // ── S4 : la MÈCHE (zoom) + comparaison courte/longue ──
+    const zWick=mk('line',{x1:CX,x2:CX,stroke:INK,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const zBase=mk('rect',{x:CX-90,width:180,height:70,rx:4,fill:INK,opacity:0});   // le corps (base de la charge)
+    const zDot=mk('circle',{r:16,fill:YOU,opacity:0});
+    // deux mini-bougies : courte mèche (gauche) vs longue mèche (droite)
+    function mini(){return {b:mk('rect',{width:70,rx:3,fill:INK,opacity:0}),wu:mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}),wl:mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0})};}
+    const miniS=mini(), miniL=mini();
+    function putMini(m,cx,cyBody,bodyH,wickUp,wickDn,op){const bt=cyBody-bodyH/2,bb=cyBody+bodyH/2;
+      m.b.setAttribute('x',cx-35);m.b.setAttribute('y',bt);m.b.setAttribute('height',bodyH);setOp(m.b,op);
+      m.wu.setAttribute('x1',cx);m.wu.setAttribute('x2',cx);m.wu.setAttribute('y1',bt);m.wu.setAttribute('y2',bt-wickUp);setOp(m.wu,op);
+      m.wl.setAttribute('x1',cx);m.wl.setAttribute('x2',cx);m.wl.setAttribute('y1',bb);m.wl.setAttribute('y2',bb+wickDn);setOp(m.wl,op);}
+    function hideS4(){setOp(zWick,0);setOp(zBase,0);setOp(zDot,0);for(const m of [miniS,miniL]){setOp(m.b,0);setOp(m.wu,0);setOp(m.wl,0);}}
+
+    // ── S5 : la ligne droite imaginée (barrée) + surlignages corps/mèches ──
+    const ghost=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-dasharray':'12 12','stroke-linecap':'round',opacity:0});
+    const ghostX=mk('line',{stroke:INK,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const bandBody=mk('rect',{fill:YOU,'fill-opacity':0.16,opacity:0});
+    const bandUp=mk('rect',{fill:DEAD,'fill-opacity':0.12,opacity:0}),bandDn=mk('rect',{fill:DEAD,'fill-opacity':0.12,opacity:0});
+    function hideS5(){setOp(ghost,0);setOp(ghostX,0);setOp(bandBody,0);setOp(bandUp,0);setOp(bandDn,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 (pas de flash blanc) ──
+    const QLINES=['WHAT IS A CANDLE','HIDING FROM YOU'];
+    const FS=82,lineH=104,y0=250,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+110,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capTop=caption(48),capL=caption(38),capR=caption(38),capB=caption(46);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capTop,capL,capR,capB])setOp(e,0);}
+
+    // ═══ S1 — une bougie encre simple (un « verdict »), elle frémit légèrement ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideKP(); setOp(zig,0); setOp(travel,0); hideS4(); hideS5();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // la bougie se dessine (mèches puis corps), puis frémit
+      const dr=clamp((u-1.6)/1.0,0,1); const jit=u>2.6?1.6*Math.sin(u*9):0;
+      setCandle(clamp((u-1.6)/0.4,0,1), true, jit);
+      // mèches qui poussent depuis le corps
+      wickU.setAttribute('y2',lerp(bodyTop,highY,dr).toFixed(1)); wickL.setAttribute('y2',lerp(bodyBot,lowY,dr).toFixed(1));
+    }
+    // ═══ S2 — la bougie se DÉPLIE : un trajet zigzaguant, la bougie n'en garde que 4 faits ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS4(); hideS5();
+      const uf=eInOut(clamp(u/2.0,0,1));                 // dépli 0->1
+      drawZig(uf, clamp((u-0.3)/1.0,0,1));
+      setCandle(clamp(1-u/1.2,0,1)*0.9, true, 0);        // la bougie pleine s'efface pendant le dépli
+      // 4 points s'allument (2-3.5)
+      const kpOp=clamp((u-2.0)/0.6,0,1);
+      if(uf>0.02)setKP(uf,kpOp); else hideKP();
+      // le trajet rejoue en boucle lente
+      setTravel((u*0.32)%1, uf, clamp((u-0.6)/0.5,0,1));
+      putCap(capTop,'A BLOCK OF TIME, SQUEEZED',CX,150,INK,clamp((u-0.3)/0.6,0,1)*clamp(1-(u-2.0)/0.8,0,1));
+      putCap(capB,'IT KEEPS ONLY FOUR FACTS',CX,WYb+90,INK,clamp((u-2.4)/0.6,0,1));
+    }
+    // ═══ S3 — repli : bougie CALME ; re-dépli : elle cache un plongeon + une reprise ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideKP(); hideS4(); hideS5();
+      // 0-2 : repli complet (le zigzag disparaît, il ne reste que le corps calme)
+      let uf;
+      if(u<2.0){ uf=eInOut(clamp(1-u/2.0,0,1)); }        // 1 -> 0
+      else { uf=0.34+0.30*(0.5-0.5*Math.cos((u-2.0)*1.6)); } // re-dépli partiel qui palpite (drame intérieur)
+      drawZig(uf, u<1.4? clamp(1-u/1.4,0,1) : clamp((u-2.0)/0.8,0,1)*0.9);
+      setCandle(clamp(u/1.2,0,1), true, 0);               // la bougie calme reste visible
+      setTravel((u*0.4)%1, uf, u<1.6?0:clamp((u-2.2)/0.6,0,1));
+      putCap(capTop,'CALM ON THE SURFACE',CX,150,INK,clamp((u-0.4)/0.6,0,1)*clamp(1-(u-1.8)/0.6,0,1));
+      putCap(capB,'THE BODY HIDES THE FIGHT',CX,WYb+90,INK,clamp((u-2.4)/0.6,0,1));
+    }
+    // ═══ S4 — la MÈCHE : le prix charge le long, puis rend tout le terrain. courte vs longue mèche ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideKP(); setOp(zig,0); setOp(travel,0); hideCandle(); hideS5();
+      // gros plan (0-3.5) : un corps + une longue mèche ; le prix monte le long puis redescend au corps
+      const zoomOp=clamp(u/0.6,0,1)*clamp(1-(u-3.6)/0.6,0,1);
+      const bodyCy=980, wickTop=560; zBase.setAttribute('y',bodyCy-35); setOp(zBase,zoomOp);
+      zWick.setAttribute('y1',bodyCy-35);zWick.setAttribute('y2',wickTop);setOp(zWick,zoomOp);
+      const cyc=(u*0.5)%1; const climb=cyc<0.5? eOut(cyc/0.5):1-eIn((cyc-0.5)/0.5);  // monte (charge) puis retombe (perd le terrain)
+      const dy=lerp(bodyCy-35, wickTop, climb); zDot.setAttribute('cx',CX);zDot.setAttribute('cy',dy.toFixed(1));setOp(zDot,zoomOp);
+      putCap(capTop,'GROUND TAKEN, THEN LOST',CX,360,INK,clamp((u-0.5)/0.6,0,1)*clamp(1-(u-3.4)/0.6,0,1));
+      // comparaison (3.5-fin) : courte mèche vs longue mèche
+      const cmp=clamp((u-3.6)/0.6,0,1);
+      const bob=6*Math.sin(u*2);
+      putMini(miniS, CX-190, 900+bob, 120, 40, 40, cmp);          // peu de combat
+      putMini(miniL, CX+190, 900-bob, 120, 250, 60, cmp);         // grosse charge repoussée
+      putCap(capL,'SHORT',CX-190,1120,INK,cmp); putCap(capR,'LONG',CX+190,1120,INK,cmp);
+      putCap(capB,'A WICK IS NOT DECORATION',CX,1230,INK,clamp((u-4.2)/0.6,0,1));
+    }
+    // ═══ S5 — DÉCHARGE : bougie transparente = son histoire. corps=la fin, mèches=la lutte ; la ligne droite imaginée, barrée ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideKP(); hideS4(); hideCandle();
+      const uf=0.62;                                       // dépliée : on voit l'histoire
+      drawZig(uf, 1);
+      setTravel((u*0.3)%1, uf, 1);
+      // surlignages : corps (la fin) = teal ; mèches (la lutte) = gris
+      const x0=vx(0,uf)-10, x1=vx(NV-1,uf)+10, ww=x1-x0;
+      const showB=clamp((u-0.6)/0.8,0,1);
+      bandBody.setAttribute('x',x0);bandBody.setAttribute('width',ww);bandBody.setAttribute('y',bodyTop);bandBody.setAttribute('height',bodyBot-bodyTop);setOp(bandBody,showB);
+      bandUp.setAttribute('x',x0);bandUp.setAttribute('width',ww);bandUp.setAttribute('y',highY);bandUp.setAttribute('height',bodyTop-highY);setOp(bandUp,showB*0.9);
+      bandDn.setAttribute('x',x0);bandDn.setAttribute('width',ww);bandDn.setAttribute('y',bodyBot);bandDn.setAttribute('height',lowY-bodyBot);setOp(bandDn,showB*0.9);
+      putCap(capL,'THE STRUGGLE',x0+70,highY-24,DEAD,showB);
+      putCap(capR,'THE ENDING',x1-40,bodyBot+52,YOU,showB);
+      // la ligne droite imaginée (open->close direct), puis barrée
+      const gf=clamp((u-2.0)/0.6,0,1); ghost.setAttribute('x1',vx(0,uf));ghost.setAttribute('y1',openY);ghost.setAttribute('x2',vx(NV-1,uf));ghost.setAttribute('y2',closeY);setOp(ghost,gf);
+      const xf=clamp((u-3.0)/0.5,0,1); const mx=(vx(0,uf)+vx(NV-1,uf))/2,my=(openY+closeY)/2;
+      ghostX.setAttribute('x1',mx-70);ghostX.setAttribute('y1',my+50);ghostX.setAttribute('x2',mx+70);ghostX.setAttribute('y2',my-50);setOp(ghostX,xf*gf);
+      putCap(capTop,'A COMPRESSED STORY',CX,150,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capB,'THE STRAIGHT LINE NEVER HAPPENED',CX,WYb+90,INK,xf);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

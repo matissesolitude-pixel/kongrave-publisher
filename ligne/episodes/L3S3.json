@@ -1,0 +1,9 @@
+{
+  "id": "L3S3",
+  "engine": "l3s3",
+  "title": "L3 S3 — les deux nombres (un fermé, un ouvert)",
+  "voice": [
+    "So leverage sets one number: what it holds. Your stop sets the other: what it costs. Two numbers. Two hands. The market touches neither."
+  ],
+  "scenes": [ { "id": "les_deux_nombres" } ]
+}

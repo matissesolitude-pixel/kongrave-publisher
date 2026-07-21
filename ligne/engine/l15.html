@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L15 « THE HOLE IN THE PRICE » — échelle de prix (barreaux = niveaux). Un point grimpe barreau par barreau (S1), puis BONDIT
+       en sautant 3 barreaux : un TROU se forme, une bande de prix jamais échangée (S2). Un cadre le nomme « gap » et une flèche
+       « must fill » est BARRÉE — pas une promesse (S3). Diptyque : petit trou vs grand trou = mesure de la vitesse/imbalance (S4).
+       Deux issues fantômes (comble / ne comble pas), puis le trou seul : « a mark left by speed » (S5). Doctrine : le gap est un
+       STATUT DE CADRE, jamais une prophétie ; aucun chiffre ; imbalance montrée par la TAILLE ; bas du cadre vide. §perf : l'échelle
+       + le point grimpent dès la 1re seconde. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+
+    // ── ÉCHELLE DE PRIX ── barreaux horizontaux = niveaux ; rails fins ; le trou = barreaux 5-6-7 absents
+    const N=12, YB=1250, YT=560, STEP=(YB-YT)/(N-1), RUNGW=176, RX=CX-RUNGW/2;
+    const rungY=i=>YB-i*STEP;
+    const HOLE=[5,6,7];
+    const rungs=[]; for(let i=0;i<N;i++) rungs.push(mk('line',{x1:RX,x2:RX+RUNGW,y1:rungY(i),y2:rungY(i),stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}));
+    const railL=mk('line',{x1:RX,x2:RX,y1:YB,y2:YT,stroke:INK,'stroke-width':3,opacity:0}), railR=mk('line',{x1:RX+RUNGW,x2:RX+RUNGW,y1:YB,y2:YT,stroke:INK,'stroke-width':3,opacity:0});
+    const pt=mk('circle',{r:17,fill:YOU,opacity:0});
+    function setPt(x,y,op){pt.setAttribute('cx',x.toFixed(1));pt.setAttribute('cy',y.toFixed(1));pt.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function railsOp(op){railL.setAttribute('opacity',(op*0.28).toFixed(3));railR.setAttribute('opacity',(op*0.28).toFixed(3));}
+    function showRungs(mask,op){for(let i=0;i<N;i++)rungs[i].setAttribute('opacity',((mask(i)?1:0)*op).toFixed(3));}
+
+    // ── S3 : cadre autour du trou + flèche « must fill » (barrée) ──
+    const frame=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,'stroke-dasharray':'14 10',opacity:0,rx:6});
+    const arrow=mk('path',{fill:'none',stroke:DEAD,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const arrowX=mk('line',{stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // la barre qui annule « must fill »
+
+    // ── S4 : diptyque — deux trous (petit vs grand) + surtension proportionnelle ──
+    function newHole(){ return { rA:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}), rB:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}), band:mk('rect',{fill:'none',stroke:INK,'stroke-width':3,'stroke-dasharray':'10 9',opacity:0}), surge:mk('polygon',{fill:YOU,'fill-opacity':0.9,stroke:INK,'stroke-width':2,opacity:0}), pt:mk('circle',{r:13,fill:YOU,opacity:0}) }; }
+    const hSmall=newHole(), hBig=newHole();
+
+    // ── S5 : deux issues fantômes ──
+    const ghL=mk('circle',{r:15,fill:'none',stroke:YOU,'stroke-width':4,'stroke-dasharray':'6 6',opacity:0});
+    const ghR=mk('circle',{r:15,fill:'none',stroke:YOU,'stroke-width':4,'stroke-dasharray':'6 6',opacity:0});
+    const ghLpath=mk('path',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'6 8',opacity:0});
+    const ghRpath=mk('path',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'6 8',opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['CAN PRICE SKIP A PLACE','IT NEVER WENT'];
+    const FS=74,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+120,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)e.setAttribute('opacity',0);qMark.setAttribute('opacity',0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(42),capC=caption(52);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function hideCaps(){capA.setAttribute('opacity',0);capB.setAttribute('opacity',0);capC.setAttribute('opacity',0);}
+    function hideS4(){for(const h of [hSmall,hBig]){h.rA.setAttribute('opacity',0);h.rB.setAttribute('opacity',0);h.band.setAttribute('opacity',0);h.surge.setAttribute('opacity',0);h.pt.setAttribute('opacity',0);}}
+    function hideS5(){ghL.setAttribute('opacity',0);ghR.setAttribute('opacity',0);ghLpath.setAttribute('opacity',0);ghRpath.setAttribute('opacity',0);}
+    function hideFrame(){frame.setAttribute('opacity',0);arrow.setAttribute('opacity',0);arrowX.setAttribute('opacity',0);}
+
+    // le point grimpe barreau par barreau (position continue le long de l'échelle, en sautant le trou)
+    function climbY(prog){ // prog 0..(N-1) index flottant -> y ; les indices du trou sont "survolés"
+      return rungY(prog);
+    }
+
+    // ═══ S1 — échelle régulière, le point grimpe barreau par barreau (le prix touche chaque niveau) ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideS4(); hideS5(); hideFrame();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // §perf : l'échelle se trace dès la 1re seconde, barreau par barreau
+      railsOp(clamp(u/0.8,0,1));
+      for(let i=0;i<N;i++){ const a=clamp((u-0.2-i*0.11)/0.2,0,1); rungs[i].setAttribute('opacity',a.toFixed(3)); }
+      // le point grimpe barreau par barreau, en boucle lente
+      if(u>1.4){ const p=((u-1.4)*1.4)%(N-1); setPt(CX, climbY(p), 1);} else setPt(CX, YB, 0);
+    }
+    // ═══ S2 — le point grimpe, puis BONDIT (saute 3 barreaux) : un TROU se forme (barreaux 5-6-7 absents) ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS4(); hideS5(); hideFrame();
+      railsOp(1);
+      // avant le bond : échelle complète ; le trou se creuse au moment du saut
+      const holeGone=clamp((u-1.2)/0.5,0,1);
+      showRungs(i=>!(HOLE.includes(i) && holeGone>0.5), 1);
+      for(const i of HOLE) rungs[i].setAttribute('opacity',(1-holeGone).toFixed(3));
+      // trajet : grimpe 0->4 (u:0->1), BOND 4->8 (u:1->1.4 rapide), puis oscille au-dessus du trou
+      let p; if(u<1.0){ p=lerp(0,4,eOut(u/1.0)); } else if(u<1.4){ p=lerp(4,8,eIn(clamp((u-1.0)/0.4,0,1))); } else { p=8+0.25*Math.sin((u-1.4)*2.0); }
+      setPt(CX, climbY(p), 1);
+      putCap(capA,'USUALLY: STEP BY STEP',CX,480,INK,clamp((u-0.2)/0.5,0,1)*clamp(1-(u-1.0)/0.4,0,1));
+      putCap(capB,'THEN — A LEAP. A HOLE.',CX,480,INK,clamp((u-1.5)/0.5,0,1));
+    }
+    // ═══ S3 — un cadre nomme le trou « gap » ; la flèche « must fill » est BARRÉE (pas une promesse) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS4(); hideS5();
+      railsOp(1); showRungs(i=>!HOLE.includes(i), 1);
+      // le point continue son chemin AU-DESSUS du trou (il grimpe, sans jamais y redescendre) — tenue vivante
+      const p=9.5+1.5*Math.sin(u*1.0); setPt(CX, climbY(p), 1);
+      // cadre autour du trou (entre barreau 4 et barreau 8)
+      const fy=rungY(8)-6, fh=rungY(4)-rungY(8)+12, fa=clamp(u/0.8,0,1);
+      frame.setAttribute('x',RX-22); frame.setAttribute('y',fy); frame.setAttribute('width',RUNGW+44); frame.setAttribute('height',fh); frame.setAttribute('opacity',fa.toFixed(3));
+      putCap(capA,'THE FRAME CALLS IT A GAP',CX,470,INK,fa);                 // en HAUT, hors échelle
+      // flèche « must fill » (grise) DANS le trou, puis BARRÉE d'un trait net — rien ne force
+      const my=(rungY(4)+rungY(8))/2, ax=CX+58;
+      const aOp=clamp((u-1.0)/0.4,0,1), struck=clamp((u-1.8)/0.3,0,1), arrShow=aOp*(1-struck*0.55);
+      arrow.setAttribute('d',`M ${ax} ${my-56} L ${ax} ${my+56} M ${ax-20} ${my+26} L ${ax} ${my+56} L ${ax+20} ${my+26}`);
+      arrow.setAttribute('opacity',arrShow.toFixed(3));
+      putCap(capB,'MUST FILL?',ax+140,my-64,DEAD,arrShow);
+      arrowX.setAttribute('stroke',INK); arrowX.setAttribute('stroke-width',9);
+      setLineEl(arrowX, ax-58, my-74, ax+92, my+66, struck);                 // barre nette en travers
+    }
+    function setLineEl(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1);el.setAttribute('y1',y1);el.setAttribute('x2',x2);el.setAttribute('y2',y2);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    // ═══ S4 — diptyque : petit trou (imbalance lente) vs grand trou (un côté écrase l'autre) ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideFrame(); hideS5();
+      railsOp(0); showRungs(i=>false,0); setPt(0,0,0);
+      putCap(capC,'GAP SIZE = HOW FAST ONE SIDE WON',CX,430,INK,clamp((u-0.2)/0.6,0,1));
+      // petit trou (gauche) : bande courte, surtension faible, presque à égalité
+      drawHole(hSmall, 360, 560, 1.0, u, 'SMALL GAP', 'slow imbalance');
+      // grand trou (droite) : bande haute, surtension forte, un côté écrase
+      drawHole(hBig, 720, 560, 3.4, u, 'BIG GAP', 'one side overwhelmed');
+    }
+    function drawHole(h, cx, topY, mag, u, lab, sub){
+      const bandH=40*mag, botY=topY+120+bandH, w=150;
+      // barreau au-dessus et au-dessous de la bande vide
+      setLineEl2(h.rA, cx-w/2, topY+120, cx+w/2, topY+120, 1);
+      setLineEl2(h.rB, cx-w/2, botY, cx+w/2, botY, 1);
+      h.band.setAttribute('x',cx-w/2); h.band.setAttribute('y',topY+120); h.band.setAttribute('width',w); h.band.setAttribute('height',bandH); h.band.setAttribute('opacity',0.9);
+      // surtension : un triangle teal proportionnel à la violence (magnitude) — pointe vers la bande
+      const sh=40*mag; const sx=cx+w/2+30;
+      h.surge.setAttribute('points',`${sx},${botY} ${sx},${botY-sh} ${sx+70},${(topY+120+bandH/2).toFixed(0)}`); h.surge.setAttribute('opacity',clamp((u-0.6)/0.5,0,1).toFixed(3));
+      // point qui bondit la bande en boucle (motion)
+      const cyc=(u*1.1)%2; let py; if(cyc<1) py=lerp(botY, topY+120, eIn(cyc)); else py=topY+120-6*Math.sin((cyc-1)*6);
+      h.pt.setAttribute('cx',cx); h.pt.setAttribute('cy',py.toFixed(1)); h.pt.setAttribute('opacity',clamp((u-0.4)/0.4,0,1).toFixed(3));
+      // étiquettes
+      const isLeft=cx<CX; const el=isLeft?capA:capB;
+      putCap(el, lab, cx, botY+70, INK, clamp((u-0.6)/0.5,0,1));
+    }
+    function setLineEl2(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1);el.setAttribute('y1',y1);el.setAttribute('x2',x2);el.setAttribute('y2',y2);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    // ═══ S5 — DÉCHARGE : deux issues fantômes (comble / ne comble pas), puis le trou seul = « a mark left by speed » ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS4(); hideFrame();
+      railsOp(1); showRungs(i=>!HOLE.includes(i), 1);
+      const my=(rungY(4)+rungY(8))/2;
+      // deux issues fantômes côte à côte (u<2) : gauche redescend combler, droite continue
+      const gOp=clamp(u/0.5,0,1)*clamp(1-(u-2.0)/0.6,0,1);
+      const lx=CX-70, rx=CX+70;
+      ghLpath.setAttribute('d',`M ${lx} ${rungY(8)} L ${lx} ${my+30}`); ghLpath.setAttribute('opacity',(gOp*0.8).toFixed(3));
+      ghL.setAttribute('cx',lx); ghL.setAttribute('cy',(my+30).toFixed(1)); ghL.setAttribute('opacity',gOp.toFixed(3));
+      ghRpath.setAttribute('d',`M ${rx} ${rungY(8)} L ${rx} ${rungY(10)}`); ghRpath.setAttribute('opacity',(gOp*0.8).toFixed(3));
+      ghR.setAttribute('cx',rx); ghR.setAttribute('cy',rungY(10).toFixed(1)); ghR.setAttribute('opacity',gOp.toFixed(3));
+      if(u<2.2){ putCap(capA,'MIGHT FILL',lx-10,my+80,YOU,gOp); putCap(capB,'MIGHT NOT',rx+10,rungY(10)-30,YOU,gOp); }
+      // le point réel grimpe au-dessus (le prix a continué) — mouvement franc pour l'image finale vivante
+      setPt(CX, climbY(9.5+1.5*Math.sin(u*0.9)), clamp(1-(u-1.6)/0.5,0.5,1));
+      // reste LE TROU seul + étiquette « a mark left by speed »
+      const label=clamp((u-2.2)/0.6,0,1);
+      putCap(capC,'A MARK LEFT BY SPEED',CX,my+8,INK,label);
+      // léger cadre discret qui respire autour du trou (image finale VIVANTE)
+      const fy=rungY(8)-6, fh=rungY(4)-rungY(8)+12, puls=0.5+0.15*Math.sin(u*1.4);
+      frame.setAttribute('x',RX-22); frame.setAttribute('y',fy); frame.setAttribute('width',RUNGW+44); frame.setAttribute('height',fh); frame.setAttribute('opacity',(label*puls).toFixed(3));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

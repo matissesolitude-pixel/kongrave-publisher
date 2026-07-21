@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L16 « THE PRICE THAT REMEMBERS » — un trait (le niveau). Un point rebondit dessus, on dirait qu'il « se souvient » (S1). Zoom :
+       le trait est vide, quelque chose attend dessous (S2). RÉVÉLATION : une PILE d'ordres (blocs teal) sous le trait ; le point s'y
+       enfonce, la masse l'absorbe et le repousse — pas de mémoire, du STOCK (S3). À force de passages la pile s'épuise → le point
+       TRAVERSE le trait resté intact (S4). La pile = jauge : la force du niveau = sa hauteur ; « respect the pile, not the paint »
+       (S5). Doctrine : niveau démythifié (inventaire, pas mémoire/intention) ; aucun chiffre ; ordres = teal ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+
+    // ── LE NIVEAU (trait) + LA PILE D'ORDRES (blocs teal sous le trait) + LE POINT (prix) ──
+    const LY=910, LW=520, LX0=CX-LW/2, LX1=CX+LW/2;
+    const level=mk('line',{x1:LX0,x2:LX1,y1:LY,y2:LY,stroke:INK,'stroke-width':16,'stroke-linecap':'round',opacity:0});
+    const NP=7, BW=240, BH=40, BGAP=7, BSTEP=BH+BGAP;
+    const blocks=[]; for(let i=0;i<NP;i++) blocks.push(mk('rect',{x:CX-BW/2,y:LY+10+i*BSTEP,width:BW,height:BH,rx:4,fill:YOU,'fill-opacity':0.9,stroke:INK,'stroke-width':2,opacity:0}));
+    const pileTop=LY+10;
+    const pt=mk('circle',{r:24,fill:YOU,opacity:0});
+    function setPt(y,op){pt.setAttribute('cx',CX);pt.setAttribute('cy',y.toFixed(1));pt.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    // n blocs pleins (du haut) ; consumingTop : le bloc en cours d'absorption (gris) ; op global
+    function drawPile(n,op,consume){ for(let i=0;i<NP;i++){ const on=i<n; let o=on?op:0; if(consume!=null && i===n && consume>0){ blocks[i].setAttribute('fill',DEAD); blocks[i].setAttribute('opacity',((1-consume)*op).toFixed(3)); continue;} blocks[i].setAttribute('fill',YOU); blocks[i].setAttribute('opacity',o.toFixed(3)); } }
+    function hidePile(){ for(const b of blocks) b.setAttribute('opacity',0); }
+    // rebond : le point touche le sol (floor) à chaque cycle, culmine à floor-amp
+    function bounce(u,floor,amp,speed){ const p=(u*speed)%1; return floor-amp*4*p*(1-p); }
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['DOES A PRICE','REMEMBER A LEVEL'];
+    const FS=82,lineH=104,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+120,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)e.setAttribute('opacity',0);qMark.setAttribute('opacity',0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capTop=caption(50),capR=caption(40),capB=caption(46);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function hideCaps(){capTop.setAttribute('opacity',0);capR.setAttribute('opacity',0);capB.setAttribute('opacity',0);}
+
+    // ═══ S1 — le trait + le point qui rebondit dessus en boucle (« on dirait qu'il se souvient ») ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hidePile();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // §perf : le trait + le point entrent dès la 1re seconde
+      const la=clamp(u/0.8,0,1); level.setAttribute('opacity',la); const L=LW; level.setAttribute('stroke-dasharray',L); level.setAttribute('stroke-dashoffset',(L*(1-la)).toFixed(0));
+      if(u>1.2){ setPt(bounce(u-1.2,LY-20,300,0.6), 1);} else setPt(LY-320,0);
+    }
+    // ═══ S2 — le trait semble vivant, mais il est VIDE ; quelque chose se devine dessous ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      level.setAttribute('stroke-dasharray','none'); level.setAttribute('opacity',1);
+      setPt(bounce(u,LY-20,300,0.6), 1);
+      // la pile se devine en transparence (préparation S3)
+      const hint=clamp((u-1.5)/1.2,0,1)*0.25;
+      drawPile(NP, hint, null);
+      putCap(capTop,'THE LINE DOES NOTHING',CX,470,INK,clamp((u-0.3)/0.6,0,1));
+    }
+    // ═══ S3 — RÉVÉLATION : une pile d'ordres sous le trait ; le point s'y enfonce, la masse l'absorbe et le repousse ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      level.setAttribute('opacity',1); level.setAttribute('stroke-dasharray','none');
+      // la pile apparaît (7 blocs)
+      const app=clamp(u/0.8,0,1);
+      // absorption : à chaque contact, le bloc du dessus se consume (gris -> disparaît) ; pile 7 -> ~5
+      let n=NP; let consume=0;
+      // le point : rebonds, mais s'ENFONCE dans la pile (descend sous LY) puis repoussé
+      let py;
+      if(u<1.6){ py=bounce(u,LY-20,300,0.6); }            // encore au-dessus, on découvre la pile
+      else { const c=(u-1.6); const cyc=(c*0.5)%1; // rebonds lents qui pénètrent la pile
+        const floor=pileTop+70;                          // il descend DANS la pile
+        py=floor-260*4*cyc*(1-cyc);
+        // consomme un bloc à chaque atterrissage
+        const hits=Math.floor(c*0.5); n=Math.max(4,NP-hits); consume=(cyc<0.15)?(1-cyc/0.15):0;
+      }
+      drawPile(n, app, consume);
+      setPt(py,1);
+      putCap(capR,'ORDERS WAITING',CX+BW/2+150,pileTop+90,INK,clamp((u-0.6)/0.5,0,1)*clamp(1-(u-3.2)/0.6,0,1));
+      putCap(capB,'NOT MEMORY — INVENTORY',CX,pileTop+NP*BSTEP+80,INK,clamp((u-3.4)/0.6,0,1));
+    }
+    // ═══ S4 — la pile s'use passage après passage, puis VIDE : le point TRAVERSE le trait resté intact ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      level.setAttribute('opacity',1); level.setAttribute('stroke-dasharray','none');
+      // 3 passages qui vident la pile (7 -> 4 -> 1 -> 0), puis traversée
+      // période de rebond ~1.2s
+      const per=1.2; const idx=Math.floor(u/per); const cyc=(u%per)/per;
+      const nSeq=[7,4,1,0,0,0,0,0]; const n=nSeq[Math.min(idx,nSeq.length-1)];
+      drawPile(n, 1, (cyc<0.16 && n>0)?(1-cyc/0.16):0);
+      let py;
+      if(n>0){ const floor=pileTop+50; py=floor-280*4*cyc*(1-cyc); }        // rebondit sur la pile
+      else { // pile vide : le point tombe, TRAVERSE le trait, puis RODE sous le niveau mort (plus de support)
+        const d=u-3*per; const base=lerp(LY-260, LY+300, eIn(clamp(d/1.4,0,1)));
+        py= base + (d>1.4? 95*Math.sin((d-1.4)*1.7):0);                       // franchit LY puis erre en dessous (motion continue)
+      }
+      setPt(py, 1);
+      const lo=clamp((u-3*per+0.2)/0.6,0,1);
+      putCap(capTop,'THE LINE LOOKS THE SAME',CX,LY-165,INK,lo);
+      putCap(capB,'THE PILE IS GONE',CX,LY-95,DEAD,lo);
+    }
+    // ═══ S5 — DÉCHARGE : la pile est une JAUGE de stock. haute -> rebond ; basse -> traverse. « respect the pile, not the paint » ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      level.setAttribute('opacity',1); level.setAttribute('stroke-dasharray','none');
+      // jauge : la pile monte et descend (stock en direct)
+      let frac; if(u<3.0){ frac=0.5+0.5*Math.sin(u*1.1); } else { frac=lerp(0.5+0.5*Math.sin(3.0*1.1),0.5,clamp((u-3.0)/1.0,0,1)); } // se stabilise à mi-hauteur
+      const n=Math.round(frac*NP);
+      drawPile(n, 1, null);
+      // le point rebondit à une profondeur inverse au stock : pile haute -> rebond franc ; pile basse -> il plonge (traverse)
+      const per=1.4; const cyc=(u%per)/per; const depth=lerp(pileTop+40, LY+330, 1-frac);   // basse pile = il descend loin
+      const py=depth-300*4*cyc*(1-cyc);
+      setPt(py,1);
+      putCap(capTop,'A LEVEL HOLDS BY ORDERS',CX,470,INK,clamp((u-0.4)/0.6,0,1)*clamp(1-(u-2.6)/0.6,0.0,1));
+      putCap(capB,'RESPECT THE PILE, NOT THE PAINT',CX,LY-90,INK,clamp((u-2.8)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

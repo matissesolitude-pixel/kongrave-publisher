@@ -1,0 +1,72 @@
+{
+  "id": "L15",
+  "engine": "l15",
+  "title": "L15 — THE HOLE IN THE PRICE",
+  "voice": [
+    "Sometimes the price jumps a gap it never actually traded through. A whole range of prices, skipped in an instant — like they never existed. Traders draw a box around that empty space and treat it like a magnet. Here's what it really is.",
+    "Price usually moves step by step, trade by trade, each level touched on the way. But sometimes it leaps — a burst of buying or selling so fast that a band of prices gets no trades at all. An empty shelf in the middle of the ladder.",
+    "People call that empty band a gap, and they'll tell you price must come back to fill it. But nothing forces that. The gap isn't a promise about the future. It's a scar from the past — proof of how violently price moved through that spot.",
+    "What the empty band really tells you is speed. A big gap means one side overwhelmed the other so fast that no deals happened in between. It's a record of imbalance — where buyers or sellers simply weren't there to argue.",
+    "So don't trade the box because a framework told you it's magic. Read it for what it is: a mark left by speed. It might get revisited. It might not. The scar tells you what happened — not what happens next."
+  ],
+  "scenes": [
+    { "id": "s1",
+      "clarity": "Le prix saute une zone qu'il n'a jamais traversee. Un trou. Le manuel en fait un aimant. Qu'est-ce que c'est vraiment ?",
+      "question": "CAN A PRICE SKIP A PLACE IT NEVER WENT?",
+      "cast": { "ladder": { "type": "ladder", "note": "une echelle verticale a barreaux reguliers, encre = les prix successifs. le fusil = le barreau manquant." } },
+      "beats": [
+        { "t": "0-1.6", "do": "question POP, ? 200px" },
+        { "t": "1.6-3", "do": "DRAW-ON: une echelle verticale se trace, barreau par barreau, reguliere (les prix qui se touchent). puis un point teal grimpe barreau par barreau, sagement." },
+        { "t": "3-10", "do": "TENUE VIVANTE: le point continue de grimper barreau par barreau en boucle lente — le prix vit, il touche chaque niveau. le ? fade." } ],
+      "camera": "fixe",
+      "dod": "l'echelle a barreaux reguliers + le point qui grimpe sagement",
+      "fusil": "une echelle reguliere — on va y creuser un trou." },
+    { "id": "s2",
+      "clarity": "Le prix bouge d'habitude barreau par barreau. Parfois il bondit si vite qu'une bande de prix n'a aucun echange.",
+      "label": "usually: step by step",
+      "beats": [
+        { "t": "0-1.5", "do": "le point grimpe barreau par barreau, normal. puis SOUDAIN: un BOND — le point saute 3 barreaux d'un coup (SNAP rapide, ease-in violent)." },
+        { "t": "1.5-3", "do": "les 3 barreaux SAUTES ne se dessinent PAS: un TROU dans l'echelle, une bande vide. le point est arrive en haut, mais le milieu est absent." },
+        { "t": "3-13", "do": "TENUE VIVANTE: le point oscille legerement au-dessus du trou, le trou BEANT en dessous — un vide franc dans une echelle sinon continue." } ],
+      "camera": "fixe",
+      "dod": "le bond + le trou de 3 barreaux manquants dans l'echelle",
+      "turn": "le prix a saute une zone — elle n'a jamais existe en tant qu'echange." },
+    { "id": "s3",
+      "clarity": "On appelle ca un gap et on dit qu'il doit etre comble. Mais rien ne l'y oblige : c'est une cicatrice, pas une promesse.",
+      "beats": [
+        { "t": "0-1.5", "do": "un CADRE (une box encre) se dessine autour du trou — c'est ce que le manuel voit. label 'the frame calls it a gap' (lab 42px). une fleche fantome pointe vers le bas: 'must fill'?" },
+        { "t": "1.5-3", "do": "la fleche fantome CLIGNOTE puis S'EFFACE (barree une fraction de seconde): rien ne force. le cadre reste, mais la promesse tombe." },
+        { "t": "3-13", "do": "TENUE VIVANTE: le trou encadre, mais LIBRE — le point au-dessus continue son chemin sans y redescendre. la cicatrice ne tire rien." } ],
+      "camera": "fixe",
+      "dod": "le cadre autour du trou + la fleche 'must fill' barree",
+      "turn": "le gap n'est pas une prophetie. c'est une trace du passe." },
+    { "id": "s4",
+      "clarity": "Ce que le trou dit vraiment, c'est la vitesse : un cote a submerge l'autre trop vite pour qu'un echange ait lieu.",
+      "note": "diptyque vitesse: petit trou vs grand trou.",
+      "beats": [
+        { "t": "0-13", "do": "HAUT 'small gap': le point monte, bond LEGER (1 barreau saute), petit trou. label 'slow imbalance'. les deux cotes (deux petites colonnes teal/encre de part et d'autre) sont presque a egalite." },
+        { "t": "0-13", "do": "BAS 'big gap': le point BONDIT fort (4 barreaux), GRAND trou. un cote (colonne) ECRASE l'autre — l'imbalance est visible dans la taille. label 'one side overwhelmed the other'. plus le trou est grand, plus le desequilibre etait brutal." } ],
+      "camera": "fixe, split",
+      "dod": "petit trou = petit desequilibre ; grand trou = un cote ecrase l'autre",
+      "turn": "la taille du trou EST la mesure de la violence du mouvement." },
+    { "id": "s5",
+      "clarity": "Ne trade pas la box parce qu'un cadre l'a dite magique. Lis-la pour ce qu'elle est : une marque laissee par la vitesse.",
+      "beats": [
+        { "t": "0-2", "do": "DECHARGE: le trou dans l'echelle. deux issues jouees en fantome, cote a cote: a GAUCHE le point RESDESCEND le combler (une possibilite), a DROITE il continue vers le haut sans jamais y revenir (l'autre possibilite). aucune n'est privilegiee." },
+        { "t": "2-3.5", "do": "les deux fantomes s'estompent. reste LE TROU seul, avec une etiquette qui se pose: 'a mark left by speed' (Helvetica 800, plus petit). il raconte le PASSE, pas le futur." },
+        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: l'echelle avec son trou, l'etiquette. immobile. le trou n'est ni un aimant ni une promesse — une cicatrice." } ],
+      "camera": "fixe",
+      "dod": "le trou avec ses deux issues possibles en fantome, puis seul: 'a mark left by speed'",
+      "fusil_decharge": "l'echelle reguliere de S1 garde son trou (S2) — et ce trou est lu pour ce qu'il est: une trace de vitesse, pas une prophetie (S5)." }
+  ],
+  "total": 74.0,
+  "caption": "Sometimes price skips a whole range it never traded through. The textbook says it must come back to fill it. Here's what that empty space really is.\n\nA gap isn't a promise about the future. It's a scar from the past — a record of how violently price moved. It might get revisited. It might not.\n\nComment \"LINE\" for the series on reading the chart without the myths.\n\nTHE LINE — the scar tells you what happened, not what happens next.\n\n#trading #trader #fvg #gap #priceaction #daytrading #forex #tradingeducation #smartmoney #liquidity",
+  "_rules": {
+    "doctrine": "FVG/gap presente comme STATUT DE CADRE ('the frame calls it a gap'), jamais comme fait ou prophetie. L'idee ETABLIE = le gap mesure la vitesse/l'imbalance passee. Le 'must fill' est explicitement barre.",
+    "fusil": "l'echelle reguliere (S1) recoit un trou (S2), le cadre le sur-interprete (S3), le trou mesure la vitesse (S4), et se lit comme une cicatrice (S5).",
+    "interdits": "aucun chiffre; pas de brun (structures neutres = encre; le desequilibre se montre par la TAILLE des colonnes); pas de bougies/grille; bas du cadre vide.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "vie_continue": "regle 5: tenues vivantes (le point qui grimpe/oscille), jamais fige hors image finale.",
+    "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap. Doctrine gardee.",
+    "circuit": "M24 frames DoD d'abord." }
+}

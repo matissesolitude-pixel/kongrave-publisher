@@ -1,0 +1,89 @@
+name: LIGNE autoprod (fabrication)
+
+# Produit UN épisode LIGNE par run, 100% cloud (Mac éteint) — modèle KONGRAVE autoprod.yml :
+#   voix George ElevenLabs -> rendu moteur ligne/engine/lXX.html (Chromium headless + hyperframes)
+#   -> assemblage ffmpeg + filigrane -> transcode 25fps nal-hrd=cbr -> dépose en ligne/queue/LXX/
+#   -> notif Telegram (send_video depuis le runner) -> commit + push (résilient).
+# La PUBLICATION reste séparée (publish-ligne.yml, 4/j FIFO).
+# Garde-fous : 1 épisode/run (--one) ; file de fabrication vide = fail-loud (rien produit) ;
+#   seuls les épisodes dont le FICHIER moteur existe sont fabriqués (is_ready_episode).
+
+on:
+  schedule:
+    - cron: "20 */4 * * *"        # toutes les 4h (décalé de publish :30 et KONGRAVE :13)
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Forcer un numéro (vide = prochain prêt non produit)"
+        required: false
+
+concurrency:
+  group: ligne-autoprod
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # secret existant KONGRAVE (nommé sans _KEY) -> nom attendu par build_ligne.py
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium-browser
+      # layout repo cloud : la file/publiés/notify sont à la racine du repo (pas ROOT/publisher/…)
+      LIGNE_QUEUE: ${{ github.workspace }}/ligne/queue
+      LIGNE_PUBLISHED: ${{ github.workspace }}/ligne/published
+      LIGNE_NOTIFY_DIR: ${{ github.workspace }}
+      LIGNE_AUTOPROD_NOPUSH: "1"   # le push est fait par le workflow (résilient), pas par autoprod
+      FORCE_EPISODE: ${{ github.event.inputs.episode }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Système (ffmpeg, chromium, polices Arial-like)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg chromium-browser fontconfig fonts-liberation
+          fc-cache -f >/dev/null 2>&1 || true
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Deps Python
+        run: pip install -r ligne/requirements-ligne.txt
+
+      - name: Pré-chauffe hyperframes (npx) + vérif Chromium
+        run: |
+          /usr/bin/chromium-browser --version || true
+          cd ligne && npx --yes hyperframes --version || true
+
+      - name: Production (1 épisode)
+        run: cd ligne && python autoprod_ligne.py --one
+
+      - name: Commit & push (résilient aux pushes concurrents)
+        run: |
+          git config user.name  "ligne-autoprod"
+          git config user.email "autoprod@users.noreply.github.com"
+          git add -f ligne/queue
+          if git diff --cached --quiet; then
+            echo "Rien de nouveau à mettre en file."
+          else
+            git commit -m "ligne: autoprod fabrication [skip ci]"
+            pushed=0
+            for i in 1 2 3 4 5; do
+              if git pull --rebase --autostash origin main && git push; then pushed=1; break; fi
+              echo "push rejeté (tentative $i/5), rebase + retry…"; sleep 5
+            done
+            [ "$pushed" = 1 ] || { echo "::error::push impossible après 5 tentatives"; exit 1; }
+          fi

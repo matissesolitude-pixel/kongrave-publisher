@@ -1,0 +1,178 @@
+{
+  "id": "L5",
+  "engine": "l5",
+  "title": "L5 — SELLING WHAT YOU DON'T OWN",
+  "voice": [
+    "You can sell something you've never owned. Not a copy. The actual thing. Right now, today. How?",
+    "You borrow it. Someone owns a thousand shares, doing nothing. You borrow one. It's not yours — you just hold it, with a promise: you'll give it back.",
+    "So you sell it. Right now, at today's price. Someone pays you, takes the share, walks away happy. Now you hold their cash — for something that was never yours. But you still owe one share back.",
+    "Later, you buy the same share back to return it. If the price dropped, you buy it cheap, return it, keep the difference. That's your profit. But if the price rose, you buy it back more expensive. Same mechanism. Opposite result.",
+    "You give the share back to whoever lent it. The loop is closed. They have their share, exactly the one you borrowed. And you keep the gap — or you eat it. You never owned anything. Selling what you don't own isn't a trick. It's a loop. And every loop has to close."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "question": "HOW DO YOU SELL WHAT YOU DON'T OWN?",
+      "cast": {
+        "lender": {
+          "type": "figure",
+          "x": 240,
+          "note": "silhouette encre, rond D90 + trait 200px 8px, tient le bloc a droite de son trait"
+        },
+        "you": {
+          "type": "ball",
+          "x": 540,
+          "d": 150,
+          "note": "boule teal, mains vides, immobile"
+        },
+        "block": {
+          "type": "block",
+          "side": 130,
+          "held_by": "lender",
+          "note": "carre teal 130, le JOUET, le fusil"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP ligne par ligne, Helvetica Neue 800 uppercase ls1px #20242A, titre 88px, ? 200px, back.out(2) scale 0.7->1 sync mot"
+        },
+        {
+          "t": "1.6-3",
+          "do": "DRAW-ON: figure lender se trace a gauche (trait monte, rond ferme, 0.5s); le bloc teal apparait dans sa main; la boule YOU se pose au centre"
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE. la boule regarde le bloc (tilt 3px vers lui, une fois, stop)"
+        },
+        {
+          "t": "10-12",
+          "do": "le ? s'efface (fade 0.4s). lender+bloc+boule restent"
+        }
+      ],
+      "camera": "fixe",
+      "dod": "question affichee + lender tenant le bloc a gauche + boule au centre",
+      "fusil": "le bloc est chez quelqu'un d'autre. tu le regardes. tu ne l'as pas.",
+      "clarity": "On peut vendre quelque chose qu'on ne possede pas ? Oui — voici comment."
+    },
+    {
+      "id": "s2",
+      "label": "you borrow it",
+      "beats": [
+        {
+          "t": "0",
+          "do": "coupe franche. lender(G)+bloc, boule(centre). label 'you borrow it' haut (lab 42px, 1s puis fade)"
+        },
+        {
+          "t": "1-2",
+          "do": "le BLOC glisse du lender vers la boule (0.8s ease-out + settle), s'arrete colle au-dessus d'elle (tenu)"
+        },
+        {
+          "t": "1",
+          "do": "au depart du bloc: a sa place chez le lender, un CONTOUR POINTILLE du bloc se trace (0.4s) et reste. la dette."
+        },
+        {
+          "t": "2-14",
+          "do": "le contour pointille PULSE (opacite 0.4->0.8, periode 900ms). le bloc contre la boule recoit un fin lisere pointille teal (emprunte)."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "bloc contre la boule, contour pointille pulsant chez le lender",
+      "turn": "tu as le jouet mais un fantome reste chez le preteur",
+      "clarity": "Il emprunte une action a quelqu'un qui la detient, avec la promesse de la rendre."
+    },
+    {
+      "id": "s3",
+      "cast": {
+        "buyer": {
+          "type": "figure",
+          "x": 840,
+          "note": "silhouette encre, se trace en s3"
+        },
+        "cash": {
+          "type": "coin",
+          "d": 70,
+          "note": "disque encre plein = argent"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "le BUYER se trace a droite (draw-on 0.5s)"
+        },
+        {
+          "t": "1-1.8",
+          "do": "TEMPS 1: le BLOC glisse de la boule vers le buyer (0.8s), se pose pres de son trait. le buyer recule d'un demi-pas (parti content)"
+        },
+        {
+          "t": "1.8-2.6",
+          "do": "TEMPS 2: un DISQUE ENCRE (cash D70) glisse du buyer vers la boule (0.8s), se pose pres d'elle"
+        },
+        {
+          "t": "2.6-14",
+          "do": "le contour pointille (dette) chez le lender reste, pulse PLUS FORT (opacite 0.5->0.9, periode 700ms). the clock is running. TENUE."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "(a) bloc arrivant chez le buyer; (b) cash arrivant chez la boule, dette pulsante visible",
+      "turn": "tu as vendu un truc emprunte. tu as l'argent ET la dette.",
+      "clarity": "Il la vend immediatement au prix du jour. Il encaisse — mais il doit toujours la rendre."
+    },
+    {
+      "id": "s4",
+      "note": "DEUX VERSIONS d'affilee, choregraphie IDENTIQUE, seule la taille du cash rendu change. Separees par un FLASH DE COUPE blanc 2 frames.",
+      "beats": [
+        {
+          "t": "0-4",
+          "do": "VERSION A (if the price dropped): PETIT disque cash D40 glisse de la boule vers le buyer -> un NOUVEAU BLOC teal glisse du buyer vers la boule. pres de la boule reste un GROS cash D90. label 'you keep the difference' (teal)"
+        },
+        {
+          "t": "4",
+          "do": "FLASH DE COUPE blanc 2 frames"
+        },
+        {
+          "t": "4-8",
+          "do": "VERSION B (but if the price rose): GROS disque cash D110 glisse vers le buyer -> meme bloc revient. pres de la boule le cash restant est MINUSCULE puis DELAVE en gris (negatif). label 'you eat it'"
+        }
+      ],
+      "camera": "fixe",
+      "dod": "version A (petit cash sorti, gros reste) ; version B (gros cash sorti, reste delave gris)",
+      "turn": "le meme geste peut te payer ou te ruiner. le prix decide.",
+      "clarity": "Plus tard il la rachete pour la rendre. Moins chere : il gagne. Plus chere : il perd."
+    },
+    {
+      "id": "s5",
+      "beats": [
+        {
+          "t": "0",
+          "do": "coupe franche. boule(centre) avec le bloc rachete + l'ecart de cash. lender(G) avec son contour pointille (dette) toujours la"
+        },
+        {
+          "t": "1-2",
+          "do": "le BLOC teal glisse de la boule vers le lender (0.9s ease-out). il se pose EXACTEMENT dans le contour pointille -> le pointille redevient PLEIN (0.4s, le lisere se solidifie). dette effacee. fremissement M22 (le lender recoit)"
+        },
+        {
+          "t": "2-3",
+          "do": "pres de la boule reste L'ECART (disque cash): TEAL (positif — on finit sur le cas qui donne envie, le risque a ete montre en s4)"
+        },
+        {
+          "t": "3-14",
+          "do": "IMAGE FINALE TENUE >=3s: lender avec son bloc rendu (entier), boule avec l'ecart teal. cycle complet immobile. rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le bloc dans le contour redevenu plein, l'ecart teal pres de la boule",
+      "fusil_decharge": "le bloc de S1 (chez le lender) est revenu chez le lender. il a boucle. c'etait une boucle.",
+      "clarity": "Il rend l'action empruntee. La boucle est fermee. Il garde l'ecart — ou il l'encaisse."
+    }
+  ],
+  "total": 55.0,
+  "_rules": {
+    "casting": "boule=YOU jamais une figure jamais un bonhomme. lender(G)+buyer(D)=silhouettes encre.",
+    "fusil": "le bloc teal part du lender (s1) et y revient (s5). charge et tire.",
+    "interdits": "rien ne teleporte tout glisse; aucun chiffre a l'ecran (cash=masse); pas de brun (perte=delavage gris); bas du cadre VIDE (pas de ticker/ligne/sol).",
+    "police": "Helvetica Neue 800 uppercase ls1px #20242A. titre 88 / ? 200 / lab 42.",
+    "circuit": "M24: frames DoD seules d'abord, PO valide, PUIS video + montage + muet (M19).",
+    "clarity_test": "NIVEAU DE COMPREHENSION 8 ans = un adulte comprend SANS EFFORT. PAS du langage enfantin, PAS de jouets/vocabulaire bebe. Le sujet reste technique (short selling, vrais termes), explique avec une clarte limpide. Le champ 'clarity' de chaque scene = le test 'est-ce limpide ?', pas le ton du copy. Le copy (voice) garde son registre BEE adulte."
+  }
+}

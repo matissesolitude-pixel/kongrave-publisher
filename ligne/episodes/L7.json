@@ -1,0 +1,93 @@
+{
+  "id": "L7",
+  "engine": "l7",
+  "title": "L7 — THE FLOOR AND THE SKY",
+  "voice": [
+    "Buying and selling. Two directions, same chart. They feel like mirror images — up or down, win or lose. But they're not symmetric. One of them has a hidden floor. The other has no ceiling at all.",
+    "When you buy, ask the worst case. The price falls. And falls. And keeps falling — until it hits zero. And there it stops. Not because someone protects you. Because a price cannot go below nothing. Your worst case has a floor built into the world.",
+    "Now sell short — bet on the price going down — and ask the same worst case. The price rises. Ten percent. A hundred. Five hundred. Where does it stop? Find the number. There isn't one. There is no price a thing cannot rise to.",
+    "So the two directions are not the same shape. Buying: your loss is capped, your gain is open. Selling short: your gain is capped — the price can only fall to zero — but your loss has no limit. The risk is upside down.",
+    "This doesn't make short selling wrong. Traders do it every day. But it changes one thing: when your worst case has no floor, your line — the point where you get out — isn't optional. It's the only floor you'll ever have. So you build it yourself."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Acheter et vendre, ca parait symetrique. Ca ne l'est pas : un cote a un sol cache, l'autre pas de plafond.",
+      "question": "IS BUYING THE MIRROR OF SELLING?",
+      "cast": {
+        "point": { "type": "dot", "d": 90, "note": "un point teal = le prix. le fusil." },
+        "axis": { "type": "hline", "y": 1560, "note": "l'axe bas = le zero (revele en S2)" }
+      },
+      "beats": [
+        { "t": "0-1.6", "do": "question POP ligne/ligne, ? 200px, back.out(2)" },
+        { "t": "1.6-2.6", "do": "DRAW-ON: un point teal au centre. deux fleches fantomes tres legeres (haut / bas) suggerent les deux directions, puis s'effacent." },
+        { "t": "2.6-10", "do": "TENUE. le point seul, au centre. le ? tenu puis fade." }
+      ],
+      "camera": "fixe",
+      "dod": "question + un point teal centre (le prix, avant de choisir une direction)",
+      "fusil": "un point qui peut monter ou descendre. les deux trajets ne sont pas symetriques — on le montre."
+    },
+    {
+      "id": "s2",
+      "clarity": "S'il tombe, il s'arrete a zero. Le sol existe — c'est l'arithmetique, pas une protection.",
+      "label": "you buy — worst case",
+      "beats": [
+        { "t": "0", "do": "coupe. le point teal en haut-centre. sous lui, l'AXE (y1560) s'epaissit 6->14px: il devient LE ZERO, un mur/sol. label 'zero' (lab 42px)." },
+        { "t": "0.5-2", "do": "le point DESCEND (mouvement reel: stries LENTES s'allument). ease-in doux." },
+        { "t": "2-2.5", "do": "il touche l'axe: ARRET NET. leger ecrasement (squash 3 frames), settle. pose sur le zero." },
+        { "t": "2.5-12", "do": "TENUE. il ne peut PAS aller plus bas. les stries s'eteignent. LE PIRE CAS A UN SOL." }
+      ],
+      "camera": "fixe",
+      "dod": "le point pose sur le zero epaissi, arrete net. le plancher.",
+      "turn": "ca tombe, ca s'arrete a zero, c'est fini. rassurant."
+    },
+    {
+      "id": "s3",
+      "clarity": "S'il monte, il n'y a pas de plafond. Il monte, sort du cadre, sans fin.",
+      "note": "moteur comete INVERSE (herite du catalogue, jamais livre). LE POINT MONTE.",
+      "beats": [
+        { "t": "0-0.6", "do": "le MEME point, meme position de depart qu'en S2. symetrie annoncee: le spectateur attend le mur du haut." },
+        { "t": "0.6-1.2", "do": "il MONTE. SNAP de depart. stries verticales JAILLISSENT (vers le bas — le monde descend). le nez ne s'affine jamais." },
+        { "t": "1.2-3", "do": "ACCELERATION ease-in agressif: rond->larme->comete. la queue sort du cadre PAR LE HAUT. le corps reste TEAL (c'est le prix qui monte). IL N'Y A PAS DE MUR EN HAUT." },
+        { "t": "3-14", "do": "LA TENUE: ca monte encore. un temps de trop. deux. there is no price a thing cannot rise to." }
+      ],
+      "camera": "suit le nez (le monde descend)",
+      "dod": "le point/comete qui monte, queue hors cadre haut, AUCUN plafond. contraste avec S2.",
+      "turn": "en S2 ca s'arrete, en S3 ca ne s'arrete JAMAIS. le contraste EST l'episode."
+    },
+    {
+      "id": "s4",
+      "clarity": "Acheter: perte plafonnee, gain ouvert. Vendre a decouvert: gain plafonne, perte sans limite. Le risque est a l'envers.",
+      "note": "DIPTYQUE. deux colonnes cote a cote, memes objets, sens inverses.",
+      "beats": [
+        { "t": "0-14", "do": "COLONNE GAUCHE 'BUY': une barre de PERTE bornee en bas (elle ne descend que jusqu'au zero) + une barre de GAIN ouverte vers le haut (fleche, pas de fin). label 'loss capped / gain open'." },
+        { "t": "0-14", "do": "COLONNE DROITE 'SHORT': une barre de GAIN bornee (elle ne monte que jusqu'au zero du prix) + une barre de PERTE ouverte vers le haut, sans fin. label 'gain capped / loss open'. LES DEUX COLONNES SONT LE MIROIR l'une de l'autre — mais le DANGER a change de cote." }
+      ],
+      "camera": "fixe, split vertical",
+      "dod": "buy = perte bornee/gain ouvert ; short = gain borne/perte ouverte. le risque inverse.",
+      "turn": "le meme chart, deux formes de risque. vendre a decouvert, le danger n'a pas de fond."
+    },
+    {
+      "id": "s5",
+      "clarity": "Quand le pire cas n'a pas de sol, ta ligne de sortie n'est pas optionnelle — c'est le seul sol que tu auras.",
+      "beats": [
+        { "t": "0", "do": "coupe. la colonne SHORT seule (perte ouverte vers le haut, pas de plafond)." },
+        { "t": "0.5-2", "do": "DECHARGE: un TRAIT horizontal (ta ligne, ton stop) se TRACE en travers de la barre de perte ouverte, a une hauteur choisie. il POSE un plafond la ou il n'y en avait pas." },
+        { "t": "2-3", "do": "au-dessus du trait: la barre de perte S'EFFACE (elle n'existe plus). ce qui reste, borne, CLAQUE net. tu as construit le sol qui manquait." },
+        { "t": "3-14", "do": "IMAGE FINALE TENUE >=3s: la barre de perte, plafonnee par TON trait. le seul plafond de ce cote, et c'est toi qui l'as mis." }
+      ],
+      "camera": "fixe",
+      "dod": "ton trait qui plafonne la perte ouverte — le sol construit a la main",
+      "fusil_decharge": "le point qui montait sans fin (S3) est enfin arrete — pas par le monde, par TA ligne (S5)."
+    }
+  ],
+  "total": 67.0,
+  "_rules": {
+    "garde_fou": "JAMAIS 'perdre plus que son depot' (faux en Europe, protection solde negatif CFD retail). On parle de la STRUCTURE du prix (pas de plafond a la hausse), PAS du solde du compte.",
+    "fusil": "un point (S1) touche un sol en descendant (S2), ne touche aucun plafond en montant (S3), et c'est TA ligne qui pose le plafond manquant (S5).",
+    "heritage": "moteur comete + stries: herite du catalogue construit-jamais-livre. la comete MONTE ici.",
+    "interdits": "pas de chiffre; pas de brun; une seule horloge; le nez de comete ne s'affine jamais; bas du cadre vide.",
+    "police": "Helvetica Neue 800 uppercase ls1px #20242A.",
+    "circuit": "M24: frames DoD d'abord."
+  }
+}

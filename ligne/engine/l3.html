@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;--them:#8A5323;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+    .head{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:60px;letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+  </style>
+</head>
+<body>
+  <!-- L3 « THE LINE IS THE DECISION » — hand-craft. UN SEUL ACTEUR : la balle. Elle naît du point du ?,
+       tombe dans chaque scène ; seule une LIGNE l'arrête. Zéro décor, zéro label flottant. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const SC=__SCENES__, TOTAL=__TOTAL__, WORDS=__WORDS__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const INK='#20242A', YOU='#1E5F6E', THEM='#8A5323';
+    function wt(i,nd,fb){nd=String(nd).toLowerCase();for(const w of(WORDS[i]||[])){const t=w.w.toLowerCase().replace(/[^a-z0-9]/g,'');if(t===nd||t.startsWith(nd))return SC[i].s+w.s;}return SC[i].s+(fb==null?0.1:fb)*SC[i].d;}
+    function W(i,tok,fb){return tok==null?SC[i].s+(fb==null?0.1:fb)*SC[i].d:wt(i,tok,fb);}
+    function at(i,f){return SC[i].s+f*SC[i].d;} function vend(i){return SC[i].s+SC[i].v;}
+    function mk(tag,a,cls){const e=document.createElementNS(NS,tag);if(cls)e.setAttribute('class',cls);for(const k in(a||{}))e.setAttribute(k,a[k]);e.setAttribute('opacity','0');SVG.appendChild(e);return e;}
+    function arm(el){const L=el.getTotalLength();el.style.strokeDasharray=L;el.style.strokeDashoffset=L;el.__L=L;}
+    function draw(el,t,dur,e){tl.set(el,{autoAlpha:1},t);tl.fromTo(el,{strokeDashoffset:el.__L},{strokeDashoffset:0,duration:dur,ease:e||'power1.inOut'},t);}
+    function lab(txt,x,y,c){const e=mk('text',{x,y,'text-anchor':'middle'},null);e.setAttribute('font-family',"'Helvetica Neue',Arial,sans-serif");e.setAttribute('font-weight','800');e.setAttribute('font-size','38');e.setAttribute('letter-spacing','1');e.setAttribute('fill',c||INK);e.textContent=String(txt).toUpperCase();return e;}
+    function circleD(cx,cy,r){const k=0.5523*r;return `M ${cx} ${cy-r} C ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy} C ${cx+r} ${cy+k} ${cx+k} ${cy+r} ${cx} ${cy+r} C ${cx-k} ${cy+r} ${cx-r} ${cy+k} ${cx-r} ${cy} C ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r} Z`;}
+    const tl=gsap.timeline({paused:true});
+    const CX=540;
+    // CAMÉRA (zoom autorisé) : anime le viewBox pour zoomer sur un détail (ex. la serrure)
+    const cam={z:1,x:540,y:960};
+    function applyCam(){const w=1080/cam.z,h=1920/cam.z;SVG.setAttribute('viewBox',`${cam.x-w/2} ${cam.y-h/2} ${w} ${h}`);}
+    function zoom(z,fx,fy,t,dur){tl.to(cam,{z,x:fx,y:fy,duration:dur||0.5,ease:'power2.inOut',onUpdate:applyCam},t);}
+
+    // LA BALLE (le point du ?) — encre au départ.
+    const ball=mk('path',{d:circleD(CX,250,16)},null); ball.setAttribute('fill',INK);
+
+    /* ============ S1 — NAISSANCE : la question, le ? dessiné, le point qui se sépare ============ */
+    function s1(i){
+      const L1=['WHY','DO','THE','PROS'], L2=['USE','MORE','LEVERAGE'];
+      const FS=60, chW=FS*0.60, GAP=1.9, lineH=104, y1=600, y2=y1+lineH;
+      function layoutLine(words,y,startIdx){const ws=words.map(w=>(w.length+GAP)*chW),tot=ws.reduce((a,b)=>a+b,0);
+        let x=CX-tot/2; const els=[];
+        words.forEach((w,k)=>{const cx=x+ws[k]/2;const e=mk('text',{x:cx,y,'text-anchor':'middle'},'head');e.textContent=w;gsap.set(e,{scale:0.82,transformOrigin:'50% 50%'});els.push({e,gi:startIdx+k});x+=ws[k];});
+        return els;}
+      const wEls=[...layoutLine(L1,y1,0),...layoutLine(L2,y2,4)];
+      // LE "?" DESSINÉ : path SVG tracé, épais, du caractère. Sur sa PROPRE ligne, centré, sous le texte.
+      const Ty=968;
+      const hook=mk('path',{d:`M ${CX-54} ${Ty+6} C ${CX-62} ${Ty-58} ${CX+62} ${Ty-58} ${CX+54} ${Ty+8} C ${CX+48} ${Ty+52} ${CX+8} ${Ty+58} ${CX} ${Ty+92} L ${CX} ${Ty+120}`},null);
+      hook.setAttribute('fill','none'); hook.setAttribute('stroke',INK); hook.setAttribute('stroke-width','30'); hook.setAttribute('stroke-linecap','round'); hook.setAttribute('stroke-linejoin','round'); arm(hook);
+      // LE POINT = la balle, objet distinct dès le début, même encre, posé sous la courbe (pas collé)
+      const dotY=Ty+178;
+      const vw=WORDS[i]||[];
+      wEls.forEach(o=>{const t=vw[o.gi]!=null?SC[i].s+vw[o.gi].s:at(i,0.04+o.gi*0.07);tl.to(o.e,{autoAlpha:1,scale:1,duration:0.16,ease:'back.out(2)'},t);});
+      const tQ=W(i,'leverage',0.66);
+      draw(hook,tQ,0.5,'power2.out');                                  // le ? se DESSINE
+      tl.set(ball,{attr:{d:circleD(CX,dotY,16)},autoAlpha:1},tQ+0.28); // le point, posé, séparé, encre
+      // la question s'efface, la courbe du ? s'efface — LE POINT RESTE, seul au centre
+      const tGo=at(i,0.86);
+      wEls.forEach((o,k)=>tl.to(o.e,{autoAlpha:0,scale:0.15,duration:0.3,ease:'power2.in'},tGo+0.01*k));
+      tl.to(hook,{autoAlpha:0,duration:0.32,ease:'power2.in'},tGo+0.12);
+      // il descend au centre, GROSSIT — c'est LA BALLE. Elle rebondit une fois (vivante).
+      const tBall=tGo+0.4;
+      tl.to(ball,{attr:{d:circleD(CX,900,34)},duration:0.5,ease:'power2.inOut'},tBall);
+      tl.to(ball,{attr:{d:circleD(CX,860,34)},duration:0.16,ease:'power2.out'},tBall+0.5)   // rebond
+        .to(ball,{attr:{d:circleD(CX,900,34)},duration:0.2,ease:'power2.in'});
+    }
+
+    /* ============ S2 — LA CAUTION : la PORTE (centre), la balle COGNE, la CLÉ (part) déverrouille ============ */
+    function s2(i){
+      const Y=900, dx=CX, top=706, bot=1104, hw=90;   // porte centrée
+      // la balle devient TON ARGENT (encre -> teal, progressif)
+      tl.to(ball,{fill:YOU,duration:0.55,ease:'power1.inOut'},W(i,'leverage',0.05));
+      // --- LA PORTE (au CENTRE) : cadre + battant à sommet arrondi + poignée + serrure ---
+      const frameD=`M ${dx-hw} ${bot} L ${dx-hw} ${top+38} Q ${dx-hw} ${top} ${dx-hw+38} ${top} L ${dx+hw-38} ${top} Q ${dx+hw} ${top} ${dx+hw} ${top+38} L ${dx+hw} ${bot}`;
+      const frame=mk('path',{d:frameD},null); frame.setAttribute('fill','none');frame.setAttribute('stroke',INK);frame.setAttribute('stroke-width','12');frame.setAttribute('stroke-linecap','round');frame.setAttribute('stroke-linejoin','round');arm(frame);
+      const sill=mk('path',{d:`M ${dx-hw-26} ${bot} L ${dx+hw+26} ${bot}`},null); sill.setAttribute('fill','none');sill.setAttribute('stroke',INK);sill.setAttribute('stroke-width','12');sill.setAttribute('stroke-linecap','round');arm(sill);
+      // le BATTANT (groupe, pivote à gauche pour s'ouvrir)
+      const leaf=mk('g',{});
+      const leafBody=document.createElementNS(NS,'path'); leafBody.setAttribute('d',`M ${dx-hw+6} ${bot-4} L ${dx-hw+6} ${top+40} Q ${dx-hw+6} ${top+6} ${dx-hw+40} ${top+6} L ${dx+hw-40} ${top+6} Q ${dx+hw-6} ${top+6} ${dx+hw-6} ${top+40} L ${dx+hw-6} ${bot-4} Z`); leafBody.setAttribute('fill',INK);
+      const knob=document.createElementNS(NS,'circle'); knob.setAttribute('cx',dx+hw-34); knob.setAttribute('cy',Y); knob.setAttribute('r',11); knob.setAttribute('fill','#F2EFE7');
+      // serrure (trou de serrure) : un petit rond clair + fente
+      const kh=document.createElementNS(NS,'path'); kh.setAttribute('d',`M ${dx+hw-34} ${Y+58} m -9 0 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0 M ${dx+hw-34} ${Y+64} L ${dx+hw-40} ${Y+84} L ${dx+hw-28} ${Y+84} Z`); kh.setAttribute('fill','#F2EFE7');
+      leaf.appendChild(leafBody); leaf.appendChild(knob); leaf.appendChild(kh); SVG.appendChild(leaf); leaf.setAttribute('opacity','0');
+      draw(frame,at(i,0.03),0.5,'power2.out'); draw(sill,at(i,0.1),0.35,'power2.out');
+      tl.fromTo(leaf,{autoAlpha:0},{autoAlpha:1,duration:0.3},at(i,0.26));
+      // --- la balle ROULE et COGNE la porte (impact + recul net, 2 coups). Elle est verrouillée. ---
+      const tKnock=W(i,'takes',0.16);
+      tl.to(ball,{attr:{d:circleD(dx-hw-42,Y,34)},duration:0.55,ease:'power2.in'},tKnock);        // arrive
+      tl.to(ball,{attr:{d:circleD(dx-hw-16,Y,34)},duration:0.09,ease:'power3.in'},tKnock+0.55)    // COGNE
+        .to(ball,{attr:{d:circleD(dx-hw-78,Y,34)},duration:0.17,ease:'power2.out'})                // recule
+        .to(ball,{attr:{d:circleD(dx-hw-16,Y,34)},duration:0.12,ease:'power3.in'})                 // COGNE encore
+        .to(ball,{attr:{d:circleD(dx-hw-70,Y,34)},duration:0.17,ease:'power2.out'});               // recule
+      tl.to(leaf,{x:7,duration:0.05,yoyo:true,repeat:3,ease:'none'},tKnock+0.62);                 // le battant tremble
+      tl.to(leaf,{x:0,duration:0.01},tKnock+0.9);
+      // --- une PART se détache et se GARE DEVANT la porte (la caution) — reste teal, entière, posée ---
+      const tPart=W(i,'parks',0.05), pkX=dx-hw-130, pkY=Y+72;
+      const part=mk('path',{d:circleD(dx-hw-70,Y,18)},null); part.setAttribute('fill',YOU);
+      tl.set(part,{autoAlpha:1},tPart);
+      tl.to(part,{attr:{d:circleD(pkX,pkY,18)},duration:0.55,ease:'power2.inOut'},tPart+0.05);
+      // ZONE A (MARGIN) : label sur la BASELINE COMMUNE des labels (bande dédiée, sous les objets)
+      const LABEL_BASELINE=1092;
+      const partL=lab('MARGIN',pkX,LABEL_BASELINE,YOU); tl.to(partL,{autoAlpha:1,duration:0.3},tPart+0.5);
+      // --- la caution posée, la PORTE S'OUVRE (le battant pivote), la balle PASSE ---
+      const tPass=W(i,'carry',0.12);
+      tl.to(leaf,{scaleX:0.05,transformOrigin:`${dx-hw+6}px ${Y}px`,duration:0.45,ease:'power2.in'},tPass);
+      tl.set(leaf,{autoAlpha:0},tPass+0.46);   // le battant DISPARAÎT une fois ouvert (aucun résidu vertical)
+      tl.to(ball,{attr:{d:circleD(dx+hw+80,Y,34)},duration:0.7,ease:'power2.inOut'},tPass+0.3);
+      // --- ZONE C (YOUR POSITION) : de l'autre côté elle GROSSIT énormément, DANS SA ZONE (gouttière avec la porte) ---
+      const tGrow=W(i,'bigger',0.15), posX=835, posR=132;   // remplit la zone C (703..967), ne touche ni la porte ni le bord
+      tl.to(ball,{attr:{d:circleD(posX,Y,posR)},duration:0.7,ease:'back.out(1.05)'},tGrow);
+      const posL=lab('YOUR POSITION',posX,LABEL_BASELINE,YOU); tl.to(posL,{autoAlpha:1,duration:0.3},tGrow+0.5);
+      // VERDICT (la caution est toujours là, devant la porte, intacte)
+      const vL=mk('text',{x:CX,y:1490,'text-anchor':'middle'},'head'); vL.style.fontSize='46px'; vL.textContent='IT PARKS. IT DOESN’T TAKE.';
+      gsap.set(vL,{scale:0.82,transformOrigin:'50% 50%'});
+      tl.to(vL,{autoAlpha:1,scale:1,duration:0.4,ease:'back.out(1.6)'},vend(i)-0.8);
+    }
+    /* ============ S3 — LA CHUTE : deux chutes, la même balle, seule la LIGNE change ============ */
+    function s3(i){
+      const topY=384, lineY=1140;
+      // rien d'autre à l'écran : on efface tous les restes de S2 (sauf la balle)
+      const others=Array.from(SVG.childNodes).filter(e=>e.nodeType===1 && e!==ball);
+      tl.to(others,{autoAlpha:0,duration:0.4,ease:'power2.in'},at(i,0.0));
+      // la balle devient le PRIX : elle rétrécit (depuis la position) et monte EN HAUT, au centre, posée sur rien
+      tl.to(ball,{attr:{d:circleD(CX,topY,30)},duration:0.6,ease:'power2.inOut'},at(i,0.05));
+      // --- 1re CHUTE : elle tombe dans le VIDE. Rien ne l'arrête : elle accélère ET rapetisse
+      //     (elle s'enfonce dans un abîme sans fond, minuscule, perdue), puis disparaît. ---
+      const tFall1=W(i,'size',0.2);
+      tl.to(ball,{attr:{d:circleD(CX,1660,2.5)},duration:1.1,ease:'power3.in'},tFall1);
+      tl.to(ball,{autoAlpha:0,duration:0.28,ease:'power1.in'},tFall1+0.98);
+      // --- RETOUR : même balle, même hauteur. Cette fois une LIGNE se trace sous elle ---
+      const tRet=W(i,'far',0.0);
+      tl.set(ball,{attr:{d:circleD(CX,topY,30)},autoAlpha:1},tRet);
+      const line=mk('path',{d:`M 300 ${lineY} L 780 ${lineY}`},null); line.setAttribute('fill','none');line.setAttribute('stroke',YOU);line.setAttribute('stroke-width','12');line.setAttribute('stroke-linecap','round');arm(line);
+      draw(line,tRet+0.1,0.45,'power2.out');
+      // --- 2e CHUTE : la ligne la RATTRAPE, elle rebondit, elle TIENT ---
+      const tFall2=W(i,'fall',0.32);
+      tl.to(ball,{attr:{d:circleD(CX,lineY-30,30)},duration:0.5,ease:'power4.in'},tFall2)
+        .to(ball,{attr:{d:circleD(CX,lineY-96,30)},duration:0.16,ease:'power2.out'})
+        .to(ball,{attr:{d:circleD(CX,lineY-30,30)},duration:0.2,ease:'power2.in'});
+      // --- la DISTANCE départ->ligne s'ILLUMINE : c'est ça, ta perte ---
+      const tDist=W(i,'stop',0.3);
+      const meas=mk('path',{d:`M ${CX} ${topY} L ${CX} ${lineY-30}`},null); meas.setAttribute('fill','none');meas.setAttribute('stroke',YOU);meas.setAttribute('stroke-width','7');meas.setAttribute('stroke-linecap','round');arm(meas);
+      const tickT=mk('path',{d:`M ${CX-26} ${topY} L ${CX+26} ${topY}`},null); tickT.setAttribute('fill','none');tickT.setAttribute('stroke',YOU);tickT.setAttribute('stroke-width','7');tickT.setAttribute('stroke-linecap','round');arm(tickT);
+      draw(tickT,tDist,0.2); draw(meas,tDist+0.1,0.5,'power2.out');
+      const distL=lab('YOUR LOSS',CX+150,(topY+lineY)/2,YOU); tl.to(distL,{autoAlpha:1,duration:0.3},tDist+0.5);
+      // --- VERDICT ---
+      const vL=mk('text',{x:CX,y:1400,'text-anchor':'middle'},'head'); vL.style.fontSize='46px'; vL.textContent='IT’S NOT HOW BIG. IT’S HOW FAR.';
+      gsap.set(vL,{scale:0.82,transformOrigin:'50% 50%'});
+      tl.to(vL,{autoAlpha:1,scale:1,duration:0.4,ease:'back.out(1.6)'},vend(i)-0.85);
+    }
+    function s4(i){} function s5(i){}
+
+    const SCN=[s1,s2,s3,s4,s5];
+    for(let i=0;i<SC.length;i++){ if(SCN[i]) SCN[i](i); }
+
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

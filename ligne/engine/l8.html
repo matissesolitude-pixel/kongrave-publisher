@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L8 « WHO IS THE HOUSE? » — le FUSIL = une flèche d'ordre dont la DESTINATION (marché neutre S2 / broker contrepartie S3)
+       décide si ta perte enrichit quelqu'un (S4), révélée en deux destinations (S5). B-book = MODÈLE, jamais accusation. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540, ROW_Y=1080;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=clamp(p,0,1)-1; return 1+(s+1)*q*q*q+s*q*q; };
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){ f=clamp(f,0,1); const A=h2(a),B=h2(b); return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`; }
+    function setBox(el,cx,cy,w,h){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',(cy-h/2).toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',h.toFixed(1)); }
+
+    // ── CASTING (boule + fil-de-fer, hérités L5) ──
+    const YOU_X=300;
+    const boule=mk('circle',{r:75,fill:YOU,opacity:0});                                 // TOI
+    const ordLine=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // la FLÈCHE d'ordre (le fusil)
+    const ordHead=mk('path',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    function arrow(x1,x2,y,op){ ordLine.setAttribute('x1',x1); ordLine.setAttribute('y1',y); ordLine.setAttribute('x2',x2); ordLine.setAttribute('y2',y);
+      ordHead.setAttribute('d',`M ${x2-28} ${y-20} L ${x2} ${y} L ${x2-28} ${y+20}`);
+      ordLine.setAttribute('opacity',op.toFixed(3)); ordHead.setAttribute('opacity',op.toFixed(3)); }
+    // figure fil-de-fer (broker / autre trader) — pour S2+
+    function figure(x){ const g=mk('g',{});
+      const head=mk('circle',{cx:x,cy:ROW_Y-130,r:45,fill:'none',stroke:INK,'stroke-width':8,opacity:0},g);
+      const body=mk('line',{x1:x,y1:ROW_Y-85,x2:x,y2:ROW_Y+115,stroke:INK,'stroke-width':8,'stroke-linecap':'round',opacity:0},g);
+      return {g,head,body,x}; }
+    const broker=figure(CX), trader=figure(840);
+    function figShow2(F,op){ F.head.setAttribute('opacity',op.toFixed(3)); F.body.setAttribute('opacity',op.toFixed(3)); }
+    const ord2Line=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});         // la flèche INVERSE de l'autre trader (S2)
+    const ord2Head=mk('path',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    function arrow2(x1,x2,y,op){ ord2Line.setAttribute('x1',x1); ord2Line.setAttribute('y1',y); ord2Line.setAttribute('x2',x2); ord2Line.setAttribute('y2',y);
+      ord2Head.setAttribute('d',`M ${x2+28} ${y-20} L ${x2} ${y} L ${x2+28} ${y+20}`); ord2Line.setAttribute('opacity',op.toFixed(3)); ord2Head.setAttribute('opacity',op.toFixed(3)); }
+    const arrUp=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});   // S5 : fourche destination (marché ?)
+    const arrDn=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});   // S5 : fourche destination (maison ?)
+    const gaugeYou=mk('rect',{fill:YOU,rx:3,opacity:0}), gaugeBrk=mk('rect',{fill:INK,rx:3,opacity:0});  // positions inverses (S3/S4)
+    const lossChunk=mk('rect',{fill:DEAD,rx:3,opacity:0});                                                // ta perte qui glisse vers lui (S4)
+    const commission=mk('circle',{fill:INK,opacity:0});                                                  // le petit cut du broker (S2)
+    function gRect(el,cx,w,yTop,yBot){ setBox(el,cx,(yTop+yBot)/2,w,Math.max(0,yBot-yTop)); }
+    const qLose=mk('text',{x:300,y:1330,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':54,'letter-spacing':'0.5',opacity:0});
+
+    // ── §M15 : LA QUESTION ──
+    const QLINES=['WHEN YOU BUY','WHO SELLS'];
+    const FS=88, lineH=112, y0=340, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+2*lineH+150, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0}); qMark.textContent='?';
+
+    // ── ÉTIQUETTES (densité L1 + clamp §M18 r2) ──
+    const lab=mk('text',{x:CX,y:250,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){ return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0}); }
+    const capYou=caption(), capOrder=caption(), capBroker=caption(), capOther=caption(), capMkt=caption(), capPos=caption();
+    const ALLCAPS=[capYou,capOrder,capBroker,capOther,capMkt,capPos];
+    function putCap(el,txt,cx,y,color,op){ el.textContent=txt; const hw=txt.length*(+el.getAttribute('font-size'))*0.30, x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1)); el.setAttribute('y',y); el.setAttribute('fill',color); el.setAttribute('opacity',clamp(op,0,1).toFixed(3)); }
+    function hideCaps(){ for(const e of ALLCAPS) e.setAttribute('opacity',0); }
+    function hideQ(){ for(const e of qEls) e.setAttribute('opacity',0); qMark.setAttribute('opacity',0); }
+
+    // ══════════ S1 — LA QUESTION · la boule (toi) + une flèche d'ordre EN SUSPENS vers l'inconnu ══════════
+    function s1(lf,t,s){
+      const u=t-s;
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(k===0?0.18:u-(0.1+k*0.34)), ap=clamp(qt/0.18,0,1), sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));
+        qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qm=u-1.0, qap=clamp(qm/0.2,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));
+      qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // la boule (toi) à gauche
+      const bin=clamp((u-1.6)/0.5,0,1);
+      boule.setAttribute('opacity',bin.toFixed(3)); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);
+      // la flèche d'ordre part d'elle et s'ARRÊTE au milieu, en suspens (2.0-2.9s)
+      const dp=clamp((u-2.0)/0.9,0,1);
+      arrow(YOU_X+85, lerp(YOU_X+85,640,eOut(dp)), ROW_Y, dp>0?1:0);
+      const ping=(u*0.85)%1.0;   // l'ordre SONDE vers l'inconnu (chevron qui émane du bout, continu, directionnel)
+      ord2Head.setAttribute('stroke',INK); ord2Head.setAttribute('d',`M ${(640+ping*150-28).toFixed(1)} ${ROW_Y-18} L ${(640+ping*150).toFixed(1)} ${ROW_Y} L ${(640+ping*150-28).toFixed(1)} ${ROW_Y+18}`);
+      ord2Head.setAttribute('opacity',(dp>0.9?clamp(1-ping,0,1)*0.5:0).toFixed(3));
+      broker.head.setAttribute('opacity',0); broker.body.setAttribute('opacity',0);
+      hideCaps();
+      putCap(capYou,'YOU',YOU_X,ROW_Y+75+48,YOU,(u-2.6)/0.4);
+      putCap(capOrder,'YOUR ORDER',(YOU_X+85+640)/2,ROW_Y-40,INK,(u-3.0)/0.4);
+    }
+    function hideL8(){ for(const el of [ordLine,ordHead,ord2Line,ord2Head,gaugeYou,gaugeBrk,lossChunk,commission,arrUp,arrDn]) el.setAttribute('opacity',0); trader.head.setAttribute('opacity',0); trader.body.setAttribute('opacity',0); broker.g.removeAttribute('transform'); qLose.setAttribute('opacity',0); lab.setAttribute('opacity',0); }
+
+    // ══════════ S2 — A : TO THE MARKET (ta flèche traverse le broker, matche un autre trader ; le broker prend un petit cut) ══════════
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideL8();
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);
+      figShow2(broker,1); figShow2(trader,clamp((u-0.3)/0.5,0,1));
+      const meetX=690, jr=clamp((u-0.5)/0.9,0,1), trp=clamp((u-0.5)/0.9,0,1);
+      arrow(YOU_X+85, lerp(YOU_X+85,meetX,eOut(jr)), ROW_Y, jr>0?1:0);          // ta flèche TRAVERSE le broker
+      arrow2(840-85, lerp(840-85,meetX+45,eOut(trp)), ROW_Y, trp>0?1:0);        // la flèche INVERSE du trader → match
+      // le broker prend un petit cut : un flux de petits disques qui montent (un cut à chaque passage)
+      const beat=(u*0.8)%1.0, cshow=(u>1.6);                                    // continu = « il gagne son cut, peu importe qui a raison »
+      commission.setAttribute('opacity',cshow?clamp(1-beat,0,1)*0.9:0); commission.setAttribute('r',18); commission.setAttribute('cx',CX); commission.setAttribute('cy',(ROW_Y-95-beat*150).toFixed(1));
+      lab.textContent='A — TO THE MARKET'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min(u/0.4,1-(u-3.2)/0.5),0,1).toFixed(3));
+      putCap(capYou,'YOU',YOU_X,ROW_Y+123,YOU,(u-1.5)/0.4);
+      putCap(capBroker,'BROKER',CX,ROW_Y+150,BRUN,(u-1.5)/0.4);
+      putCap(capOther,'A TRADER',840,ROW_Y+150,BRUN,(u-1.7)/0.4);
+      putCap(capMkt,'A SMALL CUT',CX,ROW_Y-215,INK,(u-2.6)/0.4);
+    }
+    // ══════════ S3 — B : THE HOUSE TAKES IT (la flèche s'arrête au broker, qui devient la contrepartie ; deux positions inverses) ══════════
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideL8();
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);
+      figShow2(broker,1); figShow2(trader,clamp(1-(u-0.4)/0.6,0,1));            // le marché extérieur DISPARAÎT
+      const jr=clamp((u-0.5)/0.8,0,1);
+      arrow(YOU_X+85, lerp(YOU_X+85,CX-55,eOut(jr)), ROW_Y, jr>0?1:0);          // ta flèche S'ARRÊTE au broker
+      const turn=(u>1.2&&u<2.0)?Math.sin((u-1.2)/0.8*Math.PI)*10:0;             // il se retourne → contrepartie
+      broker.g.setAttribute('transform',`rotate(${turn.toFixed(2)} ${CX} ${ROW_Y})`);
+      const BY=1440, H0=170, W=80, gg=eOut(clamp((u-2.0)/1.3,0,1));
+      const jit=(gg>0.98)? Math.sin(u*2.0)*6 : 0;                               // positions VIVANTES + inverses (jitter opposé, continu)
+      gaugeYou.setAttribute('opacity',gg>0.01?1:0); gaugeYou.setAttribute('fill',YOU); gRect(gaugeYou,YOU_X,W,BY-H0*gg-jit,BY);
+      gaugeBrk.setAttribute('opacity',gg>0.01?1:0); gRect(gaugeBrk,CX,W,BY-H0*gg+jit,BY);
+      putCap(capYou,'YOU',YOU_X,BY+55,YOU,(u-2.4)/0.4);
+      putCap(capBroker,'THE HOUSE',CX,BY+55,INK,(u-2.4)/0.4);
+      putCap(capPos,'OPPOSITE POSITIONS',420,BY+112,BRUN,(u-2.8)/0.4);
+      lab.textContent='B — THE HOUSE TAKES IT'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min(u/0.4,1-(u-3.6)/0.5),0,1).toFixed(3));
+    }
+    // ══════════ S4 — YOUR LOSS = HIS GAIN (ce que tu perds glisse DIRECTEMENT dans son gain, montant pour montant) ══════════
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideL8();
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);
+      figShow2(broker,1);
+      const BY=1440, H0=170, W=80;
+      const C=H0*0.6*clamp((u-0.6)/1.0,0,1);                                    // tu perds (le haut de ta jauge, 0.6-1.6)
+      const e=eOut(clamp((u-1.7)/1.1,0,1)), Cgone=C*e;                          // le morceau se transfère 1.7-2.8
+      gRect(gaugeYou,YOU_X,W,BY-(H0-C),BY); gaugeYou.setAttribute('opacity',1); gaugeYou.setAttribute('fill',YOU);   // ta jauge rétrécit
+      const chunkCy=lerp(BY-H0+C/2, BY-(H0+Cgone)+C/2, e), chunkX=lerp(YOU_X,CX,e);   // la perte grise glisse vers lui
+      gRect(lossChunk,chunkX,W,chunkCy-C/2,chunkCy+C/2); lossChunk.setAttribute('opacity',(C>2?clamp(1-(e-0.82)/0.18,0,1):0).toFixed(3));
+      gRect(gaugeBrk,CX,W,BY-(H0+Cgone),BY); gaugeBrk.setAttribute('opacity',1);      // sa jauge grandit d'EXACTEMENT ta perte
+      const drip=(u*0.7)%1.0;   // la perte CONTINUE de couler vers lui (goutte grise, continu, thématique)
+      commission.setAttribute('fill',DEAD); commission.setAttribute('r',11); commission.setAttribute('opacity',(u>2.9?clamp(Math.sin(drip*Math.PI),0,1)*0.7:0).toFixed(3)); commission.setAttribute('cx',lerp(YOU_X,CX,drip).toFixed(1)); commission.setAttribute('cy',(BY-(H0-C)-24).toFixed(1));
+      putCap(capYou,'YOU LOSE',YOU_X,BY+55,DEAD,(u-1.0)/0.4);
+      putCap(capBroker,'HE GAINS',CX,BY+55,INK,(u-1.8)/0.4);
+      lab.textContent='YOUR LOSS = HIS GAIN'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min((u-0.3)/0.4,1-(u-3.4)/0.5),0,1).toFixed(3));
+    }
+    // ══════════ S5 — WHO PROFITS WHEN I LOSE? (la flèche révèle ses deux destinations + la question) ══════════
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideL8();
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);
+      arrow(YOU_X+85, 640, ROW_Y, 1);
+      // deux destinations fantômes qui ALTERNENT (marché ? maison ?) — l'incertitude, en continu
+      const app=clamp((u-0.5)/1.0,0,1), off=(-(u*175)%240).toFixed(1);   // l'ordre ESSAIE les deux chemins (dash qui rampe vers chaque destination)
+      arrUp.setAttribute('d',`M 645 ${ROW_Y} L 835 ${ROW_Y-130}`); arrUp.setAttribute('stroke-dasharray','22 220'); arrUp.setAttribute('stroke-dashoffset',off); arrUp.setAttribute('opacity',(app*0.55).toFixed(3));
+      arrDn.setAttribute('d',`M 645 ${ROW_Y} L 835 ${ROW_Y+130}`); arrDn.setAttribute('stroke-dasharray','22 220'); arrDn.setAttribute('stroke-dashoffset',off); arrDn.setAttribute('opacity',(app*0.55).toFixed(3));
+      qLose.setAttribute('opacity',clamp((u-1.8)/0.6,0,1).toFixed(3)); qLose.setAttribute('x',540); qLose.setAttribute('y',1360); qLose.textContent='WHO PROFITS WHEN I LOSE?';
+      putCap(capYou,'YOU',YOU_X,ROW_Y+123,YOU,(u-0.4)/0.4);
+      putCap(capMkt,'THE MARKET?',880,ROW_Y-135,BRUN,(u-1.0)/0.4);
+      putCap(capBroker,'THE HOUSE?',880,ROW_Y+140,BRUN,(u-1.0)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5};
+    const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1); hideCaps(); SCENEFN[i](lf,t,SC[i].s); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

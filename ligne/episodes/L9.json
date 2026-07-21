@@ -1,0 +1,155 @@
+{
+  "id": "L9",
+  "engine": "l9",
+  "title": "L9 — THE FEE THAT WAITS",
+  "voice": [
+    "There's a fee that takes your money while you sleep. You did nothing wrong — the market didn't even move. And it charges you again every single night you hold. Here's what's quietly eating your trade.",
+    "Holding a position isn't free. Most trades you take are built on borrowed exposure — and borrowed things have rent. Every night your position stays open, a small fee is taken. Automatically. Silently.",
+    "It's called the overnight fee — the swap, the funding. It's tiny. A fraction of a percent. Which is exactly why you never notice it. One night costs you almost nothing.",
+    "But almost nothing, repeated, becomes something. Hold for a week — seven small cuts. A month — thirty. The fee doesn't care if your idea was right. It charges you for time, not for being wrong.",
+    "So before you hold a trade for weeks, do one piece of math: what does waiting cost? Because your trade doesn't just need to be right. It needs to be right faster than the rent eats the win."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Il n'a rien fait pendant la nuit, et sa position vaut un peu moins au matin. Pourquoi ?",
+      "question": "WHO CHARGED YOU WHILE YOU SLEPT?",
+      "cast": {
+        "gauge": {
+          "type": "gauge",
+          "x": 540,
+          "h": 420,
+          "note": "ta position: jauge teal, le fusil"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP ligne/ligne, ? 200px, back.out(2)"
+        },
+        {
+          "t": "1.6-2.4",
+          "do": "DRAW-ON: la jauge teal (ta position) au centre, pleine, nette"
+        },
+        {
+          "t": "2.4-3.2",
+          "do": "le fond s'assombrit legerement (la nuit, un voile 8% opacite) puis revient (le matin)"
+        },
+        {
+          "t": "3.2-3.5",
+          "do": "SNAP: le sommet de la jauge DESCEND de 12px. presque rien. mais visible."
+        },
+        {
+          "t": "3.5-10",
+          "do": "TENUE VIVANTE: le cycle nuit/jour continue en boucle discrete (voile 8%), et a CHAQUE passage la jauge perd 2px de plus — le loyer court deja. le ? tenu puis fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge teal amputee de 12px apres le passage nuit/matin",
+      "fusil": "la jauge pleine de S1 — on la retrouvera en S4 apres 30 nuits."
+    },
+    {
+      "id": "s2",
+      "clarity": "Tenir une position, ce n'est pas gratuit : ce qu'on tient est en partie emprunte, et l'emprunt a un loyer.",
+      "label": "borrowed exposure has rent",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "la jauge se DECOMPOSE en deux couches: une base fine teal (ta mise) + une large part au-dessus en teal plus clair (l'exposition empruntee). labels 'yours' / 'borrowed' (lab 42px)"
+        },
+        {
+          "t": "1.5-3",
+          "do": "sur la part empruntee, une petite ENCOCHE se detache du sommet et glisse HORS du cadre a droite: le loyer part. geste discret, presque poli."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: toutes les ~2s, une MICRO-encoche se detache de la couche empruntee et sort par la droite — le loyer ne s'arrete jamais. la jauge a deux couches respire a peine."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge en deux couches (mise/emprunte) + une encoche qui sort",
+      "turn": "ce que tu tiens n'est pas tout a toi — et la part empruntee paie un loyer."
+    },
+    {
+      "id": "s3",
+      "clarity": "Une nuit coute presque rien. C'est exactement pour ca qu'on ne le remarque jamais.",
+      "label": "one night = almost nothing",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "cycle nuit/jour x1, LENT: le voile passe, une encoche minuscule (8px) se detache et sort. la jauge bouge a peine."
+        },
+        {
+          "t": "2-4",
+          "do": "zoom leger sur l'encoche en train de partir: elle est RIDICULE de petitesse a cote de la jauge. c'est le propos."
+        },
+        {
+          "t": "4-13",
+          "do": "dezoom. TENUE VIVANTE: le cycle nuit/jour continue en fond, tres lent, une micro-encoche par passage. on se dit: ce n'est rien. (c'est le piege.)"
+        }
+      ],
+      "camera": "zoom leger sur l'encoche puis retour",
+      "dod": "l'encoche minuscule comparee a la jauge — 'ce n'est rien'",
+      "turn": "le cout est si petit qu'il est invisible. c'est sa force."
+    },
+    {
+      "id": "s4",
+      "clarity": "Presque rien, repete trente fois, devient quelque chose. Le temps facture, meme quand tu as raison.",
+      "note": "LA scene. l'accumulation cadencee (lent -> presse -> pluie).",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "cycles nuit/jour ACCELERES: voile-encoche, voile-encoche. cadence 800ms puis 400ms puis 200ms. les encoches sortent en file par la droite, on les COMPTE."
+        },
+        {
+          "t": "2-5",
+          "do": "la jauge FOND a vue d'oeil, cran par cran, ~30 encoches. pas un krach: une erosion. le sommet descend regulierement, implacable."
+        },
+        {
+          "t": "5-6",
+          "do": "les cycles s'arretent. la jauge a perdu ~un tiers. SANS QU'AUCUN PRIX N'AIT BOUGE contre toi."
+        },
+        {
+          "t": "6-14",
+          "do": "TENUE longue: la jauge erodee, cote a cote avec son CONTOUR d'origine en pointille (souvenir de S1). la difference EST le loyer du temps."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge erodee vs son contour d'origine pointille — l'ecart = 30 nuits",
+      "turn": "rien ne t'a frappe. le temps seul t'a facture un tiers."
+    },
+    {
+      "id": "s5",
+      "clarity": "Avant de tenir des semaines, il calcule ce que l'attente coute. Le trade doit avoir raison plus vite que le loyer ne mange.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: a cote de la jauge erodee, une COURSE se dessine — deux petites barres qui montent en parallele: 'the win' (teal) vs 'the rent' (encre, qui monte par crans reguliers). la question visuelle: laquelle monte plus vite ?"
+        },
+        {
+          "t": "2-3.5",
+          "do": "la barre teal passe DEVANT et le reste. c'est la seule issue: avoir raison PLUS VITE que le loyer."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: les deux barres, teal devant. immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la course win vs rent, teal devant — la lecon en une image",
+      "fusil_decharge": "la jauge pleine de S1, erodee en S4, se resout en S5: le trade doit battre le loyer du temps."
+    }
+  ],
+  "total": 54.0,
+  "caption": "You did nothing overnight. Your position still shrank. Here's the fee nobody shows you.\n\nHolding a trade has a rent — tiny per night, relentless over weeks. Your idea doesn't just need to be right. It needs to be right faster than the rent eats the win.\n\nComment \"LINE\" for the series on how trading actually works underneath.\n\nTHE LINE — the proof is on the chart.\n\n#trading #trader #daytrading #forex #swap #overnightfee #tradingeducation #priceaction #swingtrading #investing",
+  "_rules": {
+    "fusil": "la jauge pleine (S1) erodee nuit apres nuit (S4), resolue par la course win vs rent (S5).",
+    "interdits": "aucun chiffre; l'erosion est MECANIQUE jamais un vol; bas du cadre vide.",
+    "police": "Helvetica Neue 800 uppercase ls1px #20242A.",
+    "circuit": "M24 frames DoD d'abord.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · eux/brun #8A5323 (UNIQUEMENT s'il y a un camp adverse — aucun dans cet episode: structures neutres = encre) · perte/gris #474D50",
+    "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
+    "hook_v1_archived": "Close your platform. Go to sleep. Touch nothing. And tomorrow morning, your position is worth a little less than you left it. Nothing moved against you. So what happened overnight?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  }
+}

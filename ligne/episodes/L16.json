@@ -1,0 +1,145 @@
+{
+  "id": "L16",
+  "engine": "l16",
+  "title": "L16 — THE PRICE THAT REMEMBERS",
+  "voice": [
+    "Traders talk about levels like the chart has a memory. Price falls to a line, bounces, and they say it 'respected support' — as if the number itself pushed back. A price has no memory. So what actually stopped it?",
+    "Draw a line where price bounced before. Watch it come back to the same spot and bounce again, and it feels alive — like the level remembers. But the line isn't doing anything. It's just a place where something is waiting.",
+    "What's waiting is orders. A price where a lot of people decided to buy last time is a price where a lot of people left buy orders this time. Price falls into that pile, the orders absorb it, and it lifts. Not memory — inventory.",
+    "And that changes how you read it. A level isn't strong because it's old or famous. It's strong because of how many orders sit there right now. When those orders get eaten, the level stops working — instantly. The line looks the same. The pile is gone.",
+    "So stop treating a line like it has willpower. Ask what's actually resting on it. A level holds because of orders, and orders run out. Respect the pile — not the paint."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "On parle des niveaux comme si le graphe avait une memoire. Un prix n'a pas de memoire. Qu'est-ce qui l'arrete vraiment ?",
+      "question": "DOES A PRICE REMEMBER A LEVEL?",
+      "cast": {
+        "level": {
+          "type": "hline",
+          "y": 1200,
+          "note": "un trait horizontal encre = le niveau. le fusil = ce qui repose dessus."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.6",
+          "do": "DRAW-ON: un trait horizontal se trace (le niveau). un point teal tombe dessus, REBONDIT. remonte."
+        },
+        {
+          "t": "2.6-10",
+          "do": "TENUE VIVANTE: le point retombe sur le trait, rebondit, remonte, en boucle — 'on dirait qu'il se souvient'. le trait, lui, immobile. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le trait + le point qui rebondit dessus en boucle",
+      "fusil": "un trait qui semble 'repousser' — on va voir ce qui repose vraiment dessus."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le trait semble vivant, comme s'il se souvenait. Mais le trait ne fait rien : c'est juste un endroit ou quelque chose attend.",
+      "label": "the line does nothing",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "gros plan sur le trait au moment du rebond. on ZOOME: le trait est... juste un trait. rien dedans. le point rebondit quand meme — pourquoi ?"
+        },
+        {
+          "t": "1.5-3",
+          "do": "sous le trait, quelque chose commence a apparaitre en transparence: des formes en attente (revele en S3). le trait n'est qu'une SURFACE."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: le point continue de rebondir, mais l'oeil est attire par ce qui se devine SOUS le trait."
+        }
+      ],
+      "camera": "zoom leger",
+      "dod": "le trait 'vide' au rebond + quelque chose qui se devine dessous",
+      "turn": "le trait ne repousse rien. c'est un endroit ou quelque chose attend."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce qui attend, ce sont des ordres. Beaucoup d'ordres d'achat empiles a ce prix. Le prix tombe dedans, ils l'absorbent, il remonte.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "REVELATION: sous le trait, une PILE d'ordres se dessine — une nappe de petits blocs teal empiles (les ordres d'achat en attente). label 'orders waiting'."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le point tombe: il s'ENFONCE dans la pile, la pile l'ABSORBE (quelques blocs se consomment, disparaissent), et le point est REPOUSSE vers le haut. ce ne sont pas les blocs qui poussent — c'est leur MASSE qui arrete."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la pile un peu entamee, le point reparti. 'not memory — inventory'."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la pile d'ordres sous le trait qui absorbe le point et le repousse",
+      "turn": "ce n'est pas de la memoire. c'est du stock."
+    },
+    {
+      "id": "s4",
+      "clarity": "Un niveau n'est pas fort parce qu'il est vieux ou celebre. Il est fort par le nombre d'ordres presents maintenant. Consommes, il lache d'un coup.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "le point retombe sur la pile PLUSIEURS fois (cadence): a chaque fois, la pile perd des blocs. elle maigrit visiblement — le 'niveau' s'use, ordre par ordre."
+        },
+        {
+          "t": "2-3",
+          "do": "au dernier passage: la pile est VIDE. le point tombe... et TRAVERSE — plus rien pour l'arreter. il continue vers le bas, franc."
+        },
+        {
+          "t": "3-4",
+          "do": "MOMENT CLE: le trait est TOUJOURS LA, identique, mais il ne fait plus rien. 'the line looks the same. the pile is gone.'"
+        },
+        {
+          "t": "4-13",
+          "do": "TENUE VIVANTE: le trait seul, traverse, la pile disparue. le point poursuit en dessous."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la pile videe progressivement puis le point qui traverse le trait intact",
+      "turn": "le trait n'a pas change. c'est le stock derriere qui s'est epuise."
+    },
+    {
+      "id": "s5",
+      "clarity": "Ne traite pas un trait comme s'il avait une volonte. Demande ce qui repose vraiment dessus : un niveau tient par les ordres, et les ordres s'epuisent.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: le trait, avec sous lui une pile qui se REMPLIT et se VIDE comme une jauge de stock (en direct). quand la pile est haute, le point rebondit; quand elle est basse, il traverse. la 'force' du niveau = la hauteur de la pile, rien d'autre."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la pile se stabilise a mi-hauteur. le trait, lui, n'a jamais bouge — c'est la pile qu'il faut lire, pas la ligne. label 'respect the pile, not the paint' (Helvetica 800, plus petit)."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: le trait et sa pile-jauge. immobile. lire le stock, pas la peinture."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le trait + la pile comme jauge de stock: la force du niveau = la hauteur de la pile",
+      "fusil_decharge": "le trait qui 'se souvenait' (S1) revele sa pile d'ordres (S3), qui s'epuise (S4) — la memoire etait du stock (S5)."
+    }
+  ],
+  "total": 74.0,
+  "caption": "A price doesn't 'remember' a level — it runs out of orders. Comment \"MAP\" for the free beta of my indicator that shows where price is really pulled.\n\nTraders talk about levels like the chart has a memory — price 'respects support' as if the line pushes back. It doesn't. A level holds because of how many orders sit there right now. When they're eaten, it stops working — instantly.\n\nTHE LINE — respect the pile, not the paint.\n\n#trading #trader #supportandresistance #priceaction #liquidity #daytrading #forex #tradingeducation #smartmoney #orderflow",
+  "_rules": {
+    "doctrine": "support/resistance demythifie: le niveau n'a pas de pouvoir magique, il tient par le STOCK d'ordres present. Pas d'intention, pas de memoire — de l'inventaire. Etabli, pas speculatif.",
+    "fusil": "le trait qui 'repousse' (S1) revele sa pile d'ordres (S3), qui s'use (S4), et devient une jauge de stock a lire (S5).",
+    "interdits": "aucun chiffre; pas de brun (les ordres en attente = teal, neutres = encre); bas du cadre vide.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "vie_continue": "regle 5: le point rebondit/traverse en continu, la pile monte/descend.",
+    "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "MAP → indicateur 3T ENGINE (whop.com/otp-consulting/3t-engine-indicator)",
+    "caption_structure": "LIGNE 1 = accroche courte + CTA avec mot-clé (visible sans déplier sur Instagram). Corps développé en dessous."
+  }
+}

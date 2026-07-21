@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flubber@0.4.2/build/flubber.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;--them:#8A5323;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+    .head{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:60px;letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+    .lab{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:40px;letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+  </style>
+</head>
+<body>
+  <!-- L3 OUVERTURE (hand-craft). Le point du "?" = la balle (encre). Elle devient TON COMPTE (teal).
+       Le levier entre. Une PART (marge) se détache, passe en GRIS (parquée), va se poser à côté.
+       Le compte reste intact : "leverage parks, it doesn't take". Couleur = rôle. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const SC=__SCENES__, TOTAL=__TOTAL__, WORDS=__WORDS__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const INK='#20242A', YOU='#1E5F6E', THEM='#8A5323', GRAY='#9AA0A6';
+    function wt(i,nd,fb){nd=String(nd).toLowerCase();for(const w of(WORDS[i]||[])){const t=w.w.toLowerCase().replace(/[^a-z0-9]/g,'');if(t===nd||t.startsWith(nd))return SC[i].s+w.s;}return SC[i].s+(fb==null?0.1:fb)*SC[i].d;}
+    function W(i,tok,fb){return tok==null?SC[i].s+(fb==null?0.1:fb)*SC[i].d:wt(i,tok,fb);}
+    function at(i,f){return SC[i].s+f*SC[i].d;} function vend(i){return SC[i].s+SC[i].v;}
+    function mk(tag,a,cls){const e=document.createElementNS(NS,tag);if(cls)e.setAttribute('class',cls);for(const k in(a||{}))e.setAttribute(k,a[k]);e.setAttribute('opacity','0');SVG.appendChild(e);return e;}
+    function arm(el){const L=el.getTotalLength();el.style.strokeDasharray=L;el.style.strokeDashoffset=L;el.__L=L;}
+    function draw(el,t,dur,e){tl.set(el,{autoAlpha:1},t);tl.fromTo(el,{strokeDashoffset:el.__L},{strokeDashoffset:0,duration:dur,ease:e||'power1.inOut'},t);}
+    function lab(txt,x,y,c){const e=mk('text',{x,y,'text-anchor':'middle'},'lab');e.textContent=txt;if(c)e.setAttribute('fill',c);return e;}
+    function circleD(cx,cy,r){const k=0.5523*r;return `M ${cx} ${cy-r} C ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy} C ${cx+r} ${cy+k} ${cx+k} ${cy+r} ${cx} ${cy+r} C ${cx-k} ${cy+r} ${cx-r} ${cy+k} ${cx-r} ${cy} C ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r} Z`;}
+    const tl=gsap.timeline({paused:true});
+    const CX=540;
+    // LA BALLE (encre = elle est le point du "?")
+    const ball=mk('path',{d:circleD(CX,250,15)},null); ball.setAttribute('fill',INK);
+
+    /* ---------- S0 : question ; "?" sous le texte, centré ; point BIEN détaché (encre) ---------- */
+    (function question(){
+      const i=0, q='WHY DO THE PROS USE MORE LEVERAGE';
+      const words=q.split(' ');
+      const FS=58, chW=FS*0.62, GAP=1.7, maxW=930, lineH=100, slot=w=>(w.length+GAP)*chW;
+      const rows=[[]]; let rw=0; words.forEach(w=>{const ww=slot(w);if(rw+ww>maxW&&rows[rows.length-1].length){rows.push([]);rw=0;}rows[rows.length-1].push(w);rw+=ww;});
+      const y0=640; const wEls=[];
+      rows.forEach((ln,li)=>{const ws=ln.map(slot),tot=ws.reduce((a,b)=>a+b,0);let x=CX-tot/2;
+        ln.forEach((w,ci)=>{const cx=x+ws[ci]/2;const e=mk('text',{x:cx,y:y0+li*lineH,'text-anchor':'middle'},'head');e.style.fontSize=FS+'px';e.textContent=w;gsap.set(e,{scale:0.82,transformOrigin:'50% 50%'});wEls.push(e);x+=ws[ci];});});
+      const nR=rows.length, qbase=y0+(nR-1)*lineH+230;    // baseline du "?" (sa propre ligne, sous le texte)
+      // LE "?" = le VRAI glyphe (même police, parfait), centré. La balle = son POINT (encre, dessus).
+      const qm=mk('text',{x:CX,y:qbase,'text-anchor':'middle'},'head'); qm.style.fontSize='150px'; qm.textContent='?';
+      gsap.set(qm,{scale:0.55,transformOrigin:'50% 65%'});
+      const vw=WORDS[i]||[];
+      wEls.forEach((e,k)=>{const t=vw[k]!=null?SC[i].s+vw[k].s:at(i,0.05+k*0.08);tl.to(e,{autoAlpha:1,scale:1,duration:0.16,ease:'back.out(2)'},t);});
+      const tQ=W(i,'leverage',0.72);
+      tl.to(qm,{autoAlpha:1,scale:1,duration:0.3,ease:'back.out(2)'},tQ);
+      const dotX=CX, dotY=qbase-14;      // le point du glyphe "?" (juste au-dessus de la baseline)
+      tl.set(ball,{attr:{d:circleD(dotX,dotY,13)},autoAlpha:1},tQ+0.04);   // la balle EST ce point, dès le début
+      // sortie : question + "?" (glyphe) s'effacent ; LE POINT (la balle) RESTE
+      const tGo=at(i,0.9);
+      wEls.forEach((e,k)=>tl.to(e,{autoAlpha:0,scale:0.15,duration:0.3,ease:'power2.in'},tGo+0.01*k));
+      tl.to(qm,{autoAlpha:0,duration:0.3,ease:'power2.in'},tGo+0.08);
+      window.__ballAt=[dotX,dotY];
+    })();
+
+    /* ---------- S1 : UN SEUL MOUVEMENT. La balle (ton argent) arrive -> une PORTE -> une PART se gare
+                       devant (la marge, visible/entière) -> la porte s'ouvre, la balle passe et GROSSIT
+                       énormément (la position) -> la part est toujours là. IT PARKS. IT DOESN'T TAKE. ---------- */
+    (function margin(){
+      const i=1, Y=900, dx=580;
+      // 1. le point (encre) descend à GAUCHE et devient TON ARGENT (teal)
+      tl.to(ball,{attr:{d:circleD(300,Y,16)},duration:0.5,ease:'power2.inOut'},at(i,0.0));
+      const tMoney=W(i,'leverage',0.06);
+      tl.to(ball,{attr:{d:circleD(300,Y,46)},duration:0.5,ease:'back.out(1.3)'},tMoney);
+      tl.to(ball,{fill:YOU,duration:0.5,ease:'power1.inOut'},tMoney);
+      // 2. une PORTE apparaît (centre) — cadre encre + panneau fermé
+      const tDoor=W(i,'cash',0.3);
+      const frame=mk('path',{d:`M ${dx-52} ${Y+158} L ${dx-52} ${Y-158} L ${dx+52} ${Y-158} L ${dx+52} ${Y+158}`},null);
+      frame.setAttribute('fill','none'); frame.setAttribute('stroke',INK); frame.setAttribute('stroke-width','12'); frame.setAttribute('stroke-linecap','round'); frame.setAttribute('stroke-linejoin','round'); arm(frame);
+      const panel=mk('rect',{x:dx-48,y:Y-154,width:96,height:308,rx:4},null); panel.setAttribute('fill',INK);
+      draw(frame,tDoor,0.5,'power2.out');
+      tl.fromTo(panel,{autoAlpha:0},{autoAlpha:1,duration:0.3},tDoor+0.35);
+      // 3. une PETITE PART se détache de la balle et se GARE devant la porte (reste teal, entière)
+      const tMarg=W(i,'margin',0.05);
+      const part=mk('path',{d:circleD(300,Y,20)},null); part.setAttribute('fill',YOU);
+      tl.set(part,{autoAlpha:1},tMarg);
+      tl.to(part,{attr:{d:circleD(dx-120,Y,20)},duration:0.6,ease:'power2.inOut'},tMarg+0.05);
+      // 4. la PORTE S'OUVRE (le panneau pivote), la balle PASSE et GROSSIT énormément de l'autre côté
+      const tPass=W(i,'takes',0.4);
+      tl.to(panel,{scaleX:0,transformOrigin:`${dx-48}px ${Y}px`,duration:0.4,ease:'power2.in'},tPass);
+      tl.to(ball,{attr:{d:circleD(820,Y,46)},duration:0.75,ease:'power2.inOut'},tPass+0.18);   // passe de l'autre côté
+      tl.to(ball,{attr:{d:circleD(820,Y,168)},duration:0.7,ease:'back.out(1.15)'},tPass+0.7);  // GROSSIT = la position contrôlée
+      // 5. la part est toujours là (intacte). VERDICT.
+      const vL=mk('text',{x:CX,y:1420,'text-anchor':'middle'},'head'); vL.style.fontSize='50px'; vL.textContent='IT PARKS. IT DOESN’T TAKE.';
+      gsap.set(vL,{scale:0.82,transformOrigin:'50% 50%'});
+      tl.to(vL,{autoAlpha:1,scale:1,duration:0.4,ease:'back.out(1.6)'},W(i,'parks',0.82));
+    })();
+
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

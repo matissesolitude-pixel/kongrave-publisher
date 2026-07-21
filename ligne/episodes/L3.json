@@ -1,0 +1,131 @@
+{
+  "id": "L3",
+  "title": "LEVERAGE ISN'T THE KILLER",
+  "engine": "pivot-dsl",
+  "note": "DSL PUR : je déclare des FORMES et une SÉQUENCE DE VERBES. Aucune coordonnée, aucune physique, aucune brique. Le moteur résout. La balle naît du '?' et porte tout l'épisode. Thèse vraie et cohérente avec la méthode (1:500 + stop) : le levier n'est pas le risque — l'absence de stop l'est.",
+
+  "voice": [
+    "Why do the pros use more leverage than you do?",
+    "Because leverage doesn't decide what you lose. It only decides how much cash sits locked as margin. It takes nothing. It parks something.",
+    "What decides your loss is one thing. The distance between your entry and your stop — multiplied by your size. That's the whole formula. Leverage isn't in it.",
+    "Same market. Same move. On the left: five hundred to one, with a stop — he risks one percent. On the right: ten to one, no stop — he risks everything he has.",
+    "The man with the biggest leverage is the safest one on the chart, because he decided before he clicked where he would be wrong. Leverage is a tool. The stop is the decision. Stop blaming the tool for what you refused to decide."
+  ],
+
+  "scenes": [
+
+    {
+      "id": "s1_question",
+      "question": "WHY DO THE PROS USE MORE LEVERAGE THAN YOU?",
+      "formes": {},
+      "sequence": [
+        { "verbe": "ecrire", "sujet": "question", "mot_a_mot": true, "sur": "fenetre_voix" },
+        { "verbe": "absorber", "sujet": "question", "sauf": "point_interrogation" },
+        { "verbe": "naitre", "sujet": "balle", "depuis": "point_interrogation" },
+        { "verbe": "rebondir", "sujet": "balle", "n": 1 }
+      ],
+      "sync": { "ecrire": "why", "naitre": "you" }
+    },
+
+    {
+      "id": "s2_margin",
+      "formes": {
+        "compte":  { "shape": "cercle", "taille": "grand",  "couleur": "you",    "label": "YOUR ACCOUNT" },
+        "marge":   { "shape": "part",   "de": "compte",     "fraction": "petite","couleur": "neutre", "label": "MARGIN LOCKED" },
+        "coffre":  { "shape": "coffre", "position": "cote", "couleur": "neutre" },
+        "levier":  { "shape": "levier", "taille": "moyen",  "couleur": "neutre", "label": "500:1" }
+      },
+      "sequence": [
+        { "verbe": "deployer",    "depuis": "balle", "cibles": ["compte"] },
+        { "verbe": "entrer",      "sujet": "levier", "depuis": "bord" },
+        { "verbe": "se_diviser",  "sujet": "compte", "extrait": "marge" },
+        { "verbe": "entrer",      "sujet": "marge",  "vers": "coffre" },
+        { "verbe": "pulser",      "sujet": "compte" },
+        { "verbe": "absorber",    "sujet": "balle",  "cibles": "tout" }
+      ],
+      "sync": { "deployer": "leverage", "entrer_levier": "decide", "se_diviser": "locked", "entrer_marge": "margin", "pulser": "parks" }
+    },
+
+    {
+      "id": "s3_formula",
+      "formes": {
+        "entree":   { "shape": "point",  "couleur": "you" },
+        "stop":     { "shape": "niveau", "couleur": "you",  "label": "YOUR STOP" },
+        "distance": { "shape": "barre",  "orientation": "verticale", "entre": ["entree","stop"], "label": "DISTANCE" },
+        "taille":   { "shape": "bloc",   "orientation": "horizontale", "couleur": "them", "label": "SIZE" },
+        "perte":    { "shape": "zone",   "couleur": "them", "label": "YOUR LOSS" },
+        "mot_levier": { "shape": "mot", "texte": "LEVERAGE", "couleur": "neutre" }
+      },
+      "sequence": [
+        { "verbe": "deployer",  "depuis": "balle", "cibles": ["entree"] },
+        { "verbe": "tomber",    "sujet": "entree", "vers": "stop" },
+        { "verbe": "grossir",   "sujet": "distance", "sur": "fenetre_voix" },
+        { "verbe": "grossir",   "sujet": "taille",   "sur": "fenetre_voix" },
+        { "verbe": "fusionner", "sujets": ["distance","taille"], "en": "perte" },
+        { "verbe": "entrer",    "sujet": "mot_levier", "depuis": "bord" },
+        { "verbe": "barrer",    "sujet": "mot_levier" },
+        { "verbe": "absorber",  "sujet": "balle", "cibles": "tout" }
+      ],
+      "sync": { "deployer": "distance", "tomber": "stop", "grossir_taille": "size", "fusionner": "formula", "barrer": "isn't" }
+    },
+
+    {
+      "id": "s4_duel",
+      "split": true,
+      "formes": {
+        "prix_g":     { "shape": "courbe", "cote": "gauche", "couleur": "neutre" },
+        "prix_d":     { "shape": "courbe", "cote": "droite", "couleur": "neutre" },
+        "stop_g":     { "shape": "niveau", "cote": "gauche", "couleur": "you",  "label": "500:1 + STOP" },
+        "compte_g":   { "shape": "colonne","cote": "gauche", "couleur": "you" },
+        "compte_d":   { "shape": "colonne","cote": "droite", "couleur": "them", "label": "10:1 NO STOP" },
+        "perte_g":    { "shape": "barre",  "cote": "gauche", "taille": "minuscule", "label": "1%" },
+        "perte_d":    { "shape": "barre",  "cote": "droite", "taille": "totale",    "label": "100%" }
+      },
+      "sequence": [
+        { "verbe": "se_diviser", "sujet": "balle", "en": ["prix_g","prix_d"] },
+        { "verbe": "deployer",   "depuis": "balle", "cibles": ["compte_g","compte_d","stop_g"] },
+        { "verbe": "tomber",     "sujets": ["prix_g","prix_d"], "simultane": true },
+        { "verbe": "arreter",    "sujet": "prix_g", "sur": "stop_g" },
+        { "verbe": "grossir",    "sujet": "perte_g", "taille": "minuscule" },
+        { "verbe": "se_derober", "sujet": "compte_d", "sous": "prix_d" },
+        { "verbe": "grossir",    "sujet": "perte_d", "taille": "totale" },
+        { "verbe": "fusionner",  "sujets": ["prix_g","prix_d"], "en": "balle" }
+      ],
+      "sync": { "se_diviser": "same", "tomber": "move", "arreter": "stop", "se_derober": "everything", "fusionner": "has" }
+    },
+
+    {
+      "id": "s5_decision",
+      "formes": {
+        "stop_final": { "shape": "niveau", "couleur": "you",   "label": "HE DECIDED BEFORE HE CLICKED" },
+        "outil":      { "shape": "levier", "couleur": "neutre","label": "THE TOOL" },
+        "main":       { "shape": "main",   "couleur": "you" },
+        "verdict":    { "shape": "mot",    "texte": "THE STOP IS THE DECISION", "couleur": "you" }
+      },
+      "sequence": [
+        { "verbe": "deployer", "depuis": "balle", "cibles": ["stop_final"] },
+        { "verbe": "poser",    "sujet": "balle",  "sur": "stop_final" },
+        { "verbe": "entrer",   "sujet": "outil",  "depuis": "bord_gauche" },
+        { "verbe": "entrer",   "sujet": "main",   "depuis": "bord_droit" },
+        { "verbe": "tracer",   "sujet": "main",   "cible": "stop_final" },
+        { "verbe": "ecrire",   "sujet": "verdict" },
+        { "verbe": "immobiliser", "sujet": "balle" }
+      ],
+      "sync": { "deployer": "safest", "poser": "decided", "entrer_outil": "tool", "tracer": "decision", "ecrire": "refused" }
+    }
+
+  ],
+
+  "VERBES_UTILISES": [
+    "ecrire", "absorber", "naitre", "rebondir", "deployer", "entrer",
+    "se_diviser", "pulser", "tomber", "grossir", "fusionner", "barrer",
+    "arreter", "se_derober", "poser", "tracer", "immobiliser"
+  ],
+
+  "FORMES_UTILISEES": [
+    "cercle", "part", "coffre", "levier", "point", "niveau", "barre",
+    "bloc", "zone", "mot", "courbe", "colonne", "main"
+  ],
+
+  "NOTE_POUR_CODE": "Si un verbe ou une forme de ces listes n'existe pas encore dans verbs.js / shapes.js, code-le AVANT de fabriquer — il rejoint le catalogue et sert à tous les épisodes suivants. Verbes probablement neufs : ecrire, pulser, arreter, poser, tracer, immobiliser. Formes probablement neuves : part, coffre, levier, zone, mot, colonne, main. Aucun n'est propre à L3 : tous serviront ailleurs."
+}

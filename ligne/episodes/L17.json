@@ -1,0 +1,137 @@
+{
+  "id": "L17",
+  "engine": "l17",
+  "title": "L17 — VOLUME IS A CROWD",
+  "voice": [
+    "Under every chart there are bars called volume. Most traders glance at them and think 'big bar, big energy' — like the market is revving an engine. That's the wrong picture entirely. Here's what volume actually counts.",
+    "Volume isn't force. It's headcount. Every unit of volume is one thing: a trade. And every trade is two people — one buying, one selling, agreeing on a price. Volume counts how many times hands changed. Nothing more.",
+    "So a tall volume bar doesn't mean price wants to go up. It means a lot of people traded there. Buyers and sellers, in equal number — because every buyer needs a seller. High volume is a crowd, not a direction.",
+    "That's why volume alone never tells you where price goes. A huge bar can appear as price rises, falls, or goes nowhere. What it tells you is where the crowd showed up — where a lot of decisions got made at once. The size of the room, not which way it's facing.",
+    "So stop reading volume like a fuel gauge. Read it like attendance. It tells you how many people cared about this price — not what they'll do next. A crowd is loud. It isn't a direction."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Sous le graphe, des barres: le volume. On croit 'grande barre = grande energie'. Faux. Que compte le volume, vraiment ?",
+      "question": "IS A BIG VOLUME BAR BIG ENERGY?",
+      "cast": {
+        "bar": {
+          "type": "vbar",
+          "note": "une grande barre verticale encre = une barre de volume. le fusil = ce qu'elle contient vraiment."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.6",
+          "do": "DRAW-ON: une grande barre verticale monte (comme une jauge d'energie). une petite icone 'moteur/energie' fantome apparait a cote — l'intuition fausse."
+        },
+        {
+          "t": "2.6-10",
+          "do": "TENUE VIVANTE: la barre PULSE comme si elle 'vrombissait' (l'illusion d'energie). le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la grande barre + l'icone energie fantome (l'intuition a corriger)",
+      "fusil": "une barre qu'on prend pour de l'energie — on va l'ouvrir."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le volume n'est pas de la force, c'est un decompte de tetes. Chaque unite = un echange. Chaque echange = deux personnes.",
+      "label": "not force — headcount",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "l'icone energie fantome S'EFFACE. la barre se DECOMPOSE: elle se revele faite d'une PILE de petites unites empilees (chaque unite = un trade)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "ZOOM sur une unite: elle se dedouble en DEUX figures fil-de-fer minuscules qui se serrent la main (un acheteur, un vendeur) — un echange, deux personnes."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: la barre faite d'unites, chacune un petit echange qui se fait (micro-poignees de main desynchronisees). la barre est une FOULE, pas un moteur."
+        }
+      ],
+      "camera": "zoom sur une unite",
+      "dod": "la barre decomposee en trades, un trade = deux figures qui echangent",
+      "turn": "le volume compte combien de mains ont change. rien d'autre."
+    },
+    {
+      "id": "s3",
+      "clarity": "Une grande barre ne veut pas dire que le prix va monter. Elle dit que beaucoup ont echange la — acheteurs et vendeurs a egalite.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "la grande barre, pleine d'unites. on la SEPARE en deux moities cote a cote: les ACHETEURS (teal) et les VENDEURS (encre) — EXACTEMENT le meme nombre. label 'every buyer needs a seller'."
+        },
+        {
+          "t": "2-3.5",
+          "do": "une fleche 'up?' apparait au-dessus de la barre, hesite, et TOMBE (barree): la barre ne pointe nulle part. les deux camps sont a egalite — pas de direction."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: les deux moities egales, la fleche de direction absente. 'a crowd, not a direction'."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la barre coupee en acheteurs=vendeurs, la fleche de direction barree",
+      "turn": "haute barre = grande foule, pas une direction."
+    },
+    {
+      "id": "s4",
+      "clarity": "C'est pourquoi le volume seul ne dit jamais ou va le prix. Une grosse barre apparait que le prix monte, descende, ou stagne.",
+      "note": "triptyque: meme grosse barre, trois destins.",
+      "beats": [
+        {
+          "t": "0-13",
+          "do": "TROIS bandes cote a cote, chacune avec la MEME grosse barre de volume identique. BANDE 1: le prix MONTE au-dessus. BANDE 2: le prix DESCEND. BANDE 3: le prix STAGNE (plat)."
+        },
+        {
+          "t": "0-13",
+          "do": "le point de prix bouge dans chaque bande, en continu. la barre de volume, elle, est IDENTIQUE dans les trois. 'the size of the room, not which way it's facing'."
+        }
+      ],
+      "camera": "fixe, triptyque",
+      "dod": "meme grosse barre, trois destins de prix differents (monte/descend/stagne)",
+      "turn": "la meme foule peut accompagner n'importe quelle direction."
+    },
+    {
+      "id": "s5",
+      "clarity": "Ne lis pas le volume comme une jauge d'essence. Lis-le comme une affluence : combien ont tenu a ce prix — pas ce qu'ils feront.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: la barre de S1 revient. l'icone 'jauge d'essence' fantome tente de se rececoller dessus — puis est REMPLACEE par une icone 'compteur de personnes / affluence' (une foule stylisee)."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la barre grandit et retrecit selon l'affluence (des figures qui arrivent/repartent), mais ne pointe JAMAIS dans une direction. label 'attendance, not a fuel gauge' (Helvetica 800, plus petit)."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la barre-affluence, sans fleche. immobile. le volume dit COMBIEN, jamais OU."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la barre relue comme affluence (foule), sans direction",
+      "fusil_decharge": "la barre prise pour de l'energie (S1) est ouverte en foule d'echanges (S2), sans direction (S3-S4), et relue comme une affluence (S5)."
+    }
+  ],
+  "total": 74.0,
+  "caption": "A big volume bar isn't energy — it's a crowd. Comment \"MAP\" for the free beta of my indicator that shows where price is really pulled.\n\nMost traders think 'big bar, big move coming.' Wrong picture. Volume is headcount — every unit is one trade, one buyer, one seller. A tall bar means a lot of people showed up, not which way they're facing.\n\nTHE LINE — a crowd is loud. It isn't a direction.\n\n#trading #trader #volume #priceaction #daytrading #forex #tradingeducation #orderflow #smartmoney #volumeanalysis",
+  "_rules": {
+    "doctrine": "volume demythifie: pas de l'energie/force, un DECOMPTE d'echanges (acheteurs = vendeurs par definition). Le volume ne donne jamais de direction seul. Etabli, factuel.",
+    "fusil": "la barre prise pour de l'energie (S1), ouverte en foule d'echanges (S2), montree sans direction (S3), meme barre trois destins (S4), relue en affluence (S5).",
+    "interdits": "aucun chiffre; les acheteurs=teal, vendeurs=encre (pas de brun: pas de camp adverse, juste les deux cotes d'un echange); figures fil-de-fer minimales pour les echanges; bas du cadre vide.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "vie_continue": "regle 5: les echanges se font en continu, le prix bouge dans les bandes.",
+    "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "MAP → indicateur 3T ENGINE (whop.com/otp-consulting/3t-engine-indicator)",
+    "caption_structure": "LIGNE 1 = accroche courte + CTA avec mot-clé (visible sans déplier sur Instagram). Corps développé en dessous."
+  }
+}

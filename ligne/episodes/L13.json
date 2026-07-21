@@ -1,0 +1,132 @@
+{
+  "id": "L13",
+  "engine": "l13",
+  "title": "L13 — THE GHOST LOSSES",
+  "voice": [
+    "Whatever you think you lost this month, the real number is bigger — and it's nowhere on your P&L. These losses don't show up in red. You never even see them leave. Here's where half your money actually goes.",
+    "The losses you take are visible. Red numbers, closed trades, a column you can add up. They hurt, but at least they exist. You can see them, count them, learn from them.",
+    "But there's a second column, and nothing gets written in it. The trade you analyzed, validated — and didn't take. The setup that ran exactly where you said it would, without you. The winner you watched from the sidelines.",
+    "Those don't cost you money you had. They cost you money you should have had. And here's the uncomfortable part: over a year, for most traders, that invisible column grows taller than the visible one. The ghosts outgrow the graves.",
+    "You can't put ghosts on a P&L. But you can count them: keep a log of the trades you skipped and what they did. Because a trader who only counts what he loses — and never what he leaves — is reading half his own story."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Demande a un trader ce qu'il a perdu : son chiffre est faux. La moitie de ses pertes n'apparaissent nulle part.",
+      "question": "WHERE DO HALF YOUR LOSSES HIDE?",
+      "cast": {
+        "col_real": {
+          "type": "column",
+          "x": 400,
+          "note": "colonne de briques pleines encre = pertes prises. le fusil = la colonne jumelle invisible."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: une colonne de 4 briques pleines encre se monte, brique par brique (400ms, settle: elles pesent). a droite d'elle: du VIDE."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: une TOISE fine (trait vertical leger) parcourt la colonne de bas en haut en continu — on peut la mesurer, c'est le propos. le vide a droite reste inerte. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la colonne de briques pleines + le vide suspect a droite",
+      "fusil": "le vide a droite de la colonne — il va se peupler."
+    },
+    {
+      "id": "s2",
+      "clarity": "Les pertes prises sont visibles : des trades fermes, une colonne qu'on peut additionner. Au moins elles existent.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "la colonne gauche recoit 2 briques de plus (meme geste, meme poids). label 'losses you took'. chaque brique s'empile avec propagation M22 (la colonne se tasse d'1px)."
+        },
+        {
+          "t": "2-13",
+          "do": "TENUE VIVANTE: la toise continue de mesurer la colonne (6 briques, comptables). solides. douloureuses mais LA."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la colonne visible etoffee, etiquetee, comptable",
+      "turn": "ces pertes-la font mal, mais elles EXISTENT. on peut les compter."
+    },
+    {
+      "id": "s3",
+      "clarity": "Il y a une deuxieme colonne, et rien ne s'y ecrit : le trade analyse, valide — et pas pris, qui a couru sans toi.",
+      "beats": [
+        {
+          "t": "0-2.5",
+          "do": "dans le vide a droite: des CONTOURS POINTILLES de briques apparaissent un a un — memes briques, mais FANTOMES (trait pointille, interieur vide). elles s'empilent SANS bruit, sans settle: elles ne pesent rien... en apparence. label 'winners you skipped'."
+        },
+        {
+          "t": "2.5-13",
+          "do": "TENUE VIVANTE: les contours fantomes PULSENT doucement, desynchronises (opacite 0.35-0.7) — ils hantent. la colonne pleine, elle, ne bouge pas: elle est reglee."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la colonne fantome pointillee qui se monte face a la pleine",
+      "turn": "le trade rate ne coute pas l'argent que tu avais — il coute l'argent que tu aurais du avoir."
+    },
+    {
+      "id": "s4",
+      "clarity": "Sur une annee, la colonne invisible depasse la visible. Les fantomes deviennent plus grands que les tombes.",
+      "note": "LA scene — l'escalade.",
+      "beats": [
+        {
+          "t": "0-3",
+          "do": "accumulation cadencee (lent->presse): les DEUX colonnes montent, mais la FANTOME monte PLUS VITE — deux fantomes pour une pleine. elle depasse la pleine, puis la domine nettement (1.6x)."
+        },
+        {
+          "t": "3-4",
+          "do": "beat final: les briques fantomes SE REMPLISSENT progressivement du GRIS de la perte (delavage M-COULEUR, du bas vers le haut, derive progressive jamais un cut, 8 frames): les pertes qu'on ne compte jamais sont quand meme des pertes — elles en prennent la couleur."
+        },
+        {
+          "t": "4-14",
+          "do": "TENUE longue: la pleine encre, digne; la fantome grise, plus haute, silencieuse."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la colonne fantome plus haute que la pleine, remplie du gris de la perte",
+      "turn": "ce qu'on ne compte pas grandit plus vite que ce qu'on compte."
+    },
+    {
+      "id": "s5",
+      "clarity": "On ne met pas des fantomes dans un P&L. Mais on peut les compter : noter les trades sautes et ce qu'ils ont fait.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: une par une, les briques fantomes passent du gris plein a un remplissage HACHURE fin: comptees. pas recuperees — COMPTEES."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les deux colonnes, cote a cote, toutes deux LISIBLES maintenant: l'une pleine, l'autre hachuree. l'histoire complete."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: les deux colonnes comptables. un trader qui lit TOUTE son histoire. immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la colonne fantome devenue hachuree (comptee), les deux lisibles",
+      "fusil_decharge": "le vide de S1 s'est peuple (S3), a grandi en rouge (S4) — et finit COMPTE (S5). les fantomes ont un registre."
+    }
+  ],
+  "total": 58.2,
+  "caption": "Ask a trader what he lost this month. His number is wrong — half his losses never show up anywhere.\n\nThe trade you analyzed, validated, and didn't take? It cost you money you should have had. And that invisible column grows faster than the visible one.\n\nComment \"LINE\" for the series on what your P&L doesn't tell you.\n\nTHE LINE — count your ghosts.\n\n#trading #trader #tradingpsychology #daytrading #forex #tradingeducation #priceaction #mindset #discipline #journaling",
+  "_rules": {
+    "source": "decline du prop saga ep31 THE GHOST LOSSES (meme image mere, format Ligne autonome). lien Loom 15/07 (le trade rate) — anonymise.",
+    "fusil": "le vide a cote de la colonne (S1) se peuple de fantomes (S3), les fantomes depassent et rougissent (S4), et finissent comptes (S5).",
+    "interdits": "aucun chiffre; AUCUNE couleur chaude (le rouge du prop saga ne passe PAS dans la Ligne — la perte se dit en GRIS delave, M-COULEUR); bas du cadre vide.",
+    "circuit": "M24 frames DoD d'abord.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · eux/brun #8A5323 (UNIQUEMENT s'il y a un camp adverse — aucun dans cet episode: structures neutres = encre) · perte/gris #474D50",
+    "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
+    "hook_v1_archived": "Ask a trader what he lost this month, and he'll give you a number. He's wrong. Not because he's lying — because half his losses never show up anywhere. Where do they hide?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  }
+}

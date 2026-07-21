@@ -1,0 +1,140 @@
+{
+  "id": "L18",
+  "engine": "l18",
+  "title": "L18 — THE CANDLE IS A STORY, COMPRESSED",
+  "voice": [
+    "A single candle looks like a simple verdict. Green, price went up. Red, price went down. Clean. Final. But that candle is hiding almost everything that happened — and the part it hides is often the part that matters.",
+    "One candle is a block of time squeezed into a shape. In that time, price didn't move in a straight line. It fought — up, down, back again. The candle keeps only four facts: where it opened, where it closed, the highest point, the lowest.",
+    "Everything in between gets erased. A calm green candle might hide a violent crash and a full recovery inside it. The body tells you where the fight ended. It says nothing about how brutal the fight was.",
+    "That's what the wicks are for — those thin lines above and below. They mark how far price was pushed before it snapped back. A long wick isn't decoration. It's a place where one side charged hard, and lost the ground they took.",
+    "So don't read a candle like a final score. Read it like a compressed story. The body is the ending. The wicks are the struggle. And the straight path you imagine between them never actually happened."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Une bougie ressemble a un verdict simple: verte ca monte, rouge ca descend. Mais elle cache presque tout ce qui s'est passe.",
+      "question": "WHAT IS A CANDLE HIDING FROM YOU?",
+      "cast": {
+        "candle": {
+          "type": "candle",
+          "note": "une bougie stylisee en ENCRE (pas de rouge/vert — palette Ligne): un corps rectangulaire + meches. le fusil = ce qu'elle compresse."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.6",
+          "do": "DRAW-ON: une bougie se dessine — corps encre plein + une meche en haut, une en bas. simple, nette, un 'verdict'."
+        },
+        {
+          "t": "2.6-10",
+          "do": "TENUE VIVANTE: la bougie seule, immobile et fermee — mais elle FREMIT tres legerement (quelque chose s'agite dedans, prefigure). le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la bougie encre fermee (corps + meches), simple verdict",
+      "fusil": "une bougie qui semble simple — on va la deplier."
+    },
+    {
+      "id": "s2",
+      "clarity": "Une bougie est un bloc de temps compresse. Dedans, le prix n'a pas bouge en ligne droite: il s'est battu. Elle ne garde que quatre faits.",
+      "label": "a block of time, squeezed",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "la bougie s'OUVRE / se DEPLIE horizontalement: elle s'etire en une LARGE fenetre de temps. dedans, un trajet de prix REEL apparait — une ligne qui zigzague violemment (haut, bas, remonte)."
+        },
+        {
+          "t": "2-3.5",
+          "do": "sur ce trajet, QUATRE points s'allument: OPEN (debut), CLOSE (fin), HIGH (le plus haut), LOW (le plus bas). labels courts. 'the candle keeps only these four'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: le trajet zigzaguant vit (il rejoue en boucle lente), les 4 points fixes dessus."
+        }
+      ],
+      "camera": "depli horizontal",
+      "dod": "la bougie depliee revelant le trajet zigzaguant + les 4 points (open/close/high/low)",
+      "turn": "le prix ne bouge pas droit. la bougie ne retient que 4 faits sur tout le combat."
+    },
+    {
+      "id": "s3",
+      "clarity": "Tout le reste est efface. Une bougie calme peut cacher un krach et une reprise complete. Le corps dit ou le combat a fini, pas sa violence.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "le trajet zigzaguant se REPLIE en bougie: tout le zigzag DISPARAIT, il ne reste que le corps (open->close). la bougie parait CALME."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on RE-DEPLIE une fraction: a l'interieur de cette bougie calme, le trajet cache un PLONGEON brutal puis une remontee complete. la meme bougie calme = un drame interieur. 'the body tells you where the fight ended, not how brutal it was'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la bougie calme en surface, le drame qui palpite dessous (alternance repli/depli leger)."
+        }
+      ],
+      "camera": "repli/depli",
+      "dod": "une bougie calme qui, depliee, cache un plongeon + reprise",
+      "turn": "le corps est le verdict final — il ment sur la brutalite du trajet."
+    },
+    {
+      "id": "s4",
+      "clarity": "C'est a ca que servent les meches: elles marquent jusqu'ou le prix a ete pousse avant de revenir. Une longue meche, c'est un terrain pris puis perdu.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "gros plan sur une MECHE longue (le trait fin au-dessus du corps). elle s'ANIME: le prix MONTE le long de la meche (un cote charge, gagne du terrain)... puis REDESCEND jusqu'au corps (il perd tout ce terrain). la meche = l'empreinte de cette charge ratee."
+        },
+        {
+          "t": "2-3.5",
+          "do": "comparaison: une bougie a COURTE meche (peu de combat) vs une a LONGUE meche (grosse charge repoussee). la longueur de la meche = l'ampleur du terrain pris puis rendu. 'not decoration'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la longue meche, le mouvement charge-puis-recul qui rejoue. la meche raconte une bataille."
+        }
+      ],
+      "camera": "fixe, gros plan meche",
+      "dod": "la meche animee (prix pousse puis revenu) + courte vs longue meche",
+      "turn": "la meche n'est pas decorative: c'est un terrain conquis puis perdu."
+    },
+    {
+      "id": "s5",
+      "clarity": "Ne lis pas une bougie comme un score final. Lis-la comme une histoire compressee: le corps est la fin, les meches sont la lutte, la ligne droite imaginee n'a jamais existe.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: la bougie de S1 revient, fermee. mais maintenant elle est TRANSPARENTE: on voit a travers elle le trajet zigzaguant qu'elle contient. le corps surligne = 'the ending', les meches surlignees = 'the struggle'."
+        },
+        {
+          "t": "2-3.5",
+          "do": "a cote, une LIGNE DROITE (open->close direct) apparait en fantome — celle qu'on imagine — puis SE BARRE: 'never actually happened'. la verite, c'est le zigzag dedans."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la bougie transparente montrant son histoire, la ligne droite barree a cote. immobile. une bougie est une histoire compressee."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la bougie transparente (corps=fin, meches=lutte) + la ligne droite imaginee barree",
+      "fusil_decharge": "la bougie 'simple' de S1 est depliee (S2), son corps demasque (S3), ses meches expliquees (S4), et relue comme une histoire compressee (S5)."
+    }
+  ],
+  "total": 76.0,
+  "caption": "A candle hides almost everything that happened. Comment \"MAP\" for the free beta of my indicator that shows where price is actually being pulled.\n\nGreen up, red down — that's the verdict. But the body only tells you where the fight ended, not how brutal it was. The wicks mark ground taken and lost. The straight line you imagine between open and close never happened.\n\nTHE LINE — the body is the ending. The wicks are the struggle.\n\n#trading #trader #candlestick #priceaction #daytrading #forex #tradingeducation #smartmoney #technicalanalysis #wicks",
+  "_rules": {
+    "doctrine": "la bougie demythifiee: elle COMPRESSE un trajet (4 faits gardes, le reste efface). Le corps = fin du combat, les meches = terrain pris/perdu. Factuel, structurel. Pas de prophetie.",
+    "fusil": "la bougie 'simple' (S1), depliee en trajet reel (S2), corps demasque (S3), meches expliquees (S4), relue en histoire compressee (S5).",
+    "interdits": "PAS DE ROUGE NI DE VERT (palette Ligne stricte — la bougie est en ENCRE, la hausse/baisse se lit par la position open/close, pas par la couleur); aucun chiffre; bas du cadre vide.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E (accent sur les points cles) · perte/gris #474D50",
+    "vie_continue": "regle 5: le trajet interieur rejoue en boucle, les meches s'animent.",
+    "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "MAP → indicateur 3T ENGINE (whop.com/otp-consulting/3t-engine-indicator)",
+    "caption_structure": "LIGNE 1 = accroche courte + CTA avec mot-clé (visible sans déplier sur Instagram). Corps développé en dessous."
+  }
+}

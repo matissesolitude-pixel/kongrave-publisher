@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L9 « THE FEE THAT WAITS » — le loyer du temps (financement overnight). FUSIL : la jauge pleine (S1) érodée nuit après
+       nuit (S4), résolue par la course WIN vs RENT (S5). §vie_continue : chaque tenue longue vit (cycle nuit/jour + encoches). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=clamp(p,0,1)-1; return 1+(s+1)*q*q*q+s*q*q; };
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){ f=clamp(f,0,1); const A=h2(a),B=h2(b); return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`; }
+    function gRect(el,cx,w,yTop,yBot){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',yTop.toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',Math.max(0,yBot-yTop).toFixed(1)); }
+    const BORROW=mix(YOU,PAPER,0.45);   // la part empruntée = teal plus clair
+
+    // ── CASTING ──
+    const GX=CX, GW=150, BY=1400, FY=620;      // jauge « ta position » (centre) : bas BY, sommet plein FY
+    const veil=mk('rect',{x:0,y:0,width:1080,height:1920,fill:INK,opacity:0});     // la NUIT (voile)
+    const gauge=mk('rect',{fill:YOU,rx:3,opacity:0});                              // S1 : jauge pleine
+    const gStake=mk('rect',{fill:YOU,rx:3,opacity:0});                             // S2+ : ta mise (base)
+    const gBorrow=mk('rect',{fill:BORROW,rx:3,opacity:0});                         // S2+ : la part empruntée (au-dessus)
+    const orig=mk('rect',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'8 6',rx:3,opacity:0});  // S4 : contour d'origine
+    const NOTCHN=10, notches=[]; for(let i=0;i<NOTCHN;i++) notches.push(mk('rect',{fill:BORROW,rx:2,opacity:0})); // le loyer qui part
+    const raceWin=mk('rect',{fill:YOU,rx:3,opacity:0}), raceRent=mk('rect',{fill:DEAD,rx:3,opacity:0});          // S5 : la course
+
+    // ── §M15 : LA QUESTION ──
+    const QLINES=['WHO CHARGED YOU','WHILE YOU SLEPT'];
+    const FS=88, lineH=112, y0=250, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+2*lineH+140, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0}); qMark.textContent='?';
+
+    // ── ÉTIQUETTES (clamp §M18 r2) ──
+    const lab=mk('text',{x:CX,y:200,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){ return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0}); }
+    const capPos=caption(), capStake=caption(), capBorrow=caption(), capA=caption(), capWin=caption(), capRent=caption();
+    const ALLCAPS=[capPos,capStake,capBorrow,capA,capWin,capRent];
+    function putCap(el,txt,cx,y,color,op){ el.textContent=txt; const hw=txt.length*(+el.getAttribute('font-size'))*0.30, x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1)); el.setAttribute('y',y); el.setAttribute('fill',color); el.setAttribute('opacity',clamp(op,0,1).toFixed(3)); }
+    function hideCaps(){ for(const e of ALLCAPS) e.setAttribute('opacity',0); }
+    function hideQ(){ for(const e of qEls) e.setAttribute('opacity',0); qMark.setAttribute('opacity',0); }
+    function hideAll(){ for(const el of [gauge,gStake,gBorrow,orig,raceWin,raceRent]) el.setAttribute('opacity',0); for(const n of notches) n.setAttribute('opacity',0); veil.setAttribute('opacity',0); lab.setAttribute('opacity',0); }
+
+    // nuit/jour : voile qui passe (nuit = pic). period en s. renvoie [opacité voile, nb de nuits écoulées]
+    function night(u, period){ const ph=(u%period)/period, op=0.09*clamp(Math.sin(ph*Math.PI*2-Math.PI/2)*0.5+0.5,0,1); return [op, Math.floor(u/period)]; }
+    // une encoche qui part vers la droite depuis (x,y), progression p (0→1)
+    function notchOut(el, x, y, w, h, p){ el.setAttribute('opacity',(clamp(1-p,0,1)*0.95).toFixed(3)); gRect(el, x+p*520, w, y-h/2, y+h/2); }
+    // FLUX CONTINU : le loyer qui s'écoule sans arrêt (§vie_continue — mouvement rapide, compte au scan)
+    function rentStream(u, x, y, w, h, rate){ for(let i=0;i<NOTCHN;i++){ const p=((u*rate + i/NOTCHN)%1); notchOut(notches[i], x, y-(i%3-1)*6, w, h, p); } }
+
+    // ══════════ S1 — la jauge pleine, une nuit passe, elle perd 12px (le loyer qui attend) ══════════
+    function s1(lf,t,s){
+      const u=t-s; hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(k===0?0.18:u-(0.1+k*0.34)), ap=clamp(qt/0.18,0,1), sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3)); qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qm=u-1.0, qap=clamp(qm/0.2,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3)); qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      gStake.setAttribute('opacity',0); gBorrow.setAttribute('opacity',0); orig.setAttribute('opacity',0);
+      // la jauge se dessine (1.6-2.4), pleine
+      const gin=clamp((u-1.6)/0.8,0,1);
+      // nuit/jour à partir de 2.4 ; érosion : 12px à la 1re nuit puis 2px/nuit
+      let er=0, vop=0;
+      if(u>2.4){ const [op,n]=night(u-2.4,2.0); vop=op; er = (n>=1?12:0) + 2*Math.max(0,n-1); }
+      veil.setAttribute('opacity',vop.toFixed(3));
+      const gtop=lerp(BY,FY,eOut(gin))+er;
+      gauge.setAttribute('opacity',gin>0?1:0); gauge.setAttribute('fill',YOU); gRect(gauge,GX,GW, gtop, BY);
+      if(u>2.6) rentStream(u, GX+GW/2, gtop+16, GW*0.5, 18, 0.85); else for(const n of notches) n.setAttribute('opacity',0);
+      putCap(capPos,'YOUR POSITION',GX,BY+55,YOU,(u-2.6)/0.4);
+    }
+    // ══════════ S2 — la jauge = mise + part empruntée ; la part empruntée paie un loyer (encoche qui sort) ══════════
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const split=clamp((u-0.3)/1.2,0,1), STK=BY-234;   // 30% mise en bas, reste emprunté
+      gStake.setAttribute('opacity',1); gRect(gStake,GX,GW,STK,BY);
+      gBorrow.setAttribute('opacity',split>0.02?1:0); gRect(gBorrow,GX,GW, lerp(STK,FY,eOut(split)), STK);
+      // encoches du loyer : une toutes les ~2s se détache du sommet emprunté et sort à droite
+      const top=lerp(STK,FY,eOut(split));
+      for(let i=0;i<NOTCHN;i++){ const t0=1.5+i*2.0, p=clamp((u-t0)/1.6,0,1); if(u>t0&&p<1) notchOut(notches[i], GX+GW/2, top+18, GW*0.8, 30, p); else notches[i].setAttribute('opacity',0); }
+      lab.textContent='BORROWED EXPOSURE HAS RENT'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min(u/0.4,1-(u-3.2)/0.5),0,1).toFixed(3));
+      putCap(capStake,'YOUR STAKE',GX,BY+55,YOU,(u-1.6)/0.4);
+      putCap(capBorrow,'BORROWED',GX,top-30,BRUN,(u-2.0)/0.4);
+    }
+    // ══════════ S3 — une nuit coûte presque rien (c'est pour ça qu'on ne le voit pas) ══════════
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const STK=BY-234, top=FY;
+      gStake.setAttribute('opacity',1); gRect(gStake,GX,GW,STK,BY);
+      gBorrow.setAttribute('opacity',1); gRect(gBorrow,GX,GW,top,STK);
+      const [vop,n]=night(u,3.2); veil.setAttribute('opacity',vop.toFixed(3));   // cycle LENT
+      // le loyer s'écoule en continu, encoches MINUSCULES — ridicules à côté de la jauge (« almost nothing »)
+      rentStream(u, GX+GW/2, top+14, 44, 12, 0.65);
+      lab.textContent='ONE NIGHT = ALMOST NOTHING'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min(u/0.4,1-(u-3.4)/0.5),0,1).toFixed(3));
+      putCap(capA,'A NIGHT',GX+GW/2+140,top+40,BRUN,(u-1.6)/0.4);
+    }
+    // ══════════ S4 — presque rien × 30 nuits = un tiers. le temps facture (érosion) ══════════
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const STK=BY-234;
+      // contour d'origine (mémoire de S1) en pointillé, plein
+      orig.setAttribute('opacity',1); gRect(orig,GX,GW+8,FY,BY);
+      // érosion : le sommet emprunté descend cran par cran (~30 nuits), cadence qui accélère puis s'arrête à ~2/3
+      const prog=clamp((u-0.3)/4.7,0,1), eroded = eOut(prog)*(BY-STK)*0.55;   // perd ~un tiers de la hauteur totale
+      const top = FY + eroded;
+      gStake.setAttribute('opacity',1); gRect(gStake,GX,GW,STK,BY);
+      gBorrow.setAttribute('opacity',top<STK?1:0); gRect(gBorrow,GX,GW,Math.min(top,STK),STK);
+      // voile nuit/jour + FLUX du loyer : rapide pendant l'érosion, plus lent après (le loyer ne s'arrête jamais)
+      const per=lerp(0.8,0.30,prog); const [vop,n]=night(u, u<5.2?per:1.6); veil.setAttribute('opacity',vop.toFixed(3));
+      rentStream(u, GX+GW/2, Math.min(top,STK)+12, GW*0.7, 22, u<5.2?2.4:0.7);
+      lab.textContent='30 NIGHTS'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp(Math.min((u-0.3)/0.4,1-(u-6)/0.6),0,1).toFixed(3));
+      putCap(capA,'= A THIRD, GONE',GX,BY+55,DEAD,(u-5.4)/0.4);
+      putCap(capPos,'DAY 1',GX+GW/2+120,FY-6,YOU,(u-5.6)/0.4);
+    }
+    // ══════════ S5 — la course : WIN vs RENT. avoir raison PLUS VITE que le loyer ne mange ══════════
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      // la jauge érodée reste à gauche (souvenir)
+      const STK=BY-234, top=FY+(BY-STK)*0.55;
+      gStake.setAttribute('opacity',1); gRect(gStake,300,110,STK,BY);
+      gBorrow.setAttribute('opacity',1); gRect(gBorrow,300,110,Math.min(top,STK),STK);
+      orig.setAttribute('opacity',1); gRect(orig,300,118,FY,BY);
+      // la course : deux barres montent (win teal, rent gris) ; teal passe devant
+      const rc=clamp((u-0.3)/3.0,0,1);
+      const winH = eOut(rc)*720, rentH = eOut(clamp((u-0.3)/3.8,0,1))*560;   // win monte plus vite/haut
+      raceWin.setAttribute('opacity',rc>0?1:0);  gRect(raceWin, 700, 120, BY-winH, BY);
+      raceRent.setAttribute('opacity',rc>0?1:0); gRect(raceRent, 910, 120, BY-rentH, BY);
+      rentStream(u, 975, BY-rentH+12, 34, 16, 0.8);   // le loyer accrue en continu au sommet de sa barre
+      putCap(capWin,'THE WIN',700,BY+55,YOU,(u-0.6)/0.4);
+      putCap(capRent,'THE RENT',910,BY+55,DEAD,(u-0.6)/0.4);
+      lab.textContent='BE RIGHT FASTER THAN THE RENT'; lab.setAttribute('fill',INK); lab.setAttribute('opacity',clamp((u-2.0)/0.5,0,1).toFixed(3));
+    }
+    const RENDER={s1,s2,s3,s4,s5}; const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1); SCENEFN[i](lf,t,SC[i].s); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

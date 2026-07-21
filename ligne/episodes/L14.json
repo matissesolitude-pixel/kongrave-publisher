@@ -1,0 +1,143 @@
+{
+  "id": "L14",
+  "engine": "l14",
+  "title": "L14 — THE SIZE IS THE RISK",
+  "voice": [
+    "Two traders took the exact same trade with the exact same stop. It went wrong for both. One barely noticed. The other lost a month of gains. The difference isn't on the chart at all. Here's what actually decided it.",
+    "Because a stop tells you WHERE you exit. It says nothing about HOW MUCH walks out the door with you. Two traders can stand at the same exit — carrying very different bags.",
+    "The first trader put a small size behind the trade. The stop hits: he loses a sliver of his account. Annoying. Forgettable. Tomorrow is another day.",
+    "The second put ten times the size behind the exact same idea. Same entry, same stop, same distance — but every point of that distance costs him ten times more. The stop hits: a tenth of his account is gone. Same exit. Ten times the bag.",
+    "So stop asking only where your stop is. Ask what's behind it. Distance times size — that's your real risk, and only one of those two numbers is truly yours to choose. Choose it like it's the whole game. Because it is."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders, meme trade, meme stop. L'un hausse les epaules, l'autre a perdu un mois. Comment ?",
+      "question": "SAME TRADE. SAME STOP. WHY DID ONLY ONE BLEED?",
+      "cast": {
+        "gA": {
+          "type": "gauge",
+          "x": 340,
+          "note": "jauge teal A (trader 1)"
+        },
+        "gB": {
+          "type": "gauge",
+          "x": 740,
+          "note": "jauge teal B (trader 2) — IDENTIQUE a A en apparence en S1"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: deux jauges teal IDENTIQUES cote a cote, meme hauteur, meme capuchon (stop) a la meme distance. jumelles parfaites."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: les deux jauges RESPIRENT a l'identique — micro-oscillation parfaitement SYNCHRONE. jumelles jusque dans le souffle. l'oeil cherche la difference: aucune. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux jauges rigoureusement identiques — la difference est invisible",
+      "fusil": "deux jumelles identiques en surface. la difference est DERRIERE — on va la retourner."
+    },
+    {
+      "id": "s2",
+      "clarity": "Un stop dit OU tu sors. Il ne dit pas COMBIEN sort avec toi.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "sur les deux jauges, la DISTANCE entree->stop se surligne (un segment teal pale, identique des deux cotes). label 'the distance — same for both'."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les deux jauges PIVOTENT d'un quart de tour (comme des cartes qu'on retourne) — revelant leur PROFONDEUR: derriere A, une tranche FINE. derriere B, un BLOC EPAIS, 10x. la difference etait dans la 3e dimension."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: un trait de prix oscille devant les DEUX facades, identique — indifferent aux profondeurs qu'il ne voit pas. labels 'small size' / 'big size'."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le pivot qui revele les profondeurs: fine vs epaisse, memes facades",
+      "turn": "la difference n'etait pas SUR le chart. elle etait DERRIERE la position."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le premier a mis petit : le stop touche, il perd une lamelle. Agacant, oubliable.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "vue sur A seule (profil, sa tranche fine visible). le trait de prix descend, touche le capuchon. SNAP."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une LAMELLE fine se detache de son compte (une grande barre teal en fond = le compte) et se delave. la barre-compte reste quasi intacte: 98%."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: A se redresse (sa jauge se remet droite, prete pour demain) et reprend sa respiration calme; la barre-compte oscille a peine. il a deja oublie."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la lamelle fine perdue, le compte quasi intact",
+      "turn": "meme stop touche — et il ne s'est presque rien passe."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le second a mis dix fois plus derriere la meme idee : chaque point de distance coute dix fois plus.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "vue sur B (profil, son bloc epais). le MEME trait de prix, la MEME distance, touche le MEME capuchon. SNAP identique."
+        },
+        {
+          "t": "1.5-3.5",
+          "do": "cette fois c'est une TRANCHE EPAISSE qui se detache du compte et se delave — un dixieme de la barre-compte, d'un coup. la barre ACCUSE le coup (elle se tasse, settle M22, un vrai impact)."
+        },
+        {
+          "t": "3.5-14",
+          "do": "TENUE longue: les deux comptes cote a cote — A: 98%, une eraflure. B: 90%, une entaille. MEME trade. MEME stop. la profondeur a tout decide."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux comptes cote a cote: l'eraflure vs l'entaille, meme trade",
+      "turn": "meme sortie, dix fois le sac. la distance etait la meme — la taille non."
+    },
+    {
+      "id": "s5",
+      "clarity": "Ne demande plus seulement ou est ton stop. Demande ce qu'il y a derriere : distance x taille = ton vrai risque.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: une jauge unique, de face. elle pivote a mi-chemin (3/4) pour montrer LES DEUX dimensions a la fois: la distance (facade) ET la profondeur (taille). les deux se surlignent tour a tour, puis ENSEMBLE."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la profondeur COULISSE (le curseur de taille): epaisse -> fine -> s'arrete sur MODEREE. la facade, elle, n'a pas bouge. tu choisis UNE des deux dimensions. choisis-la bien."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la jauge en 3/4, distance et profondeur visibles ensemble, profondeur choisie. immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge en 3/4 montrant distance x profondeur, la profondeur reglee",
+      "fusil_decharge": "les jumelles identiques de S1 ne le sont plus jamais: on voit desormais TOUJOURS la profondeur derriere la facade."
+    }
+  ],
+  "total": 74.0,
+  "caption": "Two traders. Same chart, same entry, same stop. One shrugs. One just lost a month. Here's the difference you can't see on the chart.\n\nA stop tells you WHERE you exit — not how much walks out with you. Distance times size is your real risk, and only one of those numbers is yours to choose.\n\nComment \"LINE\" for the series on what actually decides your losses.\n\nTHE LINE — ask what's behind the stop.\n\n#trading #trader #riskmanagement #positionsizing #stoploss #daytrading #forex #tradingeducation #priceaction #discipline",
+  "_rules": {
+    "fusil": "deux jauges jumelles (S1) retournees pour reveler leurs profondeurs opposees (S2), testees par le meme stop (S3/S4), resolues en une regle: distance x taille (S5).",
+    "interdits": "aucun chiffre a l'ecran (les rapports par la TAILLE/EPAISSEUR); pas de figures (episode d'objets); bas du cadre vide.",
+    "circuit": "M24 frames DoD d'abord.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · eux/brun #8A5323 (UNIQUEMENT s'il y a un camp adverse — aucun dans cet episode: structures neutres = encre) · perte/gris #474D50",
+    "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
+    "hook_v1_archived": "Two traders. Same chart, same entry, same stop — everything identical. The trade goes wrong for both. One shrugs it off. The other just lost a month. Same trade. How?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  }
+}

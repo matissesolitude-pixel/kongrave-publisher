@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;--them:#8A5323;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0}
+    svg{position:absolute;inset:0;width:1080px;height:1920px}
+    .ln{fill:none;stroke:var(--ink);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+    .you{stroke:var(--you)} .them{stroke:var(--them)}
+    .dot{fill:var(--you);stroke:none} .dot.them{fill:var(--them)} .dot.ink{fill:var(--ink)}
+    .cell{fill:var(--ink)} .cell.them{fill:var(--them)}
+    .lab{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:42px;
+         letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+    .lab.you{fill:var(--you)} .lab.them{fill:var(--them)}
+    .head{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:88px;
+          letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+    .qmark{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:200px;fill:var(--ink)}
+  </style>
+</head>
+<body>
+  <!-- MOTEUR LA LIGNE — piloté par un épisode JSON (SPEC). Bibliothèque d'archétypes :
+       hook · routing · mirror · count · faceoff · fork. Socle figé (sync mot-à-mot, zones
+       réservées, centrage x=540, purge, règle ZÉRO FRAME MORTE). Filigrane = au compositing. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+
+  <script>
+    const SC=__SCENES__, TOTAL=__TOTAL__, WORDS=__WORDS__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    /* ---- socle : sync mot-à-mot ---- */
+    function wt(i,needle,occ,fb){const nd=String(needle).toLowerCase();let n=0;
+      for(const w of (WORDS[i]||[])){const t=w.w.toLowerCase().replace(/[^a-z0-9]/g,'');
+        if(t===nd||t.startsWith(nd)){n++;if(n===(occ||1))return SC[i].s+w.s;}}
+      return SC[i].s+(fb==null?0.1:fb)*SC[i].d;}
+    // W(i,'word' | 'word:occ', fb) -> temps absolu. Sync piloté par le spec.
+    function W(i,tok,fb){if(tok==null)return SC[i].s+(fb==null?0.1:fb)*SC[i].d;
+      const p=String(tok).split(':');return wt(i,p[0],p[1]?+p[1]:1,fb);}
+    function at(i,f){return SC[i].s+f*SC[i].d;} function vend(i){return SC[i].s+SC[i].v;}
+    /* ---- socle : dessin / vie ---- */
+    function arm(el){const L=el.getTotalLength();el.style.strokeDasharray=L;el.style.strokeDashoffset=L;el.__L=L;}
+    function drawIn(tl,el,t,dur,e){tl.set(el,{autoAlpha:1},t);
+      tl.fromTo(el,{strokeDashoffset:el.__L},{strokeDashoffset:0,duration:dur,ease:e||'none'},t);}
+    function drawOut(tl,el,t,dur,e){tl.to(el,{strokeDashoffset:el.__L,duration:dur,ease:e||'power1.in'},t);
+      tl.set(el,{autoAlpha:0},t+dur);}
+    // === RÈGLE : LA VIE EST NARRATIVE, PAS DÉCORATIVE ===
+    // INTERDIT : oscillation / pulsation / dérive / respiration d'un objet statique (= frame morte déguisée).
+    // À CHAQUE INSTANT L'IMAGE AVANCE. Combler une fenêtre de voix (par ordre) :
+    //   1. ÉTALER la construction (l'élément met tout le temps de la voix à se dessiner/transformer)
+    //   2. AVANCER (le prix monte vers le niveau, la foule converge, la cascade se propage)
+    //   3. ANTICIPER (la scène suivante commence 0,3-0,5s avant la fin de la précédente — jamais d'écran vide)
+    //   4. ENRICHIR (un détail se précise, un élément se dévoile)
+    // spread(tl,el,t,dur) = draw-on étalé (alias explicite de drawIn) pour rappeler l'intention.
+    function spread(tl,el,t,dur,e){drawIn(tl,el,t,dur,e||'none');}
+    /* ---- socle : création d'éléments ---- */
+    function mk(tag,attrs,cls){const e=document.createElementNS(NS,tag);if(cls)e.setAttribute('class',cls);
+      for(const k in(attrs||{}))e.setAttribute(k,attrs[k]);e.setAttribute('opacity','0');SVG.appendChild(e);return e;}
+    function labelEl(text,x,y,cls){const t=mk('text',{x,y,'text-anchor':'middle'},'lab'+(cls?' '+cls:''));t.textContent=text;return t;}
+    function bigEl(text,x,y,cls){const t=mk('text',{x,y,'text-anchor':'middle'},cls||'head');t.textContent=text;return t;}
+    function figureEl(x,dir,cls){const g=mk('g',{});
+      const head=document.createElementNS(NS,'circle');head.setAttribute('class','ln'+(cls?' '+cls:''));
+      head.setAttribute('cx',x);head.setAttribute('cy',978);head.setAttribute('r',30);head.setAttribute('fill','none');
+      const body=document.createElementNS(NS,'path');body.setAttribute('class','ln'+(cls?' '+cls:''));
+      body.setAttribute('d',`M ${x} 1008 L ${x} 1108 M ${x} 1036 L ${x+dir*46} 1058 M ${x} 1108 L ${x-20} 1150 M ${x} 1108 L ${x+20} 1150`);
+      g.appendChild(head);g.appendChild(body);return g;}
+
+    const tl=gsap.timeline({paused:true});
+    const S=(p,k,d)=>((p.sync||{})[k]!=null?(p.sync||{})[k]:d);   // mot-sync du spec, sinon défaut L1
+
+    /* ============ BALLE-PIVOT : l'objet permanent de la Ligne (le PRIX) ============
+       Née du ? du hook. Ne disparaît JAMAIS. À chaque transition : les éléments de la scène
+       se RÉTRACTENT dans la balle (collapse), la scène suivante les DÉPLOIE depuis la balle (deploy).
+       Entre deux scènes, la balle est le seul élément à l'écran -> plus jamais d'écran vide. */
+    const pivot=mk('circle',{cx:540,cy:1000,r:18},'dot'); // révélée à la fin du hook (voir hook)
+    const PVT={el:pivot, cx:540, cy:1000};                // position courante de la balle (mise à jour par les scènes)
+    // NB : on scale vers le POINT ABSOLU de la balle (svgOrigin) — indépendant de la position/taille animée
+    // de l'élément (getBBox au parse renvoie l'état initial, faux pour tout objet qui bouge/grossit).
+    // deploy : l'élément NAÎT de la balle (scale 0 au point de la balle) et grandit vers sa place
+    function deployEl(el,t,dur){
+      tl.set(el,{autoAlpha:1,svgOrigin:`${PVT.cx} ${PVT.cy}`,scale:0.001},t);
+      tl.to(el,{scale:1,duration:dur||0.4,ease:'back.out(1.4)'},t);}
+    // collapse : l'élément se RÉTRACTE dans la balle (scale -> 0 AUTOUR du point de la balle)
+    function collapseEl(el,t,dur){
+      tl.to(el,{scale:0.001,svgOrigin:`${PVT.cx} ${PVT.cy}`,duration:dur||0.4,ease:'power2.in'},t);
+      tl.set(el,{autoAlpha:0},t+(dur||0.4)+0.001);}
+    function deploy(els,t,dur,stag){els.forEach((el,k)=>deployEl(el,t+(stag||0.05)*k,dur));}
+    function collapse(els,t,dur,stag){els.forEach((el,k)=>collapseEl(el,t+(stag||0.03)*k,dur));}
+
+    /* ===================== ARCHÉTYPE : HOOK — dessine l'OBJET DE CET ÉPISODE (prop) ===================== */
+    function hook(i,p){
+      // ===== FORMAT PIVOT : la question = UNE phrase, révélée MOT PAR MOT sur la voix,
+      //       puis tout se rétracte SAUF le "?", dont le POINT devient la balle. =====
+      if((p.prop||'platform')==='none'){
+        const qtext=(p.question||(p.lines?p.lines.join(' '):'WHERE DOES YOUR MONEY GO')).toUpperCase().replace(/\?+\s*$/,'').trim();
+        const words=qtext.split(/\s+/);
+        const FS=60, chW=FS*0.62, GAP=1.7, maxW=944, lineH=110;   // GAP = espace inter-mot (en caractères)
+        const slot=wd=>(wd.length+GAP)*chW;
+        const rows=[[]]; let rw=0;
+        words.forEach(wd=>{const ww=slot(wd); if(rw+ww>maxW && rows[rows.length-1].length){rows.push([]); rw=0;} rows[rows.length-1].push(wd); rw+=ww;});
+        const y0=980-(rows.length*lineH)/2;
+        const wEls=[]; let gk=0, lastRowY=y0, lastRowRight=540;
+        rows.forEach((ln,li)=>{
+          const ws=ln.map(slot), tot=ws.reduce((a,b)=>a+b,0); let x=540-tot/2;
+          ln.forEach((wd,ci)=>{const cx=x+ws[ci]/2;
+            const t=mk('text',{x:cx,y:y0+li*lineH,'text-anchor':'middle'},'head'); t.style.fontSize=FS+'px'; t.textContent=wd;
+            gsap.set(t,{scale:0.82,transformOrigin:'50% 50%'});
+            wEls.push(t); x+=ws[ci]; gk++;});
+          if(li===rows.length-1){lastRowY=y0+li*lineH; lastRowRight=540+tot/2;}
+        });
+        // "?" juste après le dernier mot, plus gros — son point deviendra la balle
+        const qx=lastRowRight+58, q=mk('text',{x:qx,y:lastRowY,'text-anchor':'middle'},'qmark'); q.style.fontSize='150px'; q.textContent='?';
+        gsap.set(q,{scale:0.6,transformOrigin:'50% 50%'});
+        const vw=WORDS[i]||[];
+        wEls.forEach((el,k)=>{const vt=(vw[k]!=null? SC[i].s+vw[k].s : at(i,0.05+k*0.12));
+          tl.to(el,{autoAlpha:1,scale:1,duration:0.16,ease:'back.out(2)'},vt);});
+        const tQ=(vw[words.length-1]!=null? SC[i].s+vw[words.length-1].s+0.22 : at(i,0.72));
+        tl.to(q,{autoAlpha:1,scale:1,duration:0.28,ease:'back.out(2)'},tQ);
+        // RÉTRACTION : tout se rétracte SAUF le "?" ; puis le POINT du "?" devient la balle
+        const tBirth=at(i,0.9);
+        wEls.forEach((el,k)=>tl.to(el,{autoAlpha:0,scale:0.15,duration:0.3,ease:'power2.in'},tBirth+0.012*k));
+        const bx=qx, by=lastRowY+56;                 // le point sous la courbe du "?"
+        tl.to(q,{autoAlpha:0,duration:0.3,ease:'power2.in'},tBirth+0.16);
+        tl.set(pivot,{attr:{cx:bx,cy:by},autoAlpha:1},tBirth+0.22);
+        tl.to(pivot,{attr:{cy:by+40},duration:0.16,ease:'power2.out'},tBirth+0.24)
+          .to(pivot,{attr:{cy:by},duration:0.18,ease:'power2.in'});
+        PVT.cx=bx; PVT.cy=by;
+        return;
+      }
+      const L=p.lines||['WHY IS YOUR','PLATFORM','FREE?'];
+      const ys=[560,668,776];
+      const H=L.map((t,k)=>bigEl(t,540,ys[k]||(560+k*108)));
+      const sy=(p.sync&&p.sync.lines)||['why','platform','free'];
+      // TEXTE TÔT et vif (dès le début, easing qui claque)
+      H.forEach((h,k)=>tl.to(h,{autoAlpha:1,scale:1,duration:0.18,ease:'back.out(2)'},W(i,sy[k],0.02+k*0.08)));
+      H.forEach(h=>gsap.set(h,{scale:0.7,transformOrigin:'50% 50%'}));
+      const tSo=W(i,S(p,'so','so'),0.72), tPr=W(i,S(p,'resolve','product'),0.86);
+      const prop=p.prop||'platform';
+      if(prop==='chart'){
+        // OBJET L2 : courbe de prix LARGE + niveau + marqueur de STOP, une balle FRAPPE le stop
+        const level=mk('path',{d:'M 180 1080 L 900 1080'},'ln'); arm(level);
+        const curve=mk('path',{d:'M 180 900 L 300 980 L 420 860 L 540 1000 L 660 940 L 760 1040'},'ln you'); curve.style.strokeWidth='7'; arm(curve);
+        const stop=mk('rect',{x:760-16,y:1044,width:32,height:32,rx:4},'cell them'); stop.style.fill='var(--them)';
+        const slabel=labelEl(p.stop_label||'YOUR STOP',760,1150,'them');
+        const tObj=W(i,S(p,'prop','stop'),0.22);
+        spread(tl,level,tObj-0.1,0.5,'power2.out');
+        spread(tl,curve,tObj+0.05,0.7,'none');
+        tl.fromTo(stop,{autoAlpha:0,scale:0,transformOrigin:'50% 50%'},{autoAlpha:1,scale:1,duration:0.3,ease:'back.out(2.2)'},tObj+0.5);
+        tl.to(slabel,{autoAlpha:1,duration:0.25},tObj+0.7);
+        // LA BALLE : ROULE SUR la courbe (suit ses sommets, jamais à travers) puis FRAPPE le stop
+        const ball=mk('circle',{cx:180,cy:882,r:16},'dot');
+        const tRoll=Math.max(tObj+1.0,tSo-1.25);
+        tl.to(ball,{autoAlpha:1,duration:0.18},tRoll-0.15);
+        const cv=[[300,962],[420,842],[540,982],[660,922],[746,1022]];   // sommets de la courbe (r au-dessus du trait)
+        let bx=tRoll, sg=0.15;
+        cv.forEach(v=>{tl.to(ball,{attr:{cx:v[0],cy:v[1]},duration:sg,ease:'none'},bx); bx+=sg; sg=Math.max(0.09,sg*0.9);});
+        tl.to(stop,{attr:{y:1044+280},autoAlpha:0,duration:0.4,ease:'power4.in'},bx);              // le stop MEURT (chute brutale)
+        tl.to(ball,{attr:{cx:824,cy:906},duration:0.4,ease:'back.out(1.4)'},bx);                   // la balle rebondit
+        tl.to([...H.slice(0,2),curve,level,ball,slabel],{autoAlpha:0,duration:0.3},tSo+0.1);
+      } else if(prop==='none'){
+        // FORMAT PIVOT : la question SUFFIT. Aucun objet — le "?" seul devient la balle.
+      } else {
+        const pg=mk('g',{}); gsap.set(pg,{transformOrigin:'552px 1010px'});
+        const pwin=document.createElementNS(NS,'path');pwin.setAttribute('class','ln');pwin.setAttribute('d','M 410 900 L 670 900 L 670 1150 L 410 1150 L 410 900');
+        const pbar=document.createElementNS(NS,'path');pbar.setAttribute('class','ln');pbar.setAttribute('d','M 410 958 L 670 958');
+        const pch =document.createElementNS(NS,'path');pch.setAttribute('class','ln');pch.setAttribute('d','M 448 1095 L 512 1030 L 576 1070 L 632 1005');
+        [pwin,pbar,pch].forEach(e=>{pg.appendChild(e);arm(e);});
+        const tCh=W(i,S(p,'prop','charts'),0.24);
+        tl.set(pg,{autoAlpha:1},tCh-0.25);
+        drawIn(tl,pwin,tCh-0.25,0.6);drawIn(tl,pbar,tCh-0.05,0.3);spread(tl,pch,tCh+0.15,(tSo-0.15)-(tCh+0.15));
+        const tags=p.tags||['FREE','FREE'], txp=[[300,1030],[780,1030]];
+        const tsy=(p.sync&&p.sync.tags)||['free:2','free:3'];
+        const T=tags.map((t,k)=>labelEl(t,txp[k]?txp[k][0]:540,txp[k]?txp[k][1]:1030,'them'));
+        T.forEach((tg,k)=>tl.to(tg,{autoAlpha:1,duration:0.25},W(i,tsy[k],0.4+k*0.1)));
+        tl.to([H[0],H[1],...T],{autoAlpha:0,duration:0.3},tSo);
+        tl.to(pg,{scale:0.08,autoAlpha:0,duration:Math.max(0.6,tPr-tSo),ease:'power2.in'},tSo);
+      }
+      const q=bigEl(p.resolve||'?',552,1070,'qmark'); gsap.set(q,{scale:0,transformOrigin:'50% 46%'});
+      tl.to([H[2],q],{autoAlpha:1,scale:1,duration:0.4,ease:'back.out(2)'},tPr-0.1);
+      // LAVOISIER : le ? se dissout et SON POINT (le rond du bas) devient LA BALLE-PIVOT — naissance, pas apparition
+      const tBirth=at(i,0.9);
+      tl.to([H[2],q],{y:'+=30',autoAlpha:0,duration:0.35,ease:'power2.in'},tBirth);
+      tl.set(pivot,{attr:{cx:560,cy:1150},autoAlpha:1},tBirth+0.12);          // le point du ? = position de naissance
+      tl.to(pivot,{attr:{cy:1195},duration:0.16,ease:'power2.out'},tBirth+0.14)   // rebond de naissance (elle vit déjà)
+        .to(pivot,{attr:{cy:1150},duration:0.18,ease:'power2.in'});
+      PVT.cx=560; PVT.cy=1150;
+    }
+
+    /* ===================== ARCHÉTYPE : ROUTING (S2) ===================== */
+    function routing(i,p){
+      const ord=mk('circle',{cx:540,cy:980,r:17},'dot');
+      const brA=mk('path',{d:'M 540 980 L 372 980'},'ln'), brB=mk('path',{d:'M 540 980 L 708 980'},'ln');
+      const market=mk('path',{d:'M 210 936 L 372 936 L 372 1024 L 210 1024 L 210 936'},'ln');
+      const book=mk('path',{d:'M 708 936 L 872 936 L 872 1024 L 708 1024 L 708 936'},'ln them');
+      const xmark=mk('path',{d:'M 432 958 L 480 1002 M 480 958 L 432 1002'},'ln');
+      const loss=mk('path',{d:'M 380 1200 L 700 1200 M 700 1200 L 676 1186 M 700 1200 L 676 1214'},'ln');
+      [brA,brB,market,book,xmark,loss].forEach(arm);
+      tl.set(ord,{autoAlpha:1,x:0,y:0},at(i,0.0));
+      const oL=labelEl(p.source||'YOUR ORDER',540,905,'you'); tl.to(oL,{autoAlpha:1,duration:0.25},W(i,S(p,'source','order')));
+      const lft=p.left||{label:'THE MARKET'}, rgt=p.right||{label:'THEIR BOOK'};
+      drawIn(tl,brA,W(i,S(p,'branchA','send'),0.2),0.45);
+      drawIn(tl,market,W(i,S(p,'left','market'),0.3),0.35);
+      const mL=labelEl(lft.label,291,1080); tl.to(mL,{autoAlpha:1,duration:0.25},W(i,S(p,'left','market'),0.3)+0.15);
+      drawIn(tl,brB,W(i,S(p,'branchB','take'),0.35),0.45);
+      drawIn(tl,book,W(i,S(p,'rightbox','side'),0.42),0.35);
+      const bL=labelEl(rgt.label,790,1080,'them'); tl.to(bL,{autoAlpha:1,duration:0.25},W(i,S(p,'right','themselves')));
+      drawIn(tl,xmark,W(i,S(p,'right','themselves'))+0.1,0.3);
+      tl.to(ord,{x:250,duration:0.95,ease:'power1.inOut'},W(i,S(p,'right','themselves'))+0.15);
+      tl.to(ord,{autoAlpha:0,duration:0.25},W(i,S(p,'right','themselves'))+1.1);
+      const oc=p.outcome||{from:'YOUR LOSS',to:'THEIR REVENUE'};
+      drawIn(tl,loss,W(i,S(p,'loss','loss'))-0.2,0.6);
+      const yl=labelEl(oc.from,430,1170,'you'),tR=labelEl(oc.to,560,1170,'them');
+      tl.to(yl,{autoAlpha:1,duration:0.25},W(i,S(p,'loss','loss')));
+      tl.to(yl,{autoAlpha:0,duration:0.25},W(i,S(p,'gain','revenue'))-0.35);
+      tl.to(tR,{autoAlpha:1,duration:0.25},W(i,S(p,'gain','revenue')));
+      tl.to([oL,mL,bL,tR],{autoAlpha:0,duration:0.3},at(i,0.95));
+      [brA,brB,market,book,xmark,loss].forEach(e=>drawOut(tl,e,at(i,0.95),0.3));
+    }
+
+    /* ===================== ARCHÉTYPE : MIRROR (S3) ===================== */
+    function mirror(i,p){
+      const axis=mk('path',{d:'M 540 820 L 540 1240'},'ln');
+      const curve=mk('path',{d:'M 300 900 Q 430 1020 476 1210'},'ln you');
+      const bar=mk('rect',{x:612,y:1000,width:110,height:220,fill:'none'},'ln them');
+      [axis,curve].forEach(arm); gsap.set(bar,{transformOrigin:'50% 100%',scaleY:0});
+      const axStart=(i>0?Math.min(vend(i-1)-0.3,SC[i].s+0.05):SC[i].s+0.05); // pont si scène préc., sinon début (ordre libre)
+      drawIn(tl,axis,axStart,0.7);
+      const cA=W(i,S(p,'enter','watch'),0.05),cEnd=vend(i)-0.3;
+      drawIn(tl,curve,cA,cEnd-cA,'none');
+      const pxY=mk('circle',{cx:300,cy:900,r:13},'dot'), pxT=mk('circle',{cx:667,cy:1220,r:13},'dot them');
+      tl.to(pxY,{autoAlpha:1,duration:0.3},cA);
+      tl.to(pxY,{attr:{cx:476,cy:1210},duration:cEnd-cA,ease:'none'},cA);
+      const lft=p.left||{label:'YOUR TRADES'}, rgt=p.right||{label:'THEIR REVENUE'};
+      // labels décalés en Y (les libellés longs ne peuvent plus se chevaucher) ; le gauche arrive TÔT (substance)
+      const ytL=labelEl(lft.label,332,844,'you'); tl.to(ytL,{autoAlpha:1,duration:0.25},cA+0.3);
+      const tBar=Math.max(cA+0.9,W(i,S(p,'right','earns'))-0.1);
+      tl.set(bar,{autoAlpha:1},tBar);
+      tl.to(bar,{scaleY:1,duration:cEnd-tBar,ease:'power1.in'},tBar);
+      tl.to(pxT,{autoAlpha:1,duration:0.3},tBar);
+      tl.to(pxT,{attr:{cy:1005},duration:cEnd-tBar,ease:'none'},tBar);
+      const trL=labelEl(rgt.label,748,916,'them'); tl.to(trL,{autoAlpha:1,duration:0.25},Math.max(cA+1.0,W(i,S(p,'right','earns'))));
+      const sb=labelEl(p.verdict||'SAME BOOK',540,1330); tl.to(sb,{autoAlpha:1,duration:0.3},W(i,S(p,'verdict','one'),0.58));
+      // sortie = collapse dans la balle (géré par le DRIVER, Lavoisier). Pas d'auto-exit ici.
+    }
+
+    /* ===================== ARCHÉTYPE : COUNT (S4, amas/cartes) ===================== */
+    function count(i,p){
+      const N=p.n||10, FALL=p.fall==null?8:p.fall;
+      const PITCH=78, CS=56, LY=1040, X0=540-(N-1)*PITCH/2;
+      const cardsG=mk('g',{}); const cards=[];
+      for(let k=0;k<N;k++){const cx=X0+k*PITCH; const r=document.createElementNS(NS,'rect');
+        r.setAttribute('class','cell');r.setAttribute('x',cx-PITCH/2);r.setAttribute('y',LY-5);
+        r.setAttribute('width',PITCH);r.setAttribute('height',10);r.setAttribute('rx',2);cardsG.appendChild(r);cards.push(r);}
+      gsap.set(cardsG,{autoAlpha:0,transformOrigin:`${X0-PITCH/2}px ${LY}px`,scaleX:0});
+      const tLine=W(i,S(p,'form','trust'));
+      tl.set(cardsG,{autoAlpha:1},tLine); tl.to(cardsG,{scaleX:1,duration:0.7,ease:'power2.out'},tLine);
+      const acL=labelEl(p.label||'10 ACCOUNTS',540,928); tl.to(acL,{autoAlpha:1,duration:0.3},W(i,S(p,'count','accounts')));
+      const tGrow=tLine+0.7,tCount=W(i,S(p,'count','accounts')),Wd=Math.max(1.8,tCount-tGrow);
+      cards.forEach(c=>tl.to(c,{attr:{y:LY-22,height:44},duration:Wd*0.45,ease:'none'},tGrow));
+      const tSeg=tGrow+Wd*0.45,stg=(tCount+0.15-tSeg)/N;
+      cards.forEach((c,k)=>{const cx=X0+k*PITCH;
+        tl.to(c,{attr:{x:cx-CS/2,width:CS,y:LY-CS/2,height:CS,rx:6},duration:Math.max(0.5,stg*1.7),ease:'power1.inOut'},tSeg+k*stg);});
+      // ordre de chute externe->interne ; survivants = les plus centraux
+      const order=[...Array(N).keys()].sort((a,b)=>Math.abs(b-(N-1)/2)-Math.abs(a-(N-1)/2));
+      const fallSet=order.slice(0,FALL), keepSet=order.slice(FALL);
+      const t0=W(i,S(p,'drop','lose')),span=(vend(i)-0.6)-t0;
+      fallSet.forEach((idx,n)=>{const tt=t0+(n/Math.max(1,FALL))*span;
+        tl.to(cards[idx],{fill:'#8A5323',duration:0.12},tt);
+        tl.to(cards[idx],{attr:{y:'+=260'},autoAlpha:0,duration:0.55,ease:'power2.in'},tt+0.08);});
+      keepSet.forEach(idx=>tl.to(cards[idx],{fill:'#1E5F6E',duration:0.35},vend(i)-1.1));
+      // sortie = collapse dans la balle (DRIVER). Pas d'auto-exit ici.
+    }
+
+    /* ===================== ARCHÉTYPE : FACEOFF (S5) ===================== */
+    function faceoff(i,p){
+      const youFig=figureEl(300,1,'you'), houseFig=figureEl(780,-1,'them');
+      const deal=mk('circle',{cx:540,cy:1050,r:18},'dot ink');
+      const arrow=mk('path',{d:'M 372 1050 L 690 1050 M 690 1050 L 664 1035 M 690 1050 L 664 1065'},'ln'); arm(arrow);
+      tl.set(deal,{autoAlpha:1,x:0},at(i,0.0)+0.2);
+      tl.to(youFig,{autoAlpha:1,duration:0.4},W(i,S(p,'left','customer')));
+      const yE=labelEl(p.left||'YOU',300,1230,'you'); tl.to(yE,{autoAlpha:1,duration:0.25},W(i,S(p,'left','customer'))+0.2);
+      const cp=labelEl(p.caption||'YOU ARE THE COUNTERPARTY',540,1330);
+      tl.to(cp,{autoAlpha:1,duration:0.35},W(i,S(p,'caption','counterparty')));
+      drawIn(tl,arrow,W(i,S(p,'arrow','side'))-0.4,0.6);
+      tl.to(houseFig,{autoAlpha:1,duration:0.4},W(i,S(p,'right','house')));
+      const hE=labelEl(p.right||'THE HOUSE',780,1230,'them'); tl.to(hE,{autoAlpha:1,duration:0.25},W(i,S(p,'right','house'))+0.2);
+      tl.to(arrow,{autoAlpha:0,duration:0.3},W(i,S(p,'slide','slides'))-0.5);
+      const to=(p.slideTo==='left')?-240:240;
+      tl.to(deal,{x:to,duration:0.8,ease:'power2.inOut'},W(i,S(p,'slide','slides')));
+      tl.to([youFig,houseFig,deal,yE,hE,cp],{autoAlpha:0,duration:0.4},vend(i));
+    }
+
+    /* ===================== ARCHÉTYPE : FORK (S6) ===================== */
+    function fork(i,p){
+      const q=bigEl(p.q||'?',552,872,'qmark'); tl.to(q,{autoAlpha:1,duration:0.4},at(i,0.04));
+      const stem=mk('path',{d:'M 540 902 L 540 1006'},'ln');
+      const brL=mk('path',{d:'M 540 1006 L 372 1152'},'ln you');
+      const brR=mk('path',{d:'M 540 1006 L 708 1152'},'ln them');
+      [stem,brL,brR].forEach(arm);
+      drawIn(tl,stem,W(i,S(p,'question','question'))-0.3,0.4);
+      drawIn(tl,brL,W(i,S(p,'question','question')),0.6);drawIn(tl,brR,W(i,S(p,'question','question')),0.6);
+      const aL=labelEl(p.left||'A-BOOK?',300,1232,'you'); tl.to(aL,{autoAlpha:1,duration:0.25},W(i,S(p,'left','a')));
+      const bL=labelEl(p.right||'B-BOOK?',780,1232,'them'); tl.to(bL,{autoAlpha:1,duration:0.25},W(i,S(p,'right','b:1')));
+      const tP=W(i,S(p,'pulse','silence'));
+      tl.to([q,stem,brL,brR,aL,bL],{scale:1.012,transformOrigin:'50% 42%',duration:0.16,ease:'sine.inOut'},tP)
+        .to([q,stem,brL,brR,aL,bL],{scale:1,duration:0.3,ease:'sine.inOut'},tP+0.16);
+    }
+
+    /* ===================== ARCHÉTYPE : CROWD (foule qui converge) ===================== */
+    function crowd(i,p){
+      const N=p.n||24;
+      const level=mk('path',{d:'M 160 1050 L 920 1050'},'ln');
+      const curve=mk('path',{d:'M 200 950 Q 380 1005 540 1012 T 900 1002'},'ln you'); curve.style.strokeWidth='6';
+      [level,curve].forEach(arm);
+      const tEnter=W(i,S(p,'appear','hundred'),0.05);
+      drawIn(tl,level,at(i,0.02),0.5); drawIn(tl,curve,at(i,0.12),0.7,'none');   // démarre DÈS le début (pont depuis le ? du hook)
+      const crowd=[]; const COLS=8;
+      for(let k=0;k<N;k++){const col=k%COLS,row=(k/COLS)|0;
+        const x=540+((col-(COLS-1)/2)*84)+((row%2)*20), y=540+row*72;
+        crowd.push({c:mk('circle',{cx:x,cy:y,r:9},'dot ink'),x,y});}
+      const clabel=labelEl(p.crowd_label||'EVERY TRADER',540,486);
+      tl.to(crowd.map(o=>o.c),{autoAlpha:1,duration:0.5,stagger:0.02},tEnter);
+      tl.to(clabel,{autoAlpha:1,duration:0.3},tEnter+0.3);
+      // cible : un point JUSTE AU-DELÀ du niveau (centre) — tout le monde pointe le même endroit
+      const TX=540,TY=1012, target=mk('circle',{cx:TX,cy:TY,r:14},'dot them');
+      const tlabel=labelEl(p.target_label||'THE OBVIOUS LEVEL',540,1140,'them');
+      const tConv=W(i,S(p,'converge','pointed'),0.4), tSettle=W(i,S(p,'settle','low'),0.85);
+      const gaze=crowd.map(o=>{const g=mk('path',{d:`M ${o.x} ${o.y} L ${TX} ${TY}`},'ln');g.style.strokeWidth='2.5';arm(g);return g;});
+      const span=Math.max(1.2,tSettle-tConv);
+      gaze.forEach((g,k)=>drawIn(tl,g,tConv+(k/N)*span,0.45,'none'));   // convergence ÉTALÉE sur la fenêtre (avance)
+      gsap.set(target,{scale:0,transformOrigin:'50% 50%'});
+      tl.to(target,{autoAlpha:1,scale:1,duration:0.4,ease:'back.out(1.6)'},W(i,S(p,'target','number')));
+      tl.to(target,{scale:1.4,duration:span*0.7,ease:'none'},W(i,S(p,'target','number'))+0.2); // grossit à mesure que les regards arrivent (monotone)
+      tl.to(tlabel,{autoAlpha:1,duration:0.3},tSettle);
+      tl.to([clabel,tlabel,target,level,curve,...crowd.map(o=>o.c),...gaze],{autoAlpha:0,duration:0.4},vend(i));
+    }
+
+    /* ===================== ARCHÉTYPE : CLUSTER (amas dense vs vide — le fait Osler) ===================== */
+    function cluster(i,p){
+      const LY=1080, level=mk('path',{d:'M 160 1080 L 920 1080'},'ln'); arm(level);
+      const tLvl=W(i,S(p,'level','data'),0.05), tVerd=W(i,S(p,'verdict','parks'),0.9);
+      spread(tl,level,tLvl,0.8);
+      const llabel=labelEl(p.level_label||'THE ROUND NUMBER',540,1150); tl.to(llabel,{autoAlpha:1,duration:0.3},tLvl+0.4);
+      const tpG=mk('g',{}),tps=[]; for(let k=0;k<4;k++){const x=489+k*34;
+        const c=document.createElementNS(NS,'rect');c.setAttribute('x',x-9);c.setAttribute('y',LY-9);c.setAttribute('width',18);c.setAttribute('height',18);c.setAttribute('rx',3);c.style.fill='var(--ink)';tpG.appendChild(c);tps.push(c);}
+      const onl=labelEl(p.on_label||'TAKE-PROFITS',540,1210);
+      tl.to(tpG,{autoAlpha:1,duration:0.4},W(i,S(p,'on','sit')));
+      tl.to(onl,{autoAlpha:1,duration:0.3},W(i,S(p,'on','sit'))+0.2);
+      // STOPS : l'amas s'ACCUMULE en continu sur PRESQUE TOUTE LA SCÈNE (action primaire = avance)
+      const stops=[],SN=18,SC0=6;
+      for(let k=0;k<SN;k++){const col=k%SC0,row=(k/SC0)|0;const x=540+((col-(SC0-1)/2)*26),y=1032-row*26;
+        const c=mk('rect',{x:x-10,y:y-10,width:20,height:20,rx:3},'cell them');c.style.fill='var(--them)';stops.push({c,y});}
+      const abl=labelEl(p.above_label||'STOPS',540,860,'them');
+      const tStart=tLvl+1.1, sspan=Math.max(2.5,(tVerd-0.3)-tStart);
+      stops.forEach((o,k)=>tl.fromTo(o.c,{autoAlpha:0,attr:{y:o.y-10+18}},{autoAlpha:1,attr:{y:o.y-10},duration:0.34,ease:'power2.out'},tStart+(k/SN)*sspan));
+      tl.to(abl,{autoAlpha:1,duration:0.3},W(i,S(p,'above','pile')));
+      const vlabel=labelEl(p.verdict||'EVERYONE PARKS HERE',540,1320); tl.to(vlabel,{autoAlpha:1,duration:0.3},tVerd);
+      tl.to([level,llabel,onl,abl,vlabel,tpG,...stops.map(o=>o.c)],{autoAlpha:0,duration:0.4},vend(i));
+    }
+
+    /* ===================== ARCHÉTYPE : CASCADE (mécanisme central — chaîne qui accélère) ===================== */
+    function cascade(i,p){
+      const N=p.n||14, X0=540-(N-1)*36/2, PITCH=36, Y=1040;
+      const level=mk('path',{d:'M 160 1080 L 920 1080'},'ln'); arm(level);
+      const tTouch=W(i,S(p,'touch','touches'),0.2), tChain=W(i,S(p,'chain','all'),0.45);
+      spread(tl,level,at(i,0.0)+0.1,Math.max(0.6,(tTouch-0.3)-(at(i,0.0)+0.1)));   // le niveau se dessine (avance)
+      // l'amas se forme ÉTALÉ pendant l'approche
+      const marks=[]; for(let k=0;k<N;k++){const x=X0+k*PITCH;const c=mk('rect',{x:x-11,y:Y-11,width:22,height:22,rx:3},'cell them');c.style.fill='var(--them)';marks.push({c,x});}
+      const mSpan=Math.max(1.0,(tTouch-0.4)-(at(i,0.0)+0.3));
+      marks.forEach((m,k)=>tl.fromTo(m.c,{autoAlpha:0,attr:{y:Y-25}},{autoAlpha:1,attr:{y:Y-11},duration:0.3,ease:'power2.out'},at(i,0.0)+0.3+(k/N)*mSpan));
+      const lbl=labelEl(p.label||'EACH ONE TRIGGERS THE NEXT',540,900);
+      // LA BALLE : CHUTE brutale -> REBONDS PLEINE HAUTEUR (revient toujours au point de départ) jusqu'à l'attaque
+      const CY0=560, CYG=Y-18;
+      const ball=mk('circle',{cx:X0-24,cy:CY0,r:18},'dot');
+      const tDrop=Math.min(tChain-1.7,at(i,0.0)+0.55), lastX=X0+(N-1)*PITCH;
+      const tSweep=Math.max(tChain,tDrop+1.5);
+      tl.to(ball,{autoAlpha:1,duration:0.1},tDrop);
+      tl.to(ball,{attr:{cy:CYG},duration:0.32,ease:'power4.in'},tDrop);            // chute brutale (gravité)
+      let bt=tDrop+0.32;
+      while(bt<tSweep-0.55){tl.to(ball,{attr:{cy:CY0},duration:0.30,ease:'power2.out'},bt)   // remonte à la HAUTEUR DE DÉPART
+        .to(ball,{attr:{cy:CYG},duration:0.25,ease:'power2.in'},bt+0.30); bt+=0.55;}
+      tl.to(ball,{attr:{cx:X0-8,cy:CY0},duration:Math.max(0.2,tSweep-bt),ease:'power2.out'},bt);   // dernier rebond au sommet, au-dessus du 1er carré
+      // ATTAQUE — phase 1 : PLONGE en courbe (rampe) jusqu'au 1er carré, au niveau du sol
+      const rowY=Y-8;
+      tl.to(ball,{attr:{cx:X0,cy:rowY},duration:0.42,ease:'power3.in'},tSweep);
+      // ATTAQUE — phase 2 : ROULE le long des carrés ; chacun tombe EXACTEMENT quand la balle l'atteint (contact réel)
+      const rollStart=tSweep+0.42, rollDur=Math.max(0.7,Math.min(1.3,(vend(i)-0.8)-rollStart));
+      tl.to(ball,{attr:{cx:lastX+PITCH,cy:rowY},duration:rollDur,ease:'none'},rollStart);
+      marks.forEach((m,k)=>{const tk=rollStart+(k/N)*rollDur;    // la balle est À m.x à cet instant
+        tl.to(m.c,{fill:'#8A5323',attr:{y:Y+300},autoAlpha:0,duration:0.26,ease:'power4.in'},tk);});
+      tl.to(lbl,{autoAlpha:1,scale:1,duration:0.3,ease:'back.out(2)'},rollStart+0.1);   // le texte tombe DÈS le fauchage
+      gsap.set(lbl,{scale:0.7,transformOrigin:'50% 50%'});
+      // le prix repart, libéré (jusqu'à la fin)
+      tl.to(ball,{attr:{cx:930,cy:660},duration:Math.max(0.5,(vend(i)-0.4)-(rollStart+rollDur)),ease:'power2.out'},rollStart+rollDur);
+      tl.to([level,lbl,ball],{autoAlpha:0,duration:0.4},vend(i));
+    }
+
+    /* ===================== ARCHÉTYPE : AFTERMATH (la zone vide, le prix repart sans toi) ===================== */
+    function aftermath(i,p){
+      const ground=mk('path',{d:'M 160 1080 L 920 1080'},'ln'); arm(ground); drawIn(tl,ground,at(i,0.0)+0.1,0.4);
+      const elabel=labelEl(p.empty_label||'THE LOT IS EMPTY',540,940);
+      tl.to(elabel,{autoAlpha:1,duration:0.3},W(i,S(p,'empty','empty')));
+      // UN marqueur gris resté au sol (immobile) = le trader laissé derrière
+      const stuck=mk('rect',{x:378,y:1058,width:24,height:24,rx:3},'cell'); stuck.style.fill='#9AA0A6';
+      tl.to(stuck,{autoAlpha:1,duration:0.3},W(i,S(p,'empty','empty'))+0.3);
+      const yl=labelEl(p.left_behind_label||'YOU',392,1150); yl.style.fill='#9AA0A6';
+      // le prix RETOURNE et part FRANCHEMENT dans la direction annoncée — trajectoire propre, dessin lent = mouvement continu
+      const move=mk('path',{d:'M 392 1058 Q 560 1040 700 900 T 920 620'},'ln you'); arm(move);
+      const tTurn=W(i,S(p,'turn','turns'),0.3), tEnd=vend(i)-0.4;
+      drawIn(tl,move,tTurn,Math.max(1.6,tEnd-tTurn),'none');
+      const mlabel=labelEl(p.move_label||'THE MOVE YOU CALLED',780,720,'you'); tl.to(mlabel,{autoAlpha:1,duration:0.3},W(i,S(p,'move','exactly')));
+      tl.to(yl,{autoAlpha:1,duration:0.3},W(i,S(p,'left_behind','without')));
+      // image finale : la distance courbe-partie / point-resté. purge.
+      tl.to([ground,elabel,mlabel,move,stuck,yl],{autoAlpha:0,duration:0.4},vend(i));
+    }
+
+    /* ===================== ARCHÉTYPE : REPLAY (scène finale — on rejoue avec le bon geste) ===================== */
+    function replay(i,p){
+      const N=10, X0=540-(N-1)*30/2, PITCH=30, Y=1040, marks=[];
+      const level=mk('path',{d:'M 160 1080 L 920 1080'},'ln'); arm(level); drawIn(tl,level,at(i,0.0)+0.1,0.4);
+      for(let k=0;k<N;k++){const x=X0+k*PITCH;const c=mk('rect',{x:x-9,y:Y-9,width:18,height:18,rx:3},'cell them');c.style.fill='var(--them)';marks.push({c,x});}
+      const tReplay=W(i,S(p,'replay','replay'),0.05), tPlace=W(i,S(p,'place','place'),0.4), tTrig=W(i,S(p,'trigger','trigger'),0.6);
+      const mSpan=Math.max(0.8,(tPlace-0.3)-tReplay);
+      marks.forEach((m,k)=>tl.fromTo(m.c,{autoAlpha:0,attr:{y:Y-23}},{autoAlpha:1,attr:{y:Y-9},duration:0.28,ease:'power2.out'},tReplay+(k/N)*mSpan)); // l'amas revient, étalé
+      const clabel=labelEl(p.mechanism||'THE SAME TRAP',540,900,'them'); tl.to(clabel,{autoAlpha:1,duration:0.3},tReplay+0.3);
+      // TON marqueur, placé AILLEURS (à l'écart) — là où ton idée serait vraiment invalidée
+      const mine=mk('rect',{x:860-11,y:Y-11,width:24,height:24,rx:3},'cell'); mine.style.fill='var(--you)';
+      const myl=labelEl(p.correct_placement||'YOUR STOP',860,1150,'you');
+      tl.fromTo(mine,{autoAlpha:0,attr:{y:Y-31}},{autoAlpha:1,attr:{y:Y-12},duration:0.45,ease:'power2.out'},tPlace);
+      tl.to(myl,{autoAlpha:1,duration:0.3},tPlace+0.2);
+      // LA BALLE : CHUTE brutale + REBONDS PLEINE HAUTEUR (revient au point de départ) jusqu'au fauchage ; TON marqueur survit
+      const CY0=560, CYG=Y-14;
+      const ball=mk('circle',{cx:X0-24,cy:CY0,r:16},'dot');
+      const tDrop=Math.min(tTrig-1.6,tPlace+0.2), lastX=X0+(N-1)*PITCH;
+      const tSweep=Math.max(tTrig,tDrop+1.45);
+      tl.to(ball,{autoAlpha:1,duration:0.1},tDrop);
+      tl.to(ball,{attr:{cy:CYG},duration:0.3,ease:'power4.in'},tDrop);
+      let rbt=tDrop+0.3;
+      while(rbt<tSweep-0.55){tl.to(ball,{attr:{cy:CY0},duration:0.30,ease:'power2.out'},rbt)
+        .to(ball,{attr:{cy:CYG},duration:0.25,ease:'power2.in'},rbt+0.30); rbt+=0.55;}
+      tl.to(ball,{attr:{cx:X0-8,cy:CY0},duration:Math.max(0.2,tSweep-rbt),ease:'power2.out'},rbt);   // sommet au-dessus du 1er carré
+      // ATTAQUE — phase 1 : plonge en courbe jusqu'au 1er carré ; phase 2 : roule, chacun tombe QUAND la balle l'atteint
+      const rowY=Y-6;
+      tl.to(ball,{attr:{cx:X0,cy:rowY},duration:0.4,ease:'power3.in'},tSweep);
+      const rollStart=tSweep+0.4, rollDur=Math.max(0.6,Math.min(1.0,(W(i,S(p,'survive','survive'),0.85))-rollStart));
+      tl.to(ball,{attr:{cx:lastX+PITCH,cy:rowY},duration:rollDur,ease:'none'},rollStart);
+      marks.forEach((m,k)=>{const tk=rollStart+(k/N)*rollDur;    // contact réel (l'amas them fauché ; ton marqueur you survit)
+        tl.to(m.c,{fill:'#8A5323',attr:{y:Y+300},autoAlpha:0,duration:0.24,ease:'power4.in'},tk);});
+      // TON marqueur (you) reste INTACT — la balle repart et TU ES DEDANS (ton stop monte avec le move)
+      const tSurv=W(i,S(p,'survive','survive'),0.85), tEnd=vend(i)-0.4;
+      tl.to(ball,{attr:{cx:872,cy:700},duration:Math.max(0.8,tEnd-tSurv),ease:'power2.out'},tSurv);
+      tl.to(mine,{attr:{y:800},duration:Math.max(0.8,tEnd-tSurv),ease:'power2.out'},tSurv);
+      tl.to(myl,{attr:{y:770},duration:Math.max(0.8,tEnd-tSurv),ease:'power2.out'},tSurv);
+      const slabel=labelEl(p.outcome_changes||"YOU'RE STILL IN",540,1330,'you'); tl.to(slabel,{autoAlpha:1,duration:0.3},tSurv+0.3);
+      tl.to([level,clabel,mine,myl,slabel,ball],{autoAlpha:0,duration:0.4},vend(i));
+    }
+
+    /* ===================== ARCHÉTYPE : SCALE (le rapport de taille — neuf, L3) ===================== */
+    function scale(i,p){
+      // petit carré = ton argent (au centre, lisible)
+      const small=mk('rect',{x:540-26,y:1000-26,width:52,height:52,rx:5},'cell'); small.style.fill='var(--you)';
+      const sl=labelEl(p.small_label||'YOUR MONEY',540,1110,'you');
+      // grand carré = ta position (se construit AUTOUR, jusqu'à presque tout le cadre)
+      const big=mk('rect',{x:540-42,y:1000-42,width:84,height:84,rx:6,fill:'none'},'ln them'); big.style.strokeWidth='9';
+      const bl=labelEl(p.big_label||'YOUR POSITION',540,430,'them');
+      const tpl=labelEl(p.third_party_label||'THE BROKER FRONTS THE REST',540,1330);
+      const tSmall=W(i,S(p,'small','small'),0.1), tBig=W(i,S(p,'big','big'),0.35);
+      const tThird=W(i,S(p,'third_party','third'),0.62), tVerd=W(i,S(p,'verdict','verdict'),0.85);
+      tl.to(small,{autoAlpha:1,duration:0.3},tSmall);
+      tl.to(sl,{autoAlpha:1,duration:0.25},tSmall+0.2);
+      // GROSSIT en continu (l'action primaire) : le petit devient minuscule par comparaison
+      tl.set(big,{autoAlpha:1},tBig);
+      tl.fromTo(big,{attr:{x:540-42,y:1000-42,width:84,height:84}},
+        {attr:{x:130,y:360,width:820,height:820},duration:Math.max(1.3,tThird-tBig),ease:'power1.inOut'},tBig);
+      tl.to(bl,{autoAlpha:1,duration:0.3},tBig+0.4);
+      tl.to(tpl,{autoAlpha:1,duration:0.3},tThird);
+      // note : la rétraction dans la balle est gérée par le DRIVER (Lavoisier)
+    }
+
+    /* ========== TEST PIVOT : tspread — les éléments SORTENT de la balle (deploy) puis y rentrent (collapse driver) ========== */
+    function tspread(i,p){
+      const items=p.items||['FEES','SPREAD','SLIP'];
+      const N=items.length, X0=540-(N-1)*260/2, y=1010, groups=[];
+      items.forEach((txt,k)=>{const x=X0+k*260; const g=mk('g',{});
+        const r=document.createElementNS(NS,'rect');r.setAttribute('class','cell');r.setAttribute('x',x-70);r.setAttribute('y',y-70);r.setAttribute('width',140);r.setAttribute('height',140);r.setAttribute('rx',12);r.style.fill='var(--them)';
+        const t=document.createElementNS(NS,'text');t.setAttribute('class','lab');t.setAttribute('x',x);t.setAttribute('y',y+180);t.setAttribute('text-anchor','middle');t.textContent=txt;t.style.fill='var(--them)';
+        g.appendChild(r);g.appendChild(t);groups.push(g);});
+      const t0=at(i,0.16);
+      groups.forEach((g,k)=>deployEl(g,t0+0.2*k,0.5));   // chaque bloc NAÎT de la balle
+    }
+
+    /* ========== TEST PIVOT : tphysics — la balle-pivot EST la balle-physique (une seule balle) ========== */
+    function tphysics(i,p){
+      const N=p.n||6, PITCH=112, X0=540-(N-1)*PITCH/2, Y=1060, marks=[];
+      const lvl=mk('rect',{x:X0-70,y:Y+40,width:(N-1)*PITCH+140,height:10,rx:5},'cell'); lvl.style.fill='var(--ink)';
+      for(let k=0;k<N;k++){const x=X0+k*PITCH; const r=mk('rect',{x:x-30,y:Y-30,width:60,height:60,rx:8},'cell them'); r.style.fill='var(--them)'; marks.push({r,x});}
+      const t0=at(i,0.12);
+      deployEl(lvl,t0,0.45);                              // le niveau SORT de la balle
+      marks.forEach((m,k)=>deployEl(m.r,t0+0.14+0.07*k,0.4));   // les blocs SORTENT de la balle
+      // LA BALLE (pivot, la MÊME) fait la physique : plonge, roule, chaque bloc tombe au contact réel
+      const Yb=Y-4, tDive=at(i,0.52);
+      tl.to(pivot,{attr:{cx:X0-10,cy:PVT.cy},duration:0.4,ease:'power2.inOut'},tDive-0.4);
+      tl.to(pivot,{attr:{cx:X0,cy:Yb},duration:0.42,ease:'power3.in'},tDive);
+      const lastX=X0+(N-1)*PITCH, rollStart=tDive+0.42, rollDur=Math.max(0.9,(vend(i)-0.5)-rollStart);
+      tl.to(pivot,{attr:{cx:lastX+PITCH,cy:Yb},duration:rollDur,ease:'none'},rollStart);
+      marks.forEach((m,k)=>{const tk=rollStart+(k/N)*rollDur;
+        tl.to(m.r,{fill:'#8A5323',attr:{y:Y+320},autoAlpha:0,duration:0.26,ease:'power4.in'},tk);});
+      PVT.cx=lastX+PITCH; PVT.cy=Yb;
+    }
+
+    /* ===================== DRIVER (balle-pivot) ===================== */
+    const ARCH={hook,routing,mirror,count,faceoff,fork,crowd,cluster,cascade,aftermath,replay,scale,tspread,tphysics};
+    const PIVOT_HOME=[540,700];   // point où la balle absorbe/redéploie entre 2 scènes
+    SPEC.forEach((scene,i)=>{const fn=ARCH[scene.type];
+      if(!fn){console.error('archétype inconnu:',scene.type);return;}
+      const before=SVG.childNodes.length;
+      fn(i,scene);
+      const els=Array.from(SVG.childNodes).slice(before).filter(e=>e!==pivot);   // éléments de CETTE scène
+      if(i<SPEC.length-1){   // transition vers la scène suivante (sauf la dernière)
+        const tc=vend(i)-0.55;
+        // la balle rejoint le point de pivot pour ABSORBER (elle vit : petit rebond)
+        tl.to(pivot,{attr:{cx:PIVOT_HOME[0],cy:PIVOT_HOME[1]},duration:0.45,ease:'power2.inOut'},tc);
+        PVT.cx=PIVOT_HOME[0]; PVT.cy=PIVOT_HOME[1];
+        els.forEach((el,k)=>collapseEl(el,tc+0.25+0.015*k,0.4));   // les éléments se RÉTRACTENT dans la balle
+        tl.to(pivot,{attr:{cy:PIVOT_HOME[1]-40},duration:0.14,ease:'power2.out'},vend(i)+0.02)  // rebond (elle n'attend pas)
+          .to(pivot,{attr:{cy:PIVOT_HOME[1]},duration:0.16,ease:'power2.in'});
+      }
+    });
+
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

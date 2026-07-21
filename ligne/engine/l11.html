@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L11 « THE LINE THAT ERASES YOU » — la ligne de liquidation. FUSIL : la ligne étrangère (S1) révèle son auteur (ta TAILLE, S3),
+       frappe (S4), devient un choix (S5). §L0 : pire cas = position fermée / dépôt épuisé, JAMAIS de dette. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){f=clamp(f,0,1);const A=h2(a),B=h2(b);return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`;}
+    function box(el,cx,cy,w,h){el.setAttribute('x',(cx-w/2).toFixed(1));el.setAttribute('y',(cy-h/2).toFixed(1));el.setAttribute('width',w.toFixed(1));el.setAttribute('height',Math.max(0,h).toFixed(1));}
+    const PALE=mix(YOU,PAPER,0.68);
+
+    const priceL=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'20 16',opacity:0});
+    function makeStack(){return{line:mk('line',{stroke:INK,'stroke-width':11,'stroke-linecap':'round',opacity:0}),cushion:mk('rect',{fill:PALE,rx:3,opacity:0}),gauge:mk('rect',{fill:YOU,rx:3,opacity:0})};}
+    const stM=makeStack(), stA=makeStack(), stB=makeStack();
+    function drawStack(st,cx,W,gTop,gBot,lineY,gFill,cushionOn){
+      st.gauge.setAttribute('opacity',1); st.gauge.setAttribute('fill',gFill||YOU); box(st.gauge,cx,(gTop+gBot)/2,W,gBot-gTop);
+      st.cushion.setAttribute('opacity',(cushionOn&&lineY>gBot)?1:0); box(st.cushion,cx,(gBot+lineY)/2,W*0.94,lineY-gBot);
+      st.line.setAttribute('opacity',1); st.line.setAttribute('x1',cx-W*0.8); st.line.setAttribute('x2',cx+W*0.8); st.line.setAttribute('y1',lineY.toFixed(1)); st.line.setAttribute('y2',lineY.toFixed(1));
+    }
+    function hideStack(st){st.gauge.setAttribute('opacity',0);st.cushion.setAttribute('opacity',0);st.line.setAttribute('opacity',0);}
+    function priceOsc(u,cy,amp,speed,op){const y=cy+amp*Math.sin(u*speed);priceL.setAttribute('opacity',op==null?0.45:op);priceL.setAttribute('x1',80);priceL.setAttribute('x2',1000);priceL.setAttribute('y1',y.toFixed(1));priceL.setAttribute('y2',y.toFixed(1));priceL.setAttribute('stroke-dashoffset',((-u*120)%36).toFixed(1));return y;}
+
+    const QLINES=['WHO PUT THAT','LINE ON','YOUR CHART'];
+    const FS=88,lineH=110,y0=250,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+120,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0});qMark.textContent='?';
+
+    const lab=mk('text',{x:CX,y:200,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0});}
+    const capYou=caption(),capLine=caption(),capA=caption(),capB=caption();
+    const ALLCAPS=[capYou,capLine,capA,capB];
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);el.setAttribute('opacity',clamp(op,0,1).toFixed(3));}
+    function hideCaps(){for(const e of ALLCAPS)e.setAttribute('opacity',0);}
+    function hideQ(){for(const e of qEls)e.setAttribute('opacity',0);qMark.setAttribute('opacity',0);}
+    function hideAll(){hideStack(stM);hideStack(stA);hideStack(stB);priceL.setAttribute('opacity',0);lab.setAttribute('opacity',0);}
+
+    const W=150,H=280,LY=1440,GB0=1180;   // jauge / ligne de liquidation / bas de jauge initial (coussin ~260)
+
+    // S1 — ta jauge + la ligne étrangère dessous ; la jauge respire avec le prix
+    function s1(lf,t,s){
+      const u=t-s; hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3));qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      hideStack(stA);hideStack(stB);
+      const gin=clamp((u-1.6)/0.9,0,1);
+      const py = u>2.6 ? priceOsc(u,760,8,1.4,0.3) : (priceL.setAttribute('opacity',0),0);
+      const breathe = u>2.6 ? 6*Math.sin(u*1.4) : 0;
+      const gBot=GB0+breathe;
+      if(gin>0) drawStack(stM,CX,W, gBot-H*eOut(gin), gBot, LY, YOU, false); else hideStack(stM);
+      stM.line.setAttribute('opacity', clamp((u-2.0)/0.5,0,1));    // la ligne apparaît sous la jauge
+      putCap(capYou,'YOUR POSITION',CX,gBot-H-30,YOU,(u-1.9)/0.4);
+      putCap(capLine,'A LINE YOU NEVER DREW',CX,LY+55,INK,(u-2.8)/0.4);
+    }
+    // S2 — le coussin (ton dépôt) entre la jauge et la ligne ; il fond quand le prix va contre toi
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const py=priceOsc(u,700,10,1.2,0.4);
+      // le prix descend d'abord (contre toi) puis remonte un peu : le coussin fond puis regonfle (respire)
+      const trend = 150*eOut(clamp((u-1.5)/2.0,0,1)) - 60*eOut(clamp((u-4.0)/2.0,0,1)) + 14*Math.sin(u*1.2);
+      const gBot=clamp(GB0+trend, GB0, LY-20);
+      const cush=clamp((u-0.3)/1.2,0,1);
+      drawStack(stM,CX,W, gBot-H, gBot, LY, YOU, cush>0.02);
+      putCap(capYou,'YOUR POSITION',CX,gBot-H-30,YOU,0.9);
+      putCap(capLine,'THE CUSHION — YOUR DEPOSIT',CX,(gBot+LY)/2+14,BRUN,(u-1.6)/0.4);
+    }
+    // S3 — ta TAILLE décide la distance : petite = coussin épais, ligne loin ; grosse = coussin écrasé, ligne près
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const app=clamp((u-0.3)/1.2,0,1);
+      priceOsc(u,470,10,2.0,0.35);
+      // HAUT small size : petite jauge, gros coussin, ligne loin
+      drawStack(stA, CX, 90, 560, 560+120, 900, YOU, app>0.02);
+      // BAS big size (MÊME dépôt) : grosse jauge, coussin écrasé, ligne proche
+      drawStack(stB, CX, 200, 1120, 1120+260, 1470, YOU, app>0.02);
+      // le prix descend un peu → sur le BAS le coussin est déjà mince (frémit près de la ligne)
+      putCap(capA,'SMALL SIZE — LINE FAR',CX,540,INK,(u-1.3)/0.4);
+      putCap(capB,'BIG SIZE — LINE CLOSE',CX,1120-30,DEAD,(u-1.6)/0.4);
+    }
+    // S4 — contact : extinction administrative (froide). la jauge se délave d'un bloc et se réduit à un trait
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const py=priceOsc(u,900,12,2.2,0.4);
+      const desc=clamp((u)/1.6,0,1);                       // le prix descend, le coussin fond jusqu'au contact
+      const gBot=lerp(1180,LY,eOut(desc));
+      const hit=clamp((u-1.6)/0.2,0,1), grayF=clamp((u-1.8)/0.6,0,1), shrink=clamp((u-2.0)/0.9,0,1);
+      const gTop=lerp(gBot-260, LY-8, eOut(shrink));       // se réduit à un trait plat sur la ligne
+      drawStack(stM,CX,200, gTop, gBot<LY?gBot:LY, LY, mix(YOU,DEAD,grayF), grayF<0.5);
+      putCap(capLine,'CLOSED — AUTOMATICALLY',CX,LY+55,DEAD,(u-2.2)/0.4);
+    }
+    // S5 — tu décides où elle se tient : jauge modérée, ligne loin, de l'air
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const py=priceOsc(u,700,9,1.4,0.35);
+      const size=lerp(200,120,eOut(clamp((u-0.5)/1.6,0,1)));   // la TAILLE devient un curseur → modérée
+      const gBot=1120, gTop=gBot-H, lineY=lerp(1300, 1470, eOut(clamp((u-0.5)/1.6,0,1)));  // ligne s'éloigne (air)
+      const breathe=8*Math.sin(u*1.4);
+      drawStack(stM,CX,size, gTop, gBot+breathe, lineY, YOU, true);
+      putCap(capYou,'YOUR POSITION',CX,gTop-30,YOU,(u-0.4)/0.4);
+      putCap(capLine,'YOU CHOOSE THE DISTANCE',CX,lineY+55,YOU,(u-2.2)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

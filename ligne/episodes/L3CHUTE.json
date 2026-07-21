@@ -1,0 +1,10 @@
+{
+  "id": "L3CHUTE",
+  "engine": "l3chute",
+  "total": 6.5,
+  "title": "L3 s3 (variante comète) — la chute délavée, remplace la balle qui rapetisse",
+  "voice": [
+    "What decides your loss is not the size of what you carry. It's how far it can fall before you stop it."
+  ],
+  "scenes": [ { "id": "la_chute_comete" } ]
+}

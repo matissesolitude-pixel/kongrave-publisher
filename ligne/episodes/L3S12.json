@@ -1,0 +1,10 @@
+{
+  "id": "L3S12",
+  "engine": "hand-craft",
+  "title": "L3 S1+S2 — naissance + la caution/porte (validation S2)",
+  "voice": [
+    "Why do the pros use more leverage than you?",
+    "Because leverage never takes your money. It parks a piece of it, and lets you carry something much bigger."
+  ],
+  "scenes": [ { "id": "s1_naissance" }, { "id": "s2_la_caution" } ]
+}

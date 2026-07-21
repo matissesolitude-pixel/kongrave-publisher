@@ -1,0 +1,78 @@
+{
+  "id": "L20",
+  "engine": "l20",
+  "title": "L20 — THE WICK THAT LIES",
+  "voice": [
+    "Price shot up. A long green spike, straight through a level you were watching. Broken, you think — it's going higher. Then it snaps back below, like the move never happened. What did you actually just see?",
+    "A candle has a body and a wick. The body is where price opened and closed. The wick is how far it reached before coming back. A long wick means price went somewhere — and got rejected. It didn't stay. It visited.",
+    "So a spike through a level isn't a break. It's a test. Price pushed past, found no ground to stand on, and fell back. The level held. But for a few seconds, the wick told you the opposite of the truth.",
+    "And that's exactly when traders get caught. They see the spike, they think 'breakout', they jump in at the top of the wick — right as price is about to snap back down onto their heads. The wick didn't lie by accident. It lied to the people watching only the tip.",
+    "So don't trade the reach. Trade the close. Where price ends the candle tells you who won — buyers or sellers. Where it merely poked tells you who tried and failed. A long wick isn't a signal to chase. It's the market showing you a door that turned out to be a wall."
+  ],
+  "scenes": [
+    { "id": "s1",
+      "clarity": "Le prix a fusé au-dessus d'un niveau puis est redescendu comme si rien ne s'était passé. Qu'a-t-il vraiment vu ?",
+      "question": "DID PRICE BREAK — OR JUST VISIT?",
+      "cast": {
+        "level": { "type": "hline", "note": "un trait horizontal encre = le niveau surveillé" },
+        "spike": { "type": "candle", "note": "une bougie encre avec une LONGUE mèche haute qui perce le niveau. le fusil = la mèche." } },
+      "beats": [
+        { "t": "0-1.6", "do": "question POP, ? 200px" },
+        { "t": "1.6-2.8", "do": "DRAW-ON: un trait horizontal (le niveau). une bougie se forme dessous, puis une LONGUE mèche jaillit vers le haut, PERCE le niveau... et le corps reste EN DESSOUS." },
+        { "t": "2.8-10", "do": "TENUE VIVANTE: la mèche pointe au-dessus du niveau mais le corps est dessous — le prix a 'visité' le dessus. le ? fade." } ],
+      "camera": "fixe",
+      "dod": "la longue mèche qui perce le niveau, le corps resté dessous",
+      "fusil": "la mèche au-dessus du niveau — on va voir si elle dit vrai." },
+    { "id": "s2",
+      "clarity": "Une bougie a un corps (open/close) et une mèche (jusqu'où ça a atteint avant de revenir). Longue mèche = allé puis rejeté.",
+      "label": "body = stayed · wick = visited",
+      "beats": [
+        { "t": "0-2", "do": "gros plan sur la bougie. le CORPS se surligne teal ('where it stayed'), la MÈCHE se surligne en pointillé ('how far it reached'). deux natures distinctes." },
+        { "t": "2-3.5", "do": "un petit point de prix REJOUE le trajet dans la mèche: il MONTE le long de la mèche jusqu'à la pointe... puis REDESCEND jusqu'au corps. il a atteint, il n'est pas resté." },
+        { "t": "3.5-13", "do": "TENUE VIVANTE: le trajet monte-descend rejoue en boucle lente dans la mèche. 'it visited'." } ],
+      "camera": "zoom sur la bougie",
+      "dod": "corps vs mèche distingués + le point qui monte la mèche puis revient",
+      "turn": "la mèche n'est pas 'resté'. c'est 'allé puis rejeté'." },
+    { "id": "s3",
+      "clarity": "Un pic à travers un niveau n'est pas une cassure, c'est un test. Le prix a poussé, n'a trouvé aucun sol, est retombé. Le niveau a tenu.",
+      "beats": [
+        { "t": "0-2", "do": "vue élargie. au-dessus du niveau, là où la mèche a pointé, on cherche un 'sol' (une base teal pour tenir) → il n'y en a PAS, juste du vide. la pointe de la mèche flotte sur rien." },
+        { "t": "2-3.5", "do": "la mèche se RÉTRACTE (le prix retombe sous le niveau), et le niveau REBRILLE (il a tenu). label 'the level held'." },
+        { "t": "3.5-13", "do": "TENUE VIVANTE: le niveau intact, la mèche rétractée en dessous. le test a échoué." } ],
+      "camera": "fixe",
+      "dod": "l'absence de sol au-dessus + la mèche qui se rétracte, le niveau qui tient",
+      "turn": "pas une cassure — un test qui a échoué. le niveau a tenu." },
+    { "id": "s4",
+      "clarity": "C'est là qu'on se fait piéger : on voit le pic, on crie 'breakout', on saute en haut de la mèche — pile quand ça va retomber sur nous.",
+      "note": "LA scene — le piège du sommet de mèche.",
+      "beats": [
+        { "t": "0-1.5", "do": "au moment où la mèche est à son SOMMET (perçant le niveau), une boule teal (un trader) SAUTE dessus, tout en haut de la mèche — 'breakout!'." },
+        { "t": "1.5-3", "do": "la mèche commence sa RÉTRACTION — et la boule, accrochée au sommet, est ENTRAÎNÉE vers le bas avec elle, brutalement, sous le niveau. le prix retombe SUR elle." },
+        { "t": "3-4", "do": "la boule se délave (gris) en bas: chassé le sommet de mèche, écrasé au retour. 'it lied to the people watching only the tip'." },
+        { "t": "4-14", "do": "TENUE VIVANTE longue: la mèche rétractée, la boule délavée en bas. le sommet de mèche était un piège." } ],
+      "camera": "fixe",
+      "dod": "la boule qui saute au sommet de mèche et est entraînée vers le bas au retour",
+      "turn": "sauter sur le bout de la mèche = se faire écraser au retour." },
+    { "id": "s5",
+      "clarity": "Ne trade pas l'extension, trade la clôture. Le close dit qui a gagné, la mèche dit qui a essayé et échoué. Une porte qui était un mur.",
+      "beats": [
+        { "t": "0-2", "do": "DÉCHARGE: la bougie complète, corps + mèche. le CORPS (close) reçoit une coche teal ('trade this — who won'), la MÈCHE reçoit une croix ('not this — who tried and failed')." },
+        { "t": "2-3.5", "do": "la pointe de la mèche, là où le prix avait percé, se transforme visuellement: la 'porte' (une ouverture teal dans le niveau) se REFERME en MUR (trait plein encre). 'a door that turned out to be a wall'." },
+        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la bougie, corps coché / mèche barrée, et le mur au sommet. immobile. lire le close, pas l'extension." } ],
+      "camera": "fixe",
+      "dod": "corps coché vs mèche barrée + la porte qui devient mur au sommet",
+      "fusil_decharge": "la mèche perçante de S1 se résout: elle montrait une porte (breakout) qui était un mur (rejet) — trade le close, pas l'extension." }
+  ],
+  "total": 78.0,
+  "caption": "A spike through a level isn't a break — it's a test that failed. Comment \"MAP\" for the free beta of my indicator that shows where price is really being pulled.\n\nA long wick means price reached somewhere and got rejected. It visited, it didn't stay. Traders see the spike, scream 'breakout', and jump at the top of the wick — right as it snaps back onto their heads.\n\nTHE LINE — trade the close, not the reach.\n\n#trading #trader #priceaction #candlestick #wicks #daytrading #forex #tradingeducation #breakout #smartmoney",
+  "_rules": {
+    "doctrine": "la mèche/le rejet démystifié: une longue mèche = test échoué, pas cassure. Le corps (close) porte la vérité, la mèche porte la tentative. Structurel, factuel. Pas de rouge/vert (bougie en encre).",
+    "cta_keyword": "MAP → indicateur 3T ENGINE (whop.com/otp-consulting/3t-engine-indicator)",
+    "caption_structure": "ligne 1 = accroche + CTA MAP visible sans déplier.",
+    "fusil": "la mèche perçante (S1), corps vs mèche (S2), le test échoué (S3), le piège du sommet (S4), résolu en porte-devenue-mur (S5).",
+    "interdits": "PAS de rouge ni vert (bougie ENCRE, la direction se lit par la position); aucun chiffre; le gris pour la boule chassée (M-couleur); pas de brun; bas du cadre vide.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "vie_continue": "regle 5: le trajet dans la mèche rejoue, jamais figé hors image finale.",
+    "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
+    "circuit": "M24 frames DoD d'abord." }
+}

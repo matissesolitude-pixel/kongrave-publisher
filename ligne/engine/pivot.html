@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;--them:#8A5323;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0}
+    svg{position:absolute;inset:0;width:1080px;height:1920px}
+    .dot{fill:var(--you);stroke:none}
+    .head{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:88px;letter-spacing:1px;text-transform:uppercase;fill:var(--ink)}
+    .qmark{font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:200px;fill:var(--ink)}
+  </style>
+</head>
+<body>
+  <!-- MOTEUR LA LIGNE — PIVOT / DSL. L'épisode DÉCLARE des formes (shapes.js) et une
+       SÉQUENCE DE VERBES (verbs.js). Ce moteur INTERPRÈTE : il instancie, résout le layout
+       et le timing, appelle les verbes, et porte la BALLE UNIQUE (née du '?'). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const SC=__SCENES__, TOTAL=__TOTAL__, WORDS=__WORDS__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    /* ---- socle : sync mot-à-mot + temps ---- */
+    function wt(i,needle,occ,fb){const nd=String(needle).toLowerCase();let n=0;
+      for(const w of (WORDS[i]||[])){const t=w.w.toLowerCase().replace(/[^a-z0-9]/g,'');
+        if(t===nd||t.startsWith(nd)){n++;if(n===(occ||1))return SC[i].s+w.s;}}
+      return SC[i].s+(fb==null?0.12:fb)*SC[i].d;}
+    function W(i,tok,fb){if(tok==null)return SC[i].s+(fb==null?0.12:fb)*SC[i].d;
+      const p=String(tok).split(':');return wt(i,p[0],p[1]?+p[1]:1,fb);}
+    function at(i,f){return SC[i].s+f*SC[i].d;} function vend(i){return SC[i].s+SC[i].v;}
+    function mk(tag,attrs,cls){const e=document.createElementNS(NS,tag);if(cls)e.setAttribute('class',cls);
+      for(const k in(attrs||{}))e.setAttribute(k,attrs[k]);e.setAttribute('opacity','0');SVG.appendChild(e);return e;}
+    function arm(el){const L=el.getTotalLength();el.style.strokeDasharray=L;el.style.strokeDashoffset=L;el.__L=L;}
+
+    const tl=gsap.timeline({paused:true});
+
+    /*INCLUDE:verbs.js*/
+    /*INCLUDE:shapes.js*/
+
+    /* ===================== LA BALLE UNIQUE ===================== */
+    const pivot=mk('circle',{cx:540,cy:1000,r:18},'dot'); gsap.set(pivot,{autoAlpha:0});
+    const PVT={cx:540,cy:1000};
+    function makeCtx(i){return {tl, ball:pivot, PVT,
+      ballX:()=>PVT.cx, ballY:()=>PVT.cy, setBall:(x,y)=>{PVT.cx=x;PVT.cy=y;},
+      at:(f)=>at(i,f), vend:()=>vend(i), W:(tok,fb)=>W(i,tok,fb), qPoint:[560,1050], i};}
+
+    /* ===================== HOOK : la question mot-à-mot, le '?' -> la balle ===================== */
+    function hookQuestion(ctx,scene,i){
+      const q=(scene.question||'').toUpperCase().replace(/\?+\s*$/,'').trim();
+      const words=q.split(/\s+/);
+      const FS=60, chW=FS*0.62, GAP=1.7, maxW=944, lineH=110, slot=w=>(w.length+GAP)*chW;
+      const rows=[[]]; let rw=0;
+      words.forEach(w=>{const ww=slot(w); if(rw+ww>maxW && rows[rows.length-1].length){rows.push([]); rw=0;} rows[rows.length-1].push(w); rw+=ww;});
+      const y0=980-(rows.length*lineH)/2; const wEls=[]; let lastY=y0, lastRight=540;
+      rows.forEach((ln,li)=>{const ws=ln.map(slot), tot=ws.reduce((a,b)=>a+b,0); let x=540-tot/2;
+        ln.forEach((w,ci)=>{const cx=x+ws[ci]/2; const t=mk('text',{x:cx,y:y0+li*lineH,'text-anchor':'middle'},'head'); t.style.fontSize=FS+'px'; t.textContent=w;
+          gsap.set(t,{scale:0.82,transformOrigin:'50% 50%'}); wEls.push(t); x+=ws[ci];});
+        if(li===rows.length-1){lastY=y0+li*lineH; lastRight=540+tot/2;}});
+      const qx=lastRight+58, qm=mk('text',{x:qx,y:lastY,'text-anchor':'middle'},'qmark'); qm.style.fontSize='150px'; qm.textContent='?';
+      gsap.set(qm,{scale:0.6,transformOrigin:'50% 50%'});
+      const vw=WORDS[i]||[];
+      wEls.forEach((el,k)=>{const vt=(vw[k]!=null?SC[i].s+vw[k].s:at(i,0.05+k*0.12));
+        tl.to(el,{autoAlpha:1,scale:1,duration:0.16,ease:'back.out(2)'},vt);});
+      const tQ=(vw[words.length-1]!=null?SC[i].s+vw[words.length-1].s+0.22:at(i,0.72));
+      tl.to(qm,{autoAlpha:1,scale:1,duration:0.28,ease:'back.out(2)'},tQ);
+      const tBirth=at(i,0.86);
+      wEls.forEach((el,k)=>tl.to(el,{autoAlpha:0,scale:0.15,duration:0.3,ease:'power2.in'},tBirth+0.012*k));
+      // LE POINT DU "?" DEVIENT LA BALLE : la balle apparaît au point (base du glyphe), la courbe
+      // du "?" s'efface, la balle DESCEND en se séparant — elle devient l'acteur, pas un décor.
+      const dotX=qx, dotY=lastY+6;
+      tl.set(pivot,{attr:{cx:dotX,cy:dotY,r:18},autoAlpha:1},tBirth+0.06);
+      tl.to(qm,{autoAlpha:0,duration:0.28,ease:'power2.in'},tBirth+0.12);
+      tl.to(pivot,{attr:{cy:dotY+130},duration:0.5,ease:'power2.inOut'},tBirth+0.14)   // descend, se sépare
+        .to(pivot,{attr:{cy:dotY+108},duration:0.14,ease:'power2.out'})                // petit rebond (vivante)
+        .to(pivot,{attr:{cy:dotY+130},duration:0.16,ease:'power2.in'});
+      ctx.setBall(dotX,dotY+130); ctx.qPoint=[dotX,dotY];
+    }
+
+    /* ===================== LAYOUT ENGINE (règles INVARIANTES, jamais dans le JSON) =====================
+       1 CENTRAGE (axe x=540)  2 SAFE ZONES (rien hors cadre, texte jamais coupé)
+       3 ANTI-COLLISION (bboxes espacées ; les labels sont DANS la bbox -> pas de superposition)
+       4 LISIBILITÉ  5 ÉCHELLE (on réduit ce qui ne rentre pas, jamais on superpose).
+       foot[id] = {w,h,ox,oy} mesuré par getBBox (pré-animation, exact). ox/oy = offset at->centre bbox. */
+    const SAFE={x0:100,x1:980,y0:300,y1:1470,cx:540,yc:900};
+    function doLayout(F,foot,ids){
+      const pos={}, ech={}; ids.forEach(id=>ech[id]=1);
+      const L=ids.filter(id=>F[id].cote==='gauche');
+      const R=ids.filter(id=>F[id].cote==='droite');
+      const SIDE=ids.filter(id=>F[id].position==='cote'&&!F[id].cote);
+      const REL=ids.filter(id=>(F[id].de||F[id].entre)&&!F[id].cote&&F[id].position!=='cote');
+      const C=ids.filter(id=>!F[id].cote&&F[id].position!=='cote'&&!F[id].de&&!F[id].entre);
+      const place=(id,cx,cy)=>{pos[id]=[cx-foot[id].ox*ech[id], cy-foot[id].oy*ech[id]];};
+      function fitList(list,avail,dim){let tot=list.reduce((a,id)=>a+foot[id][dim],0)+40*(list.length-1);
+        if(tot>avail){const k=avail/tot; list.forEach(id=>ech[id]=Math.min(ech[id],k));}}
+      function stack(list,x){ if(!list.length)return; fitList(list,SAFE.y1-SAFE.y0,'h');
+        let tot=list.reduce((a,id)=>a+foot[id].h*ech[id],0)+40*(list.length-1), y=(SAFE.y0+SAFE.y1)/2-tot/2;
+        list.forEach(id=>{const h=foot[id].h*ech[id]; place(id,x,y+h/2); y+=h+40;});}
+      function row(list){ if(!list.length)return; fitList(list,SAFE.x1-SAFE.x0,'w');
+        let tot=list.reduce((a,id)=>a+foot[id].w*ech[id],0)+48*(list.length-1), x=SAFE.cx-tot/2;
+        list.forEach(id=>{const w=foot[id].w*ech[id]; place(id,x+w/2,SAFE.yc); x+=w+48;});}
+      if(L.length||R.length){ stack(L,SAFE.cx-230); stack(R,SAFE.cx+230); }
+      if(C.length===1){const id=C[0]; ech[id]=Math.min(1,(SAFE.x1-SAFE.x0)/foot[id].w,(SAFE.y1-SAFE.y0)/foot[id].h); place(id,SAFE.cx,SAFE.yc);}
+      else if(C.length>1) row(C);
+      stack(SIDE,SAFE.x1-70);
+      REL.forEach(id=>{const f=F[id];
+        if(f.de&&pos[f.de]){const p=pos[f.de],pw=foot[f.de].w*ech[f.de]; place(id,p[0]+foot[f.de].ox*ech[f.de]+pw/2+foot[id].w*ech[id]/2+28, p[1]+foot[f.de].oy*ech[f.de]);}
+        else if(f.entre&&f.entre.length===2&&pos[f.entre[0]]&&pos[f.entre[1]]){const a=pos[f.entre[0]],b=pos[f.entre[1]]; place(id,(a[0]+b[0])/2+ (foot[f.entre[0]].ox*ech[f.entre[0]]+foot[f.entre[1]].ox*ech[f.entre[1]])/2,(a[1]+b[1])/2);}
+        else place(id,SAFE.cx,SAFE.yc);});
+      // SÉPARATION ANTI-COLLISION : aucune bbox n'en chevauche une autre (on repousse, jamais on superpose)
+      const bxc=id=>[pos[id][0]+foot[id].ox*ech[id], pos[id][1]+foot[id].oy*ech[id]];
+      for(let it=0; it<32; it++){ let moved=false;
+        for(let a=0;a<ids.length;a++)for(let b=a+1;b<ids.length;b++){
+          const ia=ids[a],ib=ids[b], A=bxc(ia),B=bxc(ib);
+          const ahw=foot[ia].w*ech[ia]/2+16, ahh=foot[ia].h*ech[ia]/2+14;
+          const bhw=foot[ib].w*ech[ib]/2+16, bhh=foot[ib].h*ech[ib]/2+14;
+          const ox=(ahw+bhw)-Math.abs(A[0]-B[0]), oy=(ahh+bhh)-Math.abs(A[1]-B[1]);
+          if(ox>0&&oy>0){ moved=true;
+            if(ox<=oy){const p=(ox/2+0.5)*(A[0]<=B[0]?1:-1); pos[ia][0]-=p; pos[ib][0]+=p;}
+            else{const p=(oy/2+0.5)*(A[1]<=B[1]?1:-1); pos[ia][1]-=p; pos[ib][1]+=p;} } }
+        if(!moved) break; }
+      // RE-CENTRAGE horizontal (axe x=540) + vertical (milieu de la safe band) après séparation
+      if(ids.length){let mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9;
+        ids.forEach(id=>{const c=bxc(id),hw=foot[id].w*ech[id]/2,hh=foot[id].h*ech[id]/2;
+          mnx=Math.min(mnx,c[0]-hw); mxx=Math.max(mxx,c[0]+hw); mny=Math.min(mny,c[1]-hh); mxy=Math.max(mxy,c[1]+hh);});
+        const sh=SAFE.cx-(mnx+mxx)/2, sv=(SAFE.y0+SAFE.y1)/2-(mny+mxy)/2;
+        ids.forEach(id=>{pos[id][0]+=sh; pos[id][1]+=sv;});}
+      // CLAMP : chaque bbox rentre dans la safe area (décale vers l'intérieur ; sinon réduit)
+      ids.forEach(id=>{ if(!pos[id])place(id,SAFE.cx,SAFE.yc);
+        let hw=foot[id].w*ech[id]/2, hh=foot[id].h*ech[id]/2;
+        if(hw*2>SAFE.x1-SAFE.x0){ech[id]*=(SAFE.x1-SAFE.x0)/(hw*2); hw=foot[id].w*ech[id]/2; hh=foot[id].h*ech[id]/2;}
+        const bx=pos[id][0]+foot[id].ox*ech[id], by=pos[id][1]+foot[id].oy*ech[id];
+        let dx=0,dy=0;
+        if(bx-hw<SAFE.x0)dx=SAFE.x0-(bx-hw); else if(bx+hw>SAFE.x1)dx=SAFE.x1-(bx+hw);
+        if(by-hh<SAFE.y0)dy=SAFE.y0-(by-hh); else if(by+hh>SAFE.y1)dy=SAFE.y1-(by+hh);
+        pos[id]=[pos[id][0]+dx,pos[id][1]+dy];});
+      return {pos,ech};
+    }
+
+    /* ===================== RÉSOLUTION DU TEMPS ===================== */
+    function stepTime(step,i,cursor,scene){
+      const sync=scene.sync||{}, s=step.sur;
+      const key=sync[step.verbe+'_'+step.sujet]||sync[step.verbe]||null;
+      if(s==='fenetre_voix') return {t:(key?W(i,key):at(i,0.12)), win:true};
+      if(s==='fin') return {t:vend(i)-0.6};
+      if(s==='debut') return {t:at(i,0.04)};
+      if(typeof step.a==='number') return {t:at(i,step.a)};
+      if(typeof s==='string' && s) return {t:W(i,key||s)};
+      if(key) return {t:W(i,key)};
+      return {t:cursor};
+    }
+
+    /* ===================== EXÉCUTION D'UNE ÉTAPE (DSL -> verbe) ===================== */
+    function el(id,S,ctx){return id==='balle'?ctx.ball:S[id];}
+    function runStep(step,i,ctx,S,pos,cursor,scene){
+      const T=stepTime(step,i,cursor,scene), t=T.t; const V=step.verbe, suj=step.sujet, subj=el(suj,S,ctx);
+      let end=t;
+      try{ switch(V){
+        case 'ecrire': end=Verbs.ecrire(ctx,{el:subj,t}); break;
+        case 'naitre':
+          if(suj==='balle'){const from=step.depuis==='point_interrogation'?ctx.qPoint:[ctx.ballX(),ctx.ballY()];
+            tl.set(ctx.ball,{attr:{cx:from[0],cy:from[1]},autoAlpha:1},t); ctx.setBall(from[0],from[1]); end=t+0.2;}
+          else end=Verbs.naitre(ctx,{el:subj,from:[ctx.ballX(),ctx.ballY()],t});
+          break;
+        case 'rebondir':{const by=130; end=Verbs.rebondir(ctx,{topY:ctx.ballY()-by,botY:ctx.ballY(),t,n:step.n||1});} break;
+        case 'deployer':{const c=(step.cibles||[]).map(id=>S[id]).filter(Boolean); end=Verbs.deployer(ctx,{els:c,t});} break;
+        case 'absorber':{let c; if(step.cibles==='tout')c=Object.values(S).filter(Boolean);
+          else if(step.cibles)c=(Array.isArray(step.cibles)?step.cibles:[step.cibles]).map(id=>S[id]).filter(Boolean);
+          else c=[subj].filter(Boolean);
+          if(step.sauf==='point_interrogation'){/* le ? est géré par le hook */ end=t;}
+          else end=Verbs.absorber(ctx,{els:c,t});} break;
+        case 'entrer':{const e=step.depuis; const edge=e==='bord_gauche'?'left':e==='bord_droit'?'right':e==='bord_haut'?'top':e==='bord_bas'?'bottom':'left';
+          end=Verbs.entrer(ctx,{el:subj,edge,t});} break;
+        case 'tomber':{const tg=step.sujets?step.sujets.map(id=>S[id]):[subj];
+          const toY=step.vers&&pos[step.vers]?pos[step.vers][1]:(subj===ctx.ball?1080:undefined);
+          tg.forEach(e=>{end=Verbs.tomber(ctx,{el:e,toY,t});});} break;
+        case 'grossir':{const ratio=step.taille==='totale'?3:step.taille==='minuscule'?1.25:step.taille==='enorme'?2.6:2;
+          const dur=T.win?Math.max(0.9,vend(i)-t-0.3):1.2; end=Verbs.grossir(ctx,{el:subj,ratio,t,dur});} break;
+        case 'se_diviser':{const into=(step.en||[]).map(id=>S[id]).filter(Boolean);
+          const extrait=step.extrait?[S[step.extrait]].filter(Boolean):null;
+          const from=(suj==='balle')?[ctx.ballX(),ctx.ballY()]:(pos[suj]||[ctx.ballX(),ctx.ballY()]);
+          end=Verbs.se_diviser(ctx,{el:(suj==='balle'?null:subj),into:extrait||into,from,t});} break;
+        case 'fusionner':{const els=(step.sujets||[]).map(id=>S[id]).filter(Boolean);
+          const to=step.en==='balle'?[ctx.ballX(),ctx.ballY()]:(pos[step.en]||[ctx.ballX(),ctx.ballY()]);
+          const result=step.en==='balle'?null:(S[step.en]||null);
+          end=Verbs.fusionner(ctx,{els,to,result,t}); if(step.en==='balle')ctx.setBall(to[0],to[1]);} break;
+        case 'pulser': end=Verbs.pulser(ctx,{el:subj,t}); break;
+        case 'barrer': end=Verbs.barrer(ctx,{el:subj,t}); break;
+        case 'arreter':{const tg=step.sur&&pos[step.sur]?pos[step.sur]:null;
+          end=Verbs.arreter(ctx,{el:subj,toY:tg?tg[1]:undefined,toX:tg?tg[0]:undefined,t});} break;
+        case 'se_derober':{const support=subj, e=S[step.sous]; end=Verbs.se_derober(ctx,{support,el:e,t});} break;
+        case 'poser':{const tg=S[step.sur]?pos[step.sur]:null; const toY=tg?tg[1]-42:ctx.ballY(), toX=tg?tg[0]:ctx.ballX();
+          end=Verbs.poser(ctx,{toX,toY,t});} break;
+        case 'tracer':{const tg=step.cible&&pos[step.cible]?pos[step.cible]:null;
+          if(tg&&pos[suj]){const p=mk('path',{d:`M ${pos[suj][0]} ${pos[suj][1]} L ${tg[0]} ${tg[1]}`},null);
+            p.setAttribute('fill','none');p.setAttribute('stroke','#1E5F6E');p.setAttribute('stroke-width','8');
+            p.setAttribute('stroke-linecap','round');arm(p); end=Verbs.tracer(ctx,{stroke:p,t});}
+          else end=t+0.6;} break;
+        case 'immobiliser': end=Verbs.immobiliser(ctx,{el:(suj==='balle'?ctx.ball:subj),t}); break;
+        case 'rouler':{const tg=step.vers&&pos[step.vers]?pos[step.vers]:null; end=Verbs.rouler(ctx,{el:subj,toX:tg?tg[0]:ctx.ballX(),toY:tg?tg[1]:undefined,t});} break;
+        case 'faucher':{const ids=(step.cibles||[]).filter(id=>S[id]); const targets=ids.map(id=>S[id]);
+          const xs=ids.map(id=>pos[id][0]), rowY=ids.length?pos[ids[0]][1]:1040;
+          const fromX=Math.min(...xs)-20, toX=Math.max(...xs)+40, dur=Math.max(0.8,vend(i)-0.8-t);
+          end=Verbs.faucher(ctx,{targets,fromX,toX,rowY,t,dur});} break;
+        default: console.warn('verbe inconnu:',V);
+      } }catch(e){ console.error('runStep',V,e); }
+      return end;
+    }
+
+    /* ===================== DRIVER : interprète chaque scène ===================== */
+    function makeShape(F,id,pos,ech,scene){const f=F[id],fn=Shapes[f.shape]; if(!fn)return null;
+      return fn({at:pos[id],echelle:ech?ech[id]:1,couleur:f.couleur,taille:f.taille,amplitude:f.amplitude,
+        fraction:f.fraction,orientation:f.orientation,texte:f.texte,posture:f.posture,n:f.n,
+        largeur:f.largeur,hauteur:f.hauteur,label:f.label||(scene.labels&&scene.labels[id])});}
+
+    SPEC.forEach((scene,i)=>{
+      const ctx=makeCtx(i);
+      if(scene.question){ hookQuestion(ctx,scene,i); return; }
+      const F=scene.formes||{}, ids=Object.keys(F).filter(id=>{const ok=!!Shapes[F[id].shape]; if(!ok)console.warn('forme inconnue:',F[id].shape,id); return ok;});
+      // PASS 1 — mesurer les footprints réels (getBBox pré-animation, exact)
+      const foot={};
+      ids.forEach(id=>{const tmp=makeShape(F,id,{[id]:[540,900]},null,scene); if(!tmp)return;
+        let b; try{b=tmp.getBBox();}catch(e){b={x:490,y:850,width:100,height:100};}
+        foot[id]={w:Math.max(24,b.width),h:Math.max(24,b.height),ox:(b.x+b.width/2)-540,oy:(b.y+b.height/2)-900};
+        SVG.removeChild(tmp);});
+      // LAYOUT (règles invariantes)
+      const {pos,ech}=doLayout(F,foot,ids);
+      // PASS 2 — créer aux positions finales, à l'échelle qui rentre
+      const S={}; ids.forEach(id=>{S[id]=makeShape(F,id,pos,ech,scene);});
+      // LA BALLE = ACTEUR : elle voyage jusqu'au foyer (haut-centre) et CRÉE la scène
+      tl.to(pivot,{attr:{cx:540,cy:560},duration:0.5,ease:'power2.inOut'},at(i,0.0));
+      ctx.setBall(540,560);
+      // SÉQUENCE
+      let cursor=at(i,0.05);
+      (scene.sequence||[]).forEach(step=>{const end=runStep(step,i,ctx,S,pos,cursor,scene);
+        if(step.sur==null && step.a==null) cursor=Math.max(cursor,end);});
+      // FILET LAVOISIER : toute matière non absorbée retourne dans la balle en fin de scène
+      if(i<SPEC.length-1){const rest=Object.values(S).filter(Boolean);
+        if(rest.length) Verbs.absorber(ctx,{els:rest,t:vend(i)-0.4,dur:0.36,stagger:0.02});}
+    });
+
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

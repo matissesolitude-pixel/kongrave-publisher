@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L3 S3 « LES DEUX NOMBRES » — grammaire JAUGE VERTICALE + $. La balle entre, se fend, chaque moitié MONTE en jauge.
+       Gauche = fermée (capuchon haut+bas, finie). Droite = ouverte (capuchon bas seul) : elle monte et SORT PAR LE HAUT
+       = pas de plafond. Un $ marque chaque jauge (le seul signe). Fond calme, une ligne de base que rien ne traverse. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', AXIS='#C8CBC2';
+    const CX=540, BASE_Y=1560, POSE_Y=BASE_Y-200, LX=360, RX=720, GW=200;    // jauges montent depuis BASE_Y
+    const fEnter=0.05, fPose=0.10, fRise=0.30, fCapL=0.50, fCapR=0.72;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+
+    // ── LE MARCHÉ : un ticker qui défile SOUS l'axe. Il vit, mais il ne touche jamais les jauges. ──
+    const gTick=mk('g',{}); const TK=[]; const TW=1120;
+    for(let i=0;i<16;i++){ const bx=i*70, h=18+((i*37)%44); TK.push({bx,h,el:mk('line',{stroke:AXIS,'stroke-width':4,'stroke-linecap':'round',opacity:0.42},gTick)}); }
+    // ── ligne de base neutre : l'axe d'où montent les jauges. Présente, rien ne la traverse. ──
+    const axis=mk('line',{x1:120,y1:BASE_Y,x2:960,y2:BASE_Y,stroke:AXIS,'stroke-width':6,'stroke-linecap':'round'});
+    const gL=mk('rect',{fill:YOU}), gR=mk('rect',{fill:YOU});                 // les deux jauges (valeurs)
+    const capLb=mk('rect',{fill:INK,height:14,opacity:0}), capLt=mk('rect',{fill:INK,height:14,opacity:0}), capRb=mk('rect',{fill:INK,height:14,opacity:0}); // butées = capuchons horizontaux
+    const dL=mk('text',{x:LX,y:BASE_Y-90,'text-anchor':'middle',fill:PAPER,'font-family':'Georgia, serif','font-weight':'bold','font-size':120,opacity:0},null); dL.textContent='$';
+    const dR=mk('text',{x:RX,y:BASE_Y-90,'text-anchor':'middle',fill:PAPER,'font-family':'Georgia, serif','font-weight':'bold','font-size':120,opacity:0},null); dR.textContent='$';
+
+    function box(el,cx,w,top){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',top.toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',(BASE_Y-top).toFixed(1)); }
+    function hcap(el,cx,w,y,op){ el.setAttribute('x',(cx-w/2-9).toFixed(1)); el.setAttribute('y',(y-7).toFixed(1)); el.setAttribute('width',(w+18).toFixed(1)); el.setAttribute('opacity',op); }
+
+    const clock={t:0};
+    function render(){
+      const t=clock.t, f=t/TOTAL;
+      // le marché défile (horizontal, sous l'axe) — continu, il ne touche rien
+      const drift=(t*80)%TW;
+      for(const k of TK){ let x=((k.bx-drift)%TW+TW)%TW; const on=x<=1080; k.el.setAttribute('opacity',on?0.42:0);
+        if(on){ k.el.setAttribute('x1',x.toFixed(1)); k.el.setAttribute('x2',x.toFixed(1)); k.el.setAttribute('y1',(BASE_Y+64).toFixed(1)); k.el.setAttribute('y2',(BASE_Y+64+k.h).toFixed(1)); } }
+      // §M1 MORPH D'ENTRÉE : la balle arrive du haut, se pose, SE FEND, chaque moitié MONTE en jauge
+      const dy=(f<fEnter)?lerp(-1500,0,eOut(f/fEnter)):0;
+      const rise=clamp((f-fPose)/(fRise-fPose),0,1);                          // 0 (balle) -> 1 (deux barres)
+      const cxL=lerp(CX,LX,eIn(rise)), cxR=lerp(CX,RX,eIn(rise)), w=lerp(400,GW,rise), rx=lerp(200,0,rise);
+      const hL=lerp(400,520,eOut(rise));                                      // gauche : finie
+      let hR=lerp(400,900,eOut(rise)); hR=lerp(hR,1760,clamp((f-fCapL)/(fCapR-fCapL),0,1));  // droite : monte puis SORT par le haut (pas de plafond)
+      gL.setAttribute('rx',rx); gR.setAttribute('rx',rx);
+      box(gL,cxL,w,(f<fPose?POSE_Y-200+dy:BASE_Y-hL));                        // pose : balle (dy) ; sinon monte du socle
+      box(gR,cxR,w,(f<fPose?POSE_Y-200+dy:BASE_Y-hR));
+      // GAUCHE — capuchons HAUT + BAS (nombre fermé) + $
+      const mL=clamp((f-fRise)/(fCapL-fRise),0,1);
+      hcap(capLb,LX,GW,BASE_Y,mL); hcap(capLt,LX,GW,BASE_Y-hL,mL); dL.setAttribute('opacity',mL);
+      // DROITE — capuchon BAS seul (nombre ouvert) + $
+      const mR=clamp((f-fCapL)/(fCapR-fCapL),0,1);
+      hcap(capRb,RX,GW,BASE_Y,mR); dR.setAttribute('opacity',mR);
+    }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L17 « VOLUME IS A CROWD » — une grande barre de volume qu'on prend pour de l'ÉNERGIE (S1, éclair fantôme, elle vrombit).
+       Zoom : la barre se DÉCOMPOSE en unités = des ÉCHANGES, chaque unité = deux figures qui se serrent la main (S2). La barre
+       se coupe en deux : ACHETEURS (teal) = VENDEURS (encre), même nombre ; la flèche de direction tombe, barrée (S3). Triptyque :
+       la MÊME grosse barre, trois destins de prix — monte / descend / stagne (S4). Décharge : la jauge d'essence fantôme est
+       remplacée par un compteur d'AFFLUENCE (une foule) ; la barre dit COMBIEN, jamais OÙ (S5).
+       Doctrine : volume = décompte d'échanges, pas force ; acheteurs=teal, vendeurs=encre (pas de brun) ; aucun chiffre ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LA BARRE DE VOLUME ──  centre du cadre ; bas de barre BYb, hauteur max HMAX
+    const BW=210, BYb=1230, HMAX=660, BYt=BYb-HMAX;
+    const NU=10, cellH=HMAX/NU;                        // la barre = NU unités (chaque unité = un trade)
+    // S1/S5 : la barre PLEINE (l'illusion « énergie ») — un seul rectangle
+    const solidBar=mk('rect',{x:CX-BW/2,y:BYt,width:BW,height:HMAX,rx:6,fill:YOU,'fill-opacity':0.92,stroke:INK,'stroke-width':3,opacity:0});
+    function setSolid(frac,op){const h=HMAX*clamp(frac,0,1);solidBar.setAttribute('y',(BYb-h).toFixed(1));solidBar.setAttribute('height',h.toFixed(1));setOp(solidBar,op);}
+    // éclair fantôme (l'intuition fausse : « moteur / énergie »)
+    const bolt=mk('polygon',{points:'0,-70 -26,6 -4,6 -18,74 30,-14 4,-14 22,-70',fill:DEAD,opacity:0});
+    function setBolt(cx,cy,sc,op){bolt.setAttribute('transform',`translate(${cx} ${cy}) scale(${sc})`);setOp(bolt,op);}
+
+    // ── LES UNITÉS (S2/S3) : chaque trade = 1 point acheteur (teal) + 1 point vendeur (encre) + un lien (poignée de main) ──
+    const cells=[]; for(let i=0;i<NU;i++){
+      const link=mk('line',{stroke:INK,'stroke-width':4,'stroke-linecap':'round',opacity:0});
+      const dB  =mk('circle',{r:12,fill:YOU,opacity:0});      // buyer (teal)
+      const dS  =mk('circle',{r:12,fill:INK,opacity:0});      // seller (ink)
+      cells.push({link,dB,dS});
+    }
+    function hideCells(){for(const c of cells){setOp(c.link,0);setOp(c.dB,0);setOp(c.dS,0);}}
+    // placer une unité : deux points à gauche/droite d'un centre, lien entre eux (hsPulse = amplitude de poignée de main)
+    function putCell(c,cx,cy,gap,op,hs){
+      const g=gap*(1-0.18*hs);                                // les mains se rapprochent au pic de la poignée
+      c.dB.setAttribute('cx',(cx-g).toFixed(1));c.dB.setAttribute('cy',cy.toFixed(1));setOp(c.dB,op);
+      c.dS.setAttribute('cx',(cx+g).toFixed(1));c.dS.setAttribute('cy',cy.toFixed(1));setOp(c.dS,op);
+      c.link.setAttribute('x1',(cx-g).toFixed(1));c.link.setAttribute('y1',cy.toFixed(1));
+      c.link.setAttribute('x2',(cx+g).toFixed(1));c.link.setAttribute('y2',cy.toFixed(1));setOp(c.link,op*(0.4+0.6*hs));
+    }
+
+    // ── ZOOM : deux figures fil-de-fer qui se serrent la main (S2, 1.5-3s) ──
+    function stick(){return {head:mk('circle',{r:26,fill:'none',stroke:INK,'stroke-width':6,opacity:0}),
+                             body:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+                             arm :mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0})};}
+    const figL=stick(), figR=stick();
+    function putFig(f,hx,footY,handX,handY,color,op){
+      const headY=footY-150;
+      f.head.setAttribute('cx',hx);f.head.setAttribute('cy',headY-30);f.head.setAttribute('stroke',color);setOp(f.head,op);
+      f.body.setAttribute('x1',hx);f.body.setAttribute('y1',headY);f.body.setAttribute('x2',hx);f.body.setAttribute('y2',footY);f.body.setAttribute('stroke',color);setOp(f.body,op);
+      f.arm.setAttribute('x1',hx);f.arm.setAttribute('y1',headY+40);f.arm.setAttribute('x2',handX);f.arm.setAttribute('y2',handY);f.arm.setAttribute('stroke',color);setOp(f.arm,op);
+    }
+    function hideFigs(){for(const f of [figL,figR]){setOp(f.head,0);setOp(f.body,0);setOp(f.arm,0);}}
+
+    // ── FLÈCHE DE DIRECTION (S3) : « up? » qui hésite et tombe, barrée ──
+    const arrow=mk('path',{fill:'none',stroke:DEAD,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const arrowX=mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    function setArrow(cx,cy,op,barred){arrow.setAttribute('d',`M ${cx} ${cy+60} L ${cx} ${cy-40} M ${cx-34} ${cy-4} L ${cx} ${cy-40} L ${cx+34} ${cy-4}`);setOp(arrow,op);
+      arrowX.setAttribute('x1',cx-52);arrowX.setAttribute('y1',cy+52);arrowX.setAttribute('x2',cx+52);arrowX.setAttribute('y2',cy-40);setOp(arrowX,barred);}
+
+    // ── TRIPTYQUE (S4) : 3 bandes, MÊME barre, 3 destins de prix ──
+    const bandsX=[250,540,830], BBW=120, TBYb=1250, TBH=300;
+    const tri=bandsX.map(x=>({bar:mk('rect',{x:x-BBW/2,y:TBYb-TBH,width:BBW,height:TBH,rx:5,fill:YOU,'fill-opacity':0.9,stroke:INK,'stroke-width':2,opacity:0}),
+                              axis:mk('line',{x1:x-95,x2:x+95,stroke:DEAD,'stroke-width':2,'stroke-dasharray':'6 8',opacity:0}),
+                              path:mk('polyline',{fill:'none',stroke:INK,'stroke-width':4,opacity:0}),
+                              dot :mk('circle',{r:12,fill:YOU,opacity:0})}));
+    const axisY=720;
+    function hideTri(){for(const b of tri){setOp(b.bar,0);setOp(b.axis,0);setOp(b.path,0);setOp(b.dot,0);}}
+
+    // ── FOULE / AFFLUENCE (S5) : une rangée de têtes stylisées ──
+    const NH=7, heads=[]; for(let i=0;i<NH;i++){const g=mk('g',{opacity:0});mk('circle',{r:16,fill:'none',stroke:INK,'stroke-width':5},g);mk('path',{d:'M -22 34 Q 0 6 22 34',fill:'none',stroke:INK,'stroke-width':5},g);heads.push(g);}
+    function putHeads(n,cx,cy,op){for(let i=0;i<NH;i++){const on=i<n;const x=cx-(NH-1)*29+i*58;heads[i].setAttribute('transform',`translate(${x} ${cy})`);setOp(heads[i],on?op:0);}}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 (pas de flash blanc) ──
+    const QLINES=['IS A BIG VOLUME BAR','BIG ENERGY'];
+    const FS=80,lineH=104,y0=250,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+110,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capTop=caption(50),capL=caption(40),capR=caption(40),capB=caption(46);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capTop,capL,capR,capB])setOp(e,0);}
+    function hideBar(){setOp(solidBar,0);setOp(bolt,0);}
+
+    // ═══ S1 — la grande barre monte comme une jauge d'énergie ; éclair fantôme ; elle « vrombit » ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideCells(); hideFigs(); hideTri(); setArrow(0,0,0,0); putHeads(0,0,0,0);
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // la barre monte (jauge), puis PULSE (vrombit)
+      const rise=clamp((u-1.6)/1.0,0,1); const pulse=u>2.6?(1+0.02*Math.sin((u-2.6)*7)):1;
+      setSolid(0.92*rise*pulse, clamp((u-1.6)/0.4,0,1));
+      const bo=clamp((u-2.0)/0.6,0,1)*0.5*(0.7+0.3*Math.sin((u-2.0)*7));
+      setBolt(CX+BW/2+120, BYb-HMAX*0.55, 1.1, bo);
+    }
+    // ═══ S2 — l'éclair s'efface, la barre se DÉCOMPOSE en unités = des échanges (deux figures se serrent la main) ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideTri(); setArrow(0,0,0,0); putHeads(0,0,0,0);
+      // l'éclair fantôme s'efface
+      setBolt(CX+BW/2+120, BYb-HMAX*0.55, 1.1, clamp(1-(u)/0.8,0,1)*0.4);
+      // la barre pleine se dissout, les unités apparaissent (empilées, centre)
+      const dis=clamp((u-0.3)/1.0,0,1);
+      setSolid(0.92, clamp(1-dis,0,1)*0.9);
+      const cellsOp=clamp((u-0.6)/0.8,0,1);
+      for(let i=0;i<NU;i++){const cy=BYb-(i+0.5)*cellH; const hs=0.5+0.5*Math.sin(u*3+i*0.9); putCell(cells[i],CX,cy,42,cellsOp,hs);}
+      // ZOOM (1.5-3s) : deux figures fil-de-fer qui se serrent la main, au-dessus de la barre
+      const zf=clamp((u-1.5)/0.5,0,1)*clamp(1-(u-3.2)/0.5,0,1);
+      if(zf>0.01){const shake=0.5+0.5*Math.sin(u*5),hy=560-6*shake;
+        putFig(figL,CX-120,640,CX-30,hy,YOU,zf); putFig(figR,CX+120,640,CX+30,hy,INK,zf);
+      } else hideFigs();
+      putCap(capTop,'NOT FORCE — HEADCOUNT',CX,180,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capB,'ONE TRADE = TWO PEOPLE',CX,BYb+70,INK,clamp((u-2.0)/0.6,0,1)*clamp(1-(u-4.0)/0.8,0,1));
+    }
+    // ═══ S3 — la barre se coupe en deux : ACHETEURS (teal) = VENDEURS (encre) ; la flèche de direction tombe, barrée ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideTri(); hideFigs(); putHeads(0,0,0,0); hideBar();
+      // split : les points teal glissent à gauche, les encre à droite (colonnes égales)
+      const sp=clamp((u-0.2)/1.4,0,1); const eS=eInOut(sp);
+      const colL=CX-155, colR=CX+155;
+      const liveRow=Math.floor(u*2)%NU;                 // vie continue : un échange « vivant » balaie la foule ligne à ligne
+      for(let i=0;i<NU;i++){const bob=eS*7*Math.sin(u*2.2+i*0.7); const cy=BYb-(i+0.5)*cellH+bob;
+        const bx=lerp(CX,colL,eS), sx=lerp(CX,colR,eS);
+        cells[i].dB.setAttribute('cx',bx.toFixed(1));cells[i].dB.setAttribute('cy',cy.toFixed(1));setOp(cells[i].dB,1);
+        cells[i].dS.setAttribute('cx',sx.toFixed(1));cells[i].dS.setAttribute('cy',cy.toFixed(1));setOp(cells[i].dS,1);
+        let lop; if(eS<1) lop=(1-eS)*0.5; else lop=(i===liveRow)?(0.45+0.55*Math.sin(u*10)):0;
+        cells[i].link.setAttribute('x1',bx.toFixed(1));cells[i].link.setAttribute('y1',cy.toFixed(1));cells[i].link.setAttribute('x2',sx.toFixed(1));cells[i].link.setAttribute('y2',cy.toFixed(1));setOp(cells[i].link,lop);
+      }
+      putCap(capL,'BUYERS',colL,BYt-30,YOU,clamp((u-1.2)/0.5,0,1));
+      putCap(capR,'SELLERS',colR,BYt-30,INK,clamp((u-1.2)/0.5,0,1));
+      putCap(capB,'EVERY BUYER NEEDS A SELLER',CX,BYb+70,INK,clamp((u-1.4)/0.6,0,1));
+      // flèche « up? » : monte, hésite (2-3.5), puis tombe + barrée
+      const af=clamp((u-2.0)/0.5,0,1); const fall=clamp((u-3.0)/0.7,0,1);
+      const ay=lerp(BYt-90, BYt-20, eIn(fall)); const hesitate=af*(1-fall);
+      setArrow(CX, ay, hesitate, clamp((u-3.2)/0.4,0,1)*hesitate);
+      putCap(capTop,'A CROWD, NOT A DIRECTION',CX,180,INK,clamp((u-3.6)/0.6,0,1));
+    }
+    // ═══ S4 — triptyque : la MÊME grosse barre, trois destins de prix (monte / descend / stagne) ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideCells(); hideFigs(); setArrow(0,0,0,0); putHeads(0,0,0,0); hideBar();
+      const app=clamp(u/0.8,0,1);
+      const paths=['up','down','flat'];
+      for(let b=0;b<3;b++){const B=tri[b],x=bandsX[b];
+        setOp(B.bar,app*0.9); B.axis.setAttribute('y1',axisY);B.axis.setAttribute('y2',axisY);setOp(B.axis,app*0.5);
+        // trajet de prix continu au-dessus de la barre (identique bar, destins différents)
+        const cyc=(u*0.5)%1; const pts=[]; const x0=x-90,x1=x+90;
+        for(let k=0;k<=12;k++){const f=k/12; const px=lerp(x0,x1,f); let py;
+          if(paths[b]==='up')   py=axisY - lerp(-60,90,f) - 26*Math.sin(f*9+u*1.5);
+          if(paths[b]==='down') py=axisY - lerp(90,-60,f) - 26*Math.sin(f*9+u*1.5);
+          if(paths[b]==='flat') py=axisY - 22*Math.sin(f*7+u*1.7);
+          pts.push(px.toFixed(0)+','+py.toFixed(0));}
+        B.path.setAttribute('points',pts.join(' ')); setOp(B.path,app);
+        const hf=(Math.sin(u*0.9)*0.5+0.5); const df=paths[b]==='up'?hf:paths[b]==='down'?(1-hf):0.5;
+        const dx=lerp(x0,x1,df); let dy; if(paths[b]==='up')dy=axisY-lerp(-60,90,df); else if(paths[b]==='down')dy=axisY-lerp(90,-60,df); else dy=axisY-22*Math.sin(df*7+u*1.7);
+        B.dot.setAttribute('cx',dx.toFixed(0));B.dot.setAttribute('cy',dy.toFixed(0));setOp(B.dot,app);
+      }
+      putCap(capTop,'SAME BAR — ANY DIRECTION',CX,180,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capB,'THE SIZE OF THE ROOM',CX,TBYb+70,INK,clamp((u-2.2)/0.6,0,1));
+    }
+    // ═══ S5 — DÉCHARGE : la jauge d'essence fantôme → remplacée par un compteur d'AFFLUENCE ; la barre dit COMBIEN, jamais OÙ ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideCells(); hideFigs(); hideTri(); setArrow(0,0,0,0);
+      // la barre revient (affluence) ; elle respire en continu selon l'affluence, jamais de direction (vie continue)
+      const frac=0.60+0.32*Math.sin(u*1.15);
+      setSolid(frac, 1);
+      // l'éclair « essence » tente de se recoller (0-2) puis est barré/remplacé
+      const boltTry=clamp(1-(u-0.4)/1.4,0,1)*0.4;
+      setBolt(CX+BW/2+120, BYb-HMAX*0.55, 1.1, boltTry);
+      // le compteur d'affluence (foule) apparaît sous la barre ; n de têtes suit l'affluence (arrivées/départs continus)
+      const crowdOp=clamp((u-1.4)/0.8,0,1); const n=Math.round(clamp(frac,0,1)*NH);
+      putHeads(n, CX, BYb+95, crowdOp);
+      putCap(capTop,'ATTENDANCE, NOT A FUEL GAUGE',CX,180,INK,clamp((u-0.5)/0.6,0,1)*clamp(1-(u-3.0)/0.8,0.25,1));
+      putCap(capB,'HOW MANY — NEVER WHICH WAY',CX,BYb+185,INK,clamp((u-2.6)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

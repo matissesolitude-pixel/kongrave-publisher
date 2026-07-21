@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L4 « WHY THEY NEED YOU » v3 — ÉPISODE CONTINU, DÉCOR PERMANENT = LA BALANCE (fléau à crans). Sans balle (v3.2).
+       S1 = §M15 question poster + la balance qui se construit + le bloc géant qui tombe -> BASCULE -14° + 2 miettes. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', AXIS='#C8CBC2', DEAD='#474D50';   // DEAD = gris froid §M-COULEUR (valeur morte)
+    const CX=540, BASE_Y=1560;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const _hx=x=>[parseInt(x.slice(1,3),16),parseInt(x.slice(3,5),16),parseInt(x.slice(5,7),16)];
+    function mix(c1,c2,f){ const a=_hx(c1),b=_hx(c2),m=a.map((v,i)=>Math.round(v+(b[i]-v)*clamp(f,0,1))); return `rgb(${m[0]},${m[1]},${m[2]})`; }   // délavage couleur
+    function setBox(el,cx,cy,w,h){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',(cy-h/2).toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',h.toFixed(1)); }
+
+    // ── §M20 : LE BAS DU CADRE EST VIDE. Aucun axe/sol/ticker par défaut. Le pied de la balance est l'élément le plus bas. ──
+    // (Le ticker était un acquis L3, mort avec L3 : purgé du template. Un fond n'existe que si un brief lui donne une raison narrative.)
+
+    // ── LA BALANCE (décor permanent, trait encre 5px). PHYSIQUE : chaque plateau est un GROUPE INDÉPENDANT qui pend au
+    //    bout du fléau. Quand le fléau tourne, le point d'accroche MONTE/DESCEND — le plateau NE tourne PAS : il translate
+    //    verticalement (fils VERTICAUX, coupe HORIZONTALE, contenu d'aplomb). gauche = coupe basse, droite = coupe haute. ──
+    // Réf : balance plate — 3 NŒUDS (boutons) aux articulations, cordes évasées, SOUCOUPES larges & peu profondes, pied à socle étagé.
+    const PVX=540, PVY=800, ARM=330, FIL=210, PANR=112, DEPTH=26, KNR=12, FOOT_Y=1460, SW=5;   // soucoupe LARGE (224) & peu profonde
+    // couche DERRIÈRE le contenu : pied, fléau, nœuds, cordes, bord ARRIÈRE + ventre de la soucoupe
+    const gBalBack=mk('g',{});
+    const foot=mk('path',{fill:'none',stroke:INK,'stroke-width':SW,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0},gBalBack);   // pied TRAIT ENCRE (DA), silhouette de la réf
+    const beam=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0},gBalBack);
+    function mkKnob(p){ return { o:mk('circle',{r:KNR,fill:INK,opacity:0},p), i:mk('circle',{r:4,fill:PAPER,opacity:0},p) }; }   // nœud = disque encre + rivet clair
+    const pivK=mkKnob(gBalBack);
+    function mkPan(){ return { kn:mkKnob(gBalBack),
+                               f1:mk('line',{stroke:INK,'stroke-width':3,'stroke-linecap':'round',opacity:0},gBalBack),   // cordes évasées
+                               f2:mk('line',{stroke:INK,'stroke-width':3,'stroke-linecap':'round',opacity:0},gBalBack),
+                               far:mk('path',{fill:'none',stroke:INK,'stroke-width':SW,'stroke-linecap':'round',opacity:0},gBalBack),   // bord arrière (ellipse) derrière contenu
+                               bowl:mk('path',{fill:'none',stroke:INK,'stroke-width':SW,'stroke-linecap':'round',opacity:0},gBalBack) }; } // ventre derrière contenu
+    const PL=mkPan(), PR=mkPan();
+    const gPanContent=mk('g',{});   // contenu des soucoupes (baleine, foule) — DEVANT le ventre, DERRIÈRE le bord avant
+    const gBalFront=mk('g',{});
+    const nearL=mk('path',{fill:'none',stroke:INK,'stroke-width':SW,'stroke-linecap':'round',opacity:0},gBalFront);   // bord AVANT (chevauche le bas du contenu -> dedans)
+    const nearR=mk('path',{fill:'none',stroke:INK,'stroke-width':SW,'stroke-linecap':'round',opacity:0},gBalFront);
+
+    function beamEnd(side, deg){ const th=deg*Math.PI/180, dx=side*ARM; return { x:PVX+dx*Math.cos(th), y:PVY+dx*Math.sin(th) }; }
+    // soucoupe : ancre = nœud au bout du fléau ; rim = ancre + FIL + sink. Reste HORIZONTALE, translate verticalement.
+    function panRim(side, deg, sink){ const A=beamEnd(side,deg); return { cx:A.x, ay:A.y, rimY:A.y+FIL+(sink||0) }; }
+    function panFloorY(side, deg, sink){ return panRim(side,deg,sink).rimY + 13; }   // fond de la soucoupe peu profonde
+    function ell(cx,rimY,dy){ return `M ${(cx-PANR).toFixed(1)},${rimY.toFixed(1)} Q ${cx.toFixed(1)},${(rimY+dy).toFixed(1)} ${(cx+PANR).toFixed(1)},${rimY.toFixed(1)}`; }
+    function knob(K,cx,cy,op){ K.o.setAttribute('opacity',op); K.o.setAttribute('cx',cx.toFixed(1)); K.o.setAttribute('cy',cy.toFixed(1));
+      K.i.setAttribute('opacity',op); K.i.setAttribute('cx',cx.toFixed(1)); K.i.setAttribute('cy',cy.toFixed(1)); }
+
+    function drawPan(side, deg, sink, P, near, op){
+      const r=panRim(side,deg,sink), cx=r.cx, ay=r.ay, rimY=r.rimY;
+      const setL=(el,x1,y1,x2,y2)=>{ el.setAttribute('opacity',op); el.setAttribute('x1',x1.toFixed(1)); el.setAttribute('y1',y1.toFixed(1)); el.setAttribute('x2',x2.toFixed(1)); el.setAttribute('y2',y2.toFixed(1)); };
+      setL(P.f1, cx, ay+KNR-2, cx-PANR+8, rimY);   // cordes : du NŒUD, s'évasent vers les bords de la soucoupe
+      setL(P.f2, cx, ay+KNR-2, cx+PANR-8, rimY);
+      P.far.setAttribute('opacity',op);  P.far.setAttribute('d', ell(cx,rimY,-9));    // bord arrière (remonte) — derrière contenu
+      P.bowl.setAttribute('opacity',op); P.bowl.setAttribute('d', ell(cx,rimY,DEPTH)); // ventre peu profond — derrière contenu
+      near.setAttribute('opacity',op);   near.setAttribute('d', ell(cx,rimY,9));       // bord avant (descend) — devant contenu
+      knob(P.kn, cx, ay, op);                                                          // NŒUD au bout du fléau
+    }
+
+    function drawBalance(deg, build, sinkL, sinkR){
+      const b=clamp(build,0,1);
+      const bFoot=clamp(b/0.34,0,1), bBeam=clamp((b-0.34)/0.33,0,1), bPan=clamp((b-0.67)/0.33,0,1);   // 3 gestes : pied · fléau · plateaux
+      // pied plein : collier sous le pivot -> fût -> socle ÉTAGÉ évasé (silhouette de la réf)
+      const bT=FOOT_Y-32, st=FOOT_Y-15;
+      foot.setAttribute('opacity',bFoot.toFixed(3));
+      foot.setAttribute('d',`M ${PVX-26},${PVY+14} L ${PVX-26},${PVY+34} L ${PVX-19},${PVY+44} L ${PVX-24},${bT} L ${PVX-58},${bT} L ${PVX-58},${st} L ${PVX-98},${st} L ${PVX-98},${FOOT_Y} L ${PVX+98},${FOOT_Y} L ${PVX+98},${st} L ${PVX+58},${st} L ${PVX+58},${bT} L ${PVX+24},${bT} L ${PVX+19},${PVY+44} L ${PVX+26},${PVY+34} L ${PVX+26},${PVY+14} Z`);
+      const eL=beamEnd(-1,deg), eR=beamEnd(1,deg);
+      beam.setAttribute('opacity',bBeam.toFixed(3));
+      beam.setAttribute('x1',eL.x.toFixed(1)); beam.setAttribute('y1',eL.y.toFixed(1)); beam.setAttribute('x2',eR.x.toFixed(1)); beam.setAttribute('y2',eR.y.toFixed(1));
+      knob(pivK, PVX, PVY, bBeam.toFixed(3));   // nœud central (pivot)
+      drawPan(-1,deg,sinkL,PL,nearL,bPan.toFixed(3));
+      drawPan( 1,deg,sinkR,PR,nearR,bPan.toFixed(3));
+    }
+
+    // ── PROPAGATION (§M22) : un impact ne s'applique pas, il se PROPAGE. Offsets frame par frame, tout en ease-out. ──
+    const FR=1/30;                                    // 1 frame
+    const BEAM_DELAY=3*FR, SETTLE=0.24;               // le fléau DÉMARRE sa rotation 3 frames après l'impact
+    function obk(p){ if(p<=0)return 0; if(p>=1)return 1; const s=1.35, q=p-1; return 1+(s+1)*q*q*q+s*q*q; }  // ease-out + dépassement ~8% + retour
+    // le fléau suit les poids : chaque palier ease depuis le précédent, départ décalé (BEAM_DELAY), un seul settle
+    function fleauAngle(stops, t){
+      let a=stops[0].a;
+      for(let i=0;i<stops.length;i++){
+        const t0=stops[i].at + (i===0?0:BEAM_DELAY);
+        if(t>=t0){ const from=(i===0)?stops[0].a:stops[i-1].a, to=stops[i].a;
+          a = from+(to-from)*obk(clamp((t-t0)/SETTLE,0,1)); }
+      }
+      return a;
+    }
+    // enfoncement d'une coupe : chaque atterrissage l'enfonce (départ +1 frame après le contact), 0 -> mag -> 0 (ease-out), settle
+    function sinkAt(landings, t){ let s=0; for(const L of landings){ const x=(t-(L.at+FR))/L.dur; if(x>0&&x<1) s+=L.mag*Math.sin(x*Math.PI)*(1-x*0.15); } return s; }
+    // squash à l'atterrissage : ratio conservé (plus large, plus plat), 1 impulsion courte, retour
+    function squashXf(cx,cy,t,land,amt,dur){ const x=(t-land)/dur; let sq=0; if(x>0&&x<1) sq=amt*Math.sin(x*Math.PI);
+      const sx=(1+sq), sy=(1-sq); return `translate(${(cx*(1-sx)).toFixed(2)} ${(cy*(1-sy)).toFixed(2)}) scale(${sx.toFixed(3)} ${sy.toFixed(3)})`; }
+
+    // ── §M15 : LA QUESTION (acquis L1/L2 : poster MAJ 800, chaque ligne POP en back.out) ──
+    const QLINES=['WHEN SOMEONE BUYS','A HUNDRED MILLION —','WHO SELLS IT TO THEM'];
+    const FS=76, lineH=106, y0=250, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+3*lineH+30, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0}); qMark.textContent='?';
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=p-1; return 1+(s+1)*q*q*q+s*q*q; };
+
+    // ── CASTING S1 : LA BALEINE (gros disque Ø170) coupe gauche · LA FOULE (petits disques Ø28, s'empilent) coupe droite ──
+    const RBIG=85, RSM=14;
+    const bigDisc=mk('circle',{r:RBIG,fill:YOU,opacity:0},gPanContent);
+    const NSM=40, smallDiscs=[]; for(let i=0;i<NSM;i++) smallDiscs.push(mk('circle',{r:RSM,fill:YOU,opacity:0},gPanContent));
+    // ÉTIQUETTES (§M2) : typo du format, 28px MAJ. Apparaissent au 1er poids de leur côté, restent, sous leur plateau.
+    const LABF={'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':28,'letter-spacing':'1.5',opacity:0};
+    const labWhale=mk('text',LABF); labWhale.textContent='THE WHALE';
+    const labEvery=mk('text',LABF); labEvery.textContent='EVERYONE ELSE';
+    // ── SYSTÈME ÉTAGÈRE (S3-S5, PLEIN CADRE — la balance a disparu à la fin de S2, coupe franche). Vocabulaire jauge/capuchon INTERDIT. ──
+    const NSH=9, SH_LEN=150, SH_TH=9, YOU_R=20, SH_Y=900;
+    const gShelf=mk('g',{});
+    const waterFill=mk('rect',{fill:YOU,opacity:0},gShelf);   // L'EAU : aplat teal léger SOUS la ligne (submersion) — backmost
+    const shelfEls=[], shelfHinge=[], shelfDiscs=[];
+    for(let i=0;i<NSH;i++){ shelfEls.push(mk('rect',{fill:INK,rx:4,opacity:0},gShelf));
+      shelfHinge.push(mk('circle',{r:8,fill:'none',stroke:INK,'stroke-width':4,opacity:0},gShelf));
+      shelfDiscs.push(mk('circle',{r:YOU_R,fill:YOU,opacity:0},gShelf)); }
+    const priceBar=mk('path',{fill:'none',stroke:YOU,'stroke-width':10,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0},gShelf);   // LE PRIX (path : permet le frémissement local au contact)
+    const labStop=mk('text',LABF); labStop.textContent='YOUR STOP';
+    const labYou=mk('text',LABF); labYou.textContent='YOU';
+    const labPrice=mk('text',LABF); labPrice.textContent='PRICE';
+
+    // ══════════ S1 — UN POIDS, UNE FOULE, RIEN (budget §M8 : geste + PLUIE qui accélère, jamais d'équilibre) ══════════
+    // PLUIE déterministe : cadence MUSICALE — lent (compte) -> pressé -> précipité (déborde). ~31 petits disques.
+    const RAIN=[]; { let tt=2.8;
+      while(tt<5.0){ RAIN.push(tt); tt+=0.80; }     // 2.6-5.0 lent : on les compte
+      while(tt<8.0){ RAIN.push(tt); tt+=0.42; }     // 5.0-8.0 ça se presse
+      while(tt<12.3){ RAIN.push(tt); tt+=0.20; } }  // 8.0-12.3 précipité : une pluie
+    const NRAIN=RAIN.length, BIGW=140;              // poids baleine=140 ; chaque petit=1 -> il en faudrait 140 pour équilibrer
+    // le tas s'empile DANS la coupe : rang 0 posé sur le FOND INCURVÉ, rangs suivants en QUINCONCE (centrage alterné), dôme au-dessus de la lèvre
+    const ROWS=[8,7,6,5,3,2];                        // somme 31 ; rangs impairs auto-décalés d'un demi-pas -> quinconce
+    function stackSlot(i){ let idx=i,r=0; while(r<ROWS.length && idx>=ROWS[r]){ idx-=ROWS[r]; r++; } if(r>=ROWS.length){ r=ROWS.length-1; idx=ROWS[r]-1; }
+      const n=ROWS[r], sp=24, dx=(idx-(n-1)/2)*sp;
+      const bowl=DEPTH*(1-Math.min(1,(dx/PANR)*(dx/PANR)));   // profondeur du fond à cette abscisse (le contenu suit le creux)
+      const cy=bowl - RSM - r*18;                             // relatif au RIM : rang 0 au fond, rangs suivants empilés (dôme)
+      return { dx, cy }; }
+
+    function s1(lf,t){
+      const s=SC[0].s, bigLand=s+2.5;
+      const build=clamp((t-s-1.5)/0.5,0,1);                       // 1.5->2.0 : la balance se construit (3 gestes secs), À PLAT
+      // ANGLE = f(POIDS POSÉS) : baleine gauche pose -14° ; chaque petit posé droite redresse d'un cran MINUSCULE -> -11° à la fin.
+      const stops=[{at:s,a:0},{at:bigLand,a:-14}];
+      for(let i=0;i<NRAIN;i++) stops.push({at:RAIN[i], a:-14+(3/NRAIN)*(i+1)});   // jamais d'équilibre (faudrait 140 petits, il en tombe ~31)
+      const deg=fleauAngle(stops,t);
+      // ENFONCEMENT des coupes (propagation, départ +1 frame après contact) : baleine gauche (fort) · chaque petit droite (léger)
+      const sinkL=sinkAt([{at:bigLand,mag:30,dur:0.28}], t);
+      const sinkR=sinkAt(RAIN.map(rt=>({at:rt,mag:16,dur:0.24})), t);
+      drawBalance(deg, build, sinkL, sinkR);
+      // LA BALEINE : chute 0.4s ease-in dans la coupe gauche -> IMPACT (squash 8%, 1 frame) -> bascule ; nichée au fond du bol, suit la coupe
+      const rL=panRim(-1,deg,sinkL), bRest=rL.rimY+DEPTH-RBIG+6;
+      const bfall=clamp((t-(bigLand-0.4))/0.4,0,1), bcx=rL.cx, bcy=lerp(bRest-380,bRest,eIn(bfall));
+      bigDisc.setAttribute('opacity',(t>=bigLand-0.4?1:0));
+      bigDisc.setAttribute('cx',bcx.toFixed(1)); bigDisc.setAttribute('cy',bcy.toFixed(1));
+      bigDisc.setAttribute('transform',squashXf(bcx,bcy,t,bigLand,0.08,0.09));
+      // LA FOULE : chaque disque NAÎT hors cadre AU-DESSUS de la coupe et tombe DROIT dans un COULOIR à droite du nœud (aucun fléau à cette
+      // abscisse) ; il ne rejoint son slot dans le tas QU'UNE FOIS SOUS LE NŒUD -> sa trajectoire ne croise JAMAIS le fléau (§M22). Squash 6%.
+      const rR=panRim(1,deg,sinkR), CORX=rR.cx+26, belowKnob=rR.ay+KNR+16;
+      for(let i=0;i<NSM;i++){ if(i>=NRAIN){ smallDiscs[i].setAttribute('opacity',0); smallDiscs[i].removeAttribute('transform'); continue; }
+        const land=RAIN[i], sl=stackSlot(i), slotX=rR.cx+sl.dx, slotY=rR.rimY+sl.cy, f=clamp((t-(land-0.42))/0.42,0,1);
+        const cy=lerp(-60,slotY,eIn(f));                                   // chute DROITE depuis le haut hors cadre
+        let cx; if(cy<belowKnob) cx=CORX; else { const h=clamp((cy-belowKnob)/Math.max(1,slotY-belowKnob),0,1); cx=lerp(CORX,slotX,eOut(h)); }
+        smallDiscs[i].setAttribute('opacity',(t>=land-0.42?1:0));
+        smallDiscs[i].setAttribute('cx',cx.toFixed(1)); smallDiscs[i].setAttribute('cy',cy.toFixed(1));
+        smallDiscs[i].setAttribute('transform',squashXf(cx,cy,t,land,0.06,0.08)); }
+      // ÉTIQUETTES §M2 : "THE WHALE" à l'atterrissage de la baleine · "EVERYONE ELSE" au 1er petit ; restent, sous leur coupe
+      labWhale.setAttribute('opacity',clamp((t-bigLand)/0.3,0,1).toFixed(3)); labWhale.setAttribute('x',rL.cx.toFixed(1)); labWhale.setAttribute('y',(rL.rimY+DEPTH+72).toFixed(1));
+      labEvery.setAttribute('opacity',clamp((t-RAIN[0])/0.3,0,1).toFixed(3)); labEvery.setAttribute('x',rR.cx.toFixed(1)); labEvery.setAttribute('y',(rR.rimY+DEPTH+72).toFixed(1));
+      // §M15 : LA QUESTION pop dès la frame 1, reste affichée, puis S'EFFACE en fin de S1 (sortie, gabarit)
+      const gf=clamp(1-(lf-0.90)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(t-s)-(k*0.4), ap=clamp(qt/0.34,0,1), op=clamp(ap*3,0,1)*gf, sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',op.toFixed(3));
+        qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qmt=(t-s)-1.1, qap=clamp(qmt/0.35,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap*3,0,1)*gf).toFixed(3));
+      qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+    }
+
+    // ══════════ S2 — LE CONSTAT : « getting filled is the problem » (continue l'état S1 : penché -11°, baleine + dôme) ══════════
+    // ÉVÉNEMENT : la baleine TIRE (le prix s'échappe) -> la coupe droite trop pleine DÉBORDE -> les disques du sommet jaillissent et
+    // TOMBENT HORS CADRE -> la foule s'allège -> le fléau penche ENCORE PLUS (-11° -> -13,5°). Essayer a empiré. Rien de neuf au casting.
+    // CADENCE des tractions (§M8 : mouvement 80% du temps) : la baleine tire ~toutes les 1,5s, chaque tir éjecte 1 disque du sommet
+    // qui met ~1,4s à tomber hors cadre -> il n'y a presque jamais de vide. Le fléau ratchet -11° -> -13,5° au fil des tirs.
+    const NEJ=10, EJ_GAP=1.5, EJ_T0=1.5;               // 10 tirs, un toutes les 1,5s, à partir de s0+1.5
+    function ejTime(j){ return EJ_T0 + j*EJ_GAP; }     // relatif à s0
+    function s2(lf,t){
+      const s0=SC[1].s, rel=t-s0;
+      // ANGLE (calculé) : porté -11 ; chaque disque qui QUITTE la coupe allège la foule -> le fléau penche PLUS, jusqu'à -13,5
+      const stops=[{at:s0,a:-11}];
+      for(let j=0;j<NEJ;j++) stops.push({at:s0+ejTime(j), a:lerp(-11,-13.5,(j+1)/NEJ)});
+      const deg=fleauAngle(stops,t);
+      // la baleine TIRE à chaque tir (sa coupe plonge) ; la coupe droite est secouée à chaque éjection
+      const sinkL=sinkAt(Array.from({length:NEJ},(_,j)=>({at:s0+ejTime(j),mag:20,dur:0.28})), t);
+      const sinkR=sinkAt(Array.from({length:NEJ},(_,j)=>({at:s0+ejTime(j),mag:12,dur:0.22})), t);
+      drawBalance(deg, 1, sinkL, sinkR);
+      // LA BALEINE (décor porté) : à demeure dans la coupe gauche
+      const rL=panRim(-1,deg,sinkL), bcy=rL.rimY+DEPTH-RBIG+6;
+      bigDisc.setAttribute('opacity',1); bigDisc.setAttribute('cx',rL.cx.toFixed(1)); bigDisc.setAttribute('cy',bcy.toFixed(1)); bigDisc.removeAttribute('transform');
+      // LA FOULE : le cœur du tas RESTE (suit la coupe) ; les NEJ du SOMMET jaillissent un par un et tombent HORS CADRE
+      const rR=panRim(1,deg,sinkR);
+      for(let i=0;i<NSM;i++){ if(i>=NRAIN){ smallDiscs[i].setAttribute('opacity',0); smallDiscs[i].removeAttribute('transform'); continue; }
+        const sl=stackSlot(i), baseX=rR.cx+sl.dx, baseY=rR.rimY+sl.cy, ejIx=i-(NRAIN-NEJ);
+        smallDiscs[i].removeAttribute('transform');
+        if(ejIx<0){ smallDiscs[i].setAttribute('opacity',1); smallDiscs[i].setAttribute('cx',baseX.toFixed(1)); smallDiscs[i].setAttribute('cy',baseY.toFixed(1)); continue; }
+        const tEj=s0+ejTime(NEJ-1-ejIx);                            // le SOMMET part en premier (le tas s'érode par le haut)
+        if(t<tEj){ smallDiscs[i].setAttribute('opacity',1); smallDiscs[i].setAttribute('cx',baseX.toFixed(1)); smallDiscs[i].setAttribute('cy',baseY.toFixed(1)); }
+        else { const e=t-tEj, x=baseX+90*e, y=baseY-270*e+700*e*e;  // jaillit (pop) puis chute hors cadre (gravité), dérive vers l'extérieur
+          smallDiscs[i].setAttribute('opacity',(y<2020?1:0)); smallDiscs[i].setAttribute('cx',x.toFixed(1)); smallDiscs[i].setAttribute('cy',y.toFixed(1)); } }
+      // ÉTIQUETTES : restent, sous leur coupe
+      labWhale.setAttribute('opacity',1); labWhale.setAttribute('x',rL.cx.toFixed(1)); labWhale.setAttribute('y',(rL.rimY+DEPTH+72).toFixed(1));
+      labEvery.setAttribute('opacity',1); labEvery.setAttribute('x',rR.cx.toFixed(1)); labEvery.setAttribute('y',(rR.rimY+DEPTH+72).toFixed(1));
+    }
+    // ══════════ SYSTÈME ÉTAGÈRE — L'ÉTAGÈRE NE BOUGE JAMAIS (c'est un NIVEAU). LA LIGNE NOIE. ══════════
+    function placeShelf(i,hx,hy,op,len){   // étagère i : FIXE, rigide (aucune rotation) — un niveau
+      len=len||SH_LEN;
+      shelfHinge[i].setAttribute('opacity',op); shelfHinge[i].setAttribute('cx',hx.toFixed(1)); shelfHinge[i].setAttribute('cy',hy.toFixed(1));
+      const s=shelfEls[i]; s.setAttribute('opacity',op); setBox(s,hx+len/2,hy,len,SH_TH); s.removeAttribute('transform');
+    }
+    // une étagère du rang (S4/S5) : intacte -> SE DISSOUT au contact (le stop consommé) -> son disque COULE en feuille morte + DÉLAVE en descente. Renvoie le frémissement.
+    function drownShelf(i,hx,hy,len,hitT,seed,ap,t){
+      const sinkStart=hitT+0.12, sd=clamp((t-hitT)/0.14,0,1);
+      placeShelf(i,hx,hy,(t<hitT?ap:(1-sd)),len);
+      const restX=hx+len/2, restY=hy-YOU_R-4, D=shelfDiscs[i]; D.setAttribute('r',YOU_R);
+      if(t<sinkStart){ D.setAttribute('opacity',ap); D.setAttribute('cx',restX.toFixed(1)); D.setAttribute('cy',restY.toFixed(1)); D.setAttribute('fill',YOU); }
+      else { const e=t-sinkStart, p=deadLeaf(restX,restY,e,seed), dv=clamp(e/2.0,0,1), fade=clamp((e-2.0)/0.8,0,1);   // DÉLAVE (teal->gris) en descente PUIS FOND dans la marée (se dissout) — pas de tas
+        D.setAttribute('opacity',((1-fade)*(p.y<1995?1:0)).toFixed(3)); D.setAttribute('cx',p.x.toFixed(1)); D.setAttribute('cy',p.y.toFixed(1)); D.setAttribute('fill',mix(YOU,DEAD,dv)); }
+      return { amp:8*Math.sin(clamp((t-hitT)/0.5,0,1)*Math.PI), x:hx+len/2 };
+    }
+    function water(priceY,on){ waterFill.setAttribute('opacity',on?0.16:0); waterFill.setAttribute('x',0); waterFill.setAttribute('y',priceY.toFixed(1)); waterFill.setAttribute('width',1080); waterFill.setAttribute('height',Math.max(0,1920-priceY).toFixed(1)); }
+    // ── LA FEUILLE MORTE (§M22) : SOUS la ligne = fluide, rien ne tombe droit. Zigzag doux, irrégulier, ease-in-out (float aux bords), vertical quasi-constant. ──
+    function fr(a,b){ const s=Math.sin(a*12.9898+b*78.233)*43758.5453; return s-Math.floor(s); }
+    function easeIO(l){ return l*l*(3-2*l); }   // smoothstep : lent aux bords (il "flotte"), rapide au milieu
+    function deadLeaf(sx,sy,e,seed){
+      const VS=225, y=sy+VS*e;                   // vitesse verticale quasi-constante (il coule, n'accélère pas)
+      let tt=0, edge=sx, side=(fr(seed,0)<0.5?-1:1), x=edge;
+      for(let j=0;j<26;j++){ const d=0.5+0.42*fr(seed,j*2+1), a=60+50*fr(seed,j*2+2), target=sx+side*a;  // durée+amplitude IRRÉGULIÈRES
+        if(e<tt+d){ x=edge+(target-edge)*easeIO(clamp((e-tt)/d,0,1)); break; }
+        tt+=d; edge=target; side=-side; x=target; }
+      return {x,y};
+    }
+    // LE PRIX = path pleine largeur ; un FRÉMISSEMENT local (bosse) à cx quand un disque s'y dissout (§M22, une seule ondulation)
+    function priceD(y,cx,amp){ y=+y.toFixed(1); if(amp<0.4) return `M 0 ${y} L 1080 ${y}`;
+      return `M 0 ${y} L ${(cx-55).toFixed(1)} ${y} Q ${cx.toFixed(1)} ${(y-amp).toFixed(1)} ${(cx+55).toFixed(1)} ${y} L 1080 ${y}`; }
+    // dissout un disque SUR PLACE : délavage teal->gris (§M-COULEUR) + s'efface + léger gonflement. dp=0..1. Renvoie l'amplitude du frémissement.
+    function dissolve(el,cx,cy,ap,dp){
+      el.setAttribute('cx',cx.toFixed(1)); el.setAttribute('cy',cy.toFixed(1));
+      el.setAttribute('r',(YOU_R*(1+0.22*dp)).toFixed(1));
+      el.setAttribute('fill',mix(YOU,DEAD,Math.min(1,dp*1.6)));
+      el.setAttribute('opacity',(dp<=0?ap:(1-dp)).toFixed(3));
+      return 8*Math.sin(clamp(dp/0.82,0,1)*Math.PI);   // frémissement : 0->8px->0 le temps de la dissolution
+    }
+    // ══════════ S3 — LE STOP EST TOUCHÉ, IL DISSOUT, TU COULES ══════════
+    // La ligne (marée) monte, atteint L'ÉTAGÈRE (ton stop). Le stop est consommé -> l'ÉTAGÈRE SE DISSOUT (fond) -> plus rien ne te tient ->
+    // TU COULES en FEUILLE MORTE (§M22, dans l'eau) à travers le vide qu'elle a laissé (jamais à travers un solide). L'étagère ne te traverse pas : elle a disparu.
+    function s3(lf,t){
+      const s0=SC[2].s, pStart=s0+0.2, pEnd=s0+SC[2].d-1.0, PY0=1860, PY1=360, HX=150;
+      const pf=clamp((t-pStart)/(pEnd-pStart),0,1), priceY=lerp(PY0,PY1,pf), ap=clamp((t-s0-0.1)/0.6,0,1);
+      const restX=HX+SH_LEN*0.60, restY=SH_Y-YOU_R-4;
+      const hitT=pStart+((PY0-SH_Y)/(PY0-PY1))*(pEnd-pStart), sinkStart=hitT+0.12;   // la ligne atteint l'étagère ; la boule lâche 0.12s après (le stop a dissous)
+      for(let i=1;i<NSH;i++){ shelfEls[i].setAttribute('opacity',0); shelfHinge[i].setAttribute('opacity',0); shelfDiscs[i].setAttribute('opacity',0); }
+      water(priceY, t>=pStart);
+      // L'ÉTAGÈRE (ton stop) : intacte, puis SE DISSOUT au contact (~4 frames) — le stop est consommé
+      const sd=clamp((t-hitT)/0.14,0,1);
+      placeShelf(0,HX,SH_Y,(t<hitT?ap:(1-sd)));
+      // TOI (la boule) : posée jusqu'à ce que le stop lâche ; puis COULE en feuille morte, dans l'eau, sort par le bas (teal — la couleur meurt en S5, pas ici)
+      shelfDiscs[0].setAttribute('r',YOU_R); shelfDiscs[0].setAttribute('fill',YOU);
+      if(t<sinkStart){ shelfDiscs[0].setAttribute('opacity',ap); shelfDiscs[0].setAttribute('cx',restX.toFixed(1)); shelfDiscs[0].setAttribute('cy',restY.toFixed(1)); }
+      else { const p=deadLeaf(restX,restY,t-sinkStart,3.7); shelfDiscs[0].setAttribute('opacity',(p.y<1995?1:0)); shelfDiscs[0].setAttribute('cx',p.x.toFixed(1)); shelfDiscs[0].setAttribute('cy',p.y.toFixed(1)); }
+      // LA LIGNE : un frémissement unique quand le stop est consommé
+      const rip=8*Math.sin(clamp((t-hitT)/0.5,0,1)*Math.PI);
+      priceBar.setAttribute('opacity',(t>=pStart?0.95:0)); priceBar.setAttribute('d',priceD(priceY,HX+SH_LEN/2,rip));
+      labStop.setAttribute('opacity',(t<hitT?ap:(1-sd)).toFixed(3)); labStop.setAttribute('x',(HX+SH_LEN/2).toFixed(1)); labStop.setAttribute('y',(SH_Y+48).toFixed(1));
+      labYou.setAttribute('opacity',(t<sinkStart?ap:0).toFixed(3)); labYou.setAttribute('x',restX.toFixed(1)); labYou.setAttribute('y',(restY-YOU_R-14).toFixed(1));
+      labPrice.setAttribute('opacity',(t>=pStart?0.95:0)); labPrice.setAttribute('x',965); labPrice.setAttribute('y',(priceY-18).toFixed(1));
+    }
+    // ══════════ S4 — LA CASCADE : 8 étagères (le rang), la marée les noie une à une, 8 feuilles mortes ══════════
+    const NR=8, SHW=100, SHX0=42, SHDX=128, ROW_Y=1200, RATE=75;   // rang de 8 (bas du cadre) ; décalées de 10px -> ordre de cascade ; RATE = vitesse de la marée (= S3)
+    function s4(lf,t){
+      const s0=SC[3].s, pStart=s0+0.2, PY0=1860, ap=clamp((t-s0-0.1)/0.6,0,1);
+      const priceY=Math.max(300,PY0-RATE*(t-pStart));   // marée à vitesse constante (= S3)
+      shelfEls[8].setAttribute('opacity',0); shelfHinge[8].setAttribute('opacity',0); shelfDiscs[8].setAttribute('opacity',0);
+      water(priceY, t>=pStart);
+      let rMax=0,rX=540;
+      for(let i=0;i<NR;i++){ const hx=SHX0+i*SHDX, hy=ROW_Y-i*10, hitT=pStart+(PY0-hy)/RATE;   // la ligne atteint chaque étagère dans l'ordre (décalage 10px)
+        const r=drownShelf(i,hx,hy,SHW,hitT,i*1.7+2.3,ap,t); if(r.amp>rMax){ rMax=r.amp; rX=r.x; } }
+      priceBar.setAttribute('opacity',(t>=pStart?0.95:0)); priceBar.setAttribute('d',priceD(priceY,rX,rMax));
+      labStop.setAttribute('opacity',0); labYou.setAttribute('opacity',0);
+      labPrice.setAttribute('opacity',(t>=pStart?0.95:0)); labPrice.setAttribute('x',965); labPrice.setAttribute('y',(priceY-18).toFixed(1));
+    }
+    // ══════════ S5 — LA NEUVIÈME : le rang noyé, la 9e PLUS HAUTE survit (la marée s'arrête sous elle). Le survivant est le seul encore TEAL. ══════════
+    const N9X=465, N9Y=980, CREST=1055;   // 9e plus haute (à l'écart au-dessus du rang) ; la marée CRÊTE à 1055 (au-dessus du rang, sous la 9e)
+    function s5(lf,t){
+      const s0=SC[4].s, pStart=s0+0.2, PY0=1860, ap=clamp((t-s0-0.1)/0.6,0,1);
+      const priceY=Math.max(CREST,PY0-RATE*(t-pStart));   // monte à la MÊME vitesse, puis S'ARRÊTE au crest (sous la 9e)
+      water(priceY, t>=pStart);
+      let rMax=0,rX=540;
+      for(let i=0;i<NR;i++){ const hx=SHX0+i*SHDX, hy=ROW_Y-i*10, hitT=pStart+(PY0-hy)/RATE;
+        const r=drownShelf(i,hx,hy,SHW,hitT,i*1.7+2.3,ap,t); if(r.amp>rMax){ rMax=r.amp; rX=r.x; } }
+      // LA NEUVIÈME : plus haute, à l'écart, INTACTE, TEAL, AU SEC (la marée s'arrête à CREST=1055, sous elle en y=980)
+      placeShelf(8,N9X,N9Y,ap,SHW);
+      shelfDiscs[8].setAttribute('opacity',ap.toFixed(3)); shelfDiscs[8].setAttribute('r',YOU_R); shelfDiscs[8].setAttribute('fill',YOU);
+      shelfDiscs[8].setAttribute('cx',(N9X+SHW*0.5).toFixed(1)); shelfDiscs[8].setAttribute('cy',(N9Y-YOU_R-4).toFixed(1)); shelfDiscs[8].removeAttribute('transform');
+      priceBar.setAttribute('opacity',(t>=pStart?0.95:0)); priceBar.setAttribute('d',priceD(priceY,rX,rMax));
+      labStop.setAttribute('opacity',0); labYou.setAttribute('opacity',0);
+      labPrice.setAttribute('opacity',(t>=pStart?0.95:0)); labPrice.setAttribute('x',965); labPrice.setAttribute('y',(priceY-18).toFixed(1));
+    }
+    const RENDER={s1,s2,s3,s4,s5};
+    const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1);
+      const bal=i<2;   // S1,S2 = LA BALANCE ; S3+ = PLEIN CADRE ÉTAGÈRE (coupe franche, la balance disparaît et ne revient plus)
+      gBalBack.setAttribute('opacity',bal?1:0); gPanContent.setAttribute('opacity',bal?1:0); gBalFront.setAttribute('opacity',bal?1:0); gShelf.setAttribute('opacity',bal?0:1);
+      if(bal){ labStop.setAttribute('opacity',0); labYou.setAttribute('opacity',0); labPrice.setAttribute('opacity',0); }
+      else { labWhale.setAttribute('opacity',0); labEvery.setAttribute('opacity',0); }
+      SCENEFN[i](lf,t); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

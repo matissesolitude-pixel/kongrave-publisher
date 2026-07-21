@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L10 « THE MULTIPLIER » — le levier. FUSIL : le petit bloc (ta mise) découvre son ombre géante (l'exposition, S2), subit la
+       tranche (S3), et finit par CHOISIR la taille de l'ombre (S5). §L0 : le pire cas = le dépôt VIDÉ, jamais une dette. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=clamp(p,0,1)-1; return 1+(s+1)*q*q*q+s*q*q; };
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){ f=clamp(f,0,1); const A=h2(a),B=h2(b); return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`; }
+    function box(el,cx,cy,w,h){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',(cy-h/2).toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',h.toFixed(1)); }
+    const PALE=mix(YOU,PAPER,0.72);
+
+    // ── CASTING ──
+    const CXC=CX, CYC=1040, S0=140, G0=470;    // petit bloc (mise) + géant (exposition), même centre
+    const giantFill=mk('rect',{fill:PALE,rx:4,opacity:0});
+    const giant=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:4,opacity:0});     // l'exposition (contour)
+    const small=mk('rect',{fill:YOU,rx:4,opacity:0});                                     // ta mise (plein teal)
+    const slice=mk('rect',{fill:DEAD,rx:3,opacity:0});                                    // la tranche perdue (délave)
+    const priceL=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'20 16',opacity:0}); // le trait de prix (au fond)
+    // S4 diptyque : deux blocs (no leverage / x10)
+    const bNo=mk('rect',{fill:YOU,rx:4,opacity:0}), bLev=mk('rect',{fill:YOU,rx:4,opacity:0});
+
+    // ── §M15 : LA QUESTION ──
+    const QLINES=['HOW DOES A','TINY MOVE','WIPE YOU OUT'];
+    const FS=88, lineH=110, y0=250, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+3*lineH+120, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0}); qMark.textContent='?';
+
+    // ── ÉTIQUETTES ──
+    const lab=mk('text',{x:CX,y:200,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function caption(){ return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0}); }
+    const capStake=caption(), capExp=caption(), capA=caption(), capB=caption();
+    const ALLCAPS=[capStake,capExp,capA,capB];
+    function putCap(el,txt,cx,y,color,op){ el.textContent=txt; const hw=txt.length*(+el.getAttribute('font-size'))*0.30, x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1)); el.setAttribute('y',y); el.setAttribute('fill',color); el.setAttribute('opacity',clamp(op,0,1).toFixed(3)); }
+    function hideCaps(){ for(const e of ALLCAPS) e.setAttribute('opacity',0); }
+    function hideQ(){ for(const e of qEls) e.setAttribute('opacity',0); qMark.setAttribute('opacity',0); }
+    function hideAll(){ for(const el of [giantFill,giant,small,slice,priceL,bNo,bLev]) el.setAttribute('opacity',0); lab.setAttribute('opacity',0); }
+    // trait de prix qui oscille (au fond) — mouvement continu = §vie
+    function priceOsc(u, cy, amp, speed){ const y=cy+amp*Math.sin(u*speed); priceL.setAttribute('opacity',0.5); priceL.setAttribute('x1',80); priceL.setAttribute('x2',1000); priceL.setAttribute('y1',y.toFixed(1)); priceL.setAttribute('y2',y.toFixed(1)); priceL.setAttribute('stroke-dashoffset',((-u*120)%36).toFixed(1)); return y; }
+
+    // ══════════ S1 — le petit bloc (ta mise), et une ombre qui commence à s'étirer ══════════
+    function s1(lf,t,s){
+      const u=t-s; hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(k===0?0.18:u-(0.1+k*0.30)), ap=clamp(qt/0.18,0,1), sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',(clamp(ap,0,1)*gf).toFixed(3)); qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qm=u-1.0, qap=clamp(qm/0.2,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3)); qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      giantFill.setAttribute('opacity',0); slice.setAttribute('opacity',0); bNo.setAttribute('opacity',0); bLev.setAttribute('opacity',0);
+      const sin=clamp((u-1.6)/0.8,0,1); small.setAttribute('opacity',sin>0?1:0); small.setAttribute('fill',YOU); box(small,CXC,CYC,S0,S0);
+      // l'ombre géante s'étire imperceptiblement (préfigure S2) — croît lentement en continu
+      const gg=clamp((u-2.4)/6.0,0,1)*0.9, gs=lerp(S0,G0*0.9,eOut(gg));
+      giant.setAttribute('opacity',(gg*0.5).toFixed(3)); box(giant,CXC,CYC,gs,gs);
+      if(u>2.8){ priceOsc(u, 560, 6, 1.4); priceL.setAttribute('opacity','0.26'); } else priceL.setAttribute('opacity',0);  // le marché bruite au fond (continu)
+      putCap(capStake,'YOUR STAKE',CXC,CYC+S0/2+50,YOU,(u-2.0)/0.4);
+    }
+    // ══════════ S2 — l'ombre géante = l'exposition (10× ta mise), pas à toi ══════════
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const dr=clamp((u-0.2)/1.8,0,1), gs=lerp(S0,G0,eOut(dr));    // le contour géant se dessine
+      const fillF=clamp((u-2.0)/1.0,0,1);
+      giantFill.setAttribute('opacity',fillF>0?1:0); box(giantFill,CXC,CYC,gs,gs);         // se remplit teal très pâle
+      giant.setAttribute('opacity',dr>0?1:0); box(giant,CXC,CYC,gs,gs);
+      small.setAttribute('opacity',1); small.setAttribute('fill',YOU); box(small,CXC,CYC,S0,S0);   // ta mise, au centre
+      priceOsc(u, 560, 8, 1.6);   // le prix oscille au fond → le géant frémit (vie continue)
+      const shiver=Math.sin(u*1.6)*3; box(giant,CXC,CYC,gs+shiver,gs+shiver);
+      putCap(capStake,'YOUR STAKE',CXC,CYC+S0/2+42,YOU,(u-0.6)/0.4);
+      putCap(capExp,'THE EXPOSURE — WHAT YOU CONTROL',CXC,CYC-gs/2-30,INK,(u-2.4)/0.4);
+    }
+    // ══════════ S3 — un petit mouvement du géant mange la moitié de ta mise ══════════
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const gs=G0, gTop=CYC-gs/2;
+      giantFill.setAttribute('opacity',1); box(giantFill,CXC,CYC,gs,gs);
+      giant.setAttribute('opacity',1); box(giant,CXC,CYC,gs,gs);
+      small.setAttribute('opacity',1); small.setAttribute('fill',YOU); box(small,CXC,CYC,S0,S0);
+      const py=priceOsc(u, gTop-30, 10, 1.8);
+      // le prix effleure le géant → il perd une FINE tranche (5% du géant), qui GLISSE et GROSSIT sur la petite mise (=50% d'elle)
+      const cut=clamp((u-1.0)/0.5,0,1), gv=clamp((u-1.5)/1.3,0,1), e=eOut(gv);
+      const sliceH0=gs*0.05, sliceHF=S0*0.5;                        // 5% du géant → 50% de la mise (l'échelle change)
+      const sy=lerp(gTop+sliceH0/2, CYC-S0/2+sliceHF/2, e), sw=lerp(gs*0.6, S0, e), sh=lerp(sliceH0, sliceHF, e);
+      slice.setAttribute('opacity', cut>0?1:0); slice.setAttribute('fill',DEAD); box(slice,CXC,sy,sw,sh);
+      // la mise tremble en écho amplifié
+      const trem=Math.sin(u*1.8)*(gv>0.5?4:1); box(small,CXC+trem,CYC,S0,S0);
+      putCap(capStake,'YOUR STAKE',CXC,CYC+S0/2+42,YOU,0.9);
+      putCap(capExp,'A TINY MOVE — HALF YOUR STAKE',CXC,gTop-40,DEAD,(u-2.6)/0.4);
+    }
+    // ══════════ S4 — le levier multiplie la VITESSE : sans levier ça s'érode, ×10 ça se vide en quelques crans ══════════
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const py=priceOsc(u, 980, 12, 2.4);
+      // HAUT : no leverage — le bloc se délave lentement
+      const eNo=clamp((u)/12,0,1), hNo=S0*(1-eNo*0.5);
+      bNo.setAttribute('opacity',1); bNo.setAttribute('fill',mix(YOU,DEAD,eNo*0.6)); box(bNo,CXC,560,S0,hNo);
+      // BAS : x10 — chaque cran mange 10× → vidé en ~quelques secondes puis reste à zéro (le dépôt VIDÉ, pas une dette)
+      const eLev=clamp((u)/3.0,0,1), hLev=S0*(1-eLev);
+      bLev.setAttribute('opacity',1); bLev.setAttribute('fill',mix(YOU,DEAD,eLev)); box(bLev,CXC,1360,S0,Math.max(3,hLev));
+      // un trait de fin sous le bloc x10 = le zéro (dépôt vidé)
+      slice.setAttribute('opacity', eLev>0.98?0.9:0); slice.setAttribute('fill',INK); box(slice,CXC,1360+S0/2+4,S0+20,5);
+      putCap(capA,'NO LEVERAGE',CXC,560-S0/2-30,INK,(u-0.4)/0.4);
+      putCap(capB,'LEVERAGED — GONE FAST',CXC,1360+S0/2+55,DEAD,(u-0.4)/0.4);
+    }
+    // ══════════ S5 — le levier est un choix : le contour se redimensionne à une taille tenable ══════════
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const shrink=clamp((u-0.5)/1.6,0,1), gs=lerp(G0, S0*2.0, eOut(shrink));   // le géant se réduit à ×2, tenable
+      giantFill.setAttribute('opacity',1); box(giantFill,CXC,CYC,gs,gs);
+      giant.setAttribute('opacity',1); box(giant,CXC,CYC,gs,gs);
+      small.setAttribute('opacity',1); small.setAttribute('fill',YOU); box(small,CXC,CYC,S0,S0);
+      const py=priceOsc(u, CYC-gs/2-30, 8, 1.6);
+      // la tranche fantôme est fine (tenable) au sommet
+      slice.setAttribute('opacity',shrink>0.5?0.8:0); slice.setAttribute('fill',DEAD); box(slice,CXC,CYC-gs/2+6, gs*0.6, gs*0.05);
+      putCap(capStake,'YOUR STAKE',CXC,CYC+S0/2+42,YOU,(u-0.4)/0.4);
+      putCap(capExp,'SIZE IS A CHOICE',CXC,CYC-gs/2-34,YOU,(u-2.4)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5}; const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1); SCENEFN[i](lf,t,SC[i].s); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

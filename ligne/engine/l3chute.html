@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;--them:#8A5323;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L3 s3 (variante COMÈTE, remplace la balle-qui-rapetisse) — PAS de ligne. La balle tombe : comète, les STRIES filent
+       en arrière-plan (la vitesse), elle se DÉLAVE en gris (§M-COULEUR : perdue, pas passée chez eux) et SORT du cadre.
+       Même sens que le rapetissement (avalée par le vide), autre image. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', STRIE='#C8CBC2', FIL='#FFFFFF', DEAD='#474D50';
+    const CX=540, FLOAT_Y=1000, R0=300, PERIOD=3820;
+    const pSnap0=0.11, pSnap1=0.15, pFall=0.60, pExit=0.83;   // exit ~ fin de voix ; le vide tombe dans le silence de fin
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    function mix(a,b,f){const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*f)).join(',')})`;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, frac=x=>x-Math.floor(x);
+
+    function vOf(t){ const p=t/TOTAL;
+      if(p<pSnap0) return 0;
+      if(p<pSnap1) return lerp(0,0.3,(p-pSnap0)/(pSnap1-pSnap0));
+      if(p<pFall){ const f=(p-pSnap1)/(pFall-pSnap1); return lerp(0.3,1,f*f); }
+      return 1; }
+    const Vel=v=>24000*Math.pow(clamp(v,0,1),1.2);
+    function intVel(a,b){ let S=0; const dt=1/30; for(let x=a;x<b-1e-6;x+=dt) S+=Vel(vOf(Math.min(x,b)))*dt; return S; }
+
+    const gStrie=mk('g',{});
+    const STR=[]; for(let i=0;i<64;i++){ const x=20+frac(Math.sin(i*12.9898)*43758.5)*1040, yb=frac(Math.sin(i*4.1)*991.7)*PERIOD;
+      STR.push({x,yb,el:mk('path',{stroke:STRIE,'stroke-linecap':'round',fill:'none',opacity:0},gStrie)}); }
+    const body=mk('path',{fill:YOU});
+    const gFil=mk('g',{});
+    const PART=[]; for(let i=0;i<44;i++){ const sd=(i%2)?1:-1, j=(Math.floor(i/2)%6)+1, ph=frac(Math.sin(i*78.233)*12345.7), lj=0.7+frac(Math.sin(i*17.71)*5432.1)*0.6;
+      PART.push({sd,j,ph,lj,el:mk('path',{stroke:FIL,'stroke-linecap':'round',fill:'none',opacity:0},gFil)}); }
+
+    function circleP(cx,cy,r){return `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx} ${cy+r} A ${r} ${r} 0 1 1 ${cx} ${cy-r} Z`;}
+    function bodyP(v,r,cx,cy){ if(v<0.015) return circleP(cx,cy,r);
+      const L=r+v*2200, D=L, s=Math.sqrt(Math.max(D*D-r*r,1)), px=r*s/D, py=r*r/D;
+      return `M ${cx} ${cy-L} L ${cx+px} ${cy-py} A ${r} ${r} 0 1 1 ${cx-px} ${cy-py} Z`; }
+    function railX(sd,j,y,r,L,cyc){ const SIGd=r+300, SIGu=Math.max(L*0.62,420), z=(y<cyc)?(cyc-y)/SIGu:(y-cyc)/SIGd;
+      const b=Math.exp(-0.5*z*z), noseOff=r+40+(j-1)*28, baseOff=40+(j-1)*70; return CX+sd*(baseOff+(noseOff-baseOff)*b); }
+
+    const clock={t:0};
+    function render(){
+      const t=clock.t, p=t/TOTAL, v=vOf(t), vth=clamp((v-0.2)/0.8,0,1);
+      const dlv=clamp((p-pSnap1)/(pFall-pSnap1),0,1), col=mix(YOU,DEAD,dlv);        // se délave à mesure qu'elle tombe
+      let cy; if(p<pSnap1) cy=FLOAT_Y; else if(p<0.5) cy=lerp(FLOAT_Y,1180,eIn((p-pSnap1)/(0.5-pSnap1))); else cy=lerp(1180,4600,eIn(clamp((p-0.5)/(pExit-0.5),0,1)));  // tombe puis SORT
+      const r=R0*(1-0.12*clamp(v/0.35,0,1)), L=r+v*2200;
+      const S=intVel(pSnap0*TOTAL,t), fade=(p<pFall)?1:clamp(1-(p-pFall)/(pExit-pFall),0,1);  // stries + filants s'estompent à la sortie
+      // STRIES (arrière-plan, la vitesse)
+      const th=30+30*vth, sl=200+1700*vth, dens=Math.round(8+52*vth);
+      for(let i=0;i<STR.length;i++){ const s=STR[i];
+        if(v<0.02||i>=dens||fade<=0.01){ s.el.setAttribute('opacity',0); continue; }
+        const y=((s.yb-S)%PERIOD+PERIOD)%PERIOD-1900; s.el.setAttribute('d',`M ${s.x} ${y} L ${s.x} ${y+sl}`); s.el.setAttribute('stroke-width',th); s.el.setAttribute('opacity',0.9*fade); }
+      // CORPS
+      body.setAttribute('d',bodyP(v,r,CX,cy)); body.setAttribute('fill',col);
+      // FILANTS (couloirs-rails)
+      if(v<0.05||fade<=0.01){ for(const q of PART) q.el.setAttribute('opacity',0); }
+      else for(const q of PART){ const spd=1+(6-q.j)*0.05, headRaw=((q.ph*PERIOD+S*spd)%PERIOD+PERIOD)%PERIOD, headY=(1920+700)-headRaw;
+        const len=(120+420*vth)*(1+(6-q.j)*0.07)*q.lj, tailY=headY+len, o=clamp((2400-headY)/300,0,1)*clamp((headY+430)/300,0,1)*fade;
+        if(o<=0.01){ q.el.setAttribute('opacity',0); continue; }
+        const P=[]; for(let k=0;k<6;k++){ const y=tailY+(headY-tailY)*(k/5); P.push([railX(q.sd,q.j,y,r,L,cy),y]); }
+        let dd=`M ${P[0][0].toFixed(1)} ${P[0][1].toFixed(1)}`;
+        for(let k=1;k<5;k++){ const mx=(P[k][0]+P[k+1][0])/2, my=(P[k][1]+P[k+1][1])/2; dd+=` Q ${P[k][0].toFixed(1)} ${P[k][1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`; }
+        dd+=` L ${P[5][0].toFixed(1)} ${P[5][1].toFixed(1)}`;
+        q.el.setAttribute('d',dd); q.el.setAttribute('stroke-width',(12+10*vth)*(1+(6-q.j)*0.05)); q.el.setAttribute('opacity',o); }
+    }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

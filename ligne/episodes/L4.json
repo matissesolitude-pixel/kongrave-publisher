@@ -1,0 +1,31 @@
+{
+  "id": "L4",
+  "engine": "l4",
+  "title": "L4 — WHY THEY NEED YOU (épisode continu v3 — LA BALANCE)",
+  "voice": [
+    "Somewhere right now, a fund wants to buy a hundred million of something. Not tomorrow. Now. And here's the problem nobody explains to you: they can't just… buy. Because when someone buys a hundred million — someone has to sell it to them. So who sells?",
+    "Every trade in the world has two sides. You buy — someone sold. You sell — someone bought. No exceptions, no gaps. And if nobody's there on the other side? No trade. Or the price runs away from you with every piece you grab. Big money's biggest problem isn't being right. It's getting filled.",
+    "Now look at your stop loss. You think of it as protection. A seatbelt. It just sits there, quietly, under your position. Except a stop is not a shield — it's an instruction. The second price touches it, it becomes a market order. A real order, selling at any price, exactly at the moment someone big needs sellers. You didn't plan to be the other side. You volunteered.",
+    "And you're not alone down there. A thousand traders read the same chart, saw the same level, parked the same stop. A thousand stops at one price — that's a thousand ready-made orders, stacked like inventory on a shelf. Does anyone hunt them on purpose? Doesn't matter. An auction fills where the orders sit. It always has.",
+    "You can't opt out of this. If you trade, you're someone's liquidity — that's the game. But there's a difference between offering your exit where everyone else does, and choosing it. Know what you're offering. And know where. That's the whole edge."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "question": "When someone buys a hundred million — who sells it to them?"
+    },
+    {
+      "id": "s2"
+    },
+    {
+      "id": "s3"
+    },
+    {
+      "id": "s4"
+    },
+    {
+      "id": "s5"
+    }
+  ],
+  "total": 88.0
+}

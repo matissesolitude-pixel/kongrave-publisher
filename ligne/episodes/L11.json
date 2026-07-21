@@ -1,0 +1,144 @@
+{
+  "id": "L11",
+  "engine": "l11",
+  "title": "L11 — THE LINE THAT ERASES YOU",
+  "voice": [
+    "There's a line on your chart that can delete your trade — and you never drew it. You can't move it by hoping. If price touches it, you're out, no warning. But you decided where it sits without realizing. Here's how.",
+    "It's the liquidation level. When you trade with leverage, your deposit is the safety cushion behind the position. As the market moves against you, the cushion shrinks. The line is where the cushion runs out.",
+    "And here's what matters: that line isn't placed by luck. Its distance from your entry is decided by one thing — your size. Big position, thin cushion: the line sits right behind you. Small position, thick cushion: the line is far away.",
+    "When price touches it, there's no phone call, no question, no second chance. The system closes you. Automatically. At market. Whatever the price is. It's not punishment — it's arithmetic reaching zero.",
+    "You can't delete the line. But you decide where it stands the moment you choose your size. So place it like it matters — because of all the lines on your chart, this is the only one that can erase you."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Il y a un prix ou ton trade cesse d'etre a toi. Tu ne l'as pas place. Si le marche le touche, tout se ferme.",
+      "question": "WHO PUT THAT LINE ON YOUR CHART?",
+      "cast": {
+        "you": {
+          "type": "gauge",
+          "x": 540,
+          "note": "ta position: jauge teal"
+        },
+        "theline": {
+          "type": "hline",
+          "note": "un trait horizontal encre, epais, SOUS la jauge. le fusil."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.6",
+          "do": "DRAW-ON: ta jauge teal au centre. puis, SOUS elle, un TRAIT horizontal encre epais (10px) se trace SEUL — tu ne l'as pas dessine. il est juste la."
+        },
+        {
+          "t": "2.6-10",
+          "do": "TENUE VIVANTE: un trait de prix fin oscille au fond, la jauge RESPIRE avec lui — la ligne etrangere, elle, reste RIGOUREUSEMENT immobile. le contraste vivant/fixe est le propos. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge + une ligne epaisse en dessous, posee par personne",
+      "fusil": "la ligne qu'on n'a pas placee — on va comprendre qui decide de sa position."
+    },
+    {
+      "id": "s2",
+      "clarity": "Ton depot est le coussin derriere la position. Quand le marche va contre toi, le coussin fond — la ligne, c'est la ou il finit.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "entre la jauge et la ligne: l'espace se COLORE en teal pale = LE COUSSIN (ton depot). label 'your cushion'."
+        },
+        {
+          "t": "1.5-3.5",
+          "do": "un trait de prix descend doucement contre toi: le coussin FOND par le haut, la jauge glisse vers la ligne. la distance restante se lit d'un coup d'oeil."
+        },
+        {
+          "t": "3.5-13",
+          "do": "le prix remonte un peu: le coussin regonfle. TENUE: le coussin respire avec le prix. la ligne, elle, NE BOUGE PAS."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le coussin colore entre jauge et ligne, qui fond et regonfle avec le prix",
+      "turn": "la ligne est fixe. c'est TOI (ton coussin) qui te rapproches d'elle."
+    },
+    {
+      "id": "s3",
+      "clarity": "La distance de la ligne est decidee par une chose : ta taille. Grosse position, coussin mince, la ligne colle a toi.",
+      "note": "diptyque taille.",
+      "beats": [
+        {
+          "t": "0-13",
+          "do": "SPLIT VERTICAL. HAUT 'small size': petite jauge, coussin EPAIS, la ligne LOIN en dessous. de l'air."
+        },
+        {
+          "t": "0-13",
+          "do": "BAS 'big size': GROSSE jauge (meme depot!), coussin ECRASE en une fine bande, la ligne COLLEE juste sous la jauge. le meme prix oscille sur les deux panneaux: en haut ca respire, en bas chaque oscillation FROLE la ligne."
+        }
+      ],
+      "camera": "fixe, split",
+      "dod": "meme depot, deux tailles: ligne loin vs ligne collee",
+      "turn": "tu n'as pas place la ligne — mais ta TAILLE a decide ou elle est."
+    },
+    {
+      "id": "s4",
+      "clarity": "Quand le prix la touche : pas d'appel, pas de question. Le systeme te ferme, automatiquement, au prix qu'il y a.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "retour vue unique (la config 'big size'). le prix descend, le coussin fond, fond..."
+        },
+        {
+          "t": "1.5-1.8",
+          "do": "CONTACT avec la ligne. SNAP 3 frames."
+        },
+        {
+          "t": "1.8-3",
+          "do": "la jauge entiere se DELAVE d'un bloc (teal -> gris, rapide, uniforme) puis se REDUIT a un trait plat pose sur la ligne. pas d'explosion, pas de drame: une extinction ADMINISTRATIVE. froide."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE longue VIVANTE: le trait plat gris sur la ligne. le prix CONTINUE de bouger en dessous, indifferent — le monde continue sans toi. c'est la vie continue de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'extinction administrative: la jauge delavee reduite a un trait plat sur la ligne",
+      "turn": "pas de punition, pas de mechant: l'arithmetique a atteint zero. le systeme a ferme."
+    },
+    {
+      "id": "s5",
+      "clarity": "Tu ne peux pas effacer la ligne. Mais tu decides ou elle se tient, a l'instant ou tu choisis ta taille.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DECHARGE: retour a une jauge vivante (teal). la TAILLE de la jauge devient un curseur: elle grossit -> la ligne REMONTE vers elle; elle retrecit -> la ligne S'ELOIGNE. la ligne suit la taille, en direct, comme un ressort."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la jauge s'arrete sur une taille moderee: la ligne se fige LOIN en dessous. de l'air. un choix."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la jauge, son coussin epais, la ligne a distance respectueuse. immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la ligne qui suit la taille comme un ressort, figee loin par un choix de taille",
+      "fusil_decharge": "la ligne mysterieuse de S1 a un auteur: ta taille. tu ne l'effaces pas — tu la places."
+    }
+  ],
+  "total": 61.0,
+  "caption": "There's a line on your chart you never drew. If price touches it, your trade is closed — not by you.\n\nThe liquidation level isn't placed by luck. Its distance is decided by one thing: your size. You can't delete it. But you decide where it stands.\n\nComment \"LINE\" for the full series.\n\nTHE LINE — of all the lines on your chart, this is the only one that can erase you.\n\n#trading #trader #liquidation #leverage #daytrading #forex #riskmanagement #tradingeducation #margin #priceaction",
+  "_rules": {
+    "garde_fou": "le pire cas = la position fermee / le depot epuise. JAMAIS de dette au-dela.",
+    "fusil": "la ligne etrangere (S1) revele son auteur (ta taille, S3), frappe (S4), et devient un choix (S5).",
+    "interdits": "aucun chiffre; l'extinction est ADMINISTRATIVE (froide, pas dramatique); bas du cadre vide.",
+    "circuit": "M24 frames DoD d'abord.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · eux/brun #8A5323 (UNIQUEMENT s'il y a un camp adverse — aucun dans cet episode: structures neutres = encre) · perte/gris #474D50",
+    "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
+    "hook_v1_archived": "There's a price on your screen where your trade stops being yours. You didn't put it there. You can't move it by wanting to. And if the market touches it, your position is closed — not by you. What is that line?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  }
+}

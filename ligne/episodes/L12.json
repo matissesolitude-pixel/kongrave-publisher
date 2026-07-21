@@ -1,0 +1,142 @@
+{
+  "id": "L12",
+  "engine": "l12",
+  "title": "L12 — THE CROWD AT ONE PRICE",
+  "voice": [
+    "The cleanest signal in every trading textbook is also the most crowded trap on the chart. Two equal tops — you've been taught to sell them. So has everyone else, at the exact same spot. Here's what's really waiting up there.",
+    "The textbook says: a wall. Price failed there twice, so you sell it — and you park your stop just above the peaks. Logical. Clean. Safe.",
+    "Except everyone owns the same textbook. Two equal tops are the most visible line on the entire chart. Thousands saw what you saw, sold where you sold, and parked their stop exactly where you parked yours. One tick above. All of them.",
+    "Now think about what that spot contains. Every stop up there is a buy order waiting to fire. Thousands of orders, stacked at a single price. Whether anyone aims for them or not — an auction fills where the orders sit. Price often goes up, collects them, and only then decides where it's really going.",
+    "The pattern isn't wrong. The pattern is crowded. And a crowded stop isn't protection — it's an appointment. It's fine to see what everyone sees. Just don't park where everyone parks."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux sommets a la meme hauteur. Le manuel y voit un mur. Qu'y a-t-il vraiment la-haut ?",
+      "question": "TWO EQUAL TOPS. WHAT'S REALLY UP THERE?",
+      "cast": {
+        "ridge": {
+          "type": "path",
+          "note": "la ligne de crete: trait encre continu 10px, deux sommets IDENTIQUES au pixel, separes de 360px. le fusil = la zone au-dessus."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-3",
+          "do": "DRAW-ON: la crete se trace de gauche a droite (2s), deux sommets egaux. un TRAIT POINTILLE horizontal effleure les deux sommets: la ligne d'egalite."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE: un point encre parcourt la crete en boucle lente (monte, descend les versants, sans depasser) — le marche vit sous la ligne. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux sommets egaux + la ligne pointillee + le vide au-dessus",
+      "fusil": "le vide au-dessus des sommets — on va decouvrir qu'il n'est pas vide."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le manuel dit : un mur. Alors il vend, et met sa barriere juste au-dessus du mur. Propre, scolaire.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "TA JAUGE (teal, zone gauche) apparait — ta vente. son capuchon HAUT (ton stop) se pose JUSTE au-dessus de la ligne d'egalite: +24px. logique."
+        },
+        {
+          "t": "1.5-13",
+          "do": "TENUE VIVANTE: le point encre continue de parcourir la crete, monte vers les sommets, N'OSE PAS depasser — ton stop domine, serein. label 'your stop' (lab 42px)."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "ta jauge, son capuchon a +24px au-dessus des sommets",
+      "turn": "il a vendu le mur, sa barriere est juste au-dessus du mur. comme le manuel dit."
+    },
+    {
+      "id": "s3",
+      "clarity": "Tout le monde a lu le meme manuel. Toutes les barrieres sont au meme endroit, a un tick pres.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "SEPT autres capuchons apparaissent un a un (120ms), TOUS a +24px: une ETAGERE continue flotte au-dessus des deux pics."
+        },
+        {
+          "t": "2-4",
+          "do": "ZOOM (revelation d'etage): la camera plonge sur la zone au-dessus des sommets. ce qui semblait UNE ligne fine est une NAPPE: les capuchons empiles, serres, a un tick."
+        },
+        {
+          "t": "4-13",
+          "do": "TENUE VIVANTE sur la nappe: les capuchons FREMISSENT par micro-pulses desynchronises (opacite 0.5-0.8) — des ordres vivants qui attendent. le vide de S1 n'etait pas vide: c'est un rayonnage qui respire."
+        }
+      ],
+      "camera": "zoom revelation puis tenue",
+      "dod": "la nappe de capuchons revelee au-dessus des sommets",
+      "turn": "au-dessus du double top, ce n'est pas du vide. c'est un rayonnage."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le prix monte juste assez pour tout ramasser, puis il redescend. Mecanique, pas mechant.",
+      "beats": [
+        {
+          "t": "0-1",
+          "do": "dezoom plan large. le prix (point encre sur la crete) remonte le second versant, ease-in."
+        },
+        {
+          "t": "1-1.3",
+          "do": "il DEPASSE les sommets d'un tick. SNAP."
+        },
+        {
+          "t": "1.3-3",
+          "do": "les capuchons se detachent EN CASCADE (60ms) et se dissolvent — la nappe se vide de gauche a droite. le point continue de 80px, ralentit (ease-out)... s'arrete."
+        },
+        {
+          "t": "3-4.5",
+          "do": "le point REDESCEND sous la ligne des sommets. lentement."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE. la nappe videe, le prix redescendu. INTERDIT ABSOLU: aucun chasseur, aucun acteur adverse, aucun brun. l'evenement est MECANIQUE."
+        }
+      ],
+      "camera": "fixe apres dezoom",
+      "dod": "la cascade qui vide la nappe + le prix redescendu — sans aucun 'mechant' dessine",
+      "turn": "monte chercher la nappe, l'a videe, redescendu. l'enchere va ou les ordres sont."
+    },
+    {
+      "id": "s5",
+      "clarity": "Le pattern n'est pas faux, il est bonde. Sa barriere a lui n'est plus la ou tout le monde a rendez-vous.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "retour sur TA jauge seule. son capuchon est encore la-haut, seul dessine — il CLIGNOTE une fois, lentement: un rendez-vous pris."
+        },
+        {
+          "t": "1.5-3",
+          "do": "DECHARGE: le capuchon GLISSE vers le bas et se replace a une hauteur A TOI, decalee de la ligne evidente (l'ancienne position reste 1s en pointille clair, puis s'efface: on VOIT le deplacement)."
+        },
+        {
+          "t": "3-14",
+          "do": "IMAGE FINALE TENUE >=3s: la crete, la ligne d'egalite, et TON capuchon ailleurs — hors du rendez-vous. immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le capuchon deplace hors de la ligne evidente, l'ancienne position en fantome",
+      "fusil_decharge": "le vide de S1 etait un rayonnage (S3), vide par l'enchere (S4) — et ton stop n'y a plus rendez-vous (S5)."
+    }
+  ],
+  "total": 62.7,
+  "caption": "Two equal tops. The textbook sees a wall. Here's what's actually sitting above it.\n\nThousands read the same chart, sold the same level, parked the same stop — one tick above the peaks. That's not protection. That's an appointment.\n\nComment \"LINE\" and I'll send you the checklist: 5 signs your stop is exactly where everyone else's is.\n\nTHE LINE — see what everyone sees. Don't park where everyone parks.\n\n#trading #trader #doubletop #stoploss #liquidity #daytrading #forex #tradingeducation #priceaction #smartmoney",
+  "_rules": {
+    "doctrine": "clustering ETABLI, intention JAMAIS affirmee ('whether anyone aims for them or not'). aucun chasseur dessine, aucun brun.",
+    "fusil": "le vide au-dessus des sommets (S1) revele sa nappe (S3), videe mecaniquement (S4), et ton stop en sort (S5).",
+    "interdits": "pas de bougies/grille/echelle; 'double top' jamais ecrit a l'ecran; aucun chiffre; bas du cadre vide.",
+    "circuit": "M24 frames DoD d'abord.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · eux/brun #8A5323 (UNIQUEMENT s'il y a un camp adverse — aucun dans cet episode: structures neutres = encre) · perte/gris #474D50",
+    "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
+    "hook_v1_archived": "Open any chart, any market, any year. Sooner or later you'll see it: two tops, exactly the same height. Every textbook has a name for it. But look closer — what's really sitting up there?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  }
+}

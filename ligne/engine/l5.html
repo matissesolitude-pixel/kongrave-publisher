@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root{--paper:#F2EFE7;--ink:#20242A;--you:#1E5F6E;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+    #stage{position:absolute;inset:0} svg{position:absolute;inset:0;width:1080px;height:1920px}
+  </style>
+</head>
+<body>
+  <!-- L5 « SELLING WHAT YOU DON'T OWN » — décor NON permanent (coupe franche), figures (prêteur/acheteur) + BOULE (toi).
+       Fusil de Tchekhov : le BLOC part du prêteur (S1) et y revient (S5). Le « ? » = invariant. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1">
+    <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  </div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', BRUN='#8A5323';
+    const CX=540;
+    function mk(tag,a,parent){const e=document.createElementNS(NS,tag);for(const k in(a||{}))e.setAttribute(k,a[k]);(parent||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1), eIn=f=>f*f, eOut=f=>1-(1-f)*(1-f);
+    const backOut=(p,s)=>{ s=(s==null?1.9:s); const q=clamp(p,0,1)-1; return 1+(s+1)*q*q*q+s*q*q; };
+    function setBox(el,cx,cy,w,h){ el.setAttribute('x',(cx-w/2).toFixed(1)); el.setAttribute('y',(cy-h/2).toFixed(1)); el.setAttribute('width',w.toFixed(1)); el.setAttribute('height',h.toFixed(1)); }
+    const h2=h=>{h=h.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+    function mix(a,b,f){ f=clamp(f,0,1); const A=h2(a),B=h2(b); return `rgb(${Math.round(A[0]+(B[0]-A[0])*f)},${Math.round(A[1]+(B[1]-A[1])*f)},${Math.round(A[2]+(B[2]-A[2])*f)})`; }
+    const pulse=(u,per,lo,hi)=>lo+(hi-lo)*(0.5+0.5*Math.sin(u/per*2*Math.PI));  // §M-dette : respiration d'opacité
+
+    // ── CASTING (échelles brief) ──
+    const RB=75, BLK=130, HEAD_R=45, FIG_STROKE=8, ROW_Y=1120;   // BOULE Ø150, BLOC 130, figure rond Ø90 + trait 200
+    const LENDER_X=240, BUYER_X=840, BLK_HOLD_DX=120, YOU_X=720;  // prêteur+bloc à GAUCHE, boule (toi) SEULE au centre-droit
+    // FIGURE = rond + trait + petit bras (rond+trait purs, §M25 zéro visage). draw() par opacité + grow du trait.
+    function figure(x){ const g=mk('g',{});
+      const head=mk('circle',{cx:x,cy:ROW_Y-130,r:HEAD_R,fill:'none',stroke:INK,'stroke-width':FIG_STROKE,opacity:0},g);
+      const body=mk('line',{x1:x,y1:ROW_Y-85,x2:x,y2:ROW_Y+115,stroke:INK,'stroke-width':FIG_STROKE,'stroke-linecap':'round',opacity:0},g);
+      const arm =mk('line',{x1:x,y1:ROW_Y-20,x2:x,y2:ROW_Y-20,stroke:INK,'stroke-width':FIG_STROKE,'stroke-linecap':'round',opacity:0},g);
+      return {g,head,body,arm,x}; }
+    function figShow(F,op,armToX){ F.head.setAttribute('opacity',op.toFixed(3)); F.body.setAttribute('opacity',op.toFixed(3));
+      F.arm.setAttribute('opacity',op.toFixed(3)); if(armToX!=null){ F.arm.setAttribute('x2',armToX.toFixed(1)); F.arm.setAttribute('y2',(ROW_Y-6).toFixed(1)); } }
+
+    const lender=figure(LENDER_X), buyer=figure(BUYER_X);
+    const boule=mk('circle',{r:RB,fill:YOU,opacity:0});                                   // TOI
+    const bloc=mk('rect',{fill:YOU,rx:4,opacity:0});                                       // LE JOUET (le fusil)
+    const debt=mk('rect',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'6 5',rx:4,opacity:0});  // la dette (contour pointillé chez le prêteur)
+    const bloclis=mk('rect',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'6 5',rx:4,opacity:0}); // liseré « emprunté » autour du bloc
+    const cash=mk('circle',{fill:INK,opacity:0});                                          // l'argent (masse encre)
+    const cashSpent=mk('circle',{fill:INK,opacity:0});                                     // le cash dépensé au rachat (S4)
+    const cashRest=mk('circle',{fill:INK,opacity:0});                                      // l'ÉCART / le reste (teal=positif, gris=négatif)
+    const GRIDN=16, gridSq=[]; for(let gi=0;gi<GRIDN;gi++) gridSq.push(mk('rect',{fill:INK,rx:2,opacity:0}));  // S2 : les « milliers d'actions » du prêteur
+
+    // ── §M15 : LA QUESTION (poster MAJ Helvetica 800 + « ? » 200px) ──
+    const QLINES=['HOW DO YOU','SELL WHAT YOU','DON’T OWN'];
+    const FS=88, lineH=112, y0=300, qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{ const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0}); e.textContent=s; return e; });
+    const QMY=y0+3*lineH+150, qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0}); qMark.textContent='?';
+    // étiquette de casting (lab 42px, typo du format) — un mot en haut, apparaît puis s'efface
+    const lab=mk('text',{x:CX,y:560,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':42,'letter-spacing':'1',opacity:0});
+    function hideQ(){ for(const e of qEls) e.setAttribute('opacity',0); qMark.setAttribute('opacity',0); }
+    function hideBuyer(){ buyer.head.setAttribute('opacity',0); buyer.body.setAttribute('opacity',0); buyer.arm.setAttribute('opacity',0); }
+    // ── ÉTIQUETTES DE CASTING (densité type L1 : chaque rôle est NOMMÉ, couleur par camp) ──
+    function caption(){ return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,'letter-spacing':'1.5',opacity:0}); }
+    const capLender=caption(), capYou=caption(), capShare=caption(), capDebt=caption(), capBuyer=caption(), capCash=caption(), capGap=caption();
+    const ALLCAPS=[capLender,capYou,capShare,capDebt,capBuyer,capCash,capGap];
+    // §M18 r2 : SAFE ZONE — le texte ne sort JAMAIS du cadre (clamp x selon sa largeur ; marge 40px)
+    function putCap(el,txt,cx,y,color,op){ el.textContent=txt;
+      const hw=txt.length*(+el.getAttribute('font-size'))*0.30, x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1)); el.setAttribute('y',y); el.setAttribute('fill',color); el.setAttribute('opacity',clamp(op,0,1).toFixed(3)); }
+    function hideCaps(){ for(const e of ALLCAPS) e.setAttribute('opacity',0); }
+    // FLASH de coupe blanc (S4, entre les 2 versions) — z-order au-dessus de tout
+    const flashEl=mk('rect',{x:0,y:0,width:1080,height:1920,fill:'#FFFFFF',opacity:0});
+
+    // ══════════ S1 — LA QUESTION (le prêteur tient le bloc ; toi, mains vides, tu le regardes) ══════════
+    function s1(lf,t,s){
+      // 1) la question POP ligne par ligne (0.1->1.4s), tenue, puis s'efface (~10s -> fin de S1)
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){ const qt=(t-s)-(0.1+k*0.32), ap=clamp(qt/0.18,0,1), op=clamp(ap,0,1)*gf, sc=0.7+0.3*backOut(ap);
+        qEls[k].setAttribute('opacity',op.toFixed(3));
+        qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`); }
+      const qm=(t-s)-1.05, qap=clamp(qm/0.2,0,1), qsc=0.6+0.4*backOut(qap);
+      qMark.setAttribute('opacity',(clamp(qap,0,1)*gf).toFixed(3));
+      qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // 2) DRAW-ON (1.6->2.4s) : le PRÊTEUR se dessine à gauche, tenant le BLOC ; TOI = la boule au centre
+      const fig=clamp((t-s-1.6)/0.7,0,1);
+      figShow(lender, fig, LENDER_X+90);                             // bras tendu vers le bloc (tenu)
+      buyer.head.setAttribute('opacity',0); buyer.body.setAttribute('opacity',0); buyer.arm.setAttribute('opacity',0);  // acheteur absent en S1
+      const blocIn=clamp((t-s-2.0)/0.35,0,1), bsc=0.7+0.3*backOut(blocIn);
+      // §L5 couleur=possession : le bloc est au prêteur → ENCRE en S1 (il devient teal seulement quand TU le tiens, S2+)
+      bloc.setAttribute('opacity',blocIn>0?1:0); bloc.setAttribute('fill',INK); setBox(bloc,LENDER_X+BLK_HOLD_DX,ROW_Y,BLK*bsc,BLK*bsc);
+      debt.setAttribute('opacity',0); cash.setAttribute('opacity',0);
+      // TOI (boule) : SEULE au centre-droit (le vide entre vous DIT « il l'a, tu ne l'as pas ») ; regarde le bloc (tilt 3px vers lui, une fois)
+      const bap=clamp((t-s-1.7)/0.5,0,1);
+      const tilt=(t-s>3.3&&t-s<4.1)?-3*Math.sin((t-s-3.3)/0.8*Math.PI):0;
+      boule.setAttribute('opacity',bap.toFixed(3)); boule.setAttribute('cx',(YOU_X+tilt).toFixed(1)); boule.setAttribute('cy',ROW_Y.toFixed(1));
+      // étiquettes en cascade (2.5->4.7s) : nomment le casting ET remplissent le creux de S1
+      hideCaps();
+      putCap(capLender,'THE LENDER',LENDER_X,905,BRUN,(t-s-2.5)/0.4);
+      putCap(capShare,'THE SHARE',LENDER_X+BLK_HOLD_DX+30,1266,INK,(t-s-3.3)/0.4);
+      putCap(capYou,'YOU',YOU_X,1272,YOU,(t-s-4.1)/0.4);
+    }
+    // ══════════ S2 — L'EMPRUNT · mécanique ACCUMULATION (le prêteur détient des milliers, tu en empruntes UNE) ══════════
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideBuyer();
+      figShow(lender,1,LENDER_X+90);                                   // le prêteur reste
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);
+      // 1) ACCUMULATION : une grille d'actions se remplit vite à sa gauche (« a thousand shares, doing nothing »)
+      for(let gi=0;gi<GRIDN;gi++){ const col=gi%4,row=(gi/4)|0, op=clamp((u-gi*0.05)/0.12,0,1);
+        gridSq[gi].setAttribute('opacity',(op*0.9).toFixed(3)); setBox(gridSq[gi],42+col*25,1058+row*25,22,22); }
+      putCap(capLender,'× 1,000',92,1035,BRUN,(u-0.5)/0.3);
+      // 2) tu en empruntes UNE : le BLOC glisse de la main du prêteur → au-dessus de toi (1.3-2.2s), encre→teal, liseré
+      const HOLD_X=LENDER_X+BLK_HOLD_DX, DEST_X=YOU_X, DEST_Y=ROW_Y-RB-BLK/2-4;
+      const sl=clamp((u-1.3)/0.9,0,1), e=eOut(sl), bx=lerp(HOLD_X,DEST_X,e), by=lerp(ROW_Y,DEST_Y,e);
+      const tealF=clamp((sl-0.5)/0.5,0,1);
+      bloc.setAttribute('opacity',1); bloc.setAttribute('fill',mix(INK,YOU,tealF)); setBox(bloc,bx,by,BLK,BLK);
+      bloclis.setAttribute('opacity',clamp((sl-0.8)/0.2,0,1).toFixed(3)); setBox(bloclis,bx,by,BLK+16,BLK+16);
+      // 3) la DETTE se trace à la place du bloc chez le prêteur, puis PULSE (marche via render())
+      const dtrace=clamp((u-1.3)/0.4,0,1), dop=u<1.3?0:(u<1.7?dtrace*0.8:pulse(u-1.7,0.9,0.4,0.8));
+      debt.setAttribute('opacity',clamp(dop,0,1).toFixed(3)); setBox(debt,HOLD_X,ROW_Y,BLK,BLK);
+      cash.setAttribute('opacity',0);
+      // étiquettes en cascade (nomment + remplissent)
+      lab.textContent='YOU BORROW ONE'; lab.setAttribute('fill',INK);
+      lab.setAttribute('opacity',clamp(Math.min((u-0.6)/0.3,1-(u-3.2)/0.4),0,1).toFixed(3));
+      putCap(capDebt,'YOUR DEBT',HOLD_X,ROW_Y+BLK/2+72,INK,(u-2.8)/0.4);
+      putCap(capShare,'BORROWED',DEST_X,DEST_Y-BLK/2-22,YOU,(u-3.0)/0.4);
+      putCap(capYou,'YOU',YOU_X,ROW_Y+RB+56,YOU,(u-3.2)/0.4);
+    }
+    // ══════════ S3 — LA VENTE (l'acheteur entre à droite ; le bloc part vers lui, le cash revient vers toi) ══════════
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); lab.setAttribute('opacity',0);
+      figShow(lender,1,LENDER_X+90);                                  // le prêteur reste
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',CX); boule.setAttribute('cy',ROW_Y);  // TOI, recentrée (stage 3 acteurs)
+      // la DETTE chez le prêteur pulse PLUS FORT (période 700ms, 0.5→0.9) — « the clock is running »
+      debt.setAttribute('opacity',pulse(u,0.7,0.5,0.9).toFixed(3)); setBox(debt,LENDER_X+BLK_HOLD_DX,ROW_Y,BLK,BLK);
+      // l'ACHETEUR se trace à droite (0-0.5s) ; recule d'un demi-pas après avoir reçu (1.8-2.2s, parti content)
+      const bin=clamp(u/0.5,0,1), walk=lerp(0,140,eOut(clamp((u-2.0)/2.6,0,1))), bob=(walk>1?5*Math.sin(walk/13):0);
+      buyer.g.setAttribute('transform',`translate(${walk.toFixed(1)} ${bob.toFixed(1)})`);   // mécanique DÉPART : il s'éloigne, content
+      figShow(buyer,bin,BUYER_X-90);                                  // bras tendu vers toi (il reçoit)
+      // TEMPS 1 (1.0-1.8s) : le BLOC glisse de toi (au-dessus) → près du trait de l'acheteur ; teal→encre (plus à toi), liseré s'efface
+      const START_X=CX, START_Y=ROW_Y-RB-BLK/2-4, DROP_X=BUYER_X-85, DROP_Y=ROW_Y;
+      const s1t=clamp((u-1.0)/0.8,0,1), e1=eOut(s1t), bx=lerp(START_X,DROP_X,e1), by=lerp(START_Y,DROP_Y,e1);
+      bloc.setAttribute('opacity',1); bloc.setAttribute('fill',mix(YOU,INK,s1t)); setBox(bloc,bx,by,BLK,BLK);
+      bloclis.setAttribute('opacity',clamp(1-s1t*1.5,0,1).toFixed(3)); setBox(bloclis,bx,by,BLK+16,BLK+16);
+      // TEMPS 2 (1.8-2.6s) : un DISQUE ENCRE (cash Ø70) glisse de l'acheteur → sous la boule (près de toi)
+      const s2t=clamp((u-1.8)/0.8,0,1), e2=eOut(s2t);
+      const ccx=lerp(BUYER_X-40,CX,e2), ccy=lerp(ROW_Y,ROW_Y+RB+55,e2);
+      cash.setAttribute('opacity',s2t>0?1:0); cash.setAttribute('r',35); cash.setAttribute('cx',ccx.toFixed(1)); cash.setAttribute('cy',ccy.toFixed(1));
+      // étiquettes
+      putCap(capBuyer,'THE BUYER',BUYER_X+walk,ROW_Y+150,BRUN,(u-0.6)/0.4);
+      putCap(capYou,'YOU',CX,ROW_Y-RB-22,YOU,(u-1.0)/0.4);
+      putCap(capDebt,'YOUR DEBT',LENDER_X+BLK_HOLD_DX,ROW_Y+BLK/2+72,INK,(u-1.4)/0.4);
+      putCap(capCash,'THEIR CASH',ccx,ROW_Y+RB+128,INK,(u-2.7)/0.4);
+    }
+    // ══════════ S4 — LE RACHAT (2 versions d'affilée, même chorégraphie ; seule la taille du cash rendu change) ══════════
+    function s4(lf,t,s){
+      const u=t-s; hideQ();
+      figShow(lender,1,LENDER_X+90);
+      debt.setAttribute('opacity',pulse(u,0.7,0.5,0.9).toFixed(3)); setBox(debt,LENDER_X+BLK_HOLD_DX,ROW_Y,BLK,BLK);
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',CX); boule.setAttribute('cy',ROW_Y);
+      buyer.g.setAttribute('transform','translate(0 0)'); figShow(buyer,1,BUYER_X-90);
+      cash.setAttribute('opacity',0);
+      const FLASH0=4.0, FDUR=0.12, inFlash=(u>=FLASH0&&u<FLASH0+FDUR);
+      flashEl.setAttribute('opacity',inFlash?1:0);
+      let vt,outD,restD,gray,labN,labTeal;
+      if(u<FLASH0){ vt=u; outD=40; restD=90; gray=false; labN='YOU KEEP THE DIFFERENCE'; labTeal=true; }
+      else       { vt=Math.max(0,u-(FLASH0+FDUR)); outD=112; restD=30; gray=true; labN='YOU EAT IT'; labTeal=false; }
+      // le cash dépensé (encre) glisse de toi → le vendeur (taille = le prix du rachat)
+      const oe=eOut(clamp((vt-0.2)/0.8,0,1));
+      cashSpent.setAttribute('opacity',vt>0.2?1:0); cashSpent.setAttribute('r',outD/2); cashSpent.setAttribute('fill',INK);
+      cashSpent.setAttribute('cx',lerp(CX,BUYER_X-70,oe).toFixed(1)); cashSpent.setAttribute('cy',lerp(ROW_Y+RB+55,ROW_Y,oe).toFixed(1));
+      // un NOUVEAU bloc teal (racheté, à toi pour rendre) glisse du vendeur → au-dessus de toi
+      const be=eOut(clamp((vt-1.0)/0.8,0,1));
+      bloc.setAttribute('opacity',vt>1.0?1:0); bloc.setAttribute('fill',YOU); bloclis.setAttribute('opacity',0);
+      setBox(bloc,lerp(BUYER_X-70,CX,be),lerp(ROW_Y,ROW_Y-RB-BLK/2-4,be),BLK,BLK);
+      // l'ÉCART / le reste près de toi : teal si positif, DÉLAVE gris si négatif (§M-COULEUR)
+      const rIn=clamp((vt-1.4)/0.4,0,1), grayF=gray?clamp((vt-1.8)/0.8,0,1):0;
+      cashRest.setAttribute('opacity',rIn.toFixed(3)); cashRest.setAttribute('r',restD/2); cashRest.setAttribute('fill',mix(YOU,DEAD,grayF));
+      cashRest.setAttribute('cx',(CX-RB-restD/2-12).toFixed(1)); cashRest.setAttribute('cy',(ROW_Y+RB+30).toFixed(1));
+      // étiquette
+      lab.textContent=labN; lab.setAttribute('fill',labTeal?YOU:DEAD);
+      lab.setAttribute('opacity',((vt>0.3&&!inFlash)?clamp((vt-0.3)/0.3,0,1):0).toFixed(3));
+      // étiquettes
+      const von=(vt>0.4&&!inFlash);
+      putCap(capBuyer,'THE MARKET',BUYER_X,ROW_Y+150,BRUN,von?(vt-0.4)/0.4:0);
+      putCap(capGap, gray?'GONE':'YOUR GAP', CX-RB-restD/2-12, ROW_Y+RB+120, gray?DEAD:YOU, (von&&vt>1.6)?(vt-1.6)/0.4:0);
+    }
+    // ══════════ S5 — LA BOUCLE SE FERME (le bloc racheté retourne au prêteur, la dette s'efface) ══════════
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); lab.setAttribute('opacity',0); flashEl.setAttribute('opacity',0);
+      figShow(lender,1,LENDER_X+90);
+      boule.setAttribute('opacity',1); boule.setAttribute('cx',YOU_X); boule.setAttribute('cy',ROW_Y);  // TOI au centre-droit (boucle sur S1)
+      hideBuyer(); cash.setAttribute('opacity',0); cashSpent.setAttribute('opacity',0); bloclis.setAttribute('opacity',0);
+      // l'écart près de toi + BEAT « you keep the gap — OR you eat it » : délave teal→gris & rétrécit (eaten), puis revient teal (kept)
+      let gb=0; const A=6.5,B=8.8,C=9.6,D=12.0;
+      if(u>A&&u<=B) gb=eOut((u-A)/(B-A)); else if(u>B&&u<=C) gb=1; else if(u>C&&u<D) gb=1-eOut((u-C)/(D-C));
+      cashRest.setAttribute('opacity',1); cashRest.setAttribute('r',lerp(45,22,gb).toFixed(1)); cashRest.setAttribute('fill',mix(YOU,DEAD,gb));
+      cashRest.setAttribute('cx',YOU_X.toFixed(1)); cashRest.setAttribute('cy',(ROW_Y+RB+52).toFixed(1));
+      // le BLOC glisse de toi → le contour chez le prêteur (1.0-1.9s), se pose dedans ; teal→encre = redevient à lui (boucle S1)
+      const START_X=YOU_X, START_Y=ROW_Y-RB-BLK/2-4, END_X=LENDER_X+BLK_HOLD_DX, END_Y=ROW_Y;
+      const sl=clamp((u-1.0)/4.5,0,1), e=eOut(sl), landed=clamp((sl-0.9)/0.1,0,1);  // retour LENT et délibéré (§M18, tu rends la chose)
+      bloc.setAttribute('opacity',1); bloc.setAttribute('fill',mix(YOU,INK,landed)); setBox(bloc,lerp(START_X,END_X,e),lerp(START_Y,END_Y,e),BLK,BLK);
+      // la dette : pulse tant que le bloc n'est pas rendu, puis s'efface quand il se pose (le bloc remplit le contour = dette effacée)
+      const dop = u<1.0 ? pulse(u,0.7,0.5,0.9) : lerp(0.7,0,landed);
+      debt.setAttribute('opacity',clamp(dop,0,1).toFixed(3)); setBox(debt,END_X,END_Y,BLK,BLK);
+      // étiquettes
+      putCap(capLender,'THE LENDER',LENDER_X,905,BRUN,(u-0.4)/0.4);
+      putCap(capShare,'RETURNED',END_X+30,END_Y+BLK/2+50,INK,landed);
+      putCap(capYou,'YOU',YOU_X,ROW_Y-RB-22,YOU,(u-0.6)/0.4);
+      putCap(capGap,'YOUR GAP',YOU_X,ROW_Y+RB+130,gb>0.5?DEAD:YOU,(u-2.6)/0.4);
+    }
+    const RENDER={s1,s2,s3,s4,s5};
+    const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+
+    const clock={t:0};
+    function sceneAt(t){ let i=0; for(let k=0;k<SC.length;k++){ if(t>=SC[k].s-1e-6) i=k; } return Math.min(i,SCENEFN.length-1); }
+    function render(){ const t=clock.t; const i=sceneAt(t), lf=clamp((t-SC[i].s)/SC[i].d,0,1);
+      // §M18 « LA VIE » : la dette TOURNE en continu (fourmis marchantes = the clock is running) tant qu'elle est à l'écran
+      const dm=((-t*26)%11).toFixed(2); debt.setAttribute('stroke-dashoffset',dm); bloclis.setAttribute('stroke-dashoffset',dm);
+      hideCaps(); for(const g of gridSq) g.setAttribute('opacity',0);   // reset densité : chaque scène redessine SES étiquettes/objets
+      SCENEFN[i](lf,t,SC[i].s); }
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{}; window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

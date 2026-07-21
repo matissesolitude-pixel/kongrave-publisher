@@ -1,0 +1,95 @@
+{
+  "id": "L6",
+  "engine": "l6",
+  "title": "L6 — THE INVISIBLE FEE",
+  "voice": [
+    "You just entered a trade. You did nothing else. No news, no move — and you're already down. Not by much. But you're down before anything happened. Why?",
+    "Because the price you were watching isn't one price. It's two. One to buy, one to sell. They're never the same. The gap between them is called the spread — and the moment you enter, you pay it.",
+    "That cost, at least, is written down. You can see it before you click. But there's a second cost nobody shows you. Between the instant you click and the instant you're filled, the price moves. Where you aimed and where you land are not the same place.",
+    "That gap has a name: slippage. In a calm market, it's tiny — a rounding error. But when everything moves fast, the gap opens wide, right as you try to cross it. And it's biggest at the exact moment you can least afford it.",
+    "You can't refuse either fee. The spread and the slippage are the cost of the door. But you can count them. Because if you don't know what entering costs, you don't know what winning has to beat."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Il vient d'entrer et il a deja perdu un peu, sans que rien ne bouge. Pourquoi ?",
+      "question": "WHY ARE YOU ALREADY DOWN?",
+      "cast": {
+        "price": { "type": "line", "y": 960, "note": "UN trait de prix horizontal, encre, pleine largeur. Le fusil." },
+        "you": { "type": "gauge", "x": 300, "note": "petite jauge teal (ta position), apparait sous le prix" }
+      },
+      "beats": [
+        { "t": "0-1.6", "do": "question POP ligne/ligne, Helvetica Neue 800, ? 200px, back.out(2) sync mot" },
+        { "t": "1.6-2.6", "do": "DRAW-ON: UN trait de prix se trace, pleine largeur, encre. Simple, evident." },
+        { "t": "2.6-3.4", "do": "une petite jauge teal (toi) apparait sous le trait. A l'instant ou elle apparait: son sommet DESCEND de 30px, SNAP. Personne n'a rien fait." },
+        { "t": "3.4-10", "do": "TENUE. la jauge amputee. le ? tenu puis s'efface (fade 0.4s ~9s)." }
+      ],
+      "camera": "fixe",
+      "dod": "question + un trait de prix + une jauge teal deja amputee dessous",
+      "fusil": "un seul trait de prix. il en cache deux — on le revele en S2."
+    },
+    {
+      "id": "s2",
+      "clarity": "Ce qu'on croyait un seul prix, c'est deux prix. Entrer coute l'ecart entre les deux.",
+      "label": "the spread",
+      "beats": [
+        { "t": "0", "do": "coupe franche. le trait de prix unique, plein cadre." },
+        { "t": "0.5-2", "do": "ZOOM DANS LE TRAIT (revelation d'etage): le trait unique SE DEDOUBLE. deux lignes paralleles, ecart constant 80px. entre elles: du VIDE. LE HAUT = 'sell', LE BAS = 'buy' (labels lab 42px)." },
+        { "t": "2-3.5", "do": "un point teal (toi) sur la ligne du BAS. pour ENTRER il SAUTE sur la ligne du HAUT — a l'atterrissage il retombe de l'ecart (il paie la traversee). le trajet paye CLIGNOTE une fois." },
+        { "t": "3.5-14", "do": "TENUE. les deux lignes, l'ecart visible. c'est le spread — le premier cout, ecrit." }
+      ],
+      "camera": "zoom (revelation etage, usage canonique)",
+      "dod": "deux lignes la ou on croyait une, l'ecart = le spread",
+      "turn": "une ligne en cachait deux. entrer = payer l'ecart."
+    },
+    {
+      "id": "s3",
+      "clarity": "Il a vise un prix, on l'a servi ailleurs. L'ecart entre les deux, personne ne l'avait ecrit.",
+      "cast": {
+        "target": { "type": "ring", "d": 60, "note": "anneau encre = l'endroit exact ou tu as clique" }
+      },
+      "beats": [
+        { "t": "0-0.8", "do": "sur la ligne du haut, une CIBLE se dessine: un anneau encre D60 = ou tu as clique." },
+        { "t": "0.8-1.8", "do": "entre le clic et le remplissage: LES DEUX LIGNES GLISSENT lateralement ET s'ecartent (ease-in, rapide). le marche a bouge." },
+        { "t": "1.8-2.8", "do": "le point teal atterrit — PAS dans l'anneau: 140px plus loin, plus haut. l'ecart anneau->point se trace en POINTILLES et RESTE affiche." },
+        { "t": "2.8-14", "do": "TENUE. l'anneau vide (vise), le point ailleurs (servi), le pointille entre les deux = LE SLIPPAGE. il n'etait cote nulle part." }
+      ],
+      "camera": "fixe",
+      "dod": "l'anneau (vise) + le point (servi) ailleurs + le pointille de slippage affiche",
+      "turn": "vise la, servi ailleurs. l'ecart est reste affiche. c'est le cout cache."
+    },
+    {
+      "id": "s4",
+      "clarity": "Marche calme: l'ecart est minuscule. Marche rapide: l'ecart devient enorme, pile au pire moment.",
+      "note": "DIPTYQUE VERTICAL. deux bandes horizontales. une seule horloge par bande, les deux points entrent au meme instant.",
+      "beats": [
+        { "t": "0-14", "do": "BANDE HAUT (calme): les deux lignes du prix defilent LENTEMENT, ecart fin (40px). le point entre, slippage minuscule (20px). respiration." },
+        { "t": "0-14", "do": "BANDE BAS (rapide): les MEMES deux lignes defilent VITE, l'ecart RESPIRE (s'ouvre/ferme 40->160px). le point entre au MEME instant que le haut — slippage 220px. le pointille du bas est PLUS LONG QUE LA JAUGE elle-meme." }
+      ],
+      "camera": "fixe, split horizontal",
+      "dod": "haut = petit ecart petit slippage ; bas = gros ecart, slippage qui mange le trade",
+      "turn": "meme geste, deux mondes. en bas le cout mange le trade."
+    },
+    {
+      "id": "s5",
+      "clarity": "Avant de compter ce qu'il gagne, il retire le prix de la porte. Sa position nait deja nette de frais.",
+      "beats": [
+        { "t": "0", "do": "coupe franche. retour vue unique." },
+        { "t": "0.5-2", "do": "la jauge teal (toi) se REDESSINE — mais AVANT qu'elle apparaisse, une ENCOCHE se retire du haut: le peage, decompte D'AVANCE. elle nait plus petite — et JUSTE." },
+        { "t": "2-3.5", "do": "DECHARGE DU FUSIL: les deux lignes du prix se REFERMENT l'une sur l'autre (l'ecart se scelle), le trait redevient UNIQUE, epais, plein cadre — mais maintenant on SAIT qu'il en cache deux." },
+        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: le trait unique (qui ment), la jauge nette de frais dessous. immobile." }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge amputee d'avance (nette de frais), le trait redevenu unique",
+      "fusil_decharge": "le trait unique de S1 revient — mais on sait maintenant qu'il cache deux prix et deux couts."
+    }
+  ],
+  "total": 56.0,
+  "_rules": {
+    "source": "Loom 14/07 anonymise (pas de paire/date/direction).",
+    "fusil": "le trait de prix unique (S1) revele qu'il cache deux prix (spread) puis deux couts (slippage), et se referme en trait unique (S5) — mais le spectateur sait.",
+    "interdits": "aucun chiffre (les ecarts sont des DISTANCES, jamais des nombres); aucun brun (le spread est une structure, pas un vol); le mot 'broker' absent; une seule horloge par vue; bas du cadre vide.",
+    "police": "Helvetica Neue 800 uppercase ls1px #20242A. titre 88 / ? 200 / lab 42.",
+    "circuit": "M24: frames DoD seules d'abord, PO valide, PUIS video + montage + muet."
+  }
+}
