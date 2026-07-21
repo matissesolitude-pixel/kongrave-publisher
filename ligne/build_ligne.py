@@ -189,10 +189,13 @@ def build_anim(ep, tl, work, rend):
     out = rend / "anim.mp4"
     env = dict(os.environ, PRODUCER_FORCE_SCREENSHOT="true")
     print("[anim] rendu HyperFrames…")
-    subprocess.run(["npx", "--yes", "hyperframes", "render", str(proj), "-o", str(out),
-                    "--resolution", "portrait", "-f", "30"], cwd=str(proj), env=env, capture_output=True, text=True)
+    # version ÉPINGLÉE (0.7.37 = celle prouvée en cloud par KONGRAVE) ; args Chromium sûrs en CI/root.
+    hf_ver = os.environ.get("HYPERFRAMES_VERSION", "0.7.37")
+    r = subprocess.run(["npx", "--yes", f"hyperframes@{hf_ver}", "render", str(proj), "-o", str(out),
+                        "--resolution", "portrait", "-f", "30"], cwd=str(proj), env=env, capture_output=True, text=True)
     if not out.exists():
-        sys.exit("[ERREUR anim] pas de sortie")
+        sys.exit(f"[ERREUR anim] pas de sortie (hyperframes@{hf_ver}, code {r.returncode})\n"
+                 f"--- stdout ---\n{(r.stdout or '')[-2500:]}\n--- stderr ---\n{(r.stderr or '')[-2500:]}")
     print(f"[anim] OK ({dur_of(out):.2f}s)")
     return out
 
