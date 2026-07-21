@@ -9,9 +9,10 @@ name: KONGRAVE auto-publish
 # via os.getenv (python-dotenv devient un no-op quand .env.local est absent).
 
 on:
-  # Réactivé (v13 validée) : publie l'épisode dû dans schedule.json. ep02 = 02:00 Dubai.
-  schedule:
-    - cron: "7 * * * *"         # 1×/h (:07 UTC). NE PAS repasser à 2×/h : voir la note ci-dessous.
+  # ARRÊT DE PUBLICATION — 2026-07-21. La saga du Patriarche est stoppée : le cron
+  # "7 * * * *" a été retiré. Les épisodes encore datés dans schedule.json ne partiront
+  # plus. AVANT toute reprise : réinitialiser les dates de schedule.json, sinon tout
+  # l'arriéré échu partira d'un coup au premier run.
   workflow_dispatch:
     inputs:
       dry_run:
