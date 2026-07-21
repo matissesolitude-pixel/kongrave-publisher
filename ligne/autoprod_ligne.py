@@ -205,6 +205,10 @@ def make_one(jp: Path) -> bool:
 
 
 def main() -> int:
+    # --check : compte les épisodes prêts et sort (court-circuit CI, aucune install/notif nécessaire).
+    if "--check" in sys.argv:
+        print(f"PENDING={len(pending())}")
+        return 0
     one = "--one" in sys.argv
     eps = pending()
     if not eps:
