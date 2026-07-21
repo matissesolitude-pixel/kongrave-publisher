@@ -1,0 +1,7 @@
+A price doesn't 'remember' a level — it runs out of orders. Comment "MAP" for the free beta of my indicator that shows where price is really pulled.
+
+Traders talk about levels like the chart has a memory — price 'respects support' as if the line pushes back. It doesn't. A level holds because of how many orders sit there right now. When they're eaten, it stops working — instantly.
+
+THE LINE — respect the pile, not the paint.
+
+#trading #trader #supportandresistance #priceaction #liquidity #daytrading #forex #tradingeducation #smartmoney #orderflow
