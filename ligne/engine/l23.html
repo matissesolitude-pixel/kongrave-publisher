@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L23 « THE CHART EVERYONE SEES » — S1 : émotion frame 0 = levier RECONNAISSANCE DE SOI — le tracé, le niveau évident et la FOULE
+       entière sont déjà là à t=0, tous les ronds tournés vers la même ligne, toi (teal) au milieu d'eux. S2 : le face-à-face — pour que
+       ton achat existe il faut un vendeur en face ; le prix est un point TENDU entre les deux, jamais au repos. S3 : la ruée — la foule
+       se déplace d'un bloc du même côté, l'autre côté reste vide avec un « ? » : qui vend ? S4 : la masse entassée EST une cible ; le
+       prix va la chercher, la traverse (les ronds se délavent), puis repart — mécanique, sans méchant. S5 : décharge — deux couches,
+       les bougies ET la foule ; toi tu lis les deux. Doctrine : aucun chiffre ; pas de brun ni de chasseur (l'autre côté est nécessaire,
+       pas malveillant) ; gris = piégés ; TOI = rond teal ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── LE GRAPHE QUE TOUT LE MONDE OUVRE ──
+    const PATH=[[200,860],[300,780],[400,815],[510,700],[620,745],[730,655],[860,700]];
+    const chart=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',
+      points:PATH.map(p=>p.join(',')).join(' '),opacity:0});
+    const LEVELY=690;
+    const level=mk('line',{x1:180,y1:LEVELY,x2:900,y2:LEVELY,stroke:INK,'stroke-width':5,'stroke-dasharray':'20 12',opacity:0});
+    const pricePt=mk('circle',{r:15,fill:INK,opacity:0});
+    function runPrice(p,op){const s=clamp(p,0,1)*(PATH.length-1),i=Math.min(PATH.length-2,Math.floor(s)),f=s-i;
+      pricePt.setAttribute('cx',lerp(PATH[i][0],PATH[i+1][0],f).toFixed(1));
+      pricePt.setAttribute('cy',lerp(PATH[i][1],PATH[i+1][1],f).toFixed(1));setOp(pricePt,op);}
+    function hideChart(){setOp(chart,0);setOp(level,0);setOp(pricePt,0);}
+
+    // ── LA FOULE (ronds encre) + TOI (rond teal) ──
+    const N=40, ME=22, R=14;
+    const dots=[], gazes=[];
+    for(let i=0;i<N;i++){gazes.push(mk('line',{stroke:INK,'stroke-width':3,opacity:0}));}
+    for(let i=0;i<N;i++){dots.push(mk('circle',{r:R,fill:INK,opacity:0}));}
+    // A = la foule qui regarde le graphe (S1/S5) ; B = la foule entassée d'un seul côté (S3/S4)
+    function posA(i){return [212+(i%10)*72, 1010+Math.floor(i/10)*70];}
+    function posB(i){return [196+(i%8)*44, 950+Math.floor(i/8)*60];}
+    function putDot(i,x,y,wash,op,r){const d=dots[i];
+      d.setAttribute('cx',x.toFixed(1));d.setAttribute('cy',y.toFixed(1));d.setAttribute('r',(r||(i===ME?R+3:R)).toFixed(1));
+      d.setAttribute('fill',i===ME?mix(YOU,DEAD,wash||0):mix(INK,DEAD,wash||0));setOp(d,op);}
+    function putGaze(i,x,y,tx,ty,op){const g=gazes[i];
+      const dx=tx-x,dy=ty-y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+      g.setAttribute('x1',(x+ux*(R+5)).toFixed(1));g.setAttribute('y1',(y+uy*(R+5)).toFixed(1));
+      g.setAttribute('x2',(x+ux*(R+27)).toFixed(1));g.setAttribute('y2',(y+uy*(R+27)).toFixed(1));
+      g.setAttribute('stroke',i===ME?YOU:INK);setOp(g,op);}
+    function hideCrowd(){for(let i=0;i<N;i++){setOp(dots[i],0);setOp(gazes[i],0);}}
+
+    // ── S2 : LE FACE-À-FACE (deux camps, le prix tendu entre eux) ──
+    const buyer=mk('circle',{r:34,fill:YOU,opacity:0}), seller=mk('circle',{r:34,fill:INK,opacity:0});
+    const pull1=mk('line',{stroke:YOU,'stroke-width':5,opacity:0}), pull2=mk('line',{stroke:INK,'stroke-width':5,opacity:0});
+    const tense=mk('circle',{r:19,fill:INK,opacity:0});
+    function hideFace(){setOp(buyer,0);setOp(seller,0);setOp(pull1,0);setOp(pull2,0);setOp(tense,0);}
+
+    // ── S3 : LA LIGNE DE PARTAGE + LE VIDE INTERROGATIF ──
+    const split=mk('line',{x1:560,y1:830,x2:560,y2:1320,stroke:INK,'stroke-width':4,'stroke-dasharray':'16 12',opacity:0});
+    const bigQ=mk('text',{x:760,y:1140,'text-anchor':'middle',fill:DEAD,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':180,opacity:0});bigQ.textContent='?';
+    // ── S4 : LE PRIX QUI VA CHERCHER LA MASSE ──
+    const sweep=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const SWEEP=[[190,1330],[300,1240],[420,1090],[520,960],[600,1010],[700,1180],[840,1320]];
+    const head=mk('circle',{r:17,fill:INK,opacity:0});
+    function hideS4(){setOp(sweep,0);setOp(head,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['IF EVERYONE SEES IT','WHO IS LEFT TO BE WRONG'];
+    const FS=62,lineH=88,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(36);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE])setOp(e,0);}
+    function hideS3(){setOp(split,0);setOp(bigQ,0);}
+
+    // ═══ S1 — LE MÊME GRAPHE, LA MÊME FOULE, LE MÊME REGARD ═══
+    // Verbe visuel : l'unisson (des dizaines de regards identiques sur une seule ligne).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideFace(); hideS3(); hideS4();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier RECONNAISSANCE DE SOI) : le graphe, le niveau évident ET la foule entière sont
+      //    DÉJÀ posés à t=0, tous tournés vers la même ligne — et l'un de ces ronds, c'est toi. Aucun draw-on.
+      setOp(chart,1); setOp(level,1);
+      level.setAttribute('stroke-width',(5+2*Math.sin(u*2.4)).toFixed(1));   // le niveau « évident » pulse
+      level.setAttribute('stroke-dashoffset',(-u*18).toFixed(0));
+      runPrice((u*0.13)%1,1);                                                // le prix court : le graphe est VIVANT
+      for(let i=0;i<N;i++){const [x,y]=posA(i), bob=6*Math.sin(u*1.8+i*0.7);
+        putDot(i,x,y+bob,0,1); putGaze(i,x,y+bob,x,LEVELY,0.75);}            // tous regardent la MÊME ligne
+      putCap(capA,'THE SAME LEVEL',300,LEVELY-46,INK,1);
+      putCap(capC,'EVERYONE SEES IT',CX,1330,DEAD,clamp((u-1.8)/0.7,0,1)*gf);
+    }
+
+    // ═══ S2 — LE PRIX EST UN DÉSACCORD : il faut quelqu'un en face ═══
+    // Verbe visuel : le transfert direct (deux camps qui tirent, le prix tendu au milieu).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideCrowd(); hideChart(); hideS3(); hideS4();
+      const BY=1040, bx=300, sx=780;
+      buyer.setAttribute('cx',bx);buyer.setAttribute('cy',BY);setOp(buyer,1);
+      seller.setAttribute('cx',sx);seller.setAttribute('cy',BY);setOp(seller,clamp((u-1.0)/0.6,0,1));
+      putCap(capA,'YOU BUY',bx,BY+96,YOU,1);
+      putCap(capC,'SOMEONE SELLS',sx,BY+96,INK,clamp((u-1.2)/0.6,0,1));
+      // le prix : point TENDU entre les deux, tiré des deux côtés — il ne se pose jamais (vie continue)
+      const px=CX+72*Math.sin(u*1.55)+18*Math.sin(u*4.3), ap=clamp((u-1.8)/0.6,0,1);
+      tense.setAttribute('cx',px.toFixed(1));tense.setAttribute('cy',BY);setOp(tense,ap);
+      pull1.setAttribute('x1',bx+38);pull1.setAttribute('y1',BY);pull1.setAttribute('x2',(px-22).toFixed(1));pull1.setAttribute('y2',BY);setOp(pull1,ap*0.9);
+      pull2.setAttribute('x1',(px+22).toFixed(1));pull2.setAttribute('y1',BY);pull2.setAttribute('x2',sx-38);pull2.setAttribute('y2',BY);setOp(pull2,ap*0.9);
+      putCap(capD,'THE PRICE',px,BY-58,INK,ap);
+      putCap(capB,'PRICE IS A DISAGREEMENT',CX,1330,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA RUÉE : tous du même côté, l'autre côté vide ═══
+    // Verbe visuel : le déplacement en bloc (la masse d'un seul côté, le vide en face).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideFace(); hideS4();
+      setOp(chart,0); setOp(pricePt,0);
+      setOp(level,1); level.setAttribute('stroke-width',(5+4*Math.abs(Math.sin(u*3.1))).toFixed(1));  // le signal CRIE
+      level.setAttribute('stroke-dashoffset',(-u*26).toFixed(0));
+      putCap(capA,'THE OBVIOUS SIGNAL',330,LEVELY-46,INK,1);
+      const move=eInOut(clamp(u/1.9,0,1));
+      for(let i=0;i<N;i++){const a=posA(i),b=posB(i), press=(1-move)*0+move*(3*Math.sin(u*3.2+i*0.9));
+        const x=lerp(a[0],b[0],move)+press, y=lerp(a[1],b[1],move)+4*Math.sin(u*2.1+i*0.6);
+        putDot(i,x,y,0,1); putGaze(i,x,y,x,LEVELY,0.6);}
+      setOp(split,clamp((u-1.4)/0.5,0,1)*0.8); split.setAttribute('stroke-dashoffset',(u*20).toFixed(0));
+      const qap=clamp((u-2.0)/0.6,0,1), qs=1+0.06*Math.sin(u*2.2);
+      bigQ.setAttribute('transform',`translate(${(760*(1-qs)).toFixed(1)} ${(1140*(1-qs)).toFixed(1)}) scale(${qs.toFixed(3)})`);setOp(bigQ,qap);
+      putCap(capC,'ALL ON ONE SIDE',330,1360,INK,clamp((u-1.8)/0.6,0,1));
+      putCap(capD,'WHO SELLS TO THEM',780,1360,DEAD,qap);
+    }
+
+    // ═══ S4 — LA MASSE EST UNE CIBLE : le prix va la chercher, la traverse, repart ═══
+    // Verbe visuel : la traversée (le mouvement va où les positions sont entassées).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideFace(); hideS3(); hideChart();
+      // la foule reste entassée là où S3 l'a laissée — c'est ÇA, la cible
+      const cross=clamp((u-1.4)/1.6,0,1);
+      for(let i=0;i<N;i++){const b=posB(i);
+        const hit=clamp((cross*9-(i%8)*0.55-Math.floor(i/8)*0.35),0,1);     // la traversée délave rang par rang
+        const sink=hit*26*eIn(clamp((u-2.6)/2.2,0,1));
+        putDot(i,b[0],b[1]+sink+3*Math.sin(u*1.7+i*0.5),hit,1-0.15*hit);
+        setOp(gazes[i],0);}
+      // le prix : il monte CHERCHER la masse, la traverse, puis repart de l'autre côté
+      const draw=clamp(u/3.0,0,1), n=Math.max(2,Math.round(2+(SWEEP.length-2)*draw));
+      sweep.setAttribute('points',SWEEP.slice(0,n).map(p=>p.join(',')).join(' '));setOp(sweep,1);
+      const ph=clamp(u/3.6,0,1)*(SWEEP.length-1), si=Math.min(SWEEP.length-2,Math.floor(ph)), sf=ph-si;
+      const hx2=lerp(SWEEP[si][0],SWEEP[si+1][0],sf), hy2=lerp(SWEEP[si][1],SWEEP[si+1][1],sf);
+      head.setAttribute('cx',hx2.toFixed(1));head.setAttribute('cy',(hy2+(u>3.6?9*Math.sin(u*1.4):0)).toFixed(1));setOp(head,1);
+      // vie continue de la tenue longue : le tracé continue de respirer, la masse délavée s'affaisse
+      sweep.setAttribute('stroke-dashoffset',(u*14).toFixed(0));
+      putCap(capB,'THE CROWDED TRADE IS THE EASIEST TARGET',CX,600,INK,clamp((u-3.4)/0.7,0,1));
+      putCap(capC,'TOO BIG TO MISS',CX,1400,DEAD,clamp((u-4.2)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : lire la foule, pas seulement les bougies ═══
+    // Verbe visuel : la double lecture (deux couches, deux regards partis du même rond teal).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideFace(); hideS3(); hideS4();
+      setOp(chart,1); setOp(level,1);
+      level.setAttribute('stroke-width',5); level.setAttribute('stroke-dashoffset',(-u*12).toFixed(0));
+      runPrice((u*0.12)%1,1);
+      const me=posA(ME);
+      for(let i=0;i<N;i++){const [x,y]=posA(i), bob=5*Math.sin(u*1.6+i*0.7);
+        if(i===ME){putDot(i,x,y+bob,0,1,R+5);setOp(gazes[i],0);continue;}
+        putDot(i,x,y+bob,0,0.85); putGaze(i,x,y+bob,x,LEVELY,0.5);}
+      // TOI : deux regards — un vers les bougies, un vers la FOULE elle-même
+      const a1=clamp((u-0.4)/0.6,0,1), a2=clamp((u-1.6)/0.7,0,1);
+      const p1=0.75+0.25*Math.sin(u*2.0), p2=0.75+0.25*Math.sin(u*2.0+Math.PI);
+      pull1.setAttribute('x1',me[0]);pull1.setAttribute('y1',me[1]-24);pull1.setAttribute('x2',me[0]);pull1.setAttribute('y2',LEVELY+18);setOp(pull1,a1*p1);
+      pull2.setAttribute('x1',me[0]+24);pull2.setAttribute('y1',me[1]);pull2.setAttribute('x2',830);pull2.setAttribute('y2',1150);setOp(pull2,a2*p2);
+      pull2.setAttribute('stroke',YOU);
+      putCap(capA,'THE CANDLES',300,LEVELY-46,INK,a1);
+      putCap(capC,'THE CROWD',830,1230,YOU,a2);
+      putCap(capB,'READ BOTH — NOT JUST THE CANDLES',CX,1400,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
