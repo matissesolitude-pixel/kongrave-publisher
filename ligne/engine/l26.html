@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L26 « THE ORDER BOOK IS A STAIRCASE » — S1 : émotion frame 0 = levier CURIOSITÉ — le prix écran (trait teal) et ton petit ordre
+       posé dessus sont nets, mais un ESCALIER se devine déjà au-dessus, en filigrane : qu'y a-t-il là-haut ? S2 : l'escalier s'allume,
+       chaque marche porte sa petite réserve d'ordres en attente ; un petit ordre reste sur la première marche, un seul prix. S3 : le GROS
+       ordre vide la première marche, déborde, GRIMPE — chaque marche gravie est un prix plus mauvais, et son prix moyen finit loin
+       au-dessus du prix écran. S4 : diptyque petit/gros sur le MÊME escalier — l'écart entre les deux prix moyens est ce que la taille
+       coûte en plus. S5 : décharge — marché profond (marches épaisses, montée courte) vs marché mince (marches fines, longue montée) :
+       la profondeur décide du coût. Doctrine : aucun chiffre (les prix par la HAUTEUR) ; ordres en attente = gris neutre ; ton ordre =
+       teal ; pas de brun ; bas du cadre vide ; aucun nom de broker. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LES ESCALIERS (contours) + LES ORDRES EN ATTENTE (gris) + TON ORDRE (teal) ──
+    const STAIRS=[0,1].map(()=>mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const RESTS=[]; for(let i=0;i<28;i++)RESTS.push(mk('rect',{rx:3,fill:DEAD,opacity:0}));
+    const MINE=[];  for(let i=0;i<14;i++)MINE.push(mk('rect',{rx:3,fill:YOU,opacity:0}));
+    const avg1=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'16 10',opacity:0});
+    const avg2=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'16 10',opacity:0});
+    const screen=mk('line',{stroke:YOU,'stroke-width':7,opacity:0});
+    const gapBand=mk('rect',{fill:DEAD,'fill-opacity':0.4,rx:4,opacity:0});
+    let rk=0, mk_=0;
+    function resetPools(){rk=0;mk_=0;}
+    function rest(x,y,w,h,op){const e=RESTS[rk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function mine(x,y,w,h,op){const e=MINE[mk_++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function flushPools(){for(let i=rk;i<RESTS.length;i++)setOp(RESTS[i],0);for(let i=mk_;i<MINE.length;i++)setOp(MINE[i],0);}
+    // escalier : marches montantes vers la droite (plus haut = prix plus mauvais)
+    function stairPts(x0,y0,w,h,n){const p=[[x0,y0]];let x=x0,y=y0;
+      for(let i=0;i<n;i++){x+=w;p.push([x,y]);y-=h;p.push([x,y]);}return p;}
+    function drawStair(el,x0,y0,w,h,n,op){el.setAttribute('points',stairPts(x0,y0,w,h,n).map(p=>p.join(',')).join(' '));setOp(el,op);}
+    function hideAll(){for(const e of STAIRS)setOp(e,0);setOp(avg1,0);setOp(avg2,0);setOp(screen,0);setOp(gapBand,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DOES A BIG ORDER','PAY MORE'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;
+      // AUTO-AJUSTEMENT (largeur cadre) : on RÉDUIT la police tant que le texte dépasse la zone sûre 1080px.
+      // Sans ça, une étiquette longue sort du cadre et se fait couper à l'écran (constaté sur L23 en live).
+      const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size'), PER=0.66, MAXW=930;
+      const fs=Math.min(nom,Math.max(20,MAXW/Math.max(1,txt.length*PER)));
+      el.setAttribute('font-size',fs.toFixed(1));
+      const hw=txt.length*fs*PER/2,x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // géométrie principale (S1→S3)
+    const X0=250, Y0=1250, SW=112, SH=84, NST=6;
+
+    // ═══ S1 — UN SEUL PRIX… ET UN ESCALIER QUI SE DEVINE AU-DESSUS ═══
+    // Verbe visuel : l'énigme au-dessus (le prix propre, et quelque chose de plus haut).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetPools(); hideAll();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier CURIOSITÉ) : le prix écran et l'ordre sont posés, nets — et l'escalier est DÉJÀ
+      //    là au-dessus, en filigrane, qui respire. Rien ne se construit : l'énigme est entière dès t=0.
+      drawStair(STAIRS[0],X0,Y0,SW,SH,NST,0.26+0.12*Math.sin(u*1.5));
+      STAIRS[0].setAttribute('transform',`translate(${(21*Math.sin(u*0.95)+8*Math.sin(u*1.75)).toFixed(1)} ${(13*Math.sin(u*1.4)+6*Math.sin(u*2.3)).toFixed(1)})`);
+      screen.setAttribute('x1',150);screen.setAttribute('x2',960);screen.setAttribute('y1',Y0);screen.setAttribute('y2',Y0);setOp(screen,1);
+      putCap(capA,'THE SCREEN PRICE',CX,Y0+70,YOU,1);
+      const ob=9*Math.sin(u*1.55)+4*Math.sin(u*2.75);                      // ton ordre respire (deux harmoniques)
+      mine(X0+16,Y0-52-ob,86,50,1);                                        // ton petit ordre, posé pile sur le prix
+      putCap(capC,'YOUR ORDER',X0+59,Y0-96-ob,YOU,1);
+      putCap(capD,'SOMETHING ABOVE IT',CX+120,700,DEAD,clamp((u-1.7)/0.7,0,1)*gf);
+      flushPools();
+    }
+
+    // ═══ S2 — L'ESCALIER S'ALLUME : chaque marche ne tient qu'une petite réserve ═══
+    // Verbe visuel : la révélation en profondeur (les réserves apparaissent marche par marche).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      drawStair(STAIRS[0],X0,Y0,SW,SH,NST,1); STAIRS[0].setAttribute('transform','');
+      screen.setAttribute('x1',150);screen.setAttribute('x2',960);screen.setAttribute('y1',Y0);screen.setAttribute('y2',Y0);setOp(screen,1);
+      putCap(capA,'THE SCREEN PRICE',CX,Y0+70,YOU,1);
+      // les ordres en attente frémissent sur chaque marche (vie continue)
+      for(let i=0;i<NST;i++){const ap=clamp((u-(0.3+i*0.34))/0.45,0,1);
+        const h=44+6*Math.sin(u*2.4-i*0.8);
+        rest(X0+i*SW+10, Y0-i*SH-h-3*Math.sin(u*1.9-i*0.6), SW-20, h, ap*0.9);}
+      mine(X0+16,Y0-52-4*Math.sin(u*2.2),86,50,1);
+      putCap(capC,'SMALL ORDER — FIRST STEP',X0+180,Y0-140,YOU,clamp((u-2.2)/0.6,0,1));
+      putCap(capB,'EACH STEP HOLDS ONLY SO MUCH',CX,660,INK,clamp((u-3.2)/0.7,0,1));
+      flushPools();
+    }
+
+    // ═══ S3 — LE GROS ORDRE GRIMPE : chaque marche gravie est un prix plus mauvais ═══
+    // Verbe visuel : l'escalade (le bloc déborde d'une marche et monte à la suivante).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      drawStair(STAIRS[0],X0,Y0,SW,SH,NST,1); STAIRS[0].setAttribute('transform','');
+      screen.setAttribute('x1',150);screen.setAttribute('x2',960);screen.setAttribute('y1',Y0);screen.setAttribute('y2',Y0);setOp(screen,1);
+      putCap(capA,'THE SCREEN PRICE',260,Y0+70,YOU,1);
+      // le gros ordre consomme marche après marche, cadence qui presse
+      const CLIMB=[0.15,0.95,1.60,2.15];                                   // 4 marches gravies
+      let filled=0;
+      for(let i=0;i<NST;i++){
+        const eaten=(i<CLIMB.length)?clamp((u-CLIMB[i])/0.42,0,1):0;
+        const h=44+6*Math.sin(u*2.4-i*0.8);
+        rest(X0+i*SW+10, Y0-i*SH-h-3*Math.sin(u*1.9-i*0.6), SW-20, h*(1-eaten), (1-eaten)*0.9);
+        if(eaten>0){ mine(X0+i*SW+10, Y0-i*SH-h*eaten, SW-20, h*eaten, 1); if(eaten>0.5)filled=i+1; }}
+      // le prix moyen payé : bien au-dessus du prix écran
+      const ay=Y0-Math.max(0,filled-0.5)*SH, aap=clamp((u-2.7)/0.6,0,1);
+      avg1.setAttribute('x1',150);avg1.setAttribute('x2',960);avg1.setAttribute('y1',ay);avg1.setAttribute('y2',ay);
+      avg1.setAttribute('stroke-dashoffset',(-u*20).toFixed(0));setOp(avg1,aap);
+      gapBand.setAttribute('x',150);gapBand.setAttribute('width',60);gapBand.setAttribute('y',ay);gapBand.setAttribute('height',(Y0-ay).toFixed(1));setOp(gapBand,aap*0.8);
+      putCap(capC,'THE PRICE YOU ACTUALLY PAID',CX,720,YOU,aap);
+      putCap(capB,'YOU PAID THE WHOLE CLIMB',CX,640,INK,clamp((u-3.2)/0.7,0,1));
+      flushPools();
+    }
+
+    // ═══ S4 — DIPTYQUE : même escalier, deux tailles, deux prix reçus ═══
+    // Verbe visuel : la comparaison simultanée (l'écart entre les deux prix moyens).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const W=76, H=52;
+      // HAUT — petit ordre : il reste sur la première marche
+      const TX=250, TY=880;
+      drawStair(STAIRS[0],TX,TY,W,H,5,1); STAIRS[0].setAttribute('transform','');
+      for(let i=0;i<5;i++){const h=28+4*Math.sin(u*2.4-i*0.8);
+        if(i>0)rest(TX+i*W+8,TY-i*H-h-2*Math.sin(u*2.0-i*0.5),W-16,h,0.9);}
+      mine(TX+8,TY-30,W-16,30,1);
+      avg1.setAttribute('x1',180);avg1.setAttribute('x2',900);avg1.setAttribute('y1',TY);avg1.setAttribute('y2',TY);
+      avg1.setAttribute('stroke-dashoffset',(-u*20).toFixed(0));setOp(avg1,1);
+      putCap(capC,'SMALL — ONE PRICE',700,TY+62,YOU,1);
+      // BAS — gros ordre : il gravit 4 marches
+      const BX=250, BY=1330;
+      drawStair(STAIRS[1],BX,BY,W,H,5,1);
+      for(let i=0;i<5;i++){const h=28+4*Math.sin(u*2.4-i*0.8);
+        if(i>3)rest(BX+i*W+8,BY-i*H-h-2*Math.sin(u*2.0-i*0.5),W-16,h,0.9);
+        else mine(BX+i*W+8,BY-i*H-h,W-16,h,1);}
+      const ay=BY-3*H;
+      avg2.setAttribute('x1',180);avg2.setAttribute('x2',900);avg2.setAttribute('y1',ay);avg2.setAttribute('y2',ay);
+      avg2.setAttribute('stroke-dashoffset',(u*20).toFixed(0));setOp(avg2,1);
+      gapBand.setAttribute('x',180);gapBand.setAttribute('width',56);gapBand.setAttribute('y',ay);gapBand.setAttribute('height',(BY-ay).toFixed(1));
+      setOp(gapBand,(0.7+0.3*Math.sin(u*2.6))*clamp((u-1.4)/0.6,0,1));
+      putCap(capD,'BIG — THE WHOLE CLIMB',700,BY+62,YOU,1);
+      putCap(capE,'WHAT SIZE COSTS ON TOP',300,ay-30,DEAD,clamp((u-1.8)/0.6,0,1));
+      putCap(capB,'SAME MARKET — TWO PRICES RECEIVED',CX,600,INK,clamp((u-2.6)/0.7,0,1));
+      flushPools();
+    }
+
+    // ═══ S5 — DÉCHARGE : la profondeur décide de la longueur de la montée ═══
+    // Verbe visuel : deux escaliers côte à côte (marches épaisses vs marches fines).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const BY=1290, W=58, H=54;
+      // GAUCHE — marché profond : marches ÉPAISSES, la montée s'arrête vite
+      const LX=140;
+      drawStair(STAIRS[0],LX,BY,W,H,6,1); STAIRS[0].setAttribute('transform','');
+      for(let i=0;i<6;i++){const h=52+5*Math.sin(u*2.3-i*0.7);
+        if(i>1)rest(LX+i*W+6,BY-i*H-h-2*Math.sin(u*1.9-i*0.5),W-12,h,0.9);
+        else mine(LX+i*W+6,BY-i*H-h,W-12,h,1);}
+      putCap(capC,'DEEP MARKET',LX+150,BY+64,INK,1);
+      putCap(capE,'SHORT CLIMB',LX+150,BY+112,YOU,clamp((u-1.2)/0.6,0,1));
+      // DROITE — marché mince : marches FINES, le même ordre grimpe loin
+      const RX=590;
+      drawStair(STAIRS[1],RX,BY,W,H,6,1);
+      for(let i=0;i<6;i++){const h=17+3*Math.sin(u*2.3-i*0.7);
+        mine(RX+i*W+6,BY-i*H-h,W-12,h,1);}
+      putCap(capD,'THIN MARKET',RX+150,BY+64,INK,1);
+      putCap(capF,'LONG CLIMB',RX+150,BY+112,DEAD,clamp((u-1.6)/0.6,0,1));
+      // le même ordre, deux fins : le trait du prix reçu monte bien plus haut à droite
+      const la=BY-2*H, ra=BY-6*H, ap=clamp((u-0.6)/0.6,0,1);
+      avg1.setAttribute('x1',LX-20);avg1.setAttribute('x2',LX+6*W+20);avg1.setAttribute('y1',la);avg1.setAttribute('y2',la);
+      avg1.setAttribute('stroke-dashoffset',(-u*18).toFixed(0));setOp(avg1,ap);
+      avg2.setAttribute('x1',RX-20);avg2.setAttribute('x2',RX+6*W+20);avg2.setAttribute('y1',ra);avg2.setAttribute('y2',ra);
+      avg2.setAttribute('stroke-dashoffset',(u*18).toFixed(0));setOp(avg2,ap);
+      putCap(capB,'IS THE STAIRCASE DEEP ENOUGH TO HOLD YOU',CX,600,INK,clamp((u-2.2)/0.7,0,1));
+      putCap(capA,'YOUR SIZE DECIDES WHERE YOU END',CX,672,DEAD,clamp((u-3.0)/0.7,0,1));
+      flushPools();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

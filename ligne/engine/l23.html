@@ -76,12 +76,21 @@
     const FS=62,lineH=88,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
     const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
     const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
     function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
 
     // ── ÉTIQUETTES (§M18) ──
-    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
     const capA=caption(40),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(36);
-    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;
+      // AUTO-AJUSTEMENT (largeur cadre) : on RÉDUIT la police tant que le texte dépasse la zone sûre 1080px.
+      // Sans ça, une étiquette longue sort du cadre et se fait couper à l'écran (constaté sur L23 en live).
+      const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size'), PER=0.66, MAXW=930;
+      const fs=Math.min(nom,Math.max(20,MAXW/Math.max(1,txt.length*PER)));
+      el.setAttribute('font-size',fs.toFixed(1));
+      const hw=txt.length*fs*PER/2,x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
     function hideCaps(){for(const e of [capA,capB,capC,capD,capE])setOp(e,0);}
     function hideS3(){setOp(split,0);setOp(bigQ,0);}
 
@@ -184,10 +193,11 @@
       const a1=clamp((u-0.4)/0.6,0,1), a2=clamp((u-1.6)/0.7,0,1);
       const p1=0.75+0.25*Math.sin(u*2.0), p2=0.75+0.25*Math.sin(u*2.0+Math.PI);
       pull1.setAttribute('x1',me[0]);pull1.setAttribute('y1',me[1]-24);pull1.setAttribute('x2',me[0]);pull1.setAttribute('y2',LEVELY+18);setOp(pull1,a1*p1);
-      pull2.setAttribute('x1',me[0]+24);pull2.setAttribute('y1',me[1]);pull2.setAttribute('x2',830);pull2.setAttribute('y2',1150);setOp(pull2,a2*p2);
+      // le 2e regard DÉSIGNE la foule par une accolade SOUS la grille — jamais un trait ni un mot par-dessus les ronds
+      pull2.setAttribute('x1',196);pull2.setAttribute('y1',1268);pull2.setAttribute('x2',876);pull2.setAttribute('y2',1268);setOp(pull2,a2*p2);
       pull2.setAttribute('stroke',YOU);
       putCap(capA,'THE CANDLES',300,LEVELY-46,INK,a1);
-      putCap(capC,'THE CROWD',830,1230,YOU,a2);
+      putCap(capC,'THE CROWD',CX,1330,YOU,a2);
       putCap(capB,'READ BOTH — NOT JUST THE CANDLES',CX,1400,INK,clamp((u-2.6)/0.7,0,1));
     }
 
