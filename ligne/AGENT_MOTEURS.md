@@ -49,9 +49,22 @@ une seule ligne. Les points qui font échouer un moteur, dans l'ordre de fréque
      s'écrit à DEUX harmoniques, `a*sin(w1*u) + b*sin(w2*u)` ;
    - une scène qui **ouvre sur peu d'objets** = écran quasi vide. Coupe franche :
      la scène ouvre sur SES objets, déjà pleins, dès sa première frame.
-4. **Étiquettes** — jamais par-dessus l'objet qu'elles nomment (à côté, au-dessus,
-   en dessous, ou reliées par une accolade posée hors de l'objet). `putCap` réduit
-   déjà la police pour que rien ne dépasse du cadre : le réutiliser tel quel.
+4. **Étiquettes — LE POINT LE PLUS FRAGILE (coupé / chevauché en LIVE sur L23, L25, L27, L28).**
+   - `putCap` **MESURE** désormais la largeur réelle (`getComputedTextLength`, qui compte le
+     letter-spacing) et borne le centre par cette demi-largeur : un texte ne peut plus être coupé
+     au bord. **Copie-le TEL QUEL depuis `l26.html`.** Ne reviens JAMAIS à une estimation
+     `longueur × facteur` : elle ignore le letter-spacing et fait déborder (cause du bug L23/L25).
+   - **Jamais par-dessus un dessin.** Une étiquette se pose dans une **zone VIDE** (gouttière,
+     au-dessus, en dessous), **jamais dans la colonne d'un objet animé** (barre, ticks, flèche,
+     pastille, ligne). Avant de la placer, demande-toi : *quel objet occupe ce (x, y) et sa bande
+     verticale ?* Si un objet y passe, déplace l'étiquette. (Bug L28 : ticks à travers le texte.)
+   - **Deux étiquettes gauche/droite** : chacune reste dans SA moitié — gauche `cx ≤ 380`,
+     droite `cx ≥ 700` — elles ne se rejoignent jamais au centre.
+   - **Deux étiquettes voisines** (ex. « GOOD DECISION » / « BAD DECISION ») : un vrai espace entre
+     elles (mesure + écart, ou empile-les). Jamais collées « GOOD DECISIONBAD DECISION » (bug L27).
+   - **Texte DANS une forme** (pastille, badge) : il doit tenir dans la forme — élargis la forme à
+     la largeur mesurée, ou raccourcis le texte. Sinon la forme le coupe (« FROM A BAD DAY » →
+     « ROM A BAD D » sur L27).
 5. **Cadrage** — tout ce qui compte reste entre y≈560 et y≈1450 (l'UI d'Instagram
    mange le bas, et le rail droit au-delà de x≈950).
 6. **Palette** — papier `#F2EFE7`, encre `#20242A`, toi/teal `#1E5F6E`,

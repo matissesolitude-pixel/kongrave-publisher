@@ -58,13 +58,21 @@
     // ── ÉTIQUETTES (§M18) ──
     function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
     const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
-    function putCap(el,txt,cx,y,color,op){el.textContent=txt;
-      // AUTO-AJUSTEMENT (largeur cadre) : on RÉDUIT la police tant que le texte dépasse la zone sûre 1080px.
-      // Sans ça, une étiquette longue sort du cadre et se fait couper à l'écran (constaté sur L23 en live).
-      const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size'), PER=0.66, MAXW=930;
-      const fs=Math.min(nom,Math.max(20,MAXW/Math.max(1,txt.length*PER)));
-      el.setAttribute('font-size',fs.toFixed(1));
-      const hw=txt.length*fs*PER/2,x=clamp(+cx,40+hw,1040-hw);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||w; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
       el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
     function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
 

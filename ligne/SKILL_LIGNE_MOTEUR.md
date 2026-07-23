@@ -253,19 +253,26 @@ Les trois pièges qui font échouer, tous vus le même jour :
   se multiplier, il commence GRAND et rétrécit en se multipliant (dézoom), il ne
   part jamais de quelques pixels.
 
-## LOI 10 — LE CADRE ET LES ÉTIQUETTES (payé le 23/07 en LIVE sur L23)
+## LOI 10 — LE CADRE ET LES ÉTIQUETTES (payé en LIVE sur L23, puis ENCORE sur L25/L27/L28)
 
-Deux défauts sont sortis publiés, visibles à l'œil nu sur le feed :
+Le défaut le plus récurrent du feed. Quatre règles — la 1re est déterministe, les autres sont du placement :
 
-- **Le texte qui déborde du cadre.** Une étiquette longue sortait du 1080 et se
-  faisait couper aux deux bords. `putCap` **réduit désormais la police** tant que le
-  texte dépasse la zone sûre (930 px), puis clampe la position. Aucune étiquette ne
-  se pose sans passer par là — et on ne se fie jamais à « ça a l'air de tenir ».
-- **L'étiquette écrite PAR-DESSUS l'objet.** Un mot posé sur la foule de ronds la
-  rend illisible. Une étiquette se pose **à côté** de ce qu'elle nomme — au-dessus,
-  en dessous, ou reliée par une accolade posée hors de l'objet. Jamais dessus.
-- Rappel de cadrage : tout ce qui compte reste **entre y≈560 et y≈1450**. Plus bas,
-  l'UI d'Instagram (légende, boutons) mange l'image ; le rail droit (x>950) aussi.
+- **Débordement du cadre → MESURE, pas estimation.** `putCap` lit maintenant la largeur RÉELLE
+  (`getComputedTextLength`, qui compte le letter-spacing) et borne le centre par cette demi-largeur :
+  un texte ne peut PLUS être coupé au bord. On copie `putCap` TEL QUEL depuis `l26.html`. On ne
+  revient JAMAIS à une estimation `longueur × facteur` — elle ignorait le letter-spacing, c'est
+  ce qui a fait déborder L23 puis ENCORE L25 malgré le premier « correctif ».
+- **Jamais par-dessus un dessin.** Une étiquette se pose dans une zone VIDE (gouttière, au-dessus,
+  en dessous), jamais dans la colonne d'un objet animé (barre, ticks, flèche, pastille, ligne).
+  Avant de la poser : *quel objet occupe ce (x, y) et sa bande verticale ?* Si un objet y passe,
+  déplace l'étiquette. (Bug L28 : les colonnes de ticks traversaient « A RECEIVES », « COMPOUNDS »,
+  « THE DRIFT TURNS ANYWAY ».)
+- **Deux étiquettes** : gauche/droite chacune dans SA moitié (gauche `cx ≤ 380`, droite `cx ≥ 700`) ;
+  deux voisines, un vrai espace entre elles — jamais collées « GOOD DECISIONBAD DECISION » (bug L27).
+- **Texte DANS une forme** (pastille/badge) : il doit tenir DEDANS — élargir la forme à la largeur
+  mesurée, ou raccourcir le texte. Sinon la forme le coupe (« FROM A BAD DAY » → « ROM A BAD D », L27).
+- Cadrage : tout ce qui compte reste **entre y≈560 et y≈1450** (l'UI Instagram mange le bas) et
+  **entre x≈70 et x≈1010** (marge dure, appliquée par putCap).
 
 ## LOI 11 — LA PUBLICATION NE SE FORCE PAS À LA MAIN
 
