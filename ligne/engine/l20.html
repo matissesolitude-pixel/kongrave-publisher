@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L20 « THE WICK THAT LIES » — une longue mèche perce un NIVEAU, le corps reste dessous : le prix a « visité » le dessus (S1). Corps
+       (resté, teal) vs mèche (atteint puis rejeté, pointillé) ; un point monte la mèche puis redescend (S2). Au-dessus : aucun sol, la mèche
+       flotte sur rien, se rétracte, le niveau tient (S3). Piège : une boule saute au SOMMET de la mèche, est entraînée sous le niveau au
+       retour, écrasée (S4). Décharge : corps coché / mèche barrée, la « porte » au sommet se referme en MUR (S5).
+       Doctrine : PAS de rouge/vert (bougie ENCRE) ; aucun chiffre ; gris = boule chassée ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── NIVEAU + BOUGIE (corps sous le niveau, longue mèche qui perce) ──
+    const LY=850, LX0=190, LX1=890, WX=CX;
+    const BODYW=120, bodyTop=920, bodyBot=1060, WTIP=610, WBOT=1110;
+    const level=mk('line',{x1:LX0,x2:LX1,y1:LY,y2:LY,stroke:INK,'stroke-width':11,'stroke-linecap':'round',opacity:0});
+    const wallSeg=mk('line',{x1:WX-70,x2:WX+70,y1:LY,y2:LY,stroke:INK,'stroke-width':16,'stroke-linecap':'butt',opacity:0}); // le "mur" au sommet (S5)
+    const doorSeg=mk('line',{x1:WX-70,x2:WX+70,y1:LY,y2:LY,stroke:YOU,'stroke-width':16,'stroke-linecap':'butt',opacity:0}); // la "porte" (ouverture teal) qui se referme
+    const body=mk('rect',{x:CX-BODYW/2,y:bodyTop,width:BODYW,height:bodyBot-bodyTop,rx:3,fill:INK,stroke:INK,'stroke-width':3,opacity:0});
+    const wickU=mk('line',{x1:WX,x2:WX,stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const wickL=mk('line',{x1:WX,x2:WX,y1:bodyBot,y2:WBOT,stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    function setWick(tipY,op){wickU.setAttribute('y1',bodyTop);wickU.setAttribute('y2',tipY.toFixed(1));setOp(wickU,op);}
+    function hideCandle(){setOp(body,0);setOp(wickU,0);setOp(wickL,0);}
+
+    // le point qui rejoue la visite (monte la mèche puis redescend)
+    const point=mk('circle',{r:12,fill:YOU,opacity:0});
+    function setPoint(y,op){point.setAttribute('cx',WX);point.setAttribute('cy',y.toFixed(1));setOp(point,op);}
+    // la boule-trader (S4) : teal -> gris
+    const BR=24; const ball=mk('circle',{r:BR,opacity:0});
+    function setBall(x,y,wash,op,breath){const r=BR*(1+0.13*(breath||0));ball.setAttribute('r',r.toFixed(1));
+      ball.setAttribute('cx',x.toFixed(1));ball.setAttribute('cy',y.toFixed(1));ball.setAttribute('fill',mix(YOU,DEAD,wash||0));setOp(ball,op);}
+    // tentative de "sol" au-dessus du niveau (S3) qui échoue
+    const groundTry=mk('line',{x1:WX-60,x2:WX+60,stroke:YOU,'stroke-width':6,'stroke-dasharray':'8 8','stroke-linecap':'round',opacity:0});
+    // marques S5
+    const check=mk('path',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const cross=mk('path',{fill:'none',stroke:DEAD,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    function setCheck(cx,cy,op){check.setAttribute('d',`M ${cx-24} ${cy} L ${cx-6} ${cy+20} L ${cx+28} ${cy-22}`);setOp(check,op);}
+    function setCross(cx,cy,op){cross.setAttribute('d',`M ${cx-20} ${cy-20} L ${cx+20} ${cy+20} M ${cx+20} ${cy-20} L ${cx-20} ${cy+20}`);setOp(cross,op);}
+    // surlignage corps/mèche (S2)
+    const hlBody=mk('rect',{x:CX-BODYW/2-8,y:bodyTop-8,width:BODYW+16,height:bodyBot-bodyTop+16,rx:6,fill:YOU,'fill-opacity':0.16,opacity:0});
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['DID PRICE BREAK','OR JUST VISIT'];
+    const FS=80,lineH=104,y0=250,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+110,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capTop=caption(48),capL=caption(38),capR=caption(38),capB=caption(46);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capTop,capL,capR,capB])setOp(e,0);}
+    function hideMarks(){setOp(check,0);setOp(cross,0);setOp(groundTry,0);setOp(hlBody,0);setOp(ball,0);setOp(point,0);setOp(wallSeg,0);setOp(doorSeg,0);}
+
+    // ═══ S1 — la longue mèche perce le niveau, le corps reste dessous ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideMarks();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier CURIOSITÉ/TENSION) : dès t=0 la LONGUE MÈCHE TRANSPERCE déjà le niveau, le corps EN DESSOUS.
+      //    « ça a cassé… ou pas ? » — l'anomalie (un trait qui coupe brutalement) happe l'œil AVANT toute compréhension. Pas de draw-on.
+      level.setAttribute('stroke-dasharray','none'); level.setAttribute('stroke-width',11); setOp(level,1);
+      setOp(body,1); setOp(wickL,1);
+      setWick(WTIP, 1);                                   // la mèche perce déjà le niveau (posé dès t=0)
+      setPoint(lerp(LY, WTIP, 0.5+0.5*Math.sin(u*1.8)), 1); // le PRIX teste : il MONTE/DESCEND le long de la mèche percée (vie continue, grand mouvement)
+      putCap(capR,'LEVEL',800,LY-22,INK,1);               // nommer le rôle (§M18)
+    }
+    // ═══ S2 — corps (resté, teal) vs mèche (atteint puis rejeté) ; un point monte la mèche puis revient ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMarks();
+      setOp(level,0.4); setOp(body,1); setOp(wickL,1); setWick(WTIP,1);
+      setOp(hlBody,clamp((u-0.3)/0.6,0,1)*(0.8+0.2*Math.sin(u*2)));
+      // le point rejoue : monte à la pointe puis redescend au corps (boucle)
+      const cyc=(u*0.4)%1; const up=cyc<0.5? eOut(cyc/0.5):1-eIn((cyc-0.5)/0.5); const py=lerp(bodyTop,WTIP,up);
+      setPoint(py, clamp((u-0.6)/0.5,0,1));
+      putCap(capTop,'BODY = STAYED',CX-0,760,YOU,clamp((u-0.4)/0.6,0,1)*clamp(1-(u-2.0)/0.6,0,1));
+      putCap(capB,'WICK = VISITED',CX,bodyBot+90,INK,clamp((u-2.0)/0.6,0,1));
+    }
+    // ═══ S3 — pas de sol au-dessus, la mèche se rétracte, le niveau tient ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMarks();
+      setOp(body,1); setOp(wickL,1);
+      // recherche d'un "sol" au sommet -> échoue (apparaît, clignote, s'efface)
+      groundTry.setAttribute('y1',WTIP-4);groundTry.setAttribute('y2',WTIP-4);
+      const gt=clamp((u-0.4)/0.5,0,1)*clamp(1-(u-1.6)/0.5,0,1); setOp(groundTry,gt*(0.4+0.3*Math.sin(u*8)));
+      // la mèche se rétracte sous le niveau (2-3.5), puis reste rétractée en respirant (vie continue)
+      const ret=clamp((u-1.8)/1.4,0,1); const tip=lerp(WTIP,LY+40,eInOut(ret))+ret*11*Math.sin(u*1.8); setWick(tip, 1);
+      // le prix rejoue en boucle dans la mèche rétractée (vie continue, élément plein détectable)
+      setPoint(lerp(bodyTop, tip, 0.5+0.45*Math.sin(u*1.6)), clamp((u-2.4)/0.5,0,1));
+      // le niveau rebrille et PULSE en continu (il tient)
+      const shine=clamp((u-2.6)/0.5,0,1); level.setAttribute('stroke-width',(11+shine*(6+5*Math.sin(u*2))).toFixed(1)); setOp(level,lerp(0.6,1,shine));
+      putCap(capTop,'NO GROUND UP THERE',CX,720,INK,clamp((u-0.6)/0.6,0,1)*clamp(1-(u-2.0)/0.6,0,1));
+      putCap(capB,'THE LEVEL HELD',CX,bodyBot+90,INK,clamp((u-2.8)/0.6,0,1));
+    }
+    // ═══ S4 — piège : la boule saute au sommet de la mèche, entraînée sous le niveau au retour ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMarks();
+      setOp(level,1); setOp(body,1); setOp(wickL,1);
+      // 0-1.5 : mèche au sommet, la boule saute dessus ; 1.5-3 : rétraction, la boule entraînée ; 3+ : écrasée en bas
+      const ret=clamp((u-1.5)/1.6,0,1); const tip=lerp(WTIP,LY+70,eInOut(ret)); setWick(tip,1);
+      const jump=clamp(u/1.2,0,1);
+      const by = u<1.5? lerp(WTIP-260, WTIP, eOut(jump)) : lerp(WTIP, bodyBot+95, eInOut(ret)); // entraînée SOUS la bougie, écrasée au pied (pas dans le corps)
+      const wash = clamp((u-3.0)/1.0,0,1);
+      // TOI (le trader piégé) : saute au sommet, entraînée, écrasée — respiration AGITÉE puis délavage ; vivante jusqu'au bout
+      setBall(WX+ (u<1.5?0:14*Math.sin(u*1.7)), by+ (u<1.5?0:20*Math.sin(u*2.4)), wash, clamp(u/0.3,0,1), Math.sin(u*4));
+      putCap(capTop,'BREAKOUT!',CX,540,INK,clamp((u-0.3)/0.4,0,1)*clamp(1-(u-1.6)/0.5,0,1));
+      putCap(capB,'CRUSHED ON THE SNAP-BACK',CX,1240,INK,clamp((u-3.0)/0.6,0,1));
+    }
+    // ═══ S5 — DÉCHARGE : corps coché / mèche barrée ; la porte au sommet devient un MUR ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideMarks();
+      setOp(body,1); setOp(wickL,1); setWick(WTIP,1); setOp(level,1);
+      setCheck(CX+90, (bodyTop+bodyBot)/2, clamp((u-0.6)/0.5,0,1));           // corps = le close, coché
+      setCross(CX+70, lerp(bodyTop,WTIP,0.5), clamp((u-1.0)/0.5,0,1));        // mèche = la tentative, barrée
+      // la "porte" (ouverture teal dans le niveau au sommet) se referme en MUR encre
+      const close=clamp((u-2.0)/1.2,0,1);
+      setOp(doorSeg, (1-close)*(0.5+0.5*Math.sin(u*3)));                       // la porte clignote puis...
+      wallSeg.setAttribute('y1',LY);wallSeg.setAttribute('y2',WTIP+ (1-close)*(LY-WTIP)); wallSeg.setAttribute('x1',WX);wallSeg.setAttribute('x2',WX);
+      wallSeg.setAttribute('stroke-width',14); setOp(wallSeg,close);          // ...devient un mur (segment plein qui monte au sommet)
+      setPoint(lerp(WTIP-10, LY-40, 0.5+0.5*Math.sin(u*2.2)), clamp((u-0.4)/0.5,0,1)); // le prix monte buter sur le mur puis redescend (vie continue)
+      putCap(capL,'TRADE THE CLOSE, NOT THE REACH',CX,bodyBot+90,YOU,clamp((u-0.8)/0.5,0,1)); // fin ACTIONNABLE (règle à enregistrer)
+      putCap(capB,'A DOOR THAT WAS A WALL',CX,1240,INK,clamp((u-2.6)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
