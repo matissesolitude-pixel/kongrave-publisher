@@ -54,7 +54,7 @@ def folder_name(eid: str) -> str:
 
 def is_ready_episode(p: Path) -> bool:
     m = EP_RE.match(p.stem)
-    if not m or int(m.group(1)) < 5:  # L5+ = format A moteur custom
+    if not m or int(m.group(1)) < 4:  # L1-L3 = legacy (déjà publiés) ; L4+ = moteur custom
         return False
     try:
         d = json.loads(p.read_text())
