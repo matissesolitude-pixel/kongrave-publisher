@@ -213,5 +213,11 @@
     "container_id": "18140008408557833",
     "published_at": "2026-07-23T07:33:31.150392+00:00",
     "logged_at": "2026-07-23T07:33:31.150392+00:00"
+  },
+  {
+    "episode": "L22",
+    "status": "error",
+    "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
+    "logged_at": "2026-07-23T14:23:51.016536+00:00"
   }
 ]
