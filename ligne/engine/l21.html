@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L21 « REVENGE HAS A PRICE » — TA TAILLE est une jauge teal ; LA PERTE est une brique grise qui PULSE et envoie des ondes de
+       pression. S1 : émotion frame 0 = levier TENSION — dès t=0 la brique est déjà énorme et pulse, une onde est DÉJÀ en vol vers la
+       jauge (taille normale, qui tremble) : l'instant juste avant. S2 : chaque onde qui frappe fait GONFLER la jauge d'un cran — la
+       taille devient un antidouleur (halo, fil de commande). S3 : diptyque — normal (jauge modérée, fine lamelle qui part) vs revenge
+       (jauge gonflée, jauge de JUGEMENT qui se vide, tranche épaisse qui part). S4 : la boucle qui ACCÉLÈRE, la revenge qui paie, puis
+       la jauge max qui s'effondre : le compte se VIDE et dix briques grises s'empilent à côté. S5 : décharge — l'onde frappe, la jauge
+       RÉSISTE et RÉTRÉCIT à sa taille normale, le fil se coupe, les ondes se brisent avant elle. Doctrine : aucun chiffre ; gris =
+       perte/délavage (jamais de rouge) ; pas de brun ; TOI n'est jamais une figure (ici TOI = la jauge teal) ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── LE FIL (la perte commande la taille) — coupé en S5 ──
+    const thread=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-dasharray':'14 10',opacity:0});
+    const cutA=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const cutB=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+
+    // ── LES ONDES DE PRESSION (de la perte vers la jauge) ──
+    const WAVES=[0,1,2].map(()=>mk('circle',{fill:'none',stroke:DEAD,'stroke-width':6,opacity:0}));
+    function runWaves(cx,cy,u,speed,maxR,op){
+      for(let i=0;i<WAVES.length;i++){const ph=((u*speed)+i/WAVES.length)%1,r=22+ph*maxR;
+        WAVES[i].setAttribute('cx',cx);WAVES[i].setAttribute('cy',cy);WAVES[i].setAttribute('r',r.toFixed(0));
+        setOp(WAVES[i],(1-ph)*op);}}
+    function hideWaves(){for(const w of WAVES)setOp(w,0);}
+
+    // ── LA PERTE (brique grise qui pulse) ──
+    const BX=320, BY=880, BW=250, BH=175;
+    const brick=mk('rect',{rx:6,fill:DEAD,opacity:0});
+    function setBrick(cx,cy,w,h,op){
+      brick.setAttribute('x',(cx-w/2).toFixed(1));brick.setAttribute('y',(cy-h/2).toFixed(1));
+      brick.setAttribute('width',w.toFixed(1));brick.setAttribute('height',h.toFixed(1));setOp(brick,op);}
+
+    // ── TA TAILLE (jauge teal) — TOI. Elle gonfle sous la pression, elle rétrécit quand elle résiste. ──
+    const GX=780, GBASE=1130, GW=150, GNORM=200;
+    const gaugeHalo=mk('ellipse',{fill:YOU,'fill-opacity':0.12,opacity:0});
+    const gauge=mk('rect',{rx:5,fill:YOU,opacity:0});
+    const gaugeBase=mk('line',{stroke:INK,'stroke-width':6,opacity:0});
+    function setGauge(cx,base,h,wash,op,wob){const w=GW*(1+(wob||0));
+      gauge.setAttribute('x',(cx-w/2).toFixed(1));gauge.setAttribute('width',w.toFixed(1));
+      gauge.setAttribute('y',(base-h).toFixed(1));gauge.setAttribute('height',Math.max(4,h).toFixed(1));
+      gauge.setAttribute('fill',mix(YOU,DEAD,wash||0));setOp(gauge,op);
+      gaugeBase.setAttribute('x1',cx-110);gaugeBase.setAttribute('x2',cx+110);
+      gaugeBase.setAttribute('y1',base+8);gaugeBase.setAttribute('y2',base+8);setOp(gaugeBase,op);}
+
+    // ── S3 : LE DIPTYQUE ──
+    const divider=mk('line',{x1:90,y1:920,x2:990,y2:920,stroke:INK,'stroke-width':3,'stroke-dasharray':'18 14',opacity:0});
+    const nGauge=mk('rect',{rx:5,fill:YOU,opacity:0});
+    const rGauge=mk('rect',{rx:5,fill:YOU,opacity:0});
+    const nBar=mk('rect',{rx:5,fill:INK,opacity:0});
+    const rBar=mk('rect',{rx:5,fill:INK,opacity:0});
+    const lamThin=mk('rect',{rx:3,fill:DEAD,opacity:0});
+    const lamThick=mk('rect',{rx:4,fill:DEAD,opacity:0});
+    const judgeFrame=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:4,opacity:0});
+    const judge=mk('rect',{rx:3,fill:YOU,opacity:0});
+    function hideDip(){for(const e of [divider,nGauge,rGauge,nBar,rBar,lamThin,lamThick,judgeFrame,judge])setOp(e,0);}
+
+    // ── S4 : LE COMPTE QUI SE VIDE + LES DIX PERTES QUI S'EMPILENT ──
+    const ACX=790, ATOP=700, ABOT=1130, AW=160;
+    const acctFrame=mk('rect',{x:ACX-AW/2,y:ATOP,width:AW,height:ABOT-ATOP,rx:6,fill:'none',stroke:INK,'stroke-width':4,opacity:0});
+    const acct=mk('rect',{x:ACX-AW/2,width:AW,rx:6,fill:INK,opacity:0});
+    const winGlow=mk('ellipse',{fill:YOU,'fill-opacity':0.20,opacity:0});
+    const SKX=938, SKW=104;   // pile hors de la colonne du compte, mais à l'écart du rail droit d'Instagram
+    const STACK=[]; for(let i=0;i<10;i++)STACK.push(mk('rect',{x:SKX-SKW/2,width:SKW,height:24,rx:3,fill:DEAD,stroke:PAPER,'stroke-width':3,opacity:0}));
+    const ASH=[]; for(let i=0;i<9;i++)ASH.push(mk('rect',{width:13,height:13,rx:2,fill:DEAD,opacity:0}));
+    function hideS4(){for(const e of [acct,acctFrame,winGlow])setOp(e,0);for(const e of STACK)setOp(e,0);for(const e of ASH)setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DOES A LOSS','MAKE YOU BET BIGGER'];
+    const FS=72,lineH=98,y0=230,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+100,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':170,opacity:0});qMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||40),'letter-spacing':'1.5',opacity:0});}
+    const capTop=caption(44),capL=caption(38),capR=caption(38),capB=caption(46),capM=caption(32),capX=caption(38);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;const hw=txt.length*(+el.getAttribute('font-size'))*0.30,x=clamp(+cx,40+hw,1040-hw);el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capTop,capL,capR,capB,capM,capX])setOp(e,0);}
+    function hideCore(){setOp(brick,0);setOp(gauge,0);setOp(gaugeHalo,0);setOp(gaugeBase,0);setOp(thread,0);setOp(cutA,0);setOp(cutB,0);hideWaves();}
+
+    // ═══ S1 — LA TENSION POSÉE : la perte pulse, l'onde est déjà en vol, ta taille normale tremble ═══
+    // Verbe visuel : l'attente sous pression (ta taille n'a pas encore bougé — tout la menace).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideDip(); hideS4();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier TENSION — l'instant juste avant) : la brique de perte est DÉJÀ là, énorme et
+      //    pulsante ; une onde est DÉJÀ à mi-course vers la jauge ; ta taille normale TREMBLE. Aucun draw-on.
+      const p=1.05+0.11*Math.sin(u*2.7+1.2);
+      setBrick(BX,BY,BW*p,BH*p,1);
+      putCap(capL,'THE LOSS',BX,BY+BH*0.62+68,DEAD,1);
+      runWaves(BX,BY,u+0.62,0.72,470,0.55);                              // +0.62 : une onde déjà en vol à la frame 0
+      const trem=Math.sin(u*7.5)*0.013+Math.sin(u*2.1)*0.010;            // la taille normale vibre sous la pression
+      setGauge(GX,GBASE,GNORM+9*Math.sin(u*2.1),0,1,trem);
+      putCap(capR,'YOUR SIZE',GX,GBASE+78,YOU,1);
+      setOp(gaugeHalo,0);setOp(thread,0);setOp(cutA,0);setOp(cutB,0);
+    }
+
+    // ═══ S2 — LE GONFLEMENT : chaque onde qui frappe pousse la taille d'un cran ═══
+    // Verbe visuel : l'accumulation par impacts (la taille cesse d'être un choix).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideDip(); hideS4();
+      const p=1.05+0.11*Math.sin(u*2.7+1.2);
+      setBrick(BX,BY,BW*p,BH*p,1);
+      putCap(capL,'THE LOSS',BX,BY+BH*0.62+68,DEAD,1);
+      runWaves(BX,BY,u,0.72,470,0.6);
+      // 5 crans : la pulsation de la perte POUSSE, la jauge encaisse (squash court à chaque impact)
+      const T0=0.55, STEP=0.78, N=5, STEPH=46;
+      let h=GNORM, wob=0;
+      for(let k=0;k<N;k++){const q=clamp((u-(T0+k*STEP))/0.30,0,1);h+=STEPH*backOut(q,2.2);
+        const im=clamp((u-(T0+k*STEP))/0.16,0,1);wob+=0.075*(im<1?Math.sin(im*Math.PI):0);}
+      const breath=6*Math.sin(u*2.7+1.2);                                // la jauge respire au RYTHME de la perte (liée à elle)
+      setGauge(GX,GBASE,h+breath,0,1,wob);
+      // le FIL : la perte commande désormais la taille
+      const thAp=clamp((u-1.4)/0.6,0,1);
+      thread.setAttribute('x1',BX+BW*0.55);thread.setAttribute('y1',BY);thread.setAttribute('x2',GX-GW*0.62);thread.setAttribute('y2',(GBASE-h*0.5).toFixed(1));
+      thread.setAttribute('stroke-dashoffset',(-u*26).toFixed(0));setOp(thread,thAp*0.9);
+      // le halo de « soulagement » promis, qui respire
+      gaugeHalo.setAttribute('cx',GX);gaugeHalo.setAttribute('cy',(GBASE-h/2).toFixed(1));
+      gaugeHalo.setAttribute('rx',(148+16*Math.sin(u*1.6)).toFixed(1));gaugeHalo.setAttribute('ry',(h*0.72+20*Math.sin(u*1.6)).toFixed(1));
+      setOp(gaugeHalo,clamp((u-3.1)/0.8,0,1)*(0.75+0.25*Math.sin(u*2.2)));
+      putCap(capR,'YOUR SIZE',GX,GBASE+78,YOU,1);
+      putCap(capB,'SIZE BECAME A PAINKILLER',CX,1340,INK,clamp((u-4.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE DIPTYQUE : taille MAX et jugement MIN, au même instant ═══
+    // Verbe visuel : la comparaison A/B simultanée (les deux états face à face, séparés par la ligne).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideCore(); hideS4();
+      divider.setAttribute('stroke-dashoffset',(u*22).toFixed(0));setOp(divider,0.5);
+      // ── HAUT : NORMAL ── (jauge modérée, le compte ne risque qu'une fine lamelle)
+      const nBase=850, nH=110;
+      nGauge.setAttribute('x',195);nGauge.setAttribute('width',110);nGauge.setAttribute('y',nBase-nH);nGauge.setAttribute('height',nH);setOp(nGauge,1);
+      const nCycle=(u/2.4)%1, nLost=Math.floor(u/2.4), nTop=690+Math.min(4,nLost)*10;
+      nBar.setAttribute('x',700);nBar.setAttribute('width',180);nBar.setAttribute('y',nTop);nBar.setAttribute('height',(nBase-nTop));setOp(nBar,1);
+      lamThin.setAttribute('x',700);lamThin.setAttribute('width',180);lamThin.setAttribute('height',10);
+      lamThin.setAttribute('y',(nTop-16-eIn(nCycle)*120).toFixed(1));setOp(lamThin,(1-nCycle)*0.9);
+      putCap(capL,'NORMAL',250,600,YOU,1);
+      putCap(capR,'A THIN SLICE',790,600,DEAD,1);
+      // ── BAS : REVENGE ── (jauge gonflée, JUGEMENT qui se vide, tranche épaisse)
+      const rBase=1290, rH=270;
+      rGauge.setAttribute('x',195);rGauge.setAttribute('width',110);rGauge.setAttribute('y',rBase-rH);rGauge.setAttribute('height',rH);setOp(rGauge,1);
+      const jFull=170, jH=jFull*(1-0.87*clamp(u/9.0,0,1));               // le jugement SE VIDE tout au long (progression)
+      judgeFrame.setAttribute('x',382);judgeFrame.setAttribute('width',56);judgeFrame.setAttribute('y',rBase-jFull);judgeFrame.setAttribute('height',jFull);setOp(judgeFrame,1);
+      judge.setAttribute('x',386);judge.setAttribute('width',48);judge.setAttribute('y',(rBase-jH).toFixed(1));judge.setAttribute('height',Math.max(3,jH).toFixed(1));
+      judge.setAttribute('fill',mix(YOU,DEAD,clamp(u/7.5,0,1)));setOp(judge,1);
+      putCap(capM,'JUDGEMENT',410,1350,DEAD,1);
+      const rCycle=(u/2.4)%1, rLost=Math.floor(u/2.4), rTop=1080+Math.min(3,rLost)*36;
+      rBar.setAttribute('x',700);rBar.setAttribute('width',180);rBar.setAttribute('y',rTop);rBar.setAttribute('height',(rBase-rTop));setOp(rBar,1);
+      lamThick.setAttribute('x',700);lamThick.setAttribute('width',180);lamThick.setAttribute('height',44);
+      lamThick.setAttribute('y',(rTop-56-eIn(rCycle)*130).toFixed(1));setOp(lamThick,(1-rCycle)*0.95);
+      putCap(capX,'REVENGE',250,990,YOU,1);
+      putCap(capTop,'A THICK SLAB',790,990,DEAD,1);
+      putCap(capB,'MAX SIZE, MIN JUDGEMENT',CX,1450,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA BOUCLE QUI ACCÉLÈRE, PUIS L'EFFONDREMENT QUI VIDE TOUT ═══
+    // Verbe visuel : le cycle qui s'emballe (chaque tour plus gros, plus rapide) puis le compte englouti.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideDip();
+      const S4GX=520, S4BX=205, S4BY=800;
+      setOp(acctFrame,1); setOp(thread,0);setOp(cutA,0);setOp(cutB,0); setOp(gaugeHalo,0);
+      // ── les tours : la taille gonfle à chaque victoire, la cadence presse ──
+      const COL0=3.6, COL=clamp((u-COL0)/1.15,0,1);
+      const ROUND=[[0.15,1.25,300],[1.55,0.80,380],[2.45,0.62,450],[3.20,0.42,520]];
+      let h=300, wash=0, glow=0;
+      for(let k=0;k<ROUND.length;k++){const [t0,dur,hh]=ROUND[k];const q=clamp((u-t0)/(dur*0.45),0,1);
+        h=lerp(h,hh,eOut(q));
+        const g=clamp((u-(t0+dur*0.55))/0.18,0,1)*clamp(1-(u-(t0+dur*0.55))/0.55,0,1);glow=Math.max(glow,g);}
+      if(u>=COL0){wash=clamp((u-COL0)/0.7,0,1);h=lerp(520,22,eIn(clamp((u-COL0)/0.95,0,1)));}
+      setGauge(S4GX,GBASE,h,wash,1,0.02*Math.sin(u*9));
+      winGlow.setAttribute('cx',S4GX);winGlow.setAttribute('cy',(GBASE-h/2).toFixed(1));
+      winGlow.setAttribute('rx',165);winGlow.setAttribute('ry',(h*0.75).toFixed(1));setOp(winGlow,glow*0.9);
+      // ── le compte : plein, puis VIDÉ d'un coup par la revenge à taille max ──
+      const aH=(ABOT-ATOP)*(1-eIn(COL));
+      acct.setAttribute('y',(ABOT-aH).toFixed(1));acct.setAttribute('height',Math.max(0,aH).toFixed(1));setOp(acct,1);
+      // ── la perte qui relance le tour suivant + les ondes, de plus en plus pressées ──
+      const alive=u<COL0, bp=alive?(0.95+0.14*Math.sin(u*(3.2+u*1.6))):0.8;
+      setBrick(S4BX,S4BY,160*bp,115*bp,alive?1:0.5);
+      runWaves(S4BX,S4BY,u,alive?(0.75+u*0.42):0.35,400,alive?0.55:0.18);
+      putCap(capTop,'REVENGE PAYS — SO YOU DO IT AGAIN',CX,540,INK,clamp((u-0.4)/0.5,0,1)*clamp(1-(u-3.3)/0.5,0,1));
+      putCap(capR,'YOUR ACCOUNT',ACX,ABOT+62,INK,clamp((u-0.6)/0.5,0,1));
+      // ── APRÈS L'EFFONDREMENT : dix briques grises s'empilent à côté du compte vide — progression continue ──
+      const S0=4.7, SGAP=0.5;
+      for(let i=0;i<STACK.length;i++){const q=clamp((u-(S0+i*SGAP))/0.32,0,1);
+        const yEnd=ABOT-28-i*27, yStart=yEnd-200;
+        STACK[i].setAttribute('y',lerp(yStart,yEnd,eIn(q)).toFixed(1));setOp(STACK[i],q*0.95);}
+      // cendres : la vie continue pendant la tenue longue
+      for(let i=0;i<ASH.length;i++){const ph=((u*0.34)+i/ASH.length)%1;
+        ASH[i].setAttribute('x',(ACX-140+((i*89)%280)).toFixed(0));
+        ASH[i].setAttribute('y',(ATOP-40+ph*(ABOT-ATOP+70)).toFixed(0));
+        setOp(ASH[i],u>COL0+0.9?(1-ph)*0.45:0);}
+      putCap(capB,'NOT ONE LOSS — TEN',CX,1340,INK,clamp((u-5.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA DÉCHARGE : sous la pression, la taille RÉSISTE et RÉTRÉCIT ; le fil se coupe ═══
+    // Verbe visuel : le réflexe inversé (l'impact fait rentrer au lieu de faire gonfler).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideDip(); hideS4();
+      const p=1.02+0.09*Math.sin(u*2.7+1.2);
+      setBrick(BX,BY,BW*p,BH*p,1);
+      putCap(capL,'THE LOSS',BX,BY+BH*0.62+68,DEAD,1);
+      setOp(gaugeHalo,0);
+      // 4 impacts : à chaque onde, la jauge RENTRE d'un cran (au lieu de gonfler) jusqu'à sa taille normale
+      const T0=0.35, STEP=0.44, N=4, DOWN=(430-GNORM)/N;
+      let h=430, wob=0;
+      for(let k=0;k<N;k++){const q=clamp((u-(T0+k*STEP))/0.26,0,1);h-=DOWN*eOut(q);
+        const im=clamp((u-(T0+k*STEP))/0.14,0,1);wob-=0.055*(im<1?Math.sin(im*Math.PI):0);}
+      const CUT=2.25, calm=clamp((u-CUT)/0.8,0,1);
+      setGauge(GX,GBASE,h+(calm>0?7*Math.sin(u*1.5):5*Math.sin(u*3.0)),0,1,wob);
+      // le fil, puis ses deux bouts qui se rétractent (la perte ne commande plus)
+      const y2=GBASE-h*0.5;
+      if(u<CUT){thread.setAttribute('x1',BX+BW*0.55);thread.setAttribute('y1',BY);thread.setAttribute('x2',GX-GW*0.62);thread.setAttribute('y2',y2.toFixed(1));
+        thread.setAttribute('stroke-dashoffset',(-u*26).toFixed(0));setOp(thread,0.9);setOp(cutA,0);setOp(cutB,0);}
+      else{setOp(thread,0);const r=eOut(clamp((u-CUT)/0.5,0,1)),mx=(BX+BW*0.55+GX-GW*0.62)/2,my=(BY+y2)/2;
+        cutA.setAttribute('x1',BX+BW*0.55);cutA.setAttribute('y1',BY);cutA.setAttribute('x2',(mx-36*r).toFixed(1));cutA.setAttribute('y2',(my-18*r).toFixed(1));setOp(cutA,0.85*(1-0.45*r));
+        cutB.setAttribute('x1',(mx+36*r).toFixed(1));cutB.setAttribute('y1',(my+18*r).toFixed(1));cutB.setAttribute('x2',GX-GW*0.62);cutB.setAttribute('y2',y2.toFixed(1));setOp(cutB,0.85*(1-0.45*r));}
+      // les ondes continuent d'arriver — mais elles SE BRISENT avant la jauge
+      runWaves(BX,BY,u,0.62,calm>0?300:470,calm>0?0.34:0.6);
+      putCap(capR,'YOUR SIZE',GX,GBASE+78,YOU,1);
+      putCap(capB,'THE URGE TO GET IT BACK = SIZE DOWN',CX,1340,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
