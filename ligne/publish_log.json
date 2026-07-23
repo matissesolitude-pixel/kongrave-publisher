@@ -196,5 +196,14 @@
     "container_id": "18139791730557833",
     "published_at": "2026-07-22T10:37:09.618962+00:00",
     "logged_at": "2026-07-22T10:37:09.618962+00:00"
+  },
+  {
+    "episode": "L20",
+    "status": "success",
+    "media_id": null,
+    "container_id": null,
+    "published_at": "2026-07-23T05:56:55+00:00",
+    "logged_at": "2026-07-23T05:56:55+00:00",
+    "note": "publie sur Instagram par le run 29983469227 ; journal reconstruit a la main (push du runner rejete par une collision de commit)"
   }
 ]
