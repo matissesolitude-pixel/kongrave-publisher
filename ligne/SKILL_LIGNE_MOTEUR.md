@@ -278,11 +278,26 @@ Deux défauts sont sortis publiés, visibles à l'œil nu sur le feed :
   rattrapage. On rattrape par la PRODUCTION (remplir la file), jamais en accélérant
   la publication.
 - **Meta peut refuser un fichier sans raison mesurable** (`ProcessingFailedError`,
-  `retriable:false`). Vu sur L22 : deux encodages indépendants refusés, quand un
-  autre épisode du même jour, du même pipeline, passait entre les deux tentatives.
-  Réflexe : comparer les deux fichiers (`ffprobe -show_format -show_streams`) ; si
-  rien ne les distingue, **sortir l'épisode de la file** (`_hold/`) et passer son
-  moteur en `.wip` — un épisode empoisonné bloque toute la file FIFO derrière lui.
+  `retriable:false`). Vu sur L22, L24, L25 : fichiers **prouvés identiques** (même
+  `ffprobe`) à des épisodes acceptés, et pourtant refusés. C'est **opaque et non
+  déterministe** — la faute n'est pas dans le fichier.
+- **Le publisher gère ça tout seul depuis le 23/07** (`publish_ligne.py`) — voir LOI 11bis.
+
+## LOI 11bis — REFUS META : NE JAMAIS GELER LA FILE, REPRODUIRE DE ZÉRO (payé le 23/07 : L24→L28 gelés)
+
+Un épisode empoisonné en tête de file bloquait **toute la file derrière lui** (le publisher
+rejouait le même à chaque run en sortant en `success` trompeur). Corrigé — **automatique** :
+
+- **1er échec complet →** passe à l'épisode **suivant** (débit préservé, ordre sacrifié),
+  reretente le fautif aux runs suivants.
+- **3 refus cumulés →** écarte l'épisode (`_hold/LNN_meta_<date>`), **archive le moteur**
+  (`engine/lNN.html` → `.refused_<date>`), et **programme une REPRODUCTION DE ZÉRO** : le moteur
+  redevient « manquant » → tu le **recodes à neuf** → l'autoprod refait un master → retour en file.
+- **Règle d'or :** le nouveau rendu **doit différer matériellement** du refusé (Meta a rejeté ce
+  flux d'octets ; un rendu quasi identique sera re-rejeté). Recode vraiment de zéro, ne recopie
+  pas l'archive `.refused_*` (jamais supprimée).
+- **Borne : 2 reproductions**, puis abandon + alerte pour intervention manuelle.
+- Le `.wip` reste réservé aux moteurs **volontairement** mis de côté, pas aux refus Meta.
 
 ## LE CIRCUIT COMPLET D'UN ÉPISODE
 

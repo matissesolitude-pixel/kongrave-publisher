@@ -11,6 +11,28 @@ autoportant : tout ce qu'il faut savoir est ici ou pointé depuis ici.
 sont écrits jusqu'à L42, mais un JSON ne devient jamais une vidéo tout seul :
 il faut un moteur. Sans moteur neuf, la file se vide et le compte cesse de publier.
 
+## PRIORITÉ ABSOLUE : REPRODUIRE UN ÉPISODE REFUSÉ PAR META
+
+Meta refuse parfois un épisode à la publication (`ProcessingFailedError`) **alors que le
+fichier est prouvé valide** — même encodage, mêmes specs qu'un épisode accepté. C'est une
+erreur **opaque et non déterministe** de Meta : on ne peut pas la corriger dans le fichier,
+seulement **reproduire l'épisode de zéro** pour obtenir un nouveau master qui, lui, passera.
+
+Quand le publisher a épuisé ses tentatives, il **retire le moteur** de l'épisode fautif :
+`ligne/engine/lNN.html` est déplacé en `ligne/engine/lNN.html.refused_<date>` et l'épisode
+est rangé dans `ligne/_hold/LNN_meta_<date>`. **Le moteur redevient donc « manquant ».**
+
+**Ta règle :** si `episodes/LNN.json` existe, `engine/lNN.html` est **absent**, et qu'il
+existe un `engine/lNN.html.refused_*` (ou un `_hold/LNN_meta_*`), ce N est une **REPRODUCTION**.
+- Traite-le **en priorité** (c'est de toute façon le plus petit N manquant).
+- **Le nouveau rendu DOIT DIFFÉRER MATÉRIELLEMENT du refusé.** Meta a rejeté ce flux d'octets
+  précis ; un rendu quasi identique sera re-rejeté. Recode **réellement de zéro** (autres
+  compositions / timings / choix d'objets, dans le même brief JSON) — ne recopie pas l'archive.
+  Tu peux ouvrir le `.refused_*` uniquement pour voir ce qu'il ne faut **pas** refaire à l'identique.
+- **Ne supprime jamais** les `.refused_*` : c'est l'historique des refus.
+- La reproduction est **bornée automatiquement à 2 fois** : au-delà, le publisher abandonne et
+  alerte pour intervention manuelle. Tu n'as rien à compter — code simplement le moteur manquant.
+
 ## LA LOI
 
 **`ligne/SKILL_LIGNE_MOTEUR.md` est la loi.** Elle se lit EN ENTIER avant d'écrire

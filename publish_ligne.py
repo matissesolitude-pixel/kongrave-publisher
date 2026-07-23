@@ -63,6 +63,20 @@ BLOCKED_DIR = LIGNE_DIR / "_blocked"          # les épisodes bloqués y sont d�
 PUBLISH_HOUR_PARIS = 18       # publie quand il est 18h à Paris (le cron cadre la fenêtre)
 CADENCE_GRACE_H = 0.5         # marge anti-gigue sur la cadence
 
+# ANTI-BLOCAGE DE FILE. Meta renvoie un ProcessingFailedError OPAQUE et NON déterministe :
+# un fichier prouvé valide (identique à un épisode accepté) peut être refusé. Sans garde-fou,
+# le publisher rejoue éternellement le même épisode en tête de file et gèle toute la chaîne.
+# Règle : au 1er échec complet d'un épisode, on tente le SUIVANT ce run (débit préservé), et
+# l'épisode fautif est reretenté aux runs suivants. Au bout de QUARANTINE_AFTER échecs cumulés,
+# on l'écarte en _hold/ (file définitivement débloquée) avec alerte Telegram forte.
+STATE_PATH = LIGNE_DIR / "publish_state.json"   # compteur d'échecs cumulés par épisode {nom: n}
+HOLD_DIR = LIGNE_DIR / "_hold"                   # épisodes écartés (refus Meta persistant, malformés)
+EPISODES_DIR = LIGNE_DIR / "episodes"            # LNN.json (brief) — sert à retrouver le nom du moteur
+ENGINE_DIR = LIGNE_DIR / "engine"               # lNN.html (moteur d'animation)
+QUARANTINE_AFTER = 3          # échecs Meta CUMULÉS (cross-run) avant mise en _hold
+MAX_ATTEMPTS_PER_RUN = 6      # borne le temps d'un run quand plusieurs épisodes échouent d'affilée
+MAX_REBUILDS = 2              # REPRODUCTIONS DE ZÉRO auto d'un épisode refusé avant abandon manuel
+
 
 # --------------------------------------------------------------------------- #
 # Chargement / persistance
@@ -197,15 +211,86 @@ def _last_publish(log: list) -> Optional[datetime]:
 # --------------------------------------------------------------------------- #
 # File d'attente
 # --------------------------------------------------------------------------- #
-def _oldest_episode() -> Optional[Path]:
-    """Plus ancien = sous-dossier au nom trié en premier (préfixe sortable)."""
+def _oldest_episode(exclude: frozenset = frozenset()) -> Optional[Path]:
+    """Plus ancien = sous-dossier au nom trié en premier (préfixe sortable).
+    `exclude` : noms de dossiers à ignorer (déjà tentés-et-échoués ce run) pour passer au suivant."""
     if not QUEUE_DIR.is_dir():
         return None
     subs = sorted(
-        (p for p in QUEUE_DIR.iterdir() if p.is_dir() and not p.name.startswith(".")),
+        (p for p in QUEUE_DIR.iterdir()
+         if p.is_dir() and not p.name.startswith(".") and p.name not in exclude),
         key=lambda p: p.name,
     )
     return subs[0] if subs else None
+
+
+def _fail_counts() -> dict:
+    """Compteur d'échecs Meta cumulés par épisode (persisté entre runs)."""
+    data = _load_json(STATE_PATH, {})
+    return data if isinstance(data, dict) else {}
+
+
+def _set_fail_count(name: str, n: int) -> None:
+    counts = _fail_counts()
+    if n <= 0:
+        counts.pop(name, None)   # succès ou quarantaine : on nettoie l'entrée
+    else:
+        counts[name] = n
+    _save_json(STATE_PATH, counts)
+
+
+def _count_meta_holds(name: str) -> int:
+    """Nb de fois où l'épisode a été écarté pour refus Meta (dossiers _hold/<name>_meta_*)."""
+    if not HOLD_DIR.is_dir():
+        return 0
+    return sum(1 for p in HOLD_DIR.iterdir()
+               if p.is_dir() and p.name.startswith(f"{name}_meta_"))
+
+
+def _engine_name(name: str) -> str:
+    """Nom du moteur d'un épisode = champ 'engine' de son JSON (repli : 'L24' -> 'l24')."""
+    jp = EPISODES_DIR / f"{name}.json"
+    if jp.is_file():
+        try:
+            eng = (json.loads(jp.read_text(encoding="utf-8")) or {}).get("engine")
+            if eng:
+                return str(eng)
+        except (ValueError, OSError):
+            pass
+    return name.lower()
+
+
+def _request_rebuild(name: str) -> bool:
+    """Programme une REPRODUCTION DE ZÉRO : archive le moteur refusé et le retire de engine/,
+    pour que la routine « moteurs » le RECODE À NEUF (Meta a refusé ce flux d'octets ; un simple
+    ré-encodage échoue — constaté sur L22). Le moteur disparu, la routine (qui code le plus petit
+    lN.html manquant) reprend l'épisode ; l'autoprod re-fabrique un nouveau master qui repart en file.
+    Retourne False si le moteur est introuvable (rien à réamorcer)."""
+    eng = _engine_name(name)
+    html = ENGINE_DIR / f"{eng}.html"
+    if not html.is_file():
+        return False
+    archived = ENGINE_DIR / f"{eng}.html.refused_{_now_utc().strftime('%Y%m%dT%H%M%SZ')}"
+    shutil.move(str(html), str(archived))
+    return True
+
+
+def _try_publish(mp4: Path, caption: str, dry_run: bool):
+    """Tente la publication. Retourne (pub, exc) : pub non-None = succès.
+    Retente jusqu'à 3× DANS le run sur le seul ProcessingFailedError (intermittent constaté)."""
+    last_exc = None
+    for attempt in range(1, 4):
+        try:
+            return publish_episode(mp4.resolve(), caption, dry_run=dry_run), None
+        except (ig_api.IgApiError, PublishError) as exc:
+            last_exc = exc
+            if "ProcessingFailedError" in str(exc) and attempt < 3:
+                print(f"[ligne] ProcessingFailedError (tentative {attempt}/3) — retry dans 25s…",
+                      file=sys.stderr)
+                time.sleep(25)
+                continue
+            break
+    return None, last_exc
 
 
 def _episode_files(folder: Path):
@@ -245,86 +330,127 @@ def run(dry_run: bool = False, force: bool = False) -> int:
             print(f"[ligne] Cadence non écoulée ({elapsed:.1f}h < {cadence}h) — refus de publier.")
             return 0
 
-    # FILET PASSIF : intègre les ❌ reçus depuis Telegram, puis sélectionne le plus ancien NON bloqué.
+    # FILET PASSIF : intègre les ❌ reçus depuis Telegram (alimente blocked.json).
     if not dry_run:
         _ingest_blocks()
     blocked = _blocked_set()
-    ep = None
-    while True:
-        ep = _oldest_episode()
+
+    # BOUCLE ANTI-BLOCAGE. On publie AU PLUS UN épisode par run (cadence). On sélectionne le plus
+    # ancien ; en cas d'échec Meta on ÉCARTE l'épisode de la sélection de CE run (`tried`) et on
+    # tente le suivant, pour ne jamais geler la file sur un fichier toxique. `tried` empêche de
+    # re-sélectionner le même épisode en boucle dans le run ; il reste dans la file pour les runs
+    # suivants tant qu'il n'a pas atteint QUARANTINE_AFTER échecs cumulés.
+    tried: set = set()
+    saw_candidate = False
+    while len(tried) < MAX_ATTEMPTS_PER_RUN:
+        ep = _oldest_episode(exclude=frozenset(tried))
         if ep is None:
             break
-        if ep.name.upper() in blocked:
+        name = ep.name
+        tried.add(name)
+
+        # Bloqué par le PO (❌ / STOP) : retirer en _blocked/ et passer au suivant.
+        if name.upper() in blocked:
             BLOCKED_DIR.mkdir(parents=True, exist_ok=True)
-            dest_b = BLOCKED_DIR / ep.name
+            dest_b = BLOCKED_DIR / name
             if dest_b.exists():
                 shutil.rmtree(dest_b)
             shutil.move(str(ep), str(dest_b))
-            print(f"[ligne] {ep.name} bloqué (filet passif) — retiré de la file.")
+            print(f"[ligne] {name} bloqué (filet passif) — retiré de la file.")
             if not dry_run:
-                notify.send(f"❌ LIGNE : {ep.name} retiré de la file (bloqué), non publié.")
+                notify.send(f"❌ LIGNE : {name} retiré de la file (bloqué), non publié.")
             continue
-        break
 
-    if ep is None:
-        # FAIL LOUD : c'est l'heure de publier mais la file est vide.
+        saw_candidate = True
+
+        # Dossier malformé (pas de .mp4, ou plusieurs) : écarter en _hold pour ne pas bloquer.
+        try:
+            mp4, caption = _episode_files(ep)
+        except PublishError as exc:
+            print(f"[ligne] {exc}", file=sys.stderr)
+            if not dry_run:
+                HOLD_DIR.mkdir(parents=True, exist_ok=True)
+                dest_h = HOLD_DIR / f"{name}_malforme"
+                if dest_h.exists():
+                    shutil.rmtree(dest_h)
+                shutil.move(str(ep), str(dest_h))
+                _set_fail_count(name, 0)
+                notify.send(f"⛔️ LIGNE {name} écarté (dossier malformé) : {exc}\nFile débloquée.")
+            _append_log({"episode": name, "status": "error", "error": str(exc), "logged_at": _iso(now)})
+            continue
+
+        pub, exc = _try_publish(mp4, caption, dry_run)
+
+        # SUCCÈS : un seul post par run.
+        if pub is not None:
+            if dry_run:
+                print(f"[ligne] DRY-RUN {name} OK — conteneur {pub.get('container_id')} "
+                      f"(non publié, dossier non déplacé).")
+                return 0
+            PUBLISHED_DIR.mkdir(parents=True, exist_ok=True)
+            dest = PUBLISHED_DIR / name
+            if dest.exists():
+                dest = PUBLISHED_DIR / f"{name}_{now.strftime('%Y%m%dT%H%M%SZ')}"
+            shutil.move(str(ep), str(dest))
+            _set_fail_count(name, 0)
+            _append_log({
+                "episode": name, "status": "success",
+                "media_id": pub["media_id"], "container_id": pub["container_id"],
+                "published_at": _iso(now), "logged_at": _iso(now),
+            })
+            notify.send(f"✅ LIGNE {name} publié sur @kongrave_.\nmedia_id : {pub['media_id']}")
+            print(f"[ligne] {name} publié et déplacé en published/.")
+            return 0
+
+        # ÉCHEC : compter, alerter, décider quarantaine vs re-tentative.
+        fails = _fail_counts().get(name, 0) + 1
+        print(f"[ligne] Échec publication {name} ({fails}/{QUARANTINE_AFTER}) : {exc}", file=sys.stderr)
+        _append_log({"episode": name, "status": "error", "attempt": fails,
+                     "error": str(exc), "logged_at": _iso(now)})
+
+        if dry_run:
+            return 0  # en dry-run on ne persiste rien ; un échec suffit à le signaler
+
+        if fails >= QUARANTINE_AFTER:
+            # QUARANTAINE : refus Meta persistant -> hors file, file débloquée, REPRODUCTION DE ZÉRO.
+            HOLD_DIR.mkdir(parents=True, exist_ok=True)
+            dest_h = HOLD_DIR / f"{name}_meta_{now.strftime('%Y%m%dT%H%M%SZ')}"
+            shutil.move(str(ep), str(dest_h))
+            _set_fail_count(name, 0)
+            refused = _count_meta_holds(name)     # nb total de refus (dossiers _hold/<name>_meta_*)
+            if refused <= MAX_REBUILDS and _request_rebuild(name):
+                notify.send(f"⛔️ LIGNE {name} refusé par Meta ({refused}/{MAX_REBUILDS + 1}). "
+                            f"File débloquée. REPRODUCTION DE ZÉRO programmée : le moteur est recodé "
+                            f"à neuf puis re-fabriqué automatiquement (nouveau master).")
+                print(f"[ligne] {name} refusé ({refused}) — moteur remis à reproduire de zéro.")
+            else:
+                notify.send(f"🛑 LIGNE {name} refusé par Meta malgré {max(refused - 1, 0)} reproduction(s). "
+                            f"Abandon auto — rangé dans _hold/, intervention manuelle nécessaire.")
+                print(f"[ligne] {name} abandonné après {refused} refus — intervention manuelle.")
+        else:
+            # Pas encore quarantaine : reste en file, sera reretenté au prochain run.
+            _set_fail_count(name, fails)
+            notify.send(f"⚠️ LIGNE {name} : refus Meta ({fails}/{QUARANTINE_AFTER}). "
+                        f"Je tente l'épisode suivant ; {name} reste en file.")
+        # passer au suivant ce run (skip-to-next)
+        continue
+
+    # Sortie de boucle sans publication.
+    if not saw_candidate:
+        # File vide (ou uniquement des épisodes bloqués déjà retirés) : FAIL LOUD.
         msg = ("⚠️ LIGNE : file vide à l'heure de publier — rien publié.\n"
                "Dépose un épisode (dossier .mp4 + caption.txt) dans ligne/queue/.")
         print(f"[ligne] {msg}")
         if not dry_run:
             notify.send(msg)
-        return 0
-
-    try:
-        mp4, caption = _episode_files(ep)
-    except PublishError as exc:
-        print(f"[ligne] {exc}", file=sys.stderr)
-        notify.send(f"❌ LIGNE : {exc}")
-        _append_log({"episode": ep.name, "status": "error", "error": str(exc), "logged_at": _iso(now)})
-        return 0
-
-    # Meta renvoie parfois un ProcessingFailedError INTERMITTENT à l'upload (constaté : un
-    # même fichier échoue puis passe au retry). On retente jusqu'à 3× sur cette erreur-là
-    # uniquement ; toute autre erreur casse tout de suite (pas de retry aveugle).
-    pub = last_exc = None
-    for attempt in range(1, 4):
-        try:
-            pub = publish_episode(mp4.resolve(), caption, dry_run=dry_run)
-            break
-        except (ig_api.IgApiError, PublishError) as exc:
-            last_exc = exc
-            if "ProcessingFailedError" in str(exc) and attempt < 3:
-                print(f"[ligne] ProcessingFailedError (tentative {attempt}/3) — retry dans 25s…", file=sys.stderr)
-                time.sleep(25)
-                continue
-            break
-    if pub is None:
-        print(f"[ligne] Échec publication {ep.name} : {last_exc}", file=sys.stderr)
-        notify.send(f"❌ LIGNE {ep.name} : échec publication (après retries).\n{last_exc}")
-        _append_log({"episode": ep.name, "status": "error", "error": str(last_exc), "logged_at": _iso(now)})
-        return 0
-
-    if dry_run:
-        print(f"[ligne] DRY-RUN {ep.name} OK — conteneur {pub.get('container_id')} "
-              f"(non publié, dossier non déplacé).")
-        return 0
-
-    # Succès : déplacer en published/ + journaliser + notifier.
-    PUBLISHED_DIR.mkdir(parents=True, exist_ok=True)
-    dest = PUBLISHED_DIR / ep.name
-    if dest.exists():
-        dest = PUBLISHED_DIR / f"{ep.name}_{now.strftime('%Y%m%dT%H%M%SZ')}"
-    shutil.move(str(ep), str(dest))
-    _append_log({
-        "episode": ep.name,
-        "status": "success",
-        "media_id": pub["media_id"],
-        "container_id": pub["container_id"],
-        "published_at": _iso(now),
-        "logged_at": _iso(now),
-    })
-    notify.send(f"✅ LIGNE {ep.name} publié sur @kongrave_.\nmedia_id : {pub['media_id']}")
-    print(f"[ligne] {ep.name} publié et déplacé en published/.")
+    else:
+        # Des épisodes existaient mais aucun n'a pu être publié ce run (tous en échec Meta).
+        print("[ligne] Aucun épisode publiable ce run (échecs Meta) — reretente au prochain créneau.",
+              file=sys.stderr)
+        if not dry_run:
+            notify.send("⚠️ LIGNE : aucun épisode publiable ce run (refus Meta en série). "
+                        "Reretente au prochain créneau ; quarantaine auto au-delà de "
+                        f"{QUARANTINE_AFTER} échecs.")
     return 0
 
 
