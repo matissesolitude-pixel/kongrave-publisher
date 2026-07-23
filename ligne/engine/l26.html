@@ -69,7 +69,8 @@
         const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
         el.setAttribute('font-size',nom);
         let w=el.getComputedTextLength()||0;
-        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||w; }
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
         el.__hw=w/2;
       }
       const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
