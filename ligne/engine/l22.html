@@ -93,11 +93,12 @@
       // ── ÉMOTION FRAME 0 (levier CURIOSITÉ) : la PILE est DÉJÀ là, en silhouette, bien plus grosse que le
       //    spread — on ne sait pas encore ce que c'est, et ça respire. Aucun draw-on : tout est posé à t=0.
       setOp(shadow,0);
-      for(let i=0;i<depth.length;i++){
-        const br=6*Math.sin(u*1.2-i*0.8);                                // la silhouette respire (vie continue)
-        depth[i].setAttribute('transform',`translate(${(br*0.6).toFixed(1)} ${br.toFixed(1)})`);
+      for(let i=0;i<depth.length;i++){                                  // la silhouette DÉRIVE en continu (vie continue,
+        const dx=17*Math.sin(u*0.9-i*0.7)+7*Math.sin(u*1.7+i*1.1);       // deux harmoniques : la vitesse ne s'annule jamais)
+        const dy=9*Math.sin(u*1.25-i*0.5)+4*Math.sin(u*2.1+i*0.8);
+        depth[i].setAttribute('transform',`translate(${dx.toFixed(1)} ${dy.toFixed(1)})`);
         depth[i].setAttribute('fill-opacity',(0.15+0.05*Math.sin(u*1.2-i*0.8)).toFixed(3));setOp(depth[i],1);}
-      setSpread(450,1090,SPW,26+2.5*Math.sin(u*2.6),1);                  // le spread, minuscule et net devant
+      setSpread(450,1090,SPW,26+4*Math.sin(u*2.6)+2*Math.sin(u*4.1),1);  // le spread, minuscule et net devant
       putCap(capA,'THE SPREAD',450,1195,YOU,1);
       putCap(capC,'SOMETHING BEHIND IT',600,715,DEAD,clamp((u-1.6)/0.7,0,1)*gf);
     }
@@ -147,22 +148,26 @@
     // Verbe visuel : la duplication cadencée qui devient une masse.
     function s4(lf,t,s){
       const u=t-s; hideQ(); hideCaps(); hideDepth(); hideS3(); hideS5(); hideSpread(); setOp(shadow,0);
-      // COUPE FRANCHE : la scène OUVRE sur l'unité EN GRAND (le coût d'un seul trade), déjà pleine à t=0 —
-      // jamais d'écran vide. Elle rétrécit ensuite jusqu'à la taille de grille, et la multiplication démarre.
-      const shrink=clamp((u-0.9)/0.7,0,1), bs=lerp(1,0.085,eIn(shrink));
-      const bcx=lerp(540,GX0+12,eIn(shrink)), bcy=lerp(987,GY0+12,eIn(shrink));
-      bigUnit.setAttribute('transform',`translate(${(bcx-540*bs).toFixed(1)} ${(bcy-987*bs).toFixed(1)}) scale(${bs.toFixed(3)})`);
-      setOp(bigUnit,shrink<1?1:0);
-      const N=Math.max(shrink>=1?1:0,Math.floor(260*eIn(clamp((u-1.5)/3.6,0,1))));  // cadence qui ACCÉLÈRE (lent -> pluie)
-      const sweep=((u*0.28)%1)*(COLS+13)-6;                              // vie continue : une vague balaie la masse
+      // DÉZOOM : la scène OUVRE sur UNE unité qui remplit tout le cadre (le coût d'un seul trade) — jamais
+      // d'écran vide. À mesure que les copies s'accumulent, la grille se resserre et les unités RÉTRÉCISSENT :
+      // la masse occupe toujours la même boîte, seule la DENSITÉ change. C'est ça, la multiplication.
+      setOp(bigUnit,0);
+      const BXL=200, BXR=880, BYT=900, BYB=1330, BW2=BXR-BXL, BH2=BYB-BYT;
+      const N=Math.max(1,Math.floor(260*eIn(clamp((u-0.8)/3.8,0,1))));   // cadence qui ACCÉLÈRE (lent -> pluie)
+      const cols=Math.max(1,Math.ceil(Math.sqrt(N*BW2/BH2))), rows=Math.ceil(N/cols);
+      const cw=BW2/cols, ch=BH2/rows;
+      const sweep=((u*0.28)%1)*(cols+6)-3;                               // vie continue : une vague balaie la masse
       for(let i=0;i<UNITS.length;i++){
         if(i>=N){setOp(UNITS[i],0);continue;}
-        const c=i%COLS, r=Math.floor(i/COLS);
-        UNITS[i].setAttribute('transform',`translate(${GX0+c*UW} ${GY0-r*UH})`);
-        const near=1-clamp(Math.abs(c+r*0.5-sweep)/3.5,0,1);
-        setOp(UNITS[i],0.55+0.45*near);}
-      setOp(oneGhost,clamp((u-1.7)/0.5,0,1));
-      putCap(capE,'ONE TRADE',lerp(540,140,eIn(shrink)),lerp(1160,1398,eIn(shrink)),INK,1);
+        const c=i%cols, r=Math.floor(i/cols);
+        const sx=(cw*0.88)/(UW-6), sy=(ch*0.88)/23;
+        const rip=7*Math.sin(u*1.9-c*0.55);                              // vie continue : une houle traverse la masse
+        UNITS[i].setAttribute('transform',`translate(${(BXL+c*cw+cw*0.06).toFixed(1)} ${(BYB-(r+1)*ch+ch*0.06+rip).toFixed(1)}) scale(${sx.toFixed(3)} ${sy.toFixed(3)})`);
+        const near=1-clamp(Math.abs(c-sweep)/2.5,0,1);
+        setOp(UNITS[i],0.6+0.4*near);}
+      const lab=clamp((u-1.6)/0.7,0,1);
+      setOp(oneGhost,lab);
+      putCap(capE,'ONE TRADE',lerp(540,140,eIn(lab)),1398,INK,1);
       putCap(capA,'ONE MONTH',CX+90,1398,INK,clamp((u-3.0)/0.6,0,1));
       putCap(capB,'THE SPREAD DIDN’T GROW',CX,600,INK,clamp((u-5.0)/0.7,0,1));
       putCap(capD,'YOU PAID IT HUNDREDS OF TIMES',CX,668,DEAD,clamp((u-5.6)/0.7,0,1));
@@ -173,15 +178,15 @@
     function s5(lf,t,s){
       const u=t-s; hideQ(); hideCaps(); hideDepth(); hideS3(); hideS4(); hideSpread(); setOp(shadow,0);
       setOp(ground,1);
-      const nL=Math.floor(LEFT.length*eOut(clamp((u-0.3)/3.4,0,1)));     // beaucoup de petites unités, vite
-      const nR=Math.floor(RIGHT.length*eOut(clamp((u-0.3)/3.4,0,1)));    // peu de grosses unités, au même tempo
+      const nL=Math.max(1,Math.floor(LEFT.length*eOut(clamp(u/3.2,0,1))));     // beaucoup de petites unités, vite
+      const nR=Math.max(1,Math.floor(RIGHT.length*eOut(clamp(u/3.2,0,1))));    // peu de grosses unités, au même tempo
       for(let i=0;i<LEFT.length;i++){
         if(i>=nL){setOp(LEFT[i],0);continue;}
-        const rip=(u>3.6)?4.5*Math.sin(u*2.0-i*0.55):0;                  // la vague REMONTE la pile : rien ne se fige
+        const rip=5*Math.sin(u*2.0-i*0.55)*clamp((u-0.4)/0.6,0,1);                  // la vague REMONTE la pile : rien ne se fige
         LEFT[i].setAttribute('y',(GROUND-20-i*20+rip).toFixed(1));setOp(LEFT[i],1);}
       for(let i=0;i<RIGHT.length;i++){
         if(i>=nR){setOp(RIGHT[i],0);continue;}
-        const rip=(u>3.6)?4.5*Math.sin(u*2.0-i*0.9+1.4):0;
+        const rip=5*Math.sin(u*2.0-i*0.9+1.4)*clamp((u-0.4)/0.6,0,1);
         RIGHT[i].setAttribute('y',(GROUND-48-i*48+rip).toFixed(1));setOp(RIGHT[i],1);}
       putCap(capC,'TIGHT SPREAD',LCX,1392,YOU,1);
       putCap(capE,'TRADED CONSTANTLY',LCX,1440,DEAD,1);
