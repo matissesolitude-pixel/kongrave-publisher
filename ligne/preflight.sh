@@ -31,7 +31,14 @@ for x in sc:
 (pathlib.Path(out)/"probes.txt").write_text("\n".join(str(p) for p in probes))
 print(f"TOTAL={s:.1f}s  scenes={[(x['s'],x['d']) for x in sc]}  sondes={len(probes)}")
 PY
-CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+# Chrome/Chromium portable : macOS en local, chromium sous Linux (agent cloud).
+CHROME=""
+for c in "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+         "$(command -v chromium 2>/dev/null)" "$(command -v chromium-browser 2>/dev/null)" \
+         "$(command -v google-chrome 2>/dev/null)" "$(command -v google-chrome-stable 2>/dev/null)"; do
+  [ -n "$c" ] && [ -x "$c" ] && CHROME="$c" && break
+done
+[ -n "$CHROME" ] || { echo "PRE-VOL IMPOSSIBLE : ni Chrome ni Chromium trouve."; exit 2; }
 ABS="$(cd "$OUT" && pwd)"
 while read -r T; do
   T2=$(python3 -c "print(round($T+1/15,4))")
