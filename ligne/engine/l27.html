@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L27 « TWO WINS, ONE HABIT » — S1 : émotion frame 0 = levier CURIOSITÉ — le GAIN teal brille déjà, net et satisfaisant, mais ce
+       sur quoi il repose est noyé dans une ombre qui bouge : d'où vient-il ? S2 : la grille décision × résultat ; les deux cases PIÈGES
+       (bonne décision → perte, mauvaise décision → gain) pulsent, une pièce tourne au milieu : le hasard court terme. S3 : le gain issu
+       d'une mauvaise décision est mal RANGÉ — il part dans le tiroir SKILL au lieu du tiroir LUCK, et de ce mauvais classement une
+       habitude se bâtit sur un socle de chance fissuré. S4 : diptyque — mauvais mois (le compte baisse mais le process se renforce) vs
+       bon mois de chance (le compte monte pendant que le process se fissure). S5 : décharge — la question « mille fois ? » éclaire le
+       socle par en dessous : solide (mérité) ou chance fissurée (la facture vient plus tard). Doctrine : aucun chiffre ; gris = chance
+       instable / perte ; pas de brun ; la pièce est fil-de-fer ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LE GAIN (bloc teal) + SON SOCLE + L'OMBRE qui le masque ──
+    const win=mk('rect',{width:330,height:165,rx:8,fill:YOU,opacity:0});
+    const winGlow=mk('ellipse',{fill:YOU,'fill-opacity':0.16,opacity:0});
+    const base=mk('rect',{width:250,height:150,rx:6,opacity:0});
+    const cracks=[]; for(let i=0;i<4;i++)cracks.push(mk('polyline',{fill:'none',stroke:PAPER,'stroke-width':5,'stroke-linejoin':'round',opacity:0}));
+    const shade=mk('rect',{fill:DEAD,'fill-opacity':0.30,rx:10,opacity:0});
+    function setWin(cx,cy,sc,op){win.setAttribute('x',(cx-165*sc).toFixed(1));win.setAttribute('y',(cy-82*sc).toFixed(1));
+      win.setAttribute('width',(330*sc).toFixed(1));win.setAttribute('height',(165*sc).toFixed(1));setOp(win,op);}
+    function setBase(cx,top,col,op){base.setAttribute('x',(cx-125).toFixed(1));base.setAttribute('y',top.toFixed(1));
+      base.setAttribute('fill',col);setOp(base,op);}
+    function setCracks(cx,top,op){for(let i=0;i<cracks.length;i++){const x=cx-95+i*62, y=top+16;
+      cracks[i].setAttribute('points',`${x},${y} ${x+18},${y+42} ${x-8},${y+80} ${x+14},${y+118}`);setOp(cracks[i],op);}}
+
+    // ── S2 : LA GRILLE DÉCISION × RÉSULTAT + LA PIÈCE ──
+    const CELLS=[]; for(let i=0;i<4;i++)CELLS.push(mk('rect',{width:236,height:150,rx:8,fill:'none',stroke:INK,'stroke-width':5,opacity:0}));
+    const FILLS=[]; for(let i=0;i<4;i++)FILLS.push(mk('rect',{width:236,height:150,rx:8,fill:DEAD,'fill-opacity':0.35,opacity:0}));
+    const coin=mk('ellipse',{fill:'none',stroke:INK,'stroke-width':6,opacity:0});
+    function hideGrid(){for(const e of CELLS)setOp(e,0);for(const e of FILLS)setOp(e,0);setOp(coin,0);}
+
+    // ── S3 : LES DEUX TIROIRS + LA FLÈCHE DE CLASSEMENT + L'HABITUDE ──
+    const drawerL=mk('rect',{x:150,y:1010,width:290,height:120,rx:8,fill:'none',stroke:INK,'stroke-width':5,opacity:0});
+    const drawerR=mk('rect',{x:640,y:1010,width:290,height:120,rx:8,fill:'none',stroke:INK,'stroke-width':5,opacity:0});
+    const fileArrow=mk('line',{stroke:INK,'stroke-width':6,opacity:0});
+    const HABIT=[]; for(let i=0;i<5;i++)HABIT.push(mk('rect',{width:230,height:44,rx:5,fill:INK,stroke:PAPER,'stroke-width':3,opacity:0}));
+    function hideS3(){setOp(drawerL,0);setOp(drawerR,0);setOp(fileArrow,0);for(const h of HABIT)setOp(h,0);}
+
+    // ── S4 : LE DIPTYQUE (compte + process) ──
+    const barL=mk('rect',{width:150,rx:5,opacity:0}), barR=mk('rect',{width:150,rx:5,opacity:0});
+    const procL=mk('rect',{width:150,rx:5,fill:YOU,opacity:0}), procR=mk('rect',{width:150,rx:5,fill:YOU,opacity:0});
+    const conf=mk('ellipse',{fill:YOU,'fill-opacity':0.16,opacity:0});
+    function hideS4(){for(const e of [barL,barR,procL,procR,conf])setOp(e,0);}
+
+    // ── LE FAISCEAU DE LA QUESTION (S5) ──
+    const beam=mk('polygon',{fill:YOU,'fill-opacity':0.16,opacity:0});
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['DID YOU WIN','OR DID YOU GET LUCKY'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||36),'data-fs':(sz||36),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(34),capD=caption(34),capE=caption(32),capF=caption(32);
+    function putCap(el,txt,cx,y,color,op){el.textContent=txt;
+      // AUTO-AJUSTEMENT (largeur cadre) : on RÉDUIT la police tant que le texte dépasse la zone sûre 1080px.
+      // Sans ça, une étiquette longue sort du cadre et se fait couper à l'écran (constaté sur L23 en live).
+      const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size'), PER=0.66, MAXW=930;
+      const fs=Math.min(nom,Math.max(20,MAXW/Math.max(1,txt.length*PER)));
+      el.setAttribute('font-size',fs.toFixed(1));
+      const hw=txt.length*fs*PER/2,x=clamp(+cx,40+hw,1040-hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function hideCore(){setOp(win,0);setOp(winGlow,0);setOp(base,0);setOp(shade,0);setOp(beam,0);for(const c of cracks)setOp(c,0);}
+
+    // ═══ S1 — LE GAIN BRILLE, SON SOCLE EST DANS L'OMBRE ═══
+    // Verbe visuel : l'énigme du dessous (ce qui porte le gain reste caché).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideGrid(); hideS3(); hideS4();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier CURIOSITÉ) : le gain est DÉJÀ posé et brillant, et l'ombre qui masque son socle
+      //    est DÉJÀ là, mouvante. Rien ne se construit : l'énigme est entière dès la première frame.
+      const bob=8*Math.sin(u*1.35)+4*Math.sin(u*2.25);
+      setWin(CX,900+bob,1,1);
+      winGlow.setAttribute('cx',CX);winGlow.setAttribute('cy',(900+bob).toFixed(1));
+      winGlow.setAttribute('rx',(215+16*Math.sin(u*1.8)).toFixed(1));winGlow.setAttribute('ry',(120+11*Math.sin(u*1.8)).toFixed(1));setOp(winGlow,1);
+      putCap(capA,'A WIN',CX,915+bob,PAPER,1);
+      // l'ombre qui masque le socle : elle glisse et respire, on ne voit jamais dessous
+      const sw=430+34*Math.sin(u*0.9)+14*Math.sin(u*1.9), sx=CX-sw/2+13*Math.sin(u*1.15);
+      shade.setAttribute('x',sx.toFixed(1));shade.setAttribute('y',(1010+bob*0.4).toFixed(1));
+      shade.setAttribute('width',sw.toFixed(1));shade.setAttribute('height',(215+9*Math.sin(u*1.5)).toFixed(1));setOp(shade,1);
+      putCap(capC,'WHAT IS IT STANDING ON',CX,1300,DEAD,clamp((u-1.7)/0.7,0,1)*gf);
+    }
+
+    // ═══ S2 — DÉCISION × RÉSULTAT : les deux cases pièges ═══
+    // Verbe visuel : la grille (quatre issues, deux qui trompent) + la pièce qui tourne.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideCore(); hideS3(); hideS4();
+      const GX=[300,584], GY=[760,930], W=236, H=150;
+      const TRAP=[1,2];                                                   // bonne décision → perte, mauvaise → gain
+      for(let i=0;i<4;i++){const c=i%2, r=Math.floor(i/2);
+        CELLS[i].setAttribute('x',GX[c]);CELLS[i].setAttribute('y',(GY[r]+3*Math.sin(u*1.45-i*0.8)+1.6*Math.sin(u*2.6+i)).toFixed(1));setOp(CELLS[i],1);
+        FILLS[i].setAttribute('x',GX[c]);FILLS[i].setAttribute('y',(GY[r]+3*Math.sin(u*1.45-i*0.8)+1.6*Math.sin(u*2.6+i)).toFixed(1));
+        const trap=TRAP.includes(i);
+        setOp(FILLS[i], trap ? clamp((u-1.8)/0.6,0,1)*(0.55+0.45*Math.abs(Math.sin(u*1.9))) : 0);}
+      putCap(capC,'GOOD DECISION',GX[0]+W/2,GY[0]-30,INK,1);
+      putCap(capD,'BAD DECISION',GX[1]+W/2,GY[0]-30,INK,1);
+      putCap(capE,'WIN',GX[0]-72,GY[0]+H/2+10,YOU,1);
+      putCap(capF,'LOSS',GX[0]-72,GY[1]+H/2+10,DEAD,1);
+      // la pièce tourne : le hasard court terme, jamais au repos
+      const rx=8+52*Math.abs(Math.cos(u*2.4));
+      coin.setAttribute('cx',CX);coin.setAttribute('cy',(1210+9*Math.sin(u*1.7)).toFixed(1));
+      coin.setAttribute('rx',rx.toFixed(1));coin.setAttribute('ry',56);setOp(coin,1);
+      putCap(capA,'THE COIN DECIDES THE SHORT RUN',CX,1330,DEAD,clamp((u-2.4)/0.6,0,1));
+      putCap(capB,'ONE TRADE TELLS YOU NOTHING',CX,640,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE MAUVAIS RANGEMENT : la chance classée en compétence ═══
+    // Verbe visuel : le classement dans le mauvais tiroir, puis l'habitude qui pousse dessus.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGrid(); hideS4(); setOp(shade,0);setOp(beam,0);
+      // le gain issu de la mauvaise décision
+      const bob=6*Math.sin(u*1.5);
+      setWin(CX,690+bob,0.62,1);
+      winGlow.setAttribute('cx',CX);winGlow.setAttribute('cy',(690+bob).toFixed(1));
+      winGlow.setAttribute('rx',(140+11*Math.sin(u*1.8)).toFixed(1));winGlow.setAttribute('ry',(78+8*Math.sin(u*1.8)).toFixed(1));setOp(winGlow,1);
+      putCap(capA,'A WIN FROM A BAD DECISION',CX,700+bob,PAPER,1);
+      setOp(drawerL,1);setOp(drawerR,1);
+      putCap(capC,'LUCK',295,1085,DEAD,1);
+      putCap(capD,'SKILL',785,1085,INK,1);
+      // la flèche part vers LUCK puis DÉVIE vers SKILL (le mauvais rangement)
+      const swing=eInOut(clamp((u-0.9)/1.0,0,1)), tipx=lerp(295,785,swing);
+      fileArrow.setAttribute('x1',CX);fileArrow.setAttribute('y1',(760+bob).toFixed(1));
+      fileArrow.setAttribute('x2',tipx.toFixed(1));fileArrow.setAttribute('y2',1005);setOp(fileArrow,clamp(u/0.5,0,1));
+      // l'habitude se bâtit sur le socle de chance (gris, fissuré)
+      const built=clamp((u-2.0)/2.2,0,1);
+      setBase(785,1180,DEAD,clamp((u-1.9)/0.5,0,1));
+      setCracks(785,1180,clamp((u-2.6)/0.6,0,1)*(0.6+0.4*Math.abs(Math.sin(u*1.6))));
+      for(let i=0;i<HABIT.length;i++){const p=clamp((built*HABIT.length-i),0,1);
+        HABIT[i].setAttribute('x',670);HABIT[i].setAttribute('y',(1174-i*48-3*Math.sin(u*1.8-i*0.7)).toFixed(1));setOp(HABIT[i],p);}
+      putCap(capB,'FILED AS SKILL — BUILT ON LUCK',CX,600,INK,clamp((u-3.2)/0.7,0,1));
+      putCap(capE,'A HABIT',785,1360,INK,clamp((u-3.0)/0.6,0,1));
+    }
+
+    // ═══ S4 — DIPTYQUE : le compte monte pendant que l'habitude pourrit ═══
+    // Verbe visuel : la comparaison inversée (ce qui monte à l'écran descend en dessous).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideCore(); hideGrid(); hideS3();
+      const BASE=1160, LX=290, RX=760;
+      const g=clamp(u/3.2,0,1);
+      // GAUCHE — mauvais mois : le compte baisse, mais le process se RENFORCE
+      const hL=210-90*g;
+      barL.setAttribute('x',LX-75);barL.setAttribute('y',(BASE-hL-8*Math.sin(u*1.35)-4*Math.sin(u*2.25)).toFixed(1));barL.setAttribute('height',hL.toFixed(1));
+      barL.setAttribute('fill',DEAD);setOp(barL,1);
+      const pL=90+110*g;
+      procL.setAttribute('x',LX-75);procL.setAttribute('y',(1240+5*Math.sin(u*1.15)+3*Math.sin(u*2.05)).toFixed(1));procL.setAttribute('height',(pL*0.55).toFixed(1));setOp(procL,1);
+      putCap(capC,'BAD MONTH',LX,1200,DEAD,1);
+      putCap(capE,'PROCESS EXAMINED',LX,1380,YOU,clamp((u-1.4)/0.6,0,1));
+      // DROITE — bon mois de chance : le compte monte, le process se fissure
+      const hR=90+200*g;
+      barR.setAttribute('x',RX-75);barR.setAttribute('y',(BASE-hR-8*Math.sin(u*1.35+2)-4*Math.sin(u*2.25+1)).toFixed(1));barR.setAttribute('height',hR.toFixed(1));
+      barR.setAttribute('fill',YOU);setOp(barR,1);
+      const pR=200-120*g;
+      procR.setAttribute('x',RX-75);procR.setAttribute('y',(1240+5*Math.sin(u*1.15+1.7)+3*Math.sin(u*2.05+0.9)).toFixed(1));procR.setAttribute('height',(pR*0.55).toFixed(1));setOp(procR,1);
+      setCracks(RX,1246,clamp((u-1.6)/0.7,0,1)*(0.6+0.4*Math.abs(Math.sin(u*1.7))));
+      conf.setAttribute('cx',RX);conf.setAttribute('cy',(BASE-hR-70).toFixed(1));
+      conf.setAttribute('rx',(60+80*g+16*Math.sin(u*1.25)+7*Math.sin(u*2.35)).toFixed(1));conf.setAttribute('ry',(34+44*g+9*Math.sin(u*1.25)+4*Math.sin(u*2.35)).toFixed(1));setOp(conf,clamp((u-1.0)/0.6,0,1));
+      putCap(capD,'GOOD MONTH — FROM LUCK',RX,1200,YOU,1);
+      putCap(capF,'PROCESS ROTTING',RX,1380,DEAD,clamp((u-1.8)/0.6,0,1));
+      putCap(capB,'THE ACCOUNT GROWS, THE HABIT ROTS',CX,620,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : la question éclaire le socle ═══
+    // Verbe visuel : la révélation par en dessous (même gain, deux socles).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGrid(); hideS3(); hideS4();
+      const lit=clamp((u-0.8)/1.0,0,1);
+      // le faisceau de la question monte et dissout l'ombre
+      const bw=250+26*Math.sin(u*0.95)+12*Math.sin(u*1.85);   // le faisceau vibre : la tenue finale n'est jamais figée
+      beam.setAttribute('points',`${CX-40},1420 ${CX+40},1420 ${(CX+bw).toFixed(1)},1010 ${(CX-bw).toFixed(1)},1010`);setOp(beam,lit);
+      const sw=430+22*Math.sin(u*0.9);
+      shade.setAttribute('x',(CX-sw/2+10*Math.sin(u*1.15)).toFixed(1));shade.setAttribute('y',1010);
+      shade.setAttribute('width',sw.toFixed(1));shade.setAttribute('height',215);setOp(shade,(1-lit)*1);
+      const bob=9*Math.sin(u*1.35)+4*Math.sin(u*2.15);
+      setWin(CX,880+bob,0.86,1);
+      winGlow.setAttribute('cx',CX);winGlow.setAttribute('cy',(880+bob).toFixed(1));
+      winGlow.setAttribute('rx',(190+18*Math.sin(u*1.15)+8*Math.sin(u*2.05)).toFixed(1));winGlow.setAttribute('ry',(105+12*Math.sin(u*1.15)+5*Math.sin(u*2.05)).toFixed(1));setOp(winGlow,1);
+      putCap(capA,'A WIN',CX,895+bob,PAPER,1);
+      // le socle révélé : solide (mérité) — et, à côté, ce qu'il aurait été s'il venait de la chance
+      setBase(CX,(1030+6*Math.sin(u*1.25)+3*Math.sin(u*2.15)),YOU,lit);
+      setCracks(CX+330,1030,0);
+      putCap(capC,'WOULD I DO THIS A THOUSAND TIMES',CX,1500,INK,clamp((u-1.6)/0.7,0,1));
+      putCap(capD,'YES — EARNED, IT SURVIVES A BAD RUN',CX,1240,YOU,clamp((u-2.4)/0.7,0,1));
+      putCap(capB,'JUDGE THE DECISION, NOT THE RESULT',CX,620,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
