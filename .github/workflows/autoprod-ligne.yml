@@ -4,13 +4,14 @@ name: LIGNE autoprod (fabrication)
 #   voix George ElevenLabs -> rendu moteur ligne/engine/lXX.html (Chromium headless + hyperframes@0.7.37)
 #   -> assemblage ffmpeg + filigrane -> transcode 25fps nal-hrd=cbr -> dépose en ligne/queue/LXX/
 #   -> notif Telegram (send_video depuis le runner) -> commit + push (résilient).
-# Cadence : 5/jour (publication 4/j -> coussin +1/j, reste dans le gratuit ~2000 min/mois).
+# Cadence : 12/jour. Le court-circuit fait sortir en <1 min quand aucun moteur nouveau n'est prêt, donc
+# le coût runner reste proportionnel au NOMBRE DE MOTEURS ÉCRITS, pas au nombre de créneaux.
 # Court-circuit : si aucun épisode prêt (moteur existant, non produit), on SORT avant toute install.
 # Garde-fous : 1 épisode/run ; seuls les épisodes dont le FICHIER moteur existe sont fabriqués.
 
 on:
   schedule:
-    - cron: "20 1,6,11,16,21 * * *"   # 5 créneaux/jour (UTC), décalés de publish et KONGRAVE
+    - cron: "20 */2 * * *"           # 12 créneaux/jour (UTC) — les créneaux sans épisode prêt sortent en <1 min (court-circuit)
   workflow_dispatch:
     inputs:
       episode:
