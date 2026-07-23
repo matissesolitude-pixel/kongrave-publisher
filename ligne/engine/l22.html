@@ -56,7 +56,11 @@
       mk('rect',{x:0,y:11,width:UW-6,height:12,rx:2,fill:DEAD},g);
       UNITS.push(g);}
     const oneGhost=mk('rect',{x:126,y:1295,width:UW-6,height:23,rx:2,fill:'none',stroke:INK,'stroke-width':3,'stroke-dasharray':'6 5',opacity:0});
-    function hideS4(){for(const u of UNITS)setOp(u,0);setOp(oneGhost,0);}
+    // L'UNITÉ EN GRAND : la scène S4 OUVRE dessus (coupe franche, jamais d'écran vide), puis elle rétrécit et se multiplie.
+    const bigUnit=mk('g',{opacity:0});
+    mk('rect',{x:395,y:880,width:290,height:88,rx:6,fill:YOU},bigUnit);
+    mk('rect',{x:395,y:982,width:290,height:112,rx:6,fill:DEAD},bigUnit);
+    function hideS4(){for(const u of UNITS)setOp(u,0);setOp(oneGhost,0);setOp(bigUnit,0);}
 
     // ── S5 : LES DEUX TOTAUX SUR LA MÊME LIGNE DE SOL ──
     const GROUND=1330, LCX=330, RCX=750, CW=170;
@@ -106,11 +110,13 @@
       // le pivot : l'écart s'écrase sur lui-même (scaleX -> 0) puis se rouvre, et la pile est là
       const piv=clamp(u/1.5,0,1), sx=Math.abs(Math.cos(piv*Math.PI))*0.85+0.15;
       setSpread(450,1090,SPW*sx,26,1);
-      // la pile derrière : elle sort de la silhouette et s'ALLUME l'une après l'autre ; la plus lointaine est la plus GROSSE
+      // la pile derrière : elle sort de la silhouette et s'ALLUME l'une après l'autre ; la plus lointaine est la plus GROSSE.
+      // VIE CONTINUE (règle 5) : parallaxe permanente — chaque bloc DÉRIVE sur sa propre phase, la pile ne se fige jamais.
       for(let i=0;i<depth.length;i++){
         const lit=clamp((u-(1.1+i*0.55))/0.5,0,1);
-        const wave=0.55+0.45*Math.sin(u*1.9-i*0.9);                      // vie continue : la pile respire de fond en comble
-        depth[i].setAttribute('transform','');
+        const wave=0.55+0.45*Math.sin(u*1.9-i*0.9);
+        const dx=(30-i*7)*Math.sin(u*0.85-i*0.75), dy=(13-i*3)*Math.sin(u*1.15-i*0.5);
+        depth[i].setAttribute('transform',`translate(${dx.toFixed(1)} ${dy.toFixed(1)})`);
         depth[i].setAttribute('fill-opacity',lerp(0.16,0.45+0.35*wave,lit).toFixed(3));setOp(depth[i],1);}
       putCap(capA,'THE SHELF PRICE',450,1195,YOU,clamp((u-0.9)/0.5,0,1));
       putCap(capC,'THE COSTS STACKED BEHIND IT',CX+30,700,DEAD,clamp((u-2.4)/0.6,0,1));
@@ -141,7 +147,13 @@
     // Verbe visuel : la duplication cadencée qui devient une masse.
     function s4(lf,t,s){
       const u=t-s; hideQ(); hideCaps(); hideDepth(); hideS3(); hideS5(); hideSpread(); setOp(shadow,0);
-      const N=Math.floor(260*eIn(clamp(u/4.3,0,1)));                     // cadence qui ACCÉLÈRE (lent -> pluie)
+      // COUPE FRANCHE : la scène OUVRE sur l'unité EN GRAND (le coût d'un seul trade), déjà pleine à t=0 —
+      // jamais d'écran vide. Elle rétrécit ensuite jusqu'à la taille de grille, et la multiplication démarre.
+      const shrink=clamp((u-0.9)/0.7,0,1), bs=lerp(1,0.085,eIn(shrink));
+      const bcx=lerp(540,GX0+12,eIn(shrink)), bcy=lerp(987,GY0+12,eIn(shrink));
+      bigUnit.setAttribute('transform',`translate(${(bcx-540*bs).toFixed(1)} ${(bcy-987*bs).toFixed(1)}) scale(${bs.toFixed(3)})`);
+      setOp(bigUnit,shrink<1?1:0);
+      const N=Math.max(shrink>=1?1:0,Math.floor(260*eIn(clamp((u-1.5)/3.6,0,1))));  // cadence qui ACCÉLÈRE (lent -> pluie)
       const sweep=((u*0.28)%1)*(COLS+13)-6;                              // vie continue : une vague balaie la masse
       for(let i=0;i<UNITS.length;i++){
         if(i>=N){setOp(UNITS[i],0);continue;}
@@ -149,11 +161,11 @@
         UNITS[i].setAttribute('transform',`translate(${GX0+c*UW} ${GY0-r*UH})`);
         const near=1-clamp(Math.abs(c+r*0.5-sweep)/3.5,0,1);
         setOp(UNITS[i],0.55+0.45*near);}
-      setOp(oneGhost,clamp((u-0.2)/0.5,0,1));
-      putCap(capE,'ONE TRADE',140,1398,INK,clamp((u-0.2)/0.5,0,1));
-      putCap(capA,'ONE MONTH',CX+90,1398,INK,clamp((u-2.2)/0.6,0,1));
-      putCap(capB,'THE SPREAD DIDN’T GROW',CX,600,INK,clamp((u-4.4)/0.7,0,1));
-      putCap(capD,'YOU PAID IT HUNDREDS OF TIMES',CX,668,DEAD,clamp((u-5.0)/0.7,0,1));
+      setOp(oneGhost,clamp((u-1.7)/0.5,0,1));
+      putCap(capE,'ONE TRADE',lerp(540,140,eIn(shrink)),lerp(1160,1398,eIn(shrink)),INK,1);
+      putCap(capA,'ONE MONTH',CX+90,1398,INK,clamp((u-3.0)/0.6,0,1));
+      putCap(capB,'THE SPREAD DIDN’T GROW',CX,600,INK,clamp((u-5.0)/0.7,0,1));
+      putCap(capD,'YOU PAID IT HUNDREDS OF TIMES',CX,668,DEAD,clamp((u-5.6)/0.7,0,1));
     }
 
     // ═══ S5 — LES DEUX TOTAUX : le serré très tradé dépasse le large touché rarement ═══
@@ -163,13 +175,14 @@
       setOp(ground,1);
       const nL=Math.floor(LEFT.length*eOut(clamp((u-0.3)/3.4,0,1)));     // beaucoup de petites unités, vite
       const nR=Math.floor(RIGHT.length*eOut(clamp((u-0.3)/3.4,0,1)));    // peu de grosses unités, au même tempo
-      const brL=(u>3.9)?2.5*Math.sin(u*1.5):0, brR=(u>3.9)?2.5*Math.sin(u*1.5+2.1):0;
       for(let i=0;i<LEFT.length;i++){
         if(i>=nL){setOp(LEFT[i],0);continue;}
-        LEFT[i].setAttribute('y',(GROUND-20-i*20+brL).toFixed(1));setOp(LEFT[i],1);}
+        const rip=(u>3.6)?4.5*Math.sin(u*2.0-i*0.55):0;                  // la vague REMONTE la pile : rien ne se fige
+        LEFT[i].setAttribute('y',(GROUND-20-i*20+rip).toFixed(1));setOp(LEFT[i],1);}
       for(let i=0;i<RIGHT.length;i++){
         if(i>=nR){setOp(RIGHT[i],0);continue;}
-        RIGHT[i].setAttribute('y',(GROUND-48-i*48+brR).toFixed(1));setOp(RIGHT[i],1);}
+        const rip=(u>3.6)?4.5*Math.sin(u*2.0-i*0.9+1.4):0;
+        RIGHT[i].setAttribute('y',(GROUND-48-i*48+rip).toFixed(1));setOp(RIGHT[i],1);}
       putCap(capC,'TIGHT SPREAD',LCX,1392,YOU,1);
       putCap(capE,'TRADED CONSTANTLY',LCX,1440,DEAD,1);
       putCap(capD,'WIDE SPREAD',RCX,1392,YOU,1);
