@@ -1,4 +1,9 @@
-# HOOKS UTILISÉS — LOI D'UNICITÉ
+# HOOKS UTILISÉS — ⚠️ CADUC (24/07/2026)
+
+> **Les gags sont supprimés.** Mr Dollar apparaît pour parler, il n'y a plus de primitives
+> ni d'agents, donc plus de combinaison à rendre unique. Ce fichier est conservé comme
+> **archive** de ce qui avait été tenté sur L20→L44 — il ne contraint plus rien et
+> `hook_gag` n'est plus lu par les moteurs.
 
 Aucune combinaison ne se répète, jamais. Primitive ≠ hook : l'agent est
 l'objet propre de l'épisode, donc deux hooks partageant une primitive

@@ -118,11 +118,8 @@
       seqLine.setAttribute('transform',`translate(0,${(6*Math.sin(u*0.95)+3*Math.sin(u*1.9)).toFixed(1)})`);
       putCap(capA,'THE LEVEL BROKE',780,LVY+96,INK,clamp((u-1.8)/0.7,0,1)*gf);   // à droite : la gauche est la zone du narrateur
       putCap(capC,'THE SEQUENCE DID NOT NOTICE',700,760,DEAD,clamp((u-3.2)/0.8,0,1)*gf);
-      // GAG : il TOMBE à travers le niveau qui se brise sous lui (agent propre à L37)
-      const HG=(SPEC[0]&&SPEC[0].hook_gag)||{};
-      MrD.gag(u,{primitive:HG.primitive||'fall', reaction:HG.reaction||'impuissant',
-                 raccord:HG.raccord||'ecarte', agent:{x:(GAP0+GAP1)/2, y:LVY+140}, t:t, lookAt:CX,
-                 rest:{x:150,y:1420,h:200}, h:330, op:gf});
+      // MR DOLLAR : il entre à gauche et il PARLE — il désigne le niveau brisé
+      MrD.enter(u,{t:t, routine:'designe', lookAt:CX, rest:{x:150,y:1420,h:200}, op:gf});
     }
 
     // ═══ S2 — UN ÉVÉNEMENT vs UNE SÉQUENCE ═══

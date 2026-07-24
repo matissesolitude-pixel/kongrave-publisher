@@ -121,17 +121,9 @@
       decMark.setAttribute('cx',DECX);decMark.setAttribute('cy',CHART.find(p=>p[0]>=DECX)[1]);setOp(decMark,clamp((u-2.6)/0.8,0,1)*0.9);
       putCap(capA,'YESTERDAY — THE TRADE IS OBVIOUS',CX,830,INK,clamp((u-1.9)/0.7,0,1)*gf);
       putCap(capC,'THE CHART ENDS HERE',cut,1440,DEAD,clamp((u-3.4)/0.8,0,1)*gf);
-      // ── GAG DE HOOK (Bible II bis) — VERBE : se cogner · AGENT : le rideau · RÉACTION : sonné puis il montre
-      //    TEMPS : EN PLEIN GESTE dès la frame 0 (il est déjà écrasé contre le rideau, aucune construction).
-      //    RACCORD : il se relève, pointe le "?", puis s'écarte et laisse la place au schéma. ~1,5 s.
-      // PRIMITIVE : bumpInto — AGENT : le rideau qui masque la droite (Bible : « le bord du
-      // graphe → il se cogne au rideau »). Frame 0 = déjà écrasé contre lui. Puis il se relève,
-      // pointe le "?", et PASSE LA MAIN sans disparaître (il reste petit pour accompagner).
+      // MR DOLLAR : il entre, il PARLE et il désigne le "?" — puis il laisse la place
       if(u<4.0){
-        const HG=(SPEC[0]&&SPEC[0].hook_gag)||{};      // ← 4 champs dans le JSON, rien à coder
-        MrD.gag(u, {primitive:HG.primitive||'bumpInto', reaction:HG.reaction||'sonné',
-                    raccord:HG.raccord||'point', agent:{x:cut, y:1430}, t:t, lookAt:CX,
-                    rest:{x:215, y:1430, h:236}, h:340, op:gf});   // GRAND au choc, petit dès qu'il passe la main
+        MrD.enter(u, {t:t, routine:'designe', lookAt:CX, rest:{x:215, y:1430, h:236}, op:gf});
       }else{                                        // il s'en va : la démonstration reste seule
         const o=clamp((u-4.0)/1.2,0,1);
         MrD.say('walk', t, lerp(215,-170,eInOut(o)), 1430, 236, (1-o)*gf, true, 0,1,1);

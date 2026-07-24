@@ -232,15 +232,14 @@
     }
 
 
-    // ── MR DOLLAR : gag d'ouverture (JSON) puis apparitions ponctuelles, propres à cet épisode ──
+    // ── MR DOLLAR : il APPARAÎT POUR PARLER (pas de gag). Ses venues sont des évènements. ──
     const NBEATS={2:['point',880,1420],4:['idle',200,1410]};
     function narrate(i,lf,t,s){
       const u=t-s;
       if(i===0){
-        const HG=(SPEC[0]&&SPEC[0].hook_gag)||{};
-        MrD.gag(u,{primitive:HG.primitive, reaction:HG.reaction, raccord:HG.raccord,
-                   agent:{x:420, y:1430}, t:t, lookAt:CX,
-                   rest:{x:180,y:1425,h:206}, h:320, op:clamp(1-(lf-0.86)/0.09,0,1)});
+        // il entre en S1, il parle, il désigne le "?" — zone libre calculée, jamais devinée
+        MrD.enter(u,{t:t, routine:'designe', lookAt:CX,
+                     rest:{x:180,y:1425,h:206}, op:clamp(1-(lf-0.86)/0.09,0,1)});
         return;
       }
       const b=NBEATS[i];

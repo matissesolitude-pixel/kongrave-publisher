@@ -56,26 +56,15 @@ coupées · L27/L28 étiquettes collées et texte sur dessin · L04/L24/L29 narr
 **Vérifie sur des frames RENDUES, jamais sur du raisonnement.**
 
 
-### ⛔ LA CAUSE DU GAG DOIT ÊTRE À L'IMAGE
-
-Un gag dont on ne voit pas la cause n'est pas drôle — **il est illisible**. Le spectateur voit
-le personnage encaisser quelque chose, mais rien n'explique quoi, et il décroche.
-
-**Règle :** au moment du choc, l'AGENT doit être **visible à l'écran** et **en contact** avec lui.
-- Les coordonnées passées à `MrD.gag(..., agent:{x,y})` doivent être celles de l'**objet réel de ta
-  scène** (le rideau, la mèche, la jauge, l'escalier…), pas une position choisie au hasard.
-- Cet objet doit être **dessiné et visible dès la frame 0**, et idéalement **en mouvement vers lui**
-  (c'est lui qui provoque, pas un décor passif).
-- La bibliothèque ajoute une **marque d'impact** au point de contact, mais elle ne remplace pas
-  l'agent : elle ne fait que souligner un lien qui doit déjà exister.
-
-**Test :** coupe le son et regarde la frame 0. Si on ne peut pas dire *ce qui lui arrive et à cause
-de quoi*, le gag est raté — refais-le.
-
 ## LE NARRATEUR MR DOLLAR (obligatoire dans tout nouveau moteur)
 
-Mr Dollar est **la voix** du Reel. Le JSON porte son gag d'ouverture dans S1
-(`hook_gag`) et sa règle de présence dans `_narrator`. Tu ne l'inventes pas : tu le branches.
+Mr Dollar est **la voix** du Reel. Il **apparaît pour parler**, puis il s'efface. C'est tout.
+
+> ### ⛔ PLUS DE GAGS — décision du 24/07/2026
+> Les primitives de gag (`bumpInto`, `fall`, `crushedBy`, `zoom`…), l'agent, la réaction et
+> le raccord sont **supprimés**. Le champ `hook_gag` des JSON n'est plus lu. Trop de choix
+> produisait des plans illisibles : on garde ce qui marche — il arrive, il parle, il désigne,
+> il s'en va. `MrD.gag()` existe encore par compatibilité mais **ignore** ses arguments de gag.
 
 **UNE SEULE LIGNE à écrire**, après la création de `SVG` :
 
@@ -83,22 +72,24 @@ Mr Dollar est **la voix** du Reel. Le JSON porte son gag d'ouverture dans S1
     /*INCLUDE:narrator*/
 ```
 
-`build_ligne` y injecte la bibliothèque de gags, les poses vectorisées, la carte des yeux
+`build_ligne` y injecte la bibliothèque narrateur, les poses vectorisées, la carte des yeux
 (clignement) et l'objet `MrD`, déjà branché sur l'amplitude de la voix. **N'inline JAMAIS
 les SVG des poses à la main** : c'est 300 Ko et une source d'erreurs.
 
-**En S1, joue le gag du JSON :**
+**Le faire entrer — la seule API :**
 ```js
-const HG=(SPEC[0]&&SPEC[0].hook_gag)||{};
-MrD.gag(u,{primitive:HG.primitive, reaction:HG.reaction, raccord:HG.raccord,
-           agent:{x:<x de l'objet>, y:<y du sol de l'objet>}, t:t, lookAt:CX,
-           rest:{x:180,y:1430,h:220}, h:330, op:gf});
+// u = temps local de l'apparition (0 = il arrive)
+MrD.enter(u, {t:t, routine:'designe', lookAt:CX, rest:{x:180,y:1430,h:220}, op:gf});
 ```
-L'AGENT est un objet **déjà codé dans ta scène** : toi seul sais où il est, tu fournis ses
-coordonnées. Le reste (choc, rebond, raccord, passage de main) vient de la primitive.
+- `routine` : `designe` (il montre puis laisse regarder) · `explique` · `attend` · `reagit`
+  · `doute` · `constate`. Chaque pose est une **intention**, jamais une variation décorative.
+- `lookAt` : abscisse de ce qu'il désigne — il **se tourne et pointe du bon côté**. Omets-le
+  s'il ne désigne rien.
+- `rest` : où il aimerait se tenir. La bibliothèque **corrige** cette position si la zone est
+  occupée (loi zéro chevauchement) : il se décale, rétrécit, ou disparaît.
 
 **Ailleurs dans l'épisode :**
-- `MrD.pointAt('point', t, x, y, h, op, cibleX)` — il pointe **et regarde** la cible. Le sens
+- `MrD.pointAt('point', t, x, y, h, op, cibleX)` — désignation ponctuelle hors `enter`. Le sens
   est calculé. **N'utilise JAMAIS `say('point')` pour désigner** : les poses visent à droite
   par défaut, le sens serait faux une fois sur deux.
 - `MrD.say('idle'|'walk'|'wave_hip', t, x, y, h, op, flip)` — présence sans désignation.
@@ -107,22 +98,7 @@ coordonnées. Le reste (choc, rebond, raccord, passage de main) vient de la prim
 **Règles :** toujours en **ENCRE**, jamais en teal (le teal est réservé au spectateur). Il est
 **PETIT** et s'écarte ; le schéma prime toujours. **AUCUN gabarit de placement** — ses
 apparitions sont des ÉVÉNEMENTS décidés épisode par épisode, jamais un rythme prévisible.
-Il ne porte jamais le fusil de Tchekhov. La taille est un outil : grand au gag, discret ensuite.
-
-
-**HOOK `zoom` — le recours le plus sûr.** Quand aucun agent ne se prête à un gag lisible, le hook
-peut être **le personnage lui-même en hyper gros plan, puis dézoom**. Son visage remplit le cadre
-avec l'expression déjà jouée (tension dès la frame 0), puis on recule jusqu'à sa taille normale et
-la démonstration prend le relais. `hook_gag: {"primitive":"zoom","reaction":"surpris"}` — aucun
-agent requis, le mouvement d'échelle accroche à lui seul.
-
-**Il ne parle JAMAIS pendant un gag** : la synchro labiale est coupée tant qu'il encaisse.
-
-**DURÉE DU GAG — corrigée le 24/07.** La Bible disait « ~1 à 1,5 s » : c'est trop court, le
-spectateur n'a pas le temps de comprendre que c'en est un. Le rythme réel est de **~3,4 s** :
-le choc TIENT ~1,3 s (on voit ce qui lui arrive), la RÉACTION dure ~0,95 s (c'est là que le
-comique se lit), puis il passe la main (~1,15 s). Ces durées sont dans `narrator-gags.js` —
-ne les raccourcis pas.
+Il ne porte jamais le fusil de Tchekhov. Il n'apparaît pas en S4.
 
 **Vie continue :** il ne dispense de rien. Une scène où il sort doit rester vivante SANS lui —
 c'est le défaut le plus fréquent (scène figée dès son départ, attrapée par le scan fail-loud).

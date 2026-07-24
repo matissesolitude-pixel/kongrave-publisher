@@ -207,7 +207,7 @@ def build_anim(ep, tl, work, rend):
         if marker in html:
             html = html.replace(marker, (LIGNE / "engine" / lib).read_text())
     # INCLUDE:narrator — MR DOLLAR clé en main. Un moteur écrit UNE ligne et reçoit :
-    # la bibliothèque de gags, les poses vectorisées (defs SVG), leurs dimensions, la carte
+    # la bibliothèque narrateur, les poses vectorisées (defs SVG), leurs dimensions, la carte
     # des yeux (clignement) et l'objet MrD prêt à l'emploi, branché sur l'amplitude de la voix.
     # Évite d'inliner 300 Ko de SVG à la main dans chaque moteur (source d'erreurs).
     if "/*INCLUDE:narrator*/" in html:
@@ -227,7 +227,7 @@ def build_anim(ep, tl, work, rend):
             sizes[name] = {"w": w, "h": h}
         eyes_all = json.loads((A / "narrator" / "eyes.json").read_text()) if (A / "narrator" / "eyes.json").is_file() else {}
         eyes = {k: v for k, v in eyes_all.items() if k in sizes and v}
-        block = (A / "narrator-gags.js").read_text().rstrip() + "\n" + \
+        block = (A / "narrator.js").read_text().rstrip() + "\n" + \
             "const NPOSE=" + json.dumps(sizes) + ";\n" + \
             "const NEYES=" + json.dumps(eyes, ensure_ascii=False) + ";\n" + \
             "(function(){var d=document.createElementNS('http://www.w3.org/2000/svg','defs');" + \
