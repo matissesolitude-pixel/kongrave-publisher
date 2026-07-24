@@ -42,12 +42,12 @@
       "dod": "la position qui grossit + le prix moyen qui descend en ajoutant plus bas",
       "fusil": "la position qui grossit en descendant — on va voir la facture cachée.",
       "hook_gag": {
-        "primitive": "vanishInto",
-        "agent": "la position qui grossit et l'engloutit à chaque ajout",
-        "reaction": "résigné",
-        "temps": "en cours",
-        "raccord": "seule sa main dépasse encore et pointe le ?",
-        "lien_sujet": "s'enfoncer en moyennant, littéralement"
+        "primitive": "zoom",
+        "agent": "—",
+        "reaction": "surpris",
+        "temps": "en plein geste",
+        "raccord": "il recule et laisse la place",
+        "lien_sujet": "DÉMO du hook zoom : aucun agent requis"
       }
     },
     {

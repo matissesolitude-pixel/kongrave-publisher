@@ -109,6 +109,15 @@ coordonnées. Le reste (choc, rebond, raccord, passage de main) vient de la prim
 apparitions sont des ÉVÉNEMENTS décidés épisode par épisode, jamais un rythme prévisible.
 Il ne porte jamais le fusil de Tchekhov. La taille est un outil : grand au gag, discret ensuite.
 
+
+**HOOK `zoom` — le recours le plus sûr.** Quand aucun agent ne se prête à un gag lisible, le hook
+peut être **le personnage lui-même en hyper gros plan, puis dézoom**. Son visage remplit le cadre
+avec l'expression déjà jouée (tension dès la frame 0), puis on recule jusqu'à sa taille normale et
+la démonstration prend le relais. `hook_gag: {"primitive":"zoom","reaction":"surpris"}` — aucun
+agent requis, le mouvement d'échelle accroche à lui seul.
+
+**Il ne parle JAMAIS pendant un gag** : la synchro labiale est coupée tant qu'il encaisse.
+
 **DURÉE DU GAG — corrigée le 24/07.** La Bible disait « ~1 à 1,5 s » : c'est trop court, le
 spectateur n'a pas le temps de comprendre que c'en est un. Le rythme réel est de **~3,4 s** :
 le choc TIENT ~1,3 s (on voit ce qui lui arrive), la RÉACTION dure ~0,95 s (c'est là que le

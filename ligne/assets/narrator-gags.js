@@ -109,6 +109,12 @@
   };
   MrDollar.prototype.resolve = function (pose, t) {
     if (/_(soft|wide)$/.test(pose)) return pose;
+    // PENDANT UN GAG IL NE PARLE PAS : bouche au repos, aucune synchro labiale.
+    if (this._inGag) {
+      if (this.poses[pose + '_soft']) return pose + '_soft';
+      if (this.poses[pose + '_wide']) return pose + '_wide';
+      return this.poses[pose] ? pose : pose + '_soft';
+    }
     if (this._pairOK(pose)) {                       // paire alignée : la bouche peut jouer
       var a = pose + '_' + this.mouth(t);
       if (this.poses[a]) return a;
@@ -393,11 +399,30 @@
     }
   };
 
+  /* HOOK 'zoom' — le plus simple et le plus sûr : on OUVRE en hyper gros plan sur
+     lui (son visage remplit le cadre, expression déjà jouée = tension frame 0), puis
+     on dézoome jusqu'à sa taille normale et la démonstration prend le relais.
+     Aucun agent requis : le mouvement d'échelle accroche à lui seul. */
+  var ZOOM_IN = 0.55, ZOOM_OUT = 1.35;
+  MrDollar.prototype.hookZoom = function (u, spec) {
+    var rest = spec.rest || { x: 180, y: 1430, h: 215 };
+    var pose = spec.pose || (REACT[spec.reaction] && REACT[spec.reaction].pose) || 'oh';
+    var k = eInOut(clamp((u - ZOOM_IN) / ZOOM_OUT, 0, 1));      // il tient d'abord, puis recule
+    var h = lerp(1500, rest.h, k);
+    var x = lerp(540, rest.x, k);
+    var y = lerp(2560, rest.y, k);                              // pieds hors cadre -> le visage remplit
+    var br = (1 - k) * (5 * Math.sin(u * 2.1) + 2 * Math.sin(u * 3.7));   // il respire, jamais figé
+    this.draw(this.resolve(pose, spec.t), x + br, y, h, (spec.op == null ? 1 : spec.op), spec.flip, 0, 1, 1);
+  };
+
   /* API PRINCIPALE — le gag d'ouverture de S1.
      spec = { primitive, agent:{x,y}, reaction, raccord, rest:{x,y,h}, h, flip,
               idle, verb, type }                                                */
   MrDollar.prototype.gag = function (u, spec) {
     spec = spec || {};
+    this._t = spec.t;
+    this._inGag = (u < HIT + RAC + HAND);                 // il encaisse : il ne parle pas
+    if (spec.primitive === 'zoom') { this.hookZoom(u, spec); return; }
     // Le JSON écrit le raccord en clair ("il se relève et pointe le ?") : on le ramène à sa clé.
     var rk = String(spec.raccord || 'point').toLowerCase();
     spec.raccord = /point/.test(rk) ? 'point' : /écart|ecart/.test(rk) ? 'ecarte'
