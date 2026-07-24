@@ -147,34 +147,53 @@
     }
     return a;
   };
-  /* Place en évitant l'existant. opts.avoid : 'all' (défaut) ou 'text' (pendant le
-     gag, où toucher l'AGENT est voulu — mais jamais le texte). */
+  /* Cherche la meilleure zone libre SANS l'appliquer (mesure seulement). */
+  MrDollar.prototype._bestSpot = function (pose, x, y, h, op, flip, rot, opts) {
+    var obs = this._obstacles(opts && opts.avoid === 'text');
+    var dx = [0, -130, 130, -260, 260, -390, 390], sc = [1, 0.82, 0.66], best = null;
+    for (var si = 0; si < sc.length; si++) {
+      for (var di = 0; di < dx.length; di++) {
+        var c = { x: x + dx[di], y: y, h: h * sc[si] };
+        this.draw(pose, c.x, c.y, c.h, op, flip, rot, 1, 1);
+        var r; try { r = this.g.getBoundingClientRect(); } catch (e) { return best; }
+        // il doit rester ENTIER dans la zone sûre : s'écarter hors champ n'est pas une solution
+        if (r.left < 40 || r.right > 1040 || r.bottom > 1500) continue;
+        var ov = this._overlapArea(r, obs) / Math.max(1, r.width * r.height);
+        if (best === null || ov < best.ov) best = { x: c.x, y: c.y, h: c.h, ov: ov };
+        if (ov < 0.02) return best;
+      }
+    }
+    return (best && best.ov < 0.10) ? best : null;
+  };
+
+  /* Place SANS chevauchement ET SANS saccade : il GLISSE vers sa cible à vitesse de
+     marche, et tant qu'il se déplace on le voit MARCHER, face au sens de la marche.
+     Un recalcul de zone libre ne doit jamais produire une téléportation. */
   MrDollar.prototype.placeClear = function (pose, x, y, h, op, flip, rot, opts) {
     opts = opts || {};
-    var obs = this._obstacles(opts.avoid === 'text');
-    var cand = [], dx = [0, -130, 130, -260, 260, -390, 390], sc = [1, 0.82, 0.66];
-    for (var si = 0; si < sc.length; si++)
-      for (var di = 0; di < dx.length; di++)
-        cand.push({ x: x + dx[di], y: y, h: h * sc[si] });
-    var best = null;
-    for (var i = 0; i < cand.length; i++) {
-      var c = cand[i];
-      this.draw(pose, c.x, c.y, c.h, op, flip, rot, 1, 1);
-      var r; try { r = this.g.getBoundingClientRect(); } catch (e) { break; }
-      // CONTRAINTE DE CADRE : éviter le chevauchement en le poussant hors champ
-      // n'est pas une solution — il doit rester ENTIER dans la zone sûre.
-      if (r.left < 40 || r.right > 1040 || r.bottom > 1500) continue;
-      var area = Math.max(1, r.width * r.height);
-      var ov = this._overlapArea(r, obs) / area;
-      if (best === null || ov < best.ov) best = { c: c, ov: ov };
-      if (ov < 0.02) return true;                              // zone libre trouvée
+    var t = this._t || 0;
+    var dt = (this._lastT == null) ? 0.033 : Math.min(0.2, Math.max(0.001, t - this._lastT));
+    this._lastT = t;
+    var tgt = this._bestSpot(pose, x, y, h, op, flip, rot, opts);
+    // fondu : apparaître/disparaître en douceur plutôt que d'un coup
+    var f = (this._fade == null) ? 0 : this._fade;
+    f = tgt ? Math.min(1, f + dt * 5) : Math.max(0, f - dt * 5);
+    this._fade = f;
+    if (!tgt) {
+      if (f <= 0.02 || !this._cur) { this.hide(); return false; }
+      tgt = this._cur;                                   // il s'efface sur place
     }
-    if (best && best.ov < 0.10) {                              // tolérance minime
-      this.draw(pose, best.c.x, best.c.y, best.c.h, op, flip, rot, 1, 1);
-      return true;
-    }
-    this.hide();                                               // rien de libre : il s'efface
-    return false;
+    // premier placement, ou retour après une absence : on se pose, on ne traverse pas l'écran
+    if (!this._cur || f < 0.06) this._cur = { x: tgt.x, y: tgt.y, h: tgt.h };
+    var d = tgt.x - this._cur.x, SPD = 700, step = SPD * dt;
+    var moving = Math.abs(d) > 8;
+    this._cur.x += (Math.abs(d) <= step) ? d : (d > 0 ? step : -step);
+    this._cur.y += (tgt.y - this._cur.y) * Math.min(1, dt * 6);
+    this._cur.h += (tgt.h - this._cur.h) * Math.min(1, dt * 6);
+    var pf = moving ? this.resolve('walk', t) : pose;     // ON LE VOIT MARCHER
+    var fl = moving ? (d < 0) : flip;                     // il regarde là où il va
+    this.draw(pf, this._cur.x, this._cur.y, this._cur.h, op * f, fl, moving ? 0 : rot, 1, 1);
+    return true;
   };
   MrDollar.prototype.show = function (pose, x, y, h, op, flip) { this.draw(pose, x, y, h, op, flip, 0, 1, 1); };
   MrDollar.prototype.hide = function () { this.g.setAttribute('opacity', '0'); };
