@@ -33,6 +33,47 @@ existe un `engine/lNN.html.refused_*` (ou un `_hold/LNN_meta_*`), ce N est une *
 - La reproduction est **bornée automatiquement à 2 fois** : au-delà, le publisher abandonne et
   alerte pour intervention manuelle. Tu n'as rien à compter — code simplement le moteur manquant.
 
+
+## LE NARRATEUR MR DOLLAR (obligatoire dans tout nouveau moteur)
+
+Mr Dollar est **la voix** du Reel. Le JSON porte son gag d'ouverture dans S1
+(`hook_gag`) et sa règle de présence dans `_narrator`. Tu ne l'inventes pas : tu le branches.
+
+**UNE SEULE LIGNE à écrire**, après la création de `SVG` :
+
+```
+    /*INCLUDE:narrator*/
+```
+
+`build_ligne` y injecte la bibliothèque de gags, les poses vectorisées, la carte des yeux
+(clignement) et l'objet `MrD`, déjà branché sur l'amplitude de la voix. **N'inline JAMAIS
+les SVG des poses à la main** : c'est 300 Ko et une source d'erreurs.
+
+**En S1, joue le gag du JSON :**
+```js
+const HG=(SPEC[0]&&SPEC[0].hook_gag)||{};
+MrD.gag(u,{primitive:HG.primitive, reaction:HG.reaction, raccord:HG.raccord,
+           agent:{x:<x de l'objet>, y:<y du sol de l'objet>}, t:t, lookAt:CX,
+           rest:{x:180,y:1430,h:220}, h:330, op:gf});
+```
+L'AGENT est un objet **déjà codé dans ta scène** : toi seul sais où il est, tu fournis ses
+coordonnées. Le reste (choc, rebond, raccord, passage de main) vient de la primitive.
+
+**Ailleurs dans l'épisode :**
+- `MrD.pointAt('point', t, x, y, h, op, cibleX)` — il pointe **et regarde** la cible. Le sens
+  est calculé. **N'utilise JAMAIS `say('point')` pour désigner** : les poses visent à droite
+  par défaut, le sens serait faux une fois sur deux.
+- `MrD.say('idle'|'walk'|'wave_hip', t, x, y, h, op, flip)` — présence sans désignation.
+- `MrD.hide()` — dès que la démonstration a besoin de la place.
+
+**Règles :** toujours en **ENCRE**, jamais en teal (le teal est réservé au spectateur). Il est
+**PETIT** et s'écarte ; le schéma prime toujours. **AUCUN gabarit de placement** — ses
+apparitions sont des ÉVÉNEMENTS décidés épisode par épisode, jamais un rythme prévisible.
+Il ne porte jamais le fusil de Tchekhov. La taille est un outil : grand au gag, discret ensuite.
+
+**Vie continue :** il ne dispense de rien. Une scène où il sort doit rester vivante SANS lui —
+c'est le défaut le plus fréquent (scène figée dès son départ, attrapée par le scan fail-loud).
+
 ## LA LOI
 
 **`ligne/SKILL_LIGNE_MOTEUR.md` est la loi.** Elle se lit EN ENTIER avant d'écrire

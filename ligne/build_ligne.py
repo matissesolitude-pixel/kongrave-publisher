@@ -206,6 +206,35 @@ def build_anim(ep, tl, work, rend):
         marker = f"/*INCLUDE:{lib}*/"
         if marker in html:
             html = html.replace(marker, (LIGNE / "engine" / lib).read_text())
+    # INCLUDE:narrator — MR DOLLAR clé en main. Un moteur écrit UNE ligne et reçoit :
+    # la bibliothèque de gags, les poses vectorisées (defs SVG), leurs dimensions, la carte
+    # des yeux (clignement) et l'objet MrD prêt à l'emploi, branché sur l'amplitude de la voix.
+    # Évite d'inliner 300 Ko de SVG à la main dans chaque moteur (source d'erreurs).
+    if "/*INCLUDE:narrator*/" in html:
+        import re as _re
+        A = LIGNE / "assets"
+        bases = ["present", "idle", "point", "walk", "wave_hip"]
+        poses = [f"{b}_{m}" for b in bases for m in ("soft", "wide")]
+        defs, sizes = [], {}
+        for name in poses:
+            f = A / "narrator" / f"{name}.svg"
+            if not f.is_file():
+                continue
+            svg = f.read_text()
+            w = int(_re.search(r'width="(\d+)"', svg).group(1))
+            h = int(_re.search(r'height="(\d+)"', svg).group(1))
+            defs.append(f'<g id="np_{name}">' + "".join(_re.findall(r"<path[^>]*/>", svg)) + "</g>")
+            sizes[name] = {"w": w, "h": h}
+        eyes_all = json.loads((A / "narrator" / "eyes.json").read_text()) if (A / "narrator" / "eyes.json").is_file() else {}
+        eyes = {k: v for k, v in eyes_all.items() if k in sizes and v}
+        block = (A / "narrator-gags.js").read_text().rstrip() + "\n" + \
+            "const NPOSE=" + json.dumps(sizes) + ";\n" + \
+            "const NEYES=" + json.dumps(eyes, ensure_ascii=False) + ";\n" + \
+            "(function(){var d=document.createElementNS('http://www.w3.org/2000/svg','defs');" + \
+            "d.innerHTML=" + json.dumps("".join(defs)) + ";SVG.appendChild(d);})();\n" + \
+            "const MrD=MrDollar.init({svg:SVG,poses:NPOSE,defaultPose:'idle_soft'});\n" + \
+            "MrD.setEyes(NEYES); MrD.setAmp(__AMP__,30);\n"
+        html = html.replace("/*INCLUDE:narrator*/", block)
     html = (html
             .replace("__SCENES__", json.dumps(tl["sc"]))
             .replace("__WORDS__", json.dumps(words))

@@ -434,8 +434,15 @@
       const u=t-s; hideQ(); hideCaps(); hideAll();
       const k=lerp(1,0.54,eInOut(clamp((u-0.4)/2.2,0,1)));
       zoom(k,CX,1160);
-      drawSeq(SEQ.length,1,INK); seqLine.setAttribute('transform',`translate(0,${(5*Math.sin(u*0.9)+2*Math.sin(u*1.8)).toFixed(1)})`);
-      swings(1,INK);
+      drawSeq(SEQ.length,1,INK); seqLine.setAttribute('transform',`translate(${(9*Math.sin(u*0.75)+4*Math.sin(u*1.55)).toFixed(1)},${(7*Math.sin(u*0.95)+3*Math.sin(u*1.9)).toFixed(1)})`);
+      // VIE CONTINUE : chaque repère respire en POSITION (deux harmoniques, phase décalée).
+      // Sans ça la scène se fige dès que le narrateur sort — défaut attrapé par le scan.
+      for(let i=0;i<SWD.length;i++){const st=SW[i];
+        if(!st){setOp(SWD[i],0);continue;}
+        const bx=5*Math.sin(u*0.85+i*0.8)+2.5*Math.sin(u*1.75+i*0.4);
+        const by=6*Math.sin(u*1.05+i*0.5)+3*Math.sin(u*2.05+i*0.9);
+        SWD[i].setAttribute('cx',(st[0]+bx).toFixed(1));SWD[i].setAttribute('cy',(st[1]+by).toFixed(1));
+        SWD[i].setAttribute('stroke',INK);setOp(SWD[i],1);}
       level(0.45,0.15);
       evDot.setAttribute('cx',(GAP0+GAP1)/2*k+CX*(1-k));evDot.setAttribute('cy',LVY*k+1160*(1-k));
       evDot.setAttribute('r',(17*k).toFixed(1));setOp(evDot,1);
