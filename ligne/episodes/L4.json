@@ -12,7 +12,15 @@
   "scenes": [
     {
       "id": "s1",
-      "question": "When someone buys a hundred million — who sells it to them?"
+      "question": "When someone buys a hundred million — who sells it to them?",
+      "hook_gag": {
+        "primitive": "hitBy",
+        "agent": "le fléau de la balance qui bascule",
+        "reaction": "faussement confiant",
+        "temps": "imminent",
+        "raccord": "il s'écarte et laisse la place",
+        "lien_sujet": "il ne voit pas ce qui arrive derrière lui — exactement le trader qui devient la contrepartie sans l'avoir voulu"
+      }
     },
     {
       "id": "s2"
@@ -28,5 +36,10 @@
     }
   ],
   "total": 88.0,
-  "caption": "Comment \"LINE\" for the checklist on where your stop really sits. Every trade has two sides — the moment your stop triggers, it becomes a market order feeding whoever needs the other side.\n\nA stop isn't a shield, it's an instruction. And a thousand traders park theirs at the same level — orders stacked like inventory on a shelf. You can't opt out of being someone's liquidity when you trade. But you can choose WHERE you offer your exit instead of leaving it where everyone else does. That's the edge.\n\nTHE LINE — you're always someone's liquidity. Choose where.\n\n#trading #trader #liquidity #orderflow #daytrading #forex #tradingeducation #priceaction #marketstructure #stoploss"
+  "caption": "Comment \"LINE\" for the checklist on where your stop really sits. Every trade has two sides — the moment your stop triggers, it becomes a market order feeding whoever needs the other side.\n\nA stop isn't a shield, it's an instruction. And a thousand traders park theirs at the same level — orders stacked like inventory on a shelf. You can't opt out of being someone's liquidity when you trade. But you can choose WHERE you offer your exit instead of leaving it where everyone else does. That's the edge.\n\nTHE LINE — you're always someone's liquidity. Choose where.\n\n#trading #trader #liquidity #orderflow #daytrading #forex #tradingeducation #priceaction #marketstructure #stoploss",
+  "_narrator": {
+    "regle": "Mr Dollar est la voix du Reel : bouche synchro à l'écran, voix off hors champ. Aucun gabarit de placement.",
+    "encre": "#20242A, jamais teal",
+    "taille": "petit, il s'écarte quand la démonstration a besoin de place"
+  }
 }

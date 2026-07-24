@@ -34,6 +34,27 @@ existe un `engine/lNN.html.refused_*` (ou un `_hold/LNN_meta_*`), ce N est une *
   alerte pour intervention manuelle. Tu n'as rien à compter — code simplement le moteur manquant.
 
 
+
+## ⛔ LOI : ZÉRO CHEVAUCHEMENT (la plus violée, la plus coûteuse)
+
+**Rien ne se superpose à l'image.** Ni étiquette sur un dessin, ni étiquette sur une autre
+étiquette, ni le narrateur sur un objet, un texte ou la boule teal.
+
+**Pourquoi c'est une LOI et pas un goût :** un plan illisible fait décrocher. La lisibilité
+fait le **watch time**, qui fait la **portée**. Un chevauchement ne coûte pas « un peu de
+beauté » — il coûte des vues. C'est le défaut le plus répété de la série (L23/L25 étiquettes
+coupées · L27/L28 étiquettes collées et texte sur dessin · L04/L24/L29 narrateur par-dessus le décor).
+
+**Ce n'est plus une affaire de vigilance, c'est une porte :**
+- `putCap` **mesure** la largeur réelle et borne le centre → un texte ne peut plus être coupé.
+- Le narrateur **cherche une zone libre avant de se dessiner** (`placeClear` : il mesure les
+  bounding boxes de ce qui est déjà à l'écran, se décale, rétrécit, et **DISPARAÎT** si rien
+  n'est libre). Il reste aussi **entier dans le cadre** : s'écarter hors champ n'est pas une solution.
+- Toi, tu restes responsable du **placement des étiquettes** : avant d'en poser une, demande-toi
+  quel objet occupe ce (x, y) et sa bande verticale.
+
+**Vérifie sur des frames RENDUES, jamais sur du raisonnement.**
+
 ## LE NARRATEUR MR DOLLAR (obligatoire dans tout nouveau moteur)
 
 Mr Dollar est **la voix** du Reel. Le JSON porte son gag d'ouverture dans S1

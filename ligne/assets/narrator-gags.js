@@ -79,14 +79,14 @@
   };
   MrDollar.prototype.say = function (base, t, x, y, h, op, flip, rot, sx, sy) {
     this._t = t;
-    this.draw(this.resolve(base, t), x, y, h, op, flip, rot, sx, sy);
+    this.placeClear(this.resolve(base, t), x, y, h, op, flip, rot);
   };
   /* IL DÉSIGNE QUELQUE CHOSE — le sens est calculé, jamais deviné.
      Les poses visent à DROITE par défaut : si la cible est à sa gauche, on miroite.
      Règle : il regarde et pointe TOUJOURS vers ce qu'il désigne. */
   MrDollar.prototype.pointAt = function (base, t, x, y, h, op, targetX, rot, sx, sy) {
     this._t = t;
-    this.draw(this.resolve(base, t), x, y, h, op, (targetX < x), rot, sx, sy);
+    this.placeClear(this.resolve(base, t), x, y, h, op, (targetX < x), rot);
   };
   /* ── LES YEUX : CLIGNEMENT + REGARD (il s'adresse à nous) ────────────────
      Les pupilles sont peintes dans le dessin vectorisé : on les RECOUVRE et on
@@ -115,6 +115,66 @@
            (e.r * 0.5).toFixed(1) + ' ' + (e.r * 2.2).toFixed(1) + ' 0" fill="none" stroke="#20242A" stroke-width="6" stroke-linecap="round"/>';
     }
     this.eyeG.innerHTML = h;
+  };
+  /* ── LOI : ZÉRO CHEVAUCHEMENT ────────────────────────────────────────────
+     Un plan illisible fait décrocher ; la lisibilité fait le watch time, donc la
+     portée. Le narrateur ne se place donc JAMAIS à l'aveugle : il mesure ce qui
+     occupe déjà l'écran, cherche une zone libre, rétrécit si besoin — et
+     DISPARAÎT si rien n'est libre. Le schéma prime toujours sur le narrateur. */
+  MrDollar.prototype._obstacles = function (textOnly) {
+    var svg = this.g.ownerSVGElement || this.g.parentNode, out = [];
+    if (!svg || !svg.querySelectorAll) return out;
+    var els = svg.querySelectorAll(textOnly ? 'text' : 'rect,circle,ellipse,line,polyline,polygon,path,text,image');
+    for (var i = 0; i < els.length; i++) {
+      var e = els[i];
+      if (this.g.contains(e)) continue;                       // lui-même
+      if (e.closest && e.closest('defs')) continue;           // non dessiné
+      var op = parseFloat(e.getAttribute('opacity'));
+      if (!isNaN(op) && op < 0.06) continue;                  // invisible
+      var r; try { r = e.getBoundingClientRect(); } catch (x) { continue; }
+      if (r.width < 3 || r.height < 3) continue;
+      out.push(r);
+    }
+    return out;
+  };
+  MrDollar.prototype._overlapArea = function (r, obs) {
+    var a = 0;
+    for (var i = 0; i < obs.length; i++) {
+      var o = obs[i];
+      var w = Math.min(r.right, o.right) - Math.max(r.left, o.left);
+      var h = Math.min(r.bottom, o.bottom) - Math.max(r.top, o.top);
+      if (w > 0 && h > 0) a += w * h;
+    }
+    return a;
+  };
+  /* Place en évitant l'existant. opts.avoid : 'all' (défaut) ou 'text' (pendant le
+     gag, où toucher l'AGENT est voulu — mais jamais le texte). */
+  MrDollar.prototype.placeClear = function (pose, x, y, h, op, flip, rot, opts) {
+    opts = opts || {};
+    var obs = this._obstacles(opts.avoid === 'text');
+    var cand = [], dx = [0, -130, 130, -260, 260, -390, 390], sc = [1, 0.82, 0.66];
+    for (var si = 0; si < sc.length; si++)
+      for (var di = 0; di < dx.length; di++)
+        cand.push({ x: x + dx[di], y: y, h: h * sc[si] });
+    var best = null;
+    for (var i = 0; i < cand.length; i++) {
+      var c = cand[i];
+      this.draw(pose, c.x, c.y, c.h, op, flip, rot, 1, 1);
+      var r; try { r = this.g.getBoundingClientRect(); } catch (e) { break; }
+      // CONTRAINTE DE CADRE : éviter le chevauchement en le poussant hors champ
+      // n'est pas une solution — il doit rester ENTIER dans la zone sûre.
+      if (r.left < 40 || r.right > 1040 || r.bottom > 1500) continue;
+      var area = Math.max(1, r.width * r.height);
+      var ov = this._overlapArea(r, obs) / area;
+      if (best === null || ov < best.ov) best = { c: c, ov: ov };
+      if (ov < 0.02) return true;                              // zone libre trouvée
+    }
+    if (best && best.ov < 0.10) {                              // tolérance minime
+      this.draw(pose, best.c.x, best.c.y, best.c.h, op, flip, rot, 1, 1);
+      return true;
+    }
+    this.hide();                                               // rien de libre : il s'efface
+    return false;
   };
   MrDollar.prototype.show = function (pose, x, y, h, op, flip) { this.draw(pose, x, y, h, op, flip, 0, 1, 1); };
   MrDollar.prototype.hide = function () { this.g.setAttribute('opacity', '0'); };
@@ -256,8 +316,10 @@
     var px = lerp(bx, rest.x, hand), py = lerp(by, rest.y, hand), ph = lerp(h0, rest.h, hand);
     if (hand > 0.85) { px += 4 * Math.sin(u * 1.2) + 2 * Math.sin(u * 2.3); }   // vie continue une fois posé
     this._t = spec.t;
-    this.draw(this.resolve(hand > 0.6 ? (RACCORD[spec.raccord] || 'idle') : pose, spec.t),
-              px, py, ph, (st.op == null ? 1 : st.op) * (spec.op == null ? 1 : spec.op), spec.flip, st.rot, st.sx, st.sy);
+    var pf = this.resolve(hand > 0.6 ? (RACCORD[spec.raccord] || 'idle') : pose, spec.t);
+    var o = (st.op == null ? 1 : st.op) * (spec.op == null ? 1 : spec.op);
+    if (hand > 0.6) this.placeClear(pf, px, py, ph, o, spec.flip, st.rot);   // une fois la main passée : zéro chevauchement
+    else this.placeClear(pf, px, py, ph, o, spec.flip, st.rot, { avoid: 'text' });  // pendant le choc : l'agent est la cible
   };
 
   root.MrDollar = {
