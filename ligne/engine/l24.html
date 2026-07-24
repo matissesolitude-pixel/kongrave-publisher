@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L24 « THE SETUP THAT NEVER COMES » — REPRODUCTION (refus Meta du master précédent + défaut d'étiquette « texte coupé »).
+       Composition VOLONTAIREMENT DIFFÉRENTE du .refused_ : l'HORIZON du marché mort est en BAS (y=1150), la boule teal REPOSE
+       dessus (elle n'est pas suspendue au-dessus) ; l'edge n'est plus des points-disques mais de rares BALISES VERTICALES teal qui
+       s'élèvent de l'horizon ; la pression n'est plus un seul anneau mais DEUX anneaux concentriques qui se resserrent ; les standards
+       ne sont plus une barre à deux montants mais une ÉTAGÈRE à crans qui s'affaisse ; le faux setup n'est plus un disque mais une
+       BALISE grise fabriquée qui pousse puis s'effondre. putCap MESURE (getComputedTextLength) et borne le centre — copié TEL QUEL de
+       l26.html — pour que le texte coupé ne se reproduise pas. S1 : émotion frame 0 = TENSION + RECONNAISSANCE DE SOI, l'horizon est
+       DÉJÀ mort et les deux anneaux serrent DÉJÀ la boule qui vibre. S2 : l'edge est RARE (balises très espacées, longs vides) ; ne
+       rien faire est juste (coche) mais se vit comme un échec (la boule se délave). S3 : sous la pression, l'ÉTAGÈRE des standards
+       DESCEND cran par cran. S4 : étagère au plus bas, la boule FABRIQUE une balise dans le vide, qui pousse et ÉCLATE — les vraies
+       balises restent intactes. S5 : décharge — la boule RETIENT l'étagère en haut (entretoise teal), la pression reflue ; deux briques :
+       jamais venue (creuse, coût nul) vs inventée (grise, coût total). Doctrine : aucun chiffre ; gris = délavage de perte (pas de rouge) ;
+       pas de brun ; TOI = boule teal jamais une figure ; bas du cadre vide sauf raison narrative. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── L'HORIZON DU MARCHÉ MORT : une ligne qui ondule à peine, en bas du cadre (deux harmoniques = vie continue) ──
+    const MY=1150, MX0=130, MX1=950, MN=34;
+    const flat=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    function drawFlat(u,amp,op){
+      const pts=[];for(let i=0;i<MN;i++){const x=MX0+(MX1-MX0)*i/(MN-1);
+        const y=MY + amp*Math.sin(i*0.5-u*1.6) + 0.45*amp*Math.sin(i*1.25-u*2.7);
+        pts.push(`${x.toFixed(0)},${y.toFixed(1)}`);}
+      flat.setAttribute('points',pts.join(' '));setOp(flat,op);}
+
+    // ── LES RARES BALISES D'EDGE (verticales teal qui s'élèvent de l'horizon, très espacées) ──
+    const EDGEX=[200,780,950];
+    const bStem=EDGEX.map(x=>mk('line',{x1:x,x2:x,stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0}));
+    const bDot=EDGEX.map(x=>mk('circle',{cx:x,r:13,fill:YOU,opacity:0}));
+    function drawBeacon(i,u,op){const topY=MY-244+7*Math.sin(u*1.9+i*1.7)+3*Math.sin(u*3.1+i*0.9);
+      bStem[i].setAttribute('y1',MY);bStem[i].setAttribute('y2',topY.toFixed(1));setOp(bStem[i],op);
+      bDot[i].setAttribute('cy',topY.toFixed(1));bDot[i].setAttribute('r',(13+2*Math.sin(u*2.4+i*1.3)).toFixed(1));setOp(bDot[i],op);}
+    function hideBeacons(){for(let i=0;i<EDGEX.length;i++){setOp(bStem[i],0);setOp(bDot[i],0);}}
+
+    // ── TOI (boule teal) + LES DEUX ANNEAUX DE PRESSION qui se resserrent ──
+    const BR=32, HX=500, HY=MY-BR;
+    const ring1=mk('circle',{fill:'none',stroke:DEAD,'stroke-width':7,opacity:0});
+    const ring2=mk('circle',{fill:'none',stroke:DEAD,'stroke-width':4,opacity:0});
+    const ball=mk('circle',{r:BR,fill:YOU,opacity:0});
+    function setBall(x,y,wash,op,squash){const rx=BR*(1+(squash||0)),ry=BR*(1-(squash||0)*0.85);
+      ball.setAttribute('cx',x.toFixed(1));ball.setAttribute('cy',y.toFixed(1));
+      ball.setAttribute('transform',`translate(${(x*(1-rx/BR)).toFixed(2)} ${(y*(1-ry/BR)).toFixed(2)}) scale(${(rx/BR).toFixed(3)} ${(ry/BR).toFixed(3)})`);
+      ball.setAttribute('fill',mix(YOU,DEAD,wash||0));setOp(ball,op);}
+    function setRings(x,y,r,op){ring1.setAttribute('cx',x.toFixed(1));ring1.setAttribute('cy',y.toFixed(1));ring1.setAttribute('r',r.toFixed(1));setOp(ring1,op);
+      ring2.setAttribute('cx',x.toFixed(1));ring2.setAttribute('cy',y.toFixed(1));ring2.setAttribute('r',(r*0.62).toFixed(1));setOp(ring2,op*0.8);}
+    function hideRings(){setOp(ring1,0);setOp(ring2,0);}
+
+    // ── L'ÉTAGÈRE DES STANDARDS (haut = exigeant, bas = tout devient acceptable) — barre + trois crans vers le bas ──
+    const SHW=210;
+    const shelf=mk('line',{stroke:INK,'stroke-width':13,'stroke-linecap':'round',opacity:0});
+    const shelfTick=[-1,0,1].map(()=>mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    function setShelf(cx,y,op){shelf.setAttribute('x1',(cx-SHW).toFixed(1));shelf.setAttribute('x2',(cx+SHW).toFixed(1));
+      shelf.setAttribute('y1',y.toFixed(1));shelf.setAttribute('y2',y.toFixed(1));setOp(shelf,op);
+      const tx=[cx-140,cx,cx+140];for(let k=0;k<3;k++){shelfTick[k].setAttribute('x1',tx[k]);shelfTick[k].setAttribute('x2',tx[k]);
+        shelfTick[k].setAttribute('y1',(y+7).toFixed(1));shelfTick[k].setAttribute('y2',(y+27).toFixed(1));setOp(shelfTick[k],op);}}
+    function hideShelf(){setOp(shelf,0);for(const t of shelfTick)setOp(t,0);}
+
+    // ── LA COCHE « ne rien faire = correct » (S2) ──
+    const check=mk('path',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    function setCheck(cx,cy,op){check.setAttribute('d',`M ${cx-26} ${cy} L ${cx-6} ${cy+22} L ${cx+30} ${cy-24}`);setOp(check,op);}
+
+    // ── LE FAUX SETUP FABRIQUÉ (S4) : une balise grise qui pousse puis éclate ──
+    const fakeStem=mk('line',{x1:HX,x2:HX,stroke:DEAD,'stroke-width':11,'stroke-linecap':'round',opacity:0});
+    const fakeDot=mk('circle',{cx:HX,r:15,fill:DEAD,opacity:0});
+    const burst=mk('circle',{cx:HX,fill:'none',stroke:DEAD,'stroke-width':6,opacity:0});
+    const DUST=[]; for(let i=0;i<9;i++)DUST.push(mk('rect',{width:12,height:12,rx:2,fill:DEAD,opacity:0}));
+    function hideFake(){setOp(fakeStem,0);setOp(fakeDot,0);setOp(burst,0);for(const d of DUST)setOp(d,0);}
+
+    // ── S5 : L'ENTRETOISE + LES DEUX BRIQUES (jamais venue / inventée) ──
+    const brace=mk('line',{x1:HX,x2:HX,stroke:YOU,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const brkA=mk('rect',{x:140,y:960,width:316,height:128,rx:8,fill:'none',stroke:INK,'stroke-width':4,'stroke-dasharray':'12 9',opacity:0});
+    const brkB=mk('rect',{x:604,y:960,width:316,height:128,rx:8,fill:DEAD,'fill-opacity':0.5,stroke:DEAD,'stroke-width':4,opacity:0});
+    function hideS5(){setOp(brace,0);setOp(brkA,0);setOp(brkB,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY IS DOING NOTHING','SO HARD'];
+    const FS=70,lineH=96,y0=220,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+100,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':165,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE et borne (copié TEL QUEL de l26.html) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(36),capC=caption(38),capD=caption(34),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — L'HORIZON MORT, ET LA PRESSION QUI SERRE DÉJÀ ═══
+    // Verbe visuel : l'étau naissant (rien ne bouge dehors, tout se resserre dedans).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideBeacons(); hideShelf(); hideFake(); hideS5(); setOp(check,0);
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (TENSION + RECONNAISSANCE DE SOI) : l'horizon est DÉJÀ mort et les deux anneaux serrent
+      //    DÉJÀ la boule, qui vibre et s'écrase. Aucun draw-on : la scène est à son point de tension dès t=0.
+      drawFlat(u,9,1);
+      putCap(capA,'A DEAD MARKET',760,MY-64,DEAD,1);                       // au-dessus de la ligne, à droite (colonne libre)
+      const jit=2.4*Math.sin(u*11)+1.6*Math.sin(u*6.3);                    // tremblement (deux harmoniques)
+      const tight=62+8*Math.sin(u*2.9)+4*Math.sin(u*4.6);
+      setRings(HX+jit,HY,tight,0.85);
+      setBall(HX+jit,HY,0,1,0.10+0.05*Math.sin(u*2.9));
+      putCap(capC,'YOU, WAITING',HX,MY+80,YOU,1);                          // sous la boule (colonne libre : la boule est au-dessus de la ligne)
+      putCap(capD,'NOTHING TO DO — AND IT BURNS',CX,1380,DEAD,clamp((u-2.0)/0.7,0,1)*gf);
+    }
+
+    // ═══ S2 — L'EDGE EST RARE : de longs vides entre de rares balises ═══
+    // Verbe visuel : l'espacement (le plein est minuscule, le vide est immense).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShelf(); hideFake(); hideS5();
+      drawFlat(u,7,1);
+      for(let i=0;i<EDGEX.length;i++){const ap=clamp((u-i*0.5+0.5)/0.5,0,1);drawBeacon(i,u,ap);}
+      putCap(capA,'YOUR EDGE — RARE',CX,850,YOU,clamp((u-0.8)/0.6,0,1));   // au-dessus des balises (y libre)
+      // la boule est DANS le vide entre deux balises : ne rien faire est JUSTE (coche) mais se vit comme un échec
+      const wash=0.30*clamp((u-2.6)/1.6,0,1);
+      const bob=3*Math.sin(u*2.2)+1.5*Math.sin(u*3.5);
+      setRings(HX,HY+bob,58+6*Math.sin(u*2.6)+3*Math.sin(u*4.1),0.45);
+      setBall(HX,HY+bob,wash,1,0.06+0.03*Math.sin(u*2.6));
+      setCheck(HX+92,HY-6,clamp((u-1.9)/0.6,0,1));
+      putCap(capC,'DOING NOTHING IS CORRECT',HX,MY+80,YOU,clamp((u-2.1)/0.6,0,1));
+      putCap(capB,'IT ONLY FEELS LIKE FAILING',CX,1380,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S3 — L'ÉTAGÈRE DES STANDARDS QUI CÈDE ═══
+    // Verbe visuel : le seuil qui s'affaisse cran par cran, poussé par la pression.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBeacons(); hideFake(); hideS5(); setOp(check,0);
+      drawFlat(u,6,1);
+      // la pression SERRE de plus en plus fort (deux harmoniques + jitter croissant)
+      const grip=clamp(u/4.0,0,1);
+      const jit=(2+4*grip)*Math.sin(u*(10+grip*6))+1.4*Math.sin(u*5.7);
+      const tight=(62-16*grip)+(8-3*grip)*Math.sin(u*(2.9+grip*2.2))+3*Math.sin(u*4.7);
+      setRings(HX+jit,HY,tight,0.85+0.15*grip);
+      setBall(HX+jit,HY,0.12*grip,1,0.10+0.09*grip*Math.abs(Math.sin(u*3.4)));
+      putCap(capC,'THE PRESSURE',HX,1245,DEAD,1);                          // sous la boule
+      // l'étagère : quatre crans qui descendent, chacun poussé par une pulsation
+      const T0=1.1, STEP=0.72, N=4; let sy=690;
+      for(let k=0;k<N;k++){sy+=76*eOut(clamp((u-(T0+k*STEP))/0.28,0,1));}
+      sy+=2*Math.sin(u*2.3);                                              // micro-vie continue de l'étagère
+      setShelf(HX,sy,1);
+      putCap(capA,'YOUR STANDARDS',HX,sy-34,INK,1);                        // au-dessus de l'étagère (crans pointent vers le BAS)
+      putCap(capB,'BOREDOM MOVES THE BAR',CX,1390,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE FAUX SETUP FABRIQUÉ DANS LE VIDE, QUI ÉCLATE ═══
+    // Verbe visuel : la fabrication + l'éclatement (les vraies balises restent intactes).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShelf(); hideS5(); setOp(check,0); hideRings();
+      drawFlat(u,6,1);
+      // les VRAIES balises restent là, brillantes, jamais prises (rappel visuel permanent)
+      for(let i=0;i<EDGEX.length;i++)drawBeacon(i,u,1);
+      // le faux setup : une balise terne fabriquée dans le vide central (colonne x=500, libre)
+      const born=clamp((u-0.3)/0.5,0,1), grow=clamp((u-1.2)/1.2,0,1), pop=clamp((u-2.6)/0.55,0,1);
+      const ftop=MY-30-210*eIn(grow);
+      fakeStem.setAttribute('y1',MY);fakeStem.setAttribute('y2',ftop.toFixed(1));setOp(fakeStem,born*(1-pop));
+      fakeDot.setAttribute('cy',ftop.toFixed(1));fakeDot.setAttribute('r',(15+4*Math.sin(u*3)).toFixed(1));setOp(fakeDot,born*(1-pop));
+      burst.setAttribute('cy',ftop.toFixed(1));burst.setAttribute('r',(30+300*eOut(pop)).toFixed(1));setOp(burst,pop*(1-pop)*3.4);
+      putCap(capA,'A SETUP YOU INVENTED',HX,ftop-40,DEAD,born*(1-pop));    // au-dessus de la pointe de la balise
+      // la boule saute sur la fausse balise, puis se délave en gris sous l'éclatement
+      const jump=clamp((u-0.7)/0.7,0,1), bx=lerp(HX,HX,eInOut(jump)), by=lerp(HY,ftop+40,eInOut(jump));
+      setBall(bx,by+pop*80,0.78*pop,1,0.08*Math.sin(u*4.6));
+      // poussière qui retombe : la vie continue pendant la tenue longue (déplacement de POSITION)
+      for(let i=0;i<DUST.length;i++){const ph=((u*0.32)+i/DUST.length)%1;
+        DUST[i].setAttribute('x',(HX-140+((i*97)%300)).toFixed(0));
+        DUST[i].setAttribute('y',(ftop+60+ph*360).toFixed(0));
+        setOp(DUST[i],u>3.0?(1-ph)*0.42:0);}
+      putCap(capB,'BLOW-UPS COME FROM THE EMPTY HOURS',CX,600,INK,clamp((u-3.2)/0.7,0,1));
+      putCap(capD,'REAL EDGES — NEVER TAKEN',CX,1250,DEAD,clamp((u-4.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : nommer l'attente, TENIR l'étagère ═══
+    // Verbe visuel : le blocage (l'étagère retenue en haut par une entretoise teal).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBeacons(); hideFake(); setOp(check,0);
+      drawFlat(u,6,1);
+      // la pression pousse encore, mais l'étagère est BLOQUÉE haut par l'entretoise teal
+      const push=clamp(u/1.5,0,1), give=(1-clamp((u-1.1)/0.7,0,1)), sy=700+24*push*give+2*Math.sin(u*2.2);
+      setShelf(HX,sy,1);
+      putCap(capA,'YOUR STANDARDS — HELD',HX,sy-34,INK,1);
+      // l'entretoise relie l'étagère à la boule (passe dans la gouttière entre les deux briques)
+      const bap=clamp((u-0.9)/0.5,0,1);
+      brace.setAttribute('y1',(sy+16).toFixed(1));brace.setAttribute('y2',(HY-BR-6).toFixed(1));setOp(brace,bap);
+      // la boule se pose calmement, la pression reflue (oscillation décroissante à deux harmoniques)
+      const calm=clamp((u-1.6)/1.0,0,1);
+      const osc=(7-5*calm)*Math.sin(u*2.4)+(3-2*calm)*Math.sin(u*3.7);
+      setRings(HX,HY,(58+16*calm)+osc,0.72-0.42*calm);
+      setBall(HX,HY,0,1,(0.09-0.07*calm)*Math.abs(Math.sin(u*2.4)));
+      putCap(capC,'THIS IS THE HARD PART',HX,1245,YOU,clamp((u-0.6)/0.6,0,1));
+      // les deux briques : jamais venue (creuse, gauche) vs inventée (grise, droite) — chacune dans SA moitié
+      const gap=clamp((u-2.3)/0.7,0,1);
+      setOp(brkA,gap);setOp(brkB,gap);
+      brkA.setAttribute('stroke-dashoffset',(u*14).toFixed(0));
+      putCap(capB,'NEVER CAME',298,1010,INK,gap);                         // gauche cx=298 (≤380)
+      putCap(capD,'COST NOTHING',298,1058,INK,gap);
+      putCap(capE,'YOU INVENTED',762,1010,DEAD,gap);                      // droite cx=762 (≥700)
+      putCap(capF,'COSTS IT ALL',762,1058,DEAD,gap);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
