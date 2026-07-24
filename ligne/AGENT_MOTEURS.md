@@ -55,6 +55,23 @@ coupées · L27/L28 étiquettes collées et texte sur dessin · L04/L24/L29 narr
 
 **Vérifie sur des frames RENDUES, jamais sur du raisonnement.**
 
+
+### ⛔ LA CAUSE DU GAG DOIT ÊTRE À L'IMAGE
+
+Un gag dont on ne voit pas la cause n'est pas drôle — **il est illisible**. Le spectateur voit
+le personnage encaisser quelque chose, mais rien n'explique quoi, et il décroche.
+
+**Règle :** au moment du choc, l'AGENT doit être **visible à l'écran** et **en contact** avec lui.
+- Les coordonnées passées à `MrD.gag(..., agent:{x,y})` doivent être celles de l'**objet réel de ta
+  scène** (le rideau, la mèche, la jauge, l'escalier…), pas une position choisie au hasard.
+- Cet objet doit être **dessiné et visible dès la frame 0**, et idéalement **en mouvement vers lui**
+  (c'est lui qui provoque, pas un décor passif).
+- La bibliothèque ajoute une **marque d'impact** au point de contact, mais elle ne remplace pas
+  l'agent : elle ne fait que souligner un lien qui doit déjà exister.
+
+**Test :** coupe le son et regarde la frame 0. Si on ne peut pas dire *ce qui lui arrive et à cause
+de quoi*, le gag est raté — refais-le.
+
 ## LE NARRATEUR MR DOLLAR (obligatoire dans tout nouveau moteur)
 
 Mr Dollar est **la voix** du Reel. Le JSON porte son gag d'ouverture dans S1
@@ -91,6 +108,12 @@ coordonnées. Le reste (choc, rebond, raccord, passage de main) vient de la prim
 **PETIT** et s'écarte ; le schéma prime toujours. **AUCUN gabarit de placement** — ses
 apparitions sont des ÉVÉNEMENTS décidés épisode par épisode, jamais un rythme prévisible.
 Il ne porte jamais le fusil de Tchekhov. La taille est un outil : grand au gag, discret ensuite.
+
+**DURÉE DU GAG — corrigée le 24/07.** La Bible disait « ~1 à 1,5 s » : c'est trop court, le
+spectateur n'a pas le temps de comprendre que c'en est un. Le rythme réel est de **~3,4 s** :
+le choc TIENT ~1,3 s (on voit ce qui lui arrive), la RÉACTION dure ~0,95 s (c'est là que le
+comique se lit), puis il passe la main (~1,15 s). Ces durées sont dans `narrator-gags.js` —
+ne les raccourcis pas.
 
 **Vie continue :** il ne dispense de rien. Une scène où il sort doit rester vivante SANS lui —
 c'est le défaut le plus fréquent (scène figée dès son départ, attrapée par le scan fail-loud).

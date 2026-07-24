@@ -35,9 +35,12 @@
   // oscillation amortie : le rebond cartoon (jamais figé, deux harmoniques)
   var wob = function (u, f, d) { return Math.exp(-(d || 4) * u) * (Math.sin(u * f) + 0.4 * Math.sin(u * f * 2.1)); };
 
-  var HIT = 0.75;   // durée de l'état de choc
-  var RAC = 0.50;   // durée du raccord (il se relève / il montre)
-  var HAND = 1.10;  // durée du passage de main (il rejoint sa place et reste petit)
+  /* RYTHME DU GAG — un gag trop rapide n'est pas lu comme un gag.
+     Il faut le temps de voir la CAUSE, d'encaisser le CHOC, puis de lire la RÉACTION.
+     (Corrigé le 24/07 : 0,75+0,50 était trop court, personne n'avait le temps de comprendre.) */
+  var HIT = 1.30;   // le choc TIENT : on voit ce qui lui arrive
+  var RAC = 0.95;   // le temps de la réaction — c'est là que le comique se lit
+  var HAND = 1.15;  // il passe la main
 
   function MrDollar(cfg) {
     this.poses = cfg.poses || {};
@@ -70,17 +73,53 @@
      la voix continue. Pas de lip-sync phonétique : les deux variantes de bouche
      (_wide ouverte / _soft fermée) sont les positions du cycle. */
   MrDollar.prototype.setAmp = function (arr, fps) { this.amp = arr || null; this.fps = fps || 30; };
+  /* Bouche : hystérésis + maintien minimum. Sans ça la bouche bat au rythme de
+     l'amplitude (jusqu'à 30 Hz) et, les deux variantes étant deux DESSINS distincts,
+     les yeux se mettent à convulser. On ne change d'état que si le son le justifie
+     durablement, et jamais plus vite que MOUTH_HOLD. */
+  var MOUTH_HOLD = 0.13;
   MrDollar.prototype.mouth = function (t) {
     if (!this.amp || !this.amp.length) return 'soft';
-    return (this.amp[Math.floor((t || 0) * this.fps)] || 0) > 0.30 ? 'wide' : 'soft';
+    t = t || 0;
+    var a = this.amp[Math.floor(t * this.fps)] || 0;
+    if (this._mState == null) { this._mState = 'soft'; this._mT = t; }
+    if (t - this._mT >= MOUTH_HOLD) {
+      var want = this._mState === 'wide' ? (a > 0.20 ? 'wide' : 'soft')   // hystérésis
+                                         : (a > 0.38 ? 'wide' : 'soft');
+      if (want !== this._mState) { this._mState = want; this._mT = t; }
+    }
+    return this._mState;
+  };
+  /* Une paire n'est utilisable pour le lip-sync que si les deux dessins sont
+     ALIGNÉS (yeux au même endroit). Sinon on garde une seule pose : mieux vaut
+     pas d'animation de bouche qu'un visage qui tremble. */
+  MrDollar.prototype._pairOK = function (base) {
+    if (!this._pair) this._pair = {};
+    if (this._pair[base] != null) return this._pair[base];
+    var A = this.eyeMap && this.eyeMap[base + '_soft'], B = this.eyeMap && this.eyeMap[base + '_wide'];
+    var ok = false;
+    if (A && B && A.eyes && B.eyes && this.poses[base + '_soft'] && this.poses[base + '_wide']) {
+      var d = 0;
+      for (var i = 0; i < 2; i++)
+        d = Math.max(d, Math.abs(A.eyes[i].x - B.eyes[i].x) + Math.abs(A.eyes[i].y - B.eyes[i].y));
+      ok = (d < 14);
+    }
+    this._pair[base] = ok;
+    return ok;
   };
   MrDollar.prototype.resolve = function (pose, t) {
     if (/_(soft|wide)$/.test(pose)) return pose;
-    var m = this.mouth(t), a = pose + '_' + m, b = pose + '_' + (m === 'wide' ? 'soft' : 'wide');
-    if (this.poses[a]) return a;
-    if (this.poses[b]) return b;      // pas de variante de bouche : on garde LA pose (jamais une autre)
-    return this.poses[pose] ? pose : a;
+    if (this._pairOK(pose)) {                       // paire alignée : la bouche peut jouer
+      var a = pose + '_' + this.mouth(t);
+      if (this.poses[a]) return a;
+    }
+    if (this.poses[pose + '_soft']) return pose + '_soft';
+    if (this.poses[pose + '_wide']) return pose + '_wide';
+    return this.poses[pose] ? pose : pose + '_soft';
   };
+  /* Poses capables de parler (paire alignée) — le séquenceur les privilégie
+     quand il y a de la voix et qu'on voit son visage. */
+  MrDollar.prototype.canTalk = function (base) { return this._pairOK(base); };
   MrDollar.prototype.say = function (base, t, x, y, h, op, flip, rot, sx, sy) {
     this._t = t;
     this.placeClear(this.resolve(base, t), x, y, h, op, flip, rot);
@@ -203,26 +242,58 @@
      Il ne tient JAMAIS la même attitude pendant toute une apparition : il enchaîne.
      `seq` = liste de poses (noms de base), jouées dans l'ordre avec des durées
      légèrement inégales (rythme naturel, pas métronomique) et déterministes. */
+  /* Chaque pose est une INTENTION, pas une variation décorative.
+     Le pointage est RARE : il ne sert qu'au moment où il désigne vraiment.
+     'talk' = poses au visage visible, capables d'animer la bouche. */
   var ROUTINES = {
-    designe:  ['point', 'point', 'armscross', 'point'],           // il montre, il laisse regarder, il remontre
-    explique: ['point', 'present', 'point', 'hips'],              // il désigne puis développe
-    attend:   ['armscross', 'hips', 'flat', 'puzzled'],           // présence sans désignation
-    reagit:   ['startle', 'mouthcover', 'armscross', 'facepalm'], // il encaisse
-    doute:    ['puzzled', 'facepalm', 'armscross', 'peek'],
-    constate: ['flat', 'armscross', 'sad', 'hips']
+    // il désigne une chose précise, puis il laisse regarder (il ne pointe pas en continu)
+    designe:  [['point', 1.1], ['present', 1.6], ['idle', 1.8], ['hips', 1.5]],
+    // il développe une idée : présentation ouverte, puis attente
+    explique: [['present', 1.7], ['idle', 1.6], ['hips', 1.5], ['present', 1.4]],
+    // il est là, il écoute, il ne commente pas
+    attend:   [['idle', 1.9], ['armscross', 1.7], ['hips', 1.6], ['idle', 1.5]],
+    // il encaisse ce que la démonstration vient de montrer
+    reagit:   [['startle', 0.9], ['mouthcover', 1.3], ['armscross', 1.7], ['sad', 1.5]],
+    doute:    [['puzzled', 1.5], ['facepalm', 1.2], ['armscross', 1.8]],
+    constate: [['flat', 1.8], ['sad', 1.6], ['armscross', 1.7]]
   };
   /* Retourne la pose courante d'une routine. u = temps local de l'apparition. */
-  MrDollar.prototype.seq = function (u, routine) {
-    var L = (typeof routine === 'string') ? (ROUTINES[routine] || ROUTINES.attend) : (routine || ROUTINES.attend);
-    if (!L.length) return 'idle';
-    var acc = 0;
-    for (var i = 0; i < 40; i++) {
-      var k = i % L.length;
-      var d = 1.15 + 0.55 * ((i * 7 % 5) / 4);        // 1,15 à 1,70 s — irrégulier mais reproductible
-      if (u < acc + d) return L[k];
-      acc += d;
+  MrDollar.prototype.seq = function (u, routine, wantTalk) {
+    var L = (typeof routine === 'string') ? (ROUTINES[routine] || ROUTINES.attend) : routine;
+    if (!L || !L.length) return 'idle';
+    var acc = 0, pick = L[L.length - 1][0];
+    for (var i = 0; i < 60; i++) {
+      var e = L[i % L.length];
+      if (u < acc + e[1]) { pick = e[0]; break; }
+      acc += e[1];
     }
-    return L[L.length - 1];
+    // s'il y a de la voix et qu'on voit son visage, préférer une pose qui peut parler
+    if (wantTalk && !this.canTalk(pick)) {
+      for (var j = 0; j < L.length; j++) if (this.canTalk(L[j][0])) return L[j][0];
+    }
+    return pick;
+  };
+  /* ── LA CAUSE DOIT ÊTRE À L'IMAGE ────────────────────────────────────────
+     Un gag dont on ne voit pas la cause n'est pas drôle, il est illisible.
+     L'AGENT (objet de l'épisode) doit être VISIBLE et EN CONTACT au moment du choc.
+     La bibliothèque ne peut pas dessiner l'agent — il appartient à la scène — mais
+     elle marque le POINT D'IMPACT : quelques traits rayonnants, langage cartoon
+     universel, qui relient visuellement l'agent au personnage. */
+  MrDollar.prototype._impact = function (ax, ay, k, dir) {
+    if (!this.hitG) {
+      this.hitG = document.createElementNS(NS, 'g');
+      (this.g.parentNode || this.g).insertBefore(this.hitG, this.g);
+    }
+    if (k <= 0.02) { this.hitG.innerHTML = ''; return; }
+    var h = '', n = 6, base = (dir < 0 ? Math.PI : 0);
+    for (var i = 0; i < n; i++) {
+      var a = base - 0.75 + (1.5 * i / (n - 1));
+      var r0 = 26 + 10 * (1 - k), r1 = r0 + 34 * k;
+      h += '<line x1="' + (ax + Math.cos(a) * r0).toFixed(1) + '" y1="' + (ay + Math.sin(a) * r0 * 0.8).toFixed(1) +
+           '" x2="' + (ax + Math.cos(a) * r1).toFixed(1) + '" y2="' + (ay + Math.sin(a) * r1 * 0.8).toFixed(1) +
+           '" stroke="#20242A" stroke-width="' + (7 * k).toFixed(1) + '" stroke-linecap="round" opacity="' + k.toFixed(2) + '"/>';
+    }
+    this.hitG.innerHTML = h;
   };
   MrDollar.prototype.show = function (pose, x, y, h, op, flip) { this.draw(pose, x, y, h, op, flip, 0, 1, 1); };
   MrDollar.prototype.hide = function () { this.g.setAttribute('opacity', '0'); };
@@ -363,6 +434,8 @@
       this.draw(this.resolve(pose, spec.t), lerp(x0, -240, hand), y0, h0, 1 - hand, spec.flip, st.rot, st.sx, st.sy);
       return;
     }
+    // marque d'impact au point de contact tant que le choc dure : on VOIT ce qui l'a frappé
+    if (P1[spec.primitive]) this._impact(a.x, a.y - 90, clamp(1 - u / (HIT * 1.2), 0, 1), (st.dx || 0) < 0 ? -1 : 1);
     var bx = a.x + (st.dx || 0), by = a.y + (st.dy || 0) + (st.bob || 0);
     // le raccord regarde vers la cible (spec.lookAt), sinon on garde spec.flip
     if (spec.lookAt != null) spec.flip = (spec.lookAt < bx);
