@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L33 « THE PRICE YOU PAID » — anchoring au prix d'entrée, en psycho MÉCANIQUE. Le fusil = LA CHAÎNE qui te relie
+       (boule teal) à ton trait d'entrée. S1 : émotion frame 0 = TENSION + RECONNAISSANCE — TOI enchaîné au trait d'entrée,
+       chaîne TENDUE à craquer, le prix qui a déjà dérivé loin en dessous et continue. S2 : les niveaux du marché sont peuplés
+       de défenseurs (fil-de-fer) ; TON trait d'entrée est DÉSERT, pâle, invisible aux autres — seule ta chaîne l'ancre.
+       S3 : la chaîne TIRE ton regard de la bonne question (teal, allumée) vers la question d'ego (grise, qui s'allume) —
+       la substitution. S4 (NARRATEUR ABSENT) : la boule enchaînée reste immobile sur sa position morte pendant que de bons
+       setups teal défilent et s'éteignent hors de portée — le vrai coût. S5 : décharge — la SEULE question fait CÉDER la
+       chaîne (les maillons se brisent, le trait d'entrée s'efface), la boule teal se LIBÈRE et se pose. Image finale tenue.
+       Doctrine : aucun chiffre ; teal = TOI uniquement ; défenseurs = fil-de-fer neutres (encre, pas de brun) ; gris = perte ;
+       narrateur toujours en encre, absent en S4 ; bas du cadre vide sauf raison narrative. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) ──
+    /*INCLUDE:narrator*/
+
+
+    // ═══ LE FUSIL : LA CHAÎNE + LA BOULE (TOI) + LE TRAIT D'ENTRÉE ═══
+    const ball=mk('circle',{fill:YOU,opacity:0});                                  // TOI — présent dans tout l'épisode
+    const entry=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});  // ton prix d'entrée
+    const pnow=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-dasharray':'18 12','stroke-linecap':'round',opacity:0}); // le prix maintenant
+    const LINKS=[]; for(let i=0;i<16;i++)LINKS.push(mk('ellipse',{rx:15,ry:24,fill:'none',stroke:INK,'stroke-width':7,opacity:0}));
+    // dessine une chaîne de n maillons de (x0,y0) vers (x1,y1). vib = vibration latérale (tension), brk = rupture [0..1].
+    function drawChain(u,x0,y0,x1,y1,n,op,vib,brk){
+      const dx=(x1-x0)/n, dy=(y1-y0)/n;
+      for(let i=0;i<LINKS.length;i++){const e=LINKS[i];
+        if(i>=n){setOp(e,0);continue;}
+        const f=(i+0.5)/n, env=Math.sin(f*Math.PI);
+        let cx=x0+dx*(i+0.5), cy=y0+dy*(i+0.5);
+        cx += (vib||0)*env*(0.6*Math.sin(u*6.1+i*0.7)+0.4*Math.sin(u*9.4+i*1.3));   // deux harmoniques
+        cy += (vib||0)*0.35*env*(Math.sin(u*7.3+i*0.9));
+        let o=op, rot=(i%2?78:6);
+        if(brk>0){const side=(i%2?1:-1); cx+=side*brk*(50+i*13); cy+=brk*brk*(220+i*38); rot+=brk*(i%2?150:-130); o=op*clamp(1-brk*1.25,0,1);}
+        e.setAttribute('transform',`translate(${cx.toFixed(1)},${cy.toFixed(1)}) rotate(${rot.toFixed(1)})`);
+        setOp(e,o);}
+    }
+    function putBall(x,y,r,op){ball.setAttribute('cx',x.toFixed(1));ball.setAttribute('cy',y.toFixed(1));ball.setAttribute('r',r.toFixed(1));setOp(ball,op);}
+    function setLine(el,x1,y,x2,op){el.setAttribute('x1',x1);el.setAttribute('x2',x2);el.setAttribute('y1',y.toFixed(1));el.setAttribute('y2',y.toFixed(1));setOp(el,op);}
+
+    // ── LES NIVEAUX DU MARCHÉ (S2) + LES DÉFENSEURS FIL-DE-FER ──
+    const LEVELS=[]; for(let i=0;i<4;i++)LEVELS.push(mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+    const NFIG=9, FIG_H=[],FIG_B=[],FIG_AL=[],FIG_AR=[];
+    for(let i=0;i<NFIG;i++){FIG_H.push(mk('circle',{fill:'none',stroke:INK,'stroke-width':6,opacity:0}));
+      FIG_B.push(mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+      FIG_AL.push(mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+      FIG_AR.push(mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}));}
+    // fil-de-fer : rond (tête) + trait (corps) + deux bras qui tiennent/défendent. Sway continu (deux harmoniques).
+    function figure(idx,x,feetY,h,sway,armLift,op){
+      const head=FIG_H[idx],body=FIG_B[idx],aL=FIG_AL[idx],aR=FIG_AR[idx];
+      const headR=h*0.14, topY=feetY-h, headCy=topY+headR, hx=x+sway, shY=topY+2*headR+2;
+      head.setAttribute('cx',hx.toFixed(1));head.setAttribute('cy',headCy.toFixed(1));head.setAttribute('r',headR.toFixed(1));setOp(head,op);
+      body.setAttribute('x1',hx.toFixed(1));body.setAttribute('y1',shY.toFixed(1));body.setAttribute('x2',x.toFixed(1));body.setAttribute('y2',feetY.toFixed(1));setOp(body,op);
+      const aw=h*0.26, ay=shY+h*0.12;
+      aL.setAttribute('x1',hx.toFixed(1));aL.setAttribute('y1',ay.toFixed(1));aL.setAttribute('x2',(hx-aw).toFixed(1));aL.setAttribute('y2',(ay-h*0.14*armLift).toFixed(1));setOp(aL,op);
+      aR.setAttribute('x1',hx.toFixed(1));aR.setAttribute('y1',ay.toFixed(1));aR.setAttribute('x2',(hx+aw).toFixed(1));aR.setAttribute('y2',(ay-h*0.11*armLift).toFixed(1));setOp(aR,op);
+    }
+
+    // ── LES SETUPS (S4) : de bons setups teal qui montent puis s'éteignent, hors de portée ──
+    const NSET=8, SETS=[]; for(let i=0;i<NSET;i++)SETS.push(mk('circle',{r:16,fill:YOU,opacity:0}));
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DOES YOUR ENTRY','PRICE HOLD YOU'];
+    const FS=88,lineH=112,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26/l44) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(42),capC=caption(40),capD=caption(38),capE=caption(38),capF=caption(38);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ── BLOCS DE TEXTE MULTI-LIGNES (S3 les deux questions, S5 la question) — chaque ligne MESURÉE puis réduite ──
+    const BLK=[]; for(let i=0;i<6;i++)BLK.push(mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':52,'data-fs':52,'letter-spacing':'1.2',opacity:0}));
+    function putBlock(els,lines,cx,yTop,lh,color,op,maxw){
+      maxw=maxw||430;
+      for(let i=0;i<els.length;i++){const e=els[i];
+        if(i>=lines.length){setOp(e,0);continue;}
+        const s=lines[i];
+        if(e.__cap!==s){e.__cap=s;e.textContent=s;const nom=+e.getAttribute('data-fs')||52;e.setAttribute('font-size',nom);
+          let w=e.getComputedTextLength()||s.length*nom*0.72;
+          if(w>maxw){const fs=Math.max(18,nom*maxw/w);e.setAttribute('font-size',fs.toFixed(1));}}
+        e.setAttribute('x',cx.toFixed(1));e.setAttribute('y',(yTop+i*lh).toFixed(1));e.setAttribute('fill',color);setOp(e,op);}
+    }
+    const bigN=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,'letter-spacing':'2',fill:YOU,opacity:0});bigN.textContent='NO';
+
+    function hideAll(){setOp(entry,0);setOp(pnow,0);setOp(ball,0);setOp(bigN,0);
+      for(const e of LINKS)setOp(e,0);
+      for(const e of LEVELS)setOp(e,0);
+      for(let i=0;i<NFIG;i++){setOp(FIG_H[i],0);setOp(FIG_B[i],0);setOp(FIG_AL[i],0);setOp(FIG_AR[i],0);}
+      for(const e of SETS)setOp(e,0);
+      for(const e of BLK)setOp(e,0);}
+
+    // ═══ S1 — TOI, ENCHAÎNÉ À TON TRAIT D'ENTRÉE ═══
+    // Verbe visuel : la contrainte tendue (la boule retenue par une chaîne à craquer, le prix qui s'éloigne).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.86)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-4.6)/1.2,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (TENSION + RECONNAISSANCE) : la boule est DÉJÀ enchaînée, la chaîne DÉJÀ tendue, dès t=0.
+      const EY=830;
+      setLine(entry,150,EY,960,1);
+      putCap(capA,'YOUR ENTRY',300,EY-40,INK,1);
+      // la boule strane vers le bas (le marché), la chaîne la retient au trait — vibration à deux harmoniques
+      const strain=1+0.12*Math.sin(u*2.1)+0.06*Math.sin(u*3.7);
+      const sway=10*Math.sin(u*1.35)+5*Math.sin(u*2.55);
+      const R=54, BY=1150+18*Math.sin(u*1.7)+8*Math.sin(u*3.1);
+      drawChain(u,CX,EY,CX+sway*0.4,BY-R,5,1,7*strain,0);
+      putBall(CX+sway,BY,R,1);
+      putCap(capC,'YOU',CX+150,BY+14,YOU,1);
+      // le prix maintenant : loin en dessous, il continue de dériver (position, deux harmoniques, borné)
+      const py=clamp(1300+u*8+14*Math.sin(u*0.9)+7*Math.sin(u*1.8),1300,1440);
+      setLine(pnow,190,py,900,1);
+      putCap(capD,'PRICE NOW',300,py-34,DEAD,clamp((u-1.6)/0.7,0,1)*gf);
+      // MR DOLLAR : il entre, il PARLE et désigne la boule enchaînée — puis il s'écarte, la scène reste vivante sans lui.
+      if(u<4.0){ MrD.enter(u,{t:t, routine:'designe', lookAt:CX, rest:{x:842,y:1200,h:210}, op:gf}); }
+      else{ const o=clamp((u-4.0)/1.2,0,1); MrD.say('walk', t, lerp(842,1180,eInOut(o)), 1200, 210, (1-o)*gf, false, 0,1,1); }
+    }
+
+    // ═══ S2 — TON TRAIT EST LE SEUL QUE PERSONNE D'AUTRE NE VOIT ═══
+    // Verbe visuel : la comparaison peuplé / désert (des niveaux défendus vs ton trait vide et pâle).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const LY=[760,940,1120];
+      for(let l=0;l<3;l++) setLine(LEVELS[l],120,LY[l],960,1);
+      // trois défenseurs fil-de-fer par niveau — ils vivent (sway + bras qui bougent, position)
+      for(let l=0;l<3;l++){ for(let j=0;j<3;j++){ const idx=l*3+j; const fx=280+j*260;
+        const sway=7*Math.sin(u*1.2+idx*0.8)+3*Math.sin(u*2.3+idx*1.1);
+        const lift=0.85+0.35*Math.sin(u*1.6+idx*0.9)+0.15*Math.sin(u*2.9+idx*0.5);
+        figure(idx,fx,LY[l],150,sway,lift,1);}}
+      putCap(capB,'EVERY LEVEL HAS DEFENDERS',CX,600,INK,1);
+      // TON trait d'entrée : désert, pâle, pointillé (invisible aux autres) — présent dès la frame 0, jamais construit
+      const yL=1320;
+      setLine(entry,150,yL,960,0.42);   // pâle : invisible aux autres
+      entry.setAttribute('stroke',DEAD);entry.setAttribute('stroke-dasharray','10 20');
+      // seule TA chaîne l'ancre : une courte chaîne + ta boule, qui vibrent (position continue)
+      const sway=8*Math.sin(u*1.5)+4*Math.sin(u*2.7), R=40, bY=1418+6*Math.sin(u*1.9)+3*Math.sin(u*3.3);
+      drawChain(u,CX,yL,CX+sway*0.5,bY-R,3,1,6,0);
+      putBall(CX+sway,bY,R,1);
+      putCap(capC,'ONLY YOU SEE THIS ONE',CX,1240,YOU,clamp((u-2.2)/0.9,0,1));
+      putCap(capD,'NOBODY IS DEFENDING IT',CX,1290,DEAD,clamp((u-3.4)/0.9,0,1));
+      // reset entry style pour les autres scènes (il repasse en trait plein encre)
+      // BEAT : il entre, DÉSIGNE ton trait désert, puis ressort. La scène reste vivante (les défenseurs bougent).
+      const inW=eInOut(clamp((u-1.8)/1.0,0,1)), outW=eInOut(clamp((u-7.2)/1.3,0,1));
+      if(u>1.8 && outW<1){
+        const stop=205, alive=(inW>0.95&&outW<0.05)?(4*Math.sin(u*1.2)+2*Math.sin(u*2.3)):0;
+        const nx=lerp(lerp(-150,stop,inW),-180,outW)+alive;
+        if(inW<0.95) MrD.say('walk', t, nx, 1444, 196, 1-outW, true, 0,1,1);
+        else MrD.pointAt('point', t, nx, 1444, 196, 1-outW, CX);   // cible : ton trait, à sa DROITE
+      } else { MrD.hide(); }
+    }
+
+    // ═══ S3 — L'ANCRAGE SUBSTITUE LA QUESTION ═══
+    // Verbe visuel : la substitution (la chaîne tire ton regard de la bonne question vers celle d'ego).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      entry.setAttribute('stroke',INK);entry.removeAttribute('stroke-dasharray');
+      const pull=eInOut(clamp((u-1.9)/1.7,0,1));
+      const lOp=lerp(1,0.20,pull), rOp=lerp(0.32,1,pull);
+      // GAUCHE (teal) — la bonne question, qui s'éteint ; DROITE (encre) — la question d'ego, qui s'allume
+      putBlock([BLK[0],BLK[1],BLK[2]],['IS THIS','POSITION','STILL GOOD?'],300,738,84,YOU,lOp,420);
+      putBlock([BLK[3],BLK[4],BLK[5]],['CAN I GET OUT','WITHOUT BEING','WRONG?'],790,738,84,(pull>0.5?INK:DEAD),rOp,420);
+      putCap(capB,'THE QUESTION QUIETLY SWAPS',CX,600,INK,clamp((u-0.5)/0.8,0,1));
+      // ta boule = ton regard : la chaîne (ancrée à la question d'ego) la traîne de gauche à droite
+      const bx=lerp(300,790,pull)+7*Math.sin(u*1.45)+3*Math.sin(u*2.75);
+      const by=1178+13*Math.sin(u*1.1)+6*Math.sin(u*2.3), R=46;
+      drawChain(u,790,1024,bx,by-R,6,1,6+6*(1-pull),0);
+      putBall(bx,by,R,1);
+      putCap(capE,'YOUR ATTENTION',bx,by+R+46,YOU,clamp((u-2.6)/0.8,0,1)*clamp(1-(u-9.0)/1.0,0,1));
+      putCap(capA,'A TRADE CHOICE BECOMES A PERSONAL ONE',CX,1420,DEAD,clamp((u-3.6)/0.9,0,1));
+      // BEAT : il doute face à la question d'ego, puis se retire. La bascule vit sans lui (boule + chaîne).
+      if(u>1.4 && u<6.0){ MrD.pointAt('point', t, 250+6*Math.sin(u*1.2), 1300, 190, clamp((u-1.4)/0.7,0,1)*clamp(1-(u-5.4)/0.6,0,1), 790); }
+      else if(u>=6.0 && u<9.4){ MrD.say('idle', t, 250+5*Math.sin(u*1.05)+3*Math.sin(u*2.1), 1300, 186, clamp((u-6.2)/0.6,0,1)*clamp(1-(u-8.8)/0.6,0,1), false, 0,1,1); }
+      else { MrD.hide(); }
+    }
+
+    // ═══ S4 — LE COÛT : LE CAPITAL ENCHAÎNÉ PENDANT QUE LES OCCASIONS PASSENT ═══
+    // Verbe visuel : les occasions hors de portée (les setups montent et s'éteignent, la boule tire mais est retenue).
+    // NARRATEUR ABSENT : la tension frappe sans accompagnement.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll(); MrD.hide();
+      entry.setAttribute('stroke',INK);entry.removeAttribute('stroke-dasharray');
+      const EY=790;
+      setLine(entry,150,EY,960,1);
+      putCap(capA,'YOUR DEAD POSITION',300,EY-38,DEAD,1);
+      // les setups : cadence qui ACCÉLÈRE, ils montent puis s'éteignent (position + fondu), hors de portée
+      const rate=0.42+clamp(u/6,0,1)*0.95;
+      let bestx=CX, bestop=0;
+      for(let k=0;k<NSET;k++){
+        const ph=((u*rate)+k*0.41)%1, life=ph/0.80;
+        const laneX=190+k*(700/(NSET-1));
+        const op=(ph<0.80)?Math.sin(life*Math.PI)*0.95:0;
+        const x=laneX+11*Math.sin(u*1.25+k*1.3)+5*Math.sin(u*2.5+k*0.7);
+        const y=1300-life*150-8*Math.sin(u*2.0+k)-4*Math.sin(u*3.3+k*1.1);
+        const e=SETS[k];e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+        e.setAttribute('r',(14+4*Math.sin(life*Math.PI)).toFixed(1));setOp(e,op);
+        if(op>bestop){bestop=op;bestx=x;}
+      }
+      putCap(capB,'GOOD SETUPS PASS BY',CX,1150,YOU,clamp((u-1.4)/0.8,0,1));
+      // la boule enchaînée : elle TIRE vers le meilleur setup mais la chaîne la retient (portée limitée)
+      const lean=(bestx-CX)*0.16*clamp((u-1.4)/0.8,0,1);
+      const bx=CX+lean+9*Math.sin(u*1.7)+4*Math.sin(u*3.1);
+      const by=1010+15*Math.sin(u*1.4)+7*Math.sin(u*2.6), R=52;
+      drawChain(u,CX,EY,bx*0.5+CX*0.5,by-R,4,1,8+4*bestop,0);
+      putBall(bx,by,R,1);
+      putCap(capC,'LOCKED',CX+150,by+8,DEAD,1);
+      putCap(capD,'THE COST IS EVERYTHING YOU DO NOT DO',CX,1470,INK,clamp((u-3.4)/0.9,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : LA SEULE QUESTION FAIT CÉDER LA CHAÎNE ═══
+    // Verbe visuel : la libération (les maillons se brisent, le trait d'entrée s'efface, la boule se pose libre).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      entry.setAttribute('stroke',INK);entry.removeAttribute('stroke-dasharray');
+      // la question s'inscrit (0-2), la réponse NO brise la chaîne (2-3.5), la boule se libère et se pose
+      putBlock([BLK[0],BLK[1],BLK[2]],['IF I HAD NO POSITION —','WOULD I OPEN THIS ONE,','AT THIS PRICE?'],CX,584,92,INK,clamp((u-0.2)/0.9,0,1),940);
+      const brk=eInOut(clamp((u-2.0)/1.5,0,1));
+      const EY=910;
+      setLine(entry,150,EY,960,1-brk);                       // le trait d'entrée s'efface : il n'a jamais rien valu
+      putCap(capA,'YOUR ENTRY',300,EY-40,INK,(1-brk));
+      // la chaîne, tendue puis rompue
+      const R=54;
+      const held=1180+16*Math.sin(u*1.6)+7*Math.sin(u*2.9)+4*Math.sin(u*3.9);   // position tenue avant la rupture
+      // la boule LIBRE flotte franchement (trois harmoniques incommensurables : jamais de vitesse nulle simultanée)
+      const freeY=1150+21*Math.sin(u*1.55)+11*Math.sin(u*2.65)+5*Math.sin(u*3.75);
+      const by=lerp(held,freeY,brk);
+      const bxHeld=9*Math.sin(u*1.4)+4*Math.sin(u*2.6);
+      const bxFree=17*Math.sin(u*1.15)+9*Math.sin(u*2.05)+4*Math.sin(u*3.2);
+      drawChain(u,CX,EY,CX,by-R,5,(1-brk),7,brk);
+      putBall(CX+lerp(bxHeld,bxFree,brk), by, R, 1);
+      // le verdict NO frappe (à côté de la chaîne, jamais par-dessus)
+      const nap=clamp((u-1.8)/0.5,0,1)*clamp(1-(u-4.2)/1.0,0,1);
+      bigN.setAttribute('x',(780+5*Math.sin(u*3.0)).toFixed(1));bigN.setAttribute('y',(980).toFixed(1));setOp(bigN,nap);
+      putCap(capC,'YOU ARE FREE TO CHOOSE',CX,by+R+58,YOU,brk*clamp((u-2.8)/0.7,0,1));
+      putCap(capB,'AN ENTRY PRICE IS NOT A REASON TO STAY',CX,1440,INK,clamp((u-3.4)/0.9,0,1));
+      // C'EST UN ÉVÉNEMENT MÉCANIQUE : il ne brise pas la chaîne, il la CONSTATE, puis présente l'état libre (image finale).
+      const grab=clamp((u-1.0)/0.6,0,1), settle=clamp((u-3.6)/0.6,0,1);
+      const jit=(1-settle)*(4*Math.sin(u*1.15)+2*Math.sin(u*2.25));
+      if(u<2.8) MrD.pointAt('point', t, 250+jit, 1300, 190, grab, CX);        // il désigne la chaîne qui va céder
+      else MrD.say('present', t, 250+jit, 1300, 190, grab, false, 0,1,1);     // il présente la boule libérée
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
