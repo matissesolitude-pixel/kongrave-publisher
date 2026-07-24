@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L32 « THE MIDDLE IS A GRAVEYARD » — S1 : émotion frame 0 = CHOC. Un range (deux murs encre, haut et bas) dont le MILIEU est DÉJÀ
+       jonché d'une dizaine de fantômes gris — un charnier de trades morts, empilé en désordre — tandis que les BORDS sont PROPRES. La
+       question « WHY DO TRADES DIE IN THE MIDDLE? » pop par-dessus, puis fade ; les fantômes frémissent, les murs respirent. S2 : les
+       BORDS sont DÉFENDUS — des figures fil-de-fer arc-boutées tiennent le mur du haut et celui du bas (elles poussent contre lui) ;
+       le MILIEU est désert, une petite bille teal (le prix) y erre sans rencontrer personne. S3 : une position teal se pose AU MILIEU ;
+       trois vérifications échouent en boucle autour d'elle — un contour cherche un niveau EN DESSOUS et ne trouve rien, un cadre-stop
+       pulse SANS protection, une flèche-cible part vers la droite et se perd dans le vide. Trois vides. S4 : LA scène — le prix GLISSE
+       au milieu, magnifiquement lisse (halo « clean »), ça ressemble à l'opportunité parfaite ; puis on RÉVÈLE que la fluidité traverse
+       le NÉANT (aucun défenseur) → séduite, la position s'y engage, le ruban se DÉLITE et elle rejoint le cimetière (un fantôme de plus).
+       S5 : décharge — le range entier réapparaît, cimetière au milieu, et la question « WHAT IS DEFENDING THIS LEVEL? » s'inscrit :
+       testée au MILIEU rien ne s'allume, testée au BORD les défenseurs s'illuminent (quelque chose DOIT casser) ; la position teal migre
+       du milieu vers le bord et s'y installe, le charnier laissé derrière. Doctrine : aucun chiffre ; toi/position = teal ; morts = gris ;
+       défenseurs = figures fil-de-fer NEUTRES (encre, pas de brun, pas de camp adverse) ; bas du cadre vide ; les prix par la POSITION. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // vie continue ROBUSTE : trois harmoniques (dont une HAUTE fréquence) — jamais de vitesse nulle simultanée sur les trois,
+    // donc jamais de gel > seuil pendant une tenue (la sinusoïde unique se fige à ses extrêmes, deux peuvent coïncider ; trois non).
+    const vibe=(u,a,b,c,ph)=>a*Math.sin(u*1.25+(ph||0))+b*Math.sin(u*2.3+(ph||0))+c*Math.sin(u*5.3+(ph||0));
+
+    // ── GÉOMÉTRIE DU RANGE (partagée) : deux murs encre, un milieu ──
+    const TW=700, BW=1340, WX0=155, WX1=925, MIDY=1030;
+
+    // ── OBJETS RÉUTILISABLES (chaque scène ouvre sur LES SIENS, déjà pleins) ──
+    const WALL=[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}));   // les deux bords du range
+    const GH=[]; for(let i=0;i<16;i++)GH.push(mk('rect',{rx:6,fill:DEAD,opacity:0}));                          // le cimetière (trades morts, gris)
+    const POS=[0,1].map(()=>mk('rect',{rx:10,fill:YOU,opacity:0}));                                           // TA position (teal)
+    const price=mk('circle',{fill:YOU,opacity:0});                                                            // le prix qui erre (S2)
+    // défenseurs = figures fil-de-fer (rond + corps + deux bras arc-boutés), encre, neutres
+    const NF=12, FHEAD=[],FBODY=[],FARML=[],FARMR=[];
+    for(let i=0;i<NF;i++){FHEAD.push(mk('circle',{fill:'none',stroke:INK,'stroke-width':5,opacity:0}));
+      FBODY.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+      FARML.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+      FARMR.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));}
+    // les trois vides (S3)
+    const SEEK=[0,1,2].map(()=>mk('rect',{rx:10,fill:'none',stroke:INK,'stroke-width':5,'stroke-dasharray':'12 11','stroke-linecap':'round',opacity:0}));
+    const ARR=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});                    // flèche-cible (S3)
+    const ARRH=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const ribbon=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});  // le ruban lisse (S4)
+    const halo=mk('ellipse',{fill:'none',stroke:DEAD,'stroke-width':8,opacity:0});                            // halo « clean » (S4)
+    const glow=[0,1].map(()=>mk('ellipse',{fill:YOU,'fill-opacity':0.13,opacity:0}));                         // illumination des bords (S5) : ellipse LARGE et BASSE, elle hugge le mur sans monter vers les étiquettes
+
+    // le cimetière : disposition fixe, déterministe (pas de Math.random), central — les bords restent PROPRES
+    const GHOST=[
+      {x:360,y:942,w:64,h:40,ph:0.0},{x:452,y:948,w:56,h:38,ph:0.7},{x:534,y:938,w:70,h:42,ph:1.4},
+      {x:624,y:952,w:58,h:38,ph:2.1},{x:398,y:1000,w:66,h:44,ph:2.8},{x:486,y:996,w:72,h:40,ph:3.5},
+      {x:572,y:1006,w:60,h:42,ph:4.2},{x:656,y:1000,w:54,h:38,ph:4.9},{x:418,y:1058,w:68,h:42,ph:5.6},
+      {x:506,y:1054,w:64,h:44,ph:6.3},{x:592,y:1064,w:70,h:40,ph:7.0},{x:352,y:1024,w:52,h:38,ph:7.7},
+      {x:668,y:1050,w:56,h:40,ph:8.4},{x:530,y:1108,w:66,h:42,ph:9.1}
+    ];
+    function R(el,x,y,w,h,op){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));el.setAttribute('width',Math.max(1,w).toFixed(1));el.setAttribute('height',Math.max(1,h).toFixed(1));setOp(el,op);}
+    function LSet(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));setOp(el,op);}
+    function CS(el,cx,cy,r,op){el.setAttribute('cx',cx.toFixed(1));el.setAttribute('cy',cy.toFixed(1));el.setAttribute('r',r.toFixed(1));setOp(el,op);}
+    // graveyard : dessine le cimetière en frémissement continu (déplacement de POSITION, deux+ harmoniques)
+    function graveyard(u,op,n){const N=(n==null?GHOST.length:n);for(let i=0;i<GHOST.length;i++){const g=GHOST[i];
+      if(i<N)R(GH[i],g.x+vibe(u,3,2,2,g.ph),g.y+vibe(u,2.4,1.8,2.6,g.ph+1.1),g.w,g.h,op*0.92);else setOp(GH[i],0);}}
+    // walls : les deux murs respirent (léger flottement de position — jamais figés)
+    function walls(u,op){LSet(WALL[0],WX0,TW+2*Math.sin(u*1.3)+1.2*Math.sin(u*2.6),WX1,TW+1.6*Math.sin(u*1.7),op);
+      LSet(WALL[1],WX0,BW-2*Math.sin(u*1.25)-1.2*Math.sin(u*2.5),WX1,BW-1.6*Math.sin(u*1.6),op);}
+    // une figure fil-de-fer arc-boutée. bodyDir: +1 corps vers le BAS (tête sous les pieds), -1 corps vers le HAUT.
+    // les bras poussent TOUJOURS vers le mur (côté des pieds, opposé au corps). brace = amplitude de la poussée (vit).
+    function figure(i,x,footY,h,bodyDir,brace,op){
+      const hd=FHEAD[i],bd=FBODY[i],al=FARML[i],ar=FARMR[i],r=h*0.16;
+      const headY=footY+bodyDir*(h-r), shoY=footY+bodyDir*(h-2*r-6), aw=h*0.30, handY=shoY-bodyDir*brace;
+      CS(hd,x,headY,r,op); LSet(bd,x,footY,x,shoY,op); LSet(al,x,shoY,x-aw,handY,op); LSet(ar,x,shoY,x+aw,handY,op);}
+    function defenders(u,topOp,botOp){const XS=[210,330,452,575,698,820];
+      for(let i=0;i<6;i++){const bx=1.4*Math.sin(u*1.7+i*0.9);
+        figure(i,   XS[i]+bx, TW, 96, +1, 24+8*Math.sin(u*2.3+i*0.8), topOp);      // bord HAUT, corps vers le bas, bras vers le mur (haut)
+        figure(6+i, XS[i]-bx, BW, 96, -1, 24+8*Math.sin(u*2.1+i*0.7), botOp);}}    // bord BAS, corps vers le haut, bras vers le mur (bas)
+    function hideFigures(){for(let i=0;i<NF;i++){setOp(FHEAD[i],0);setOp(FBODY[i],0);setOp(FARML[i],0);setOp(FARMR[i],0);}}
+    function hideShapes(){[...WALL,...GH,...POS,price,...SEEK,ARR,ARRH,ribbon,halo,...glow].forEach(e=>setOp(e,0));hideFigures();}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0, « ? » comme ancre ──
+    const QLINES=['WHY DO TRADES DIE','IN THE MIDDLE'];
+    const FS=76,lineH=100,qy0=250,qY=QLINES.map((s,li)=>qy0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=qy0+2*lineH+72,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    const qbig1=caption(60),qbig2=caption(60);qbig1.setAttribute('font-weight',800);qbig2.setAttribute('font-weight',800);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation ignorait —
+      // cause du débordement live sur L23/L25). On réduit la police tant que le texte dépasse la zone sûre,
+      // puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne peut PLUS être coupé au bord.
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,qbig1,qbig2])setOp(e,0);}
+
+    /*INCLUDE:narrator*/
+
+    // ═══ S1 — LE CIMETIÈRE : le milieu déjà jonché de morts, les bords propres (émotion frame 0 = CHOC) ═══
+    // Verbe visuel : le charnier accumulé (une pile de morts, immédiate).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideShapes();
+      const gf=clamp(1-(lf-0.965)/0.03,0,1);   // fondu SEULEMENT tout à la fin (jamais de gel/pâleur pendant la voix)
+      // ÉMOTION FRAME 0 : le range et le cimetière sont ENTIERS dès t=0 (aucun draw-on des objets) — seule la question pop.
+      walls(u,gf);
+      graveyard(u,gf,GHOST.length);
+      // question POP ligne par ligne (seul draw-on autorisé), 1re ligne dès t=0, puis fade pendant la tenue
+      const qf=clamp(1-(u-4.5)/1.4,0,1)*gf;
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.20:u-(0.15+k*0.30)),ap=clamp(qt/0.2,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*qf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.22,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*qf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // Mr Dollar : brève apparition PERPLEXE devant le charnier — il incarne le « pourquoi ici ? », puis s'efface
+      // (la scène reste vivante sans lui : le cimetière frémit en continu).
+      const nWin=clamp((u-2.6)/0.5,0,1)*clamp(1-(u-5.6)/0.6,0,1);
+      if(nWin>0.02) MrD.enter(u-2.6,{t:t, routine:'doute', lookAt:CX, rest:{x:540,y:1452,h:184}, op:nWin*gf});
+      else MrD.hide();
+    }
+
+    // ═══ S2 — LES BORDS SONT DÉFENDUS, LE MILIEU EST DÉSERT ═══
+    // Verbe visuel : le prix qui ERRE (une bille qui dérive sans obstacle dans le vide central).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShapes();
+      walls(u,1);
+      defenders(u,1,1);                                   // des figures arc-boutées tiennent les DEUX bords (bras qui poussent = vie)
+      // le MILIEU : une bille teal (le prix) erre sans rencontrer personne (deux+ harmoniques, large amplitude)
+      const px=CX+vibe(u,120,60,24,0), py=MIDY+40+vibe(u,42,26,12,1.6);
+      CS(price, px, py, 26, 1);
+      putCap(capA,'THE EDGES ARE DEFENDED',CX,632,INK,clamp(u/0.6,0,1));         // au-dessus du mur haut (zone vide)
+      putCap(capB,'THE MIDDLE — NO ONE',CX,896,DEAD,clamp((u-1.6)/0.7,0,1));     // dans le vide central, au-dessus de l'errance
+      // Mr Dollar : il DÉSIGNE le milieu désert (il pointe vers le centre), puis s'efface
+      const nWin=clamp((u-3.6)/0.5,0,1)*clamp(1-(u-7.2)/0.7,0,1);
+      if(nWin>0.02) MrD.enter(u-3.6,{t:t, routine:'designe', lookAt:CX, rest:{x:250,y:1452,h:184}, op:nWin});
+      else MrD.hide();
+    }
+
+    // ═══ S3 — TROIS VIDES : la position au milieu n'a rien derrière, rien qui protège, aucune cible ═══
+    // Verbe visuel : la vérification qui ÉCHOUE (trois sondes qui cherchent et ne trouvent rien, en boucle).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShapes();
+      walls(u,0.28);                                      // murs en filigrane : on est TOUJOURS dans un range
+      // la position teal, posée au milieu, sans appui (elle flotte — deux+ harmoniques)
+      const px=CX+vibe(u,10,7,5,0), py=MIDY+vibe(u,12,8,6,1.4);
+      R(POS[0], px-42, py-30, 84, 60, 1);
+      // (1) LEVEL BEHIND ? — un contour cherche un niveau EN DESSOUS et grandit dans le vide, puis s'efface (boucle)
+      const c0=(u*0.5)%1; R(SEEK[0], px-70, py+44, 140, 40+150*eOut(c0), (1-c0)*0.85);
+      // (2) STOP PROTECTED ? — un cadre-stop encercle la position et PULSE sans jamais rien rencontrer (il suit la position)
+      const pw=118+8*Math.sin(u*2.2), ph=94+6*Math.sin(u*2.7);
+      R(SEEK[1], px-pw/2, py-ph/2, pw, ph, 0.5+0.35*Math.abs(Math.sin(u*1.4)));
+      // (3) TARGET ? — une flèche part vers la droite et se PERD dans le vide (boucle : elle se dissout en avançant)
+      const c2=(u*0.55)%1, ax0=px+52, ax1=ax0+170*eOut(c2), ay=py, aop=(1-c2)*0.9;
+      LSet(ARR, ax0, ay, ax1, ay, aop);
+      ARRH.setAttribute('points',`${(ax1-22).toFixed(1)},${(ay-14).toFixed(1)} ${ax1.toFixed(1)},${ay.toFixed(1)} ${(ax1-22).toFixed(1)},${(ay+14).toFixed(1)}`);setOp(ARRH,aop);
+      putCap(capA,'NO LEVEL BEHIND IT',250,880,DEAD,clamp((u-0.4)/0.6,0,1));      // gutter GAUCHE, au-dessus
+      putCap(capC,'STOP UNGUARDED',250,1180,DEAD,clamp((u-1.4)/0.7,0,1));         // gutter GAUCHE, en dessous (court : ne touche ni la marge ni la sonde centrale)
+      putCap(capD,'TARGET — NOWHERE',815,872,DEAD,clamp((u-2.2)/0.7,0,1));        // gutter DROITE, au-dessus de la flèche
+      MrD.hide();  // la position seule au milieu a besoin de toute la place — la scène vit sans lui (sondes + dérive)
+    }
+
+    // ═══ S4 — LA FLUIDITÉ TROMPEUSE : le ruban lisse traverse le vide, séduit, puis se délite ═══
+    // Verbe visuel : la révélation-leurre (le lisse dévoilé comme du néant, puis la dissolution vers le cimetière).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShapes();
+      walls(u,0.26);                                     // les murs lointains sont là dès le début : la fluidité traverse un range VIDE
+      // le cimetière est DÉJÀ là, en filigrane, au milieu : le ruban lisse GLISSE au-dessus des morts passés (se densifie ensuite)
+      const gvOn=0.42+0.5*clamp((u-2.8)/1.0,0,1);
+      graveyard(u, gvOn, GHOST.length-1);
+      // le prix GLISSE au milieu, un ruban lisse qui ondule (la phase défile = glisse en continu), amplitude qui respire
+      const cy=MIDY-70, amp=54+8*Math.sin(u*1.1), fall=clamp((u-3.2)/1.5,0,1), ph=u*2.4;
+      const N=52, pts=[];
+      for(let i=0;i<=N;i++){const f=i/N, x=210+ (860-210)*f;
+        let y=cy + amp*Math.sin(f*6.0 - ph) + 0.42*amp*Math.sin(f*11.0 - ph*1.7);
+        if(fall>0) y += fall*260*(0.55+0.45*Math.sin(i*2.399+1.7));   // à la dissolution, les points TOMBENT vers le cimetière (déplacement)
+        pts.push(x.toFixed(1)+','+y.toFixed(1));}
+      setOp(ribbon, (1-0.85*fall));
+      ribbon.setAttribute('points',pts.join(' '));
+      // halo « clean » : ça ressemble à l'opportunité parfaite (phase A), puis il s'éteint quand la vérité tombe
+      const hOn=clamp(u/0.6,0,1)*clamp(1-(u-2.8)/0.8,0,1);
+      halo.setAttribute('cx',CX);halo.setAttribute('cy',cy);halo.setAttribute('rx',(360+16*Math.sin(u*1.4)).toFixed(1));halo.setAttribute('ry',(118+9*Math.sin(u*2.3)).toFixed(1));
+      setOp(halo,hOn*0.5);
+      // PHASE C (u>2.4) — séduite, la position s'engage sur le ruban → il se délite → elle TOMBE dans le cimetière
+      const eng=clamp((u-2.4)/0.7,0,1);
+      if(eng>0.01){ const rx=CX+vibe(u,8,5,4,0), ry=cy+amp*Math.sin(0.5*6.0-ph)+fall*260*0.9;
+        R(POS[0], rx-40, ry-28, 80, 56, clamp(1-1.5*fall,0,1)); }   // elle se délave TOTALEMENT en tombant → devient un fantôme (aucun bloc teal résiduel sur l'étiquette)
+      // le cimetière reçoit un fantôme de PLUS (le nouveau mort), tout frémit (tenue vivante longue)
+      const newG=clamp((u-3.8)/0.8,0,1);
+      R(GH[GHOST.length-1], 470+vibe(u,3,2,2,0.4), 1150+vibe(u,2.6,1.8,2.4,1.3), 74, 46, newG*0.92);
+      putCap(capA, (u<1.6?'LOOKS PERFECTLY CLEAN':'SMOOTH BECAUSE IT’S EMPTY'), CX, 790, (u<1.6?INK:DEAD), clamp(u/0.5,0,1));
+      putCap(capB,'THE SMOOTHNESS WAS THE VOID',CX,1288,INK,clamp((u-3.2)/0.7,0,1));
+      MrD.hide();  // il n'apparaît PAS en S4
+    }
+
+    // ═══ S5 — DÉCHARGE : « what is defending this level? » — le milieu ne répond pas, le bord s'illumine ═══
+    // Verbe visuel : la sonde testée aux deux endroits + la MIGRATION de la position (milieu → bord).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideShapes();
+      walls(u,1);
+      graveyard(u,0.9,GHOST.length);                     // le charnier du milieu, laissé derrière
+      // les défenseurs des bords : le BORD BAS s'illumine quand on l'interroge (quelque chose DOIT casser)
+      const litEdge=clamp((u-2.4)/0.7,0,1);
+      defenders(u, 0.85, 0.85+0.15*litEdge);
+      // halo teal sur le bord défendu (ellipse basse : rx large, ry court → n'atteint pas l'étiquette du gutter bas)
+      glow[1].setAttribute('cx',CX);glow[1].setAttribute('cy',(BW-6).toFixed(1));glow[1].setAttribute('rx',(300+18*Math.sin(u*1.6)).toFixed(1));glow[1].setAttribute('ry',(54+6*Math.sin(u*2.4)).toFixed(1));
+      setOp(glow[1], litEdge*(0.7+0.3*Math.sin(u*2.4)));
+      // la question s'inscrit au-dessus du mur haut (gutter VIDE)
+      putCap(qbig1,'WHAT IS DEFENDING',CX,610,INK,clamp(u/0.6,0,1));
+      putCap(qbig2,'THIS LEVEL?',CX,680,INK,clamp((u-0.3)/0.6,0,1));
+      // testée au MILIEU (u~1.2) → rien ne s'allume (une sonde pulse dans le vide et s'éteint)
+      const midTest=clamp((u-1.0)/0.6,0,1)*clamp(1-(u-2.6)/0.8,0,1);
+      R(SEEK[0], CX-120, MIDY-70, 240, 150, midTest*(0.4+0.3*Math.abs(Math.sin(u*1.6))));
+      putCap(capA,'MIDDLE — NO ONE',250,858,DEAD,midTest);
+      // la position teal MIGRE du milieu vers le bord bas et s'y installe (déplacement franc)
+      const mig=eInOut(clamp((u-2.8)/1.1,0,1));
+      const px=lerp(CX,CX,mig), py=lerp(MIDY,BW-64,mig);
+      R(POS[0], px-42+vibe(u,5,3,3,0), py-28+vibe(u,4,2.6,3,1.2), 84, 56, 1);
+      putCap(capB,'THE EDGE — SOMETHING BREAKS',CX,1432,INK,clamp((u-3.4)/0.7,0,1));   // gutter BAS, sous le mur
+      // Mr Dollar : il DÉSIGNE le milieu muet (il pointe vers le centre), puis tire le rideau — la règle reste seule
+      const nWin=clamp((u-1.3)/0.4,0,1)*clamp(1-(u-2.9)/0.5,0,1);
+      if(nWin>0.02) MrD.enter(u-1.3,{t:t, routine:'designe', lookAt:CX, rest:{x:300,y:1452,h:180}, op:nWin});
+      else MrD.hide();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
