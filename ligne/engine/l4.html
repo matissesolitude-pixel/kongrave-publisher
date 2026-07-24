@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L4 « WHY THEY NEED YOU » — REPRODUCTION (refus Meta du rendu balance/marée). Métaphore NEUVE = « THE OTHER SIDE » : une DEMANDE
+       géante (bloc encre, la foule institutionnelle « on purpose or not ») contre TES ordres (teal). Un verbe visuel DISTINCT par scène :
+       S1 émotion frame 0 = TENSION/CURIOSITÉ : un bloc énorme tend contre un couloir presque VIDE, un seul petit teal (TOI) dedans — qui
+       lui vend ? S2 = L'APPARIEMENT : chaque achat rencontre une vente et les deux s'annulent (un trade) ; quand les vendeurs manquent,
+       le prix S'ÉCHAPPE. S3 = LE RETOURNEMENT : ton stop, tu le crois BOUCLIER — au contact il BASCULE en flèche (un ordre de vente) qui
+       nourrit la demande : tu t'es porté volontaire. S4 = LE BALAYAGE : mille stops au même prix, une rangée entière avalée en cadence.
+       S5 = LE DIPTYQUE : offrir sa sortie où tout le monde l'offre (balayé, délavé gris) vs la CHOISIR (seul, au-dessus, survit teal).
+       Doctrine : aucun chiffre à l'écran ; teal = toi/le prix que tu regardes ; encre = la demande neutre ; gris = valeur morte ; pas de
+       brun, pas de rouge ; bas du cadre vide ; putCap MESURE (copié de l26). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    function setBox(el,cx,cy,w,h,op){el.setAttribute('x',(cx-w/2).toFixed(1));el.setAttribute('y',(cy-h/2).toFixed(1));el.setAttribute('width',Math.max(2,w).toFixed(1));el.setAttribute('height',Math.max(2,h).toFixed(1));setOp(el,op);}
+
+    // ── LES OBJETS (créés une fois, replacés par scène ; coupe franche, chacune ouvre sur SES objets déjà pleins) ──
+    const bigBlock=mk('rect',{rx:6,fill:INK,opacity:0});          // LA DEMANDE (foule institutionnelle) — encre neutre
+    // le prix / la ligne de balayage : TIRETÉ QUI MARCHE (dashoffset = -u·k) — vitesse constante non nulle => progression garantie à chaque frame
+    const frontier=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round','stroke-dasharray':'22 13',opacity:0});
+    const priceLine=mk('line',{stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-dasharray':'22 13',opacity:0});
+    const INKTOK=[]; for(let i=0;i<16;i++) INKTOK.push(mk('rect',{rx:5,fill:INK,opacity:0}));   // acheteurs / demande fragmentée
+    const TEALTOK=[]; for(let i=0;i<16;i++) TEALTOK.push(mk('rect',{rx:5,fill:YOU,opacity:0}));  // TES ordres (vendeurs)
+    const GRAYTOK=[]; for(let i=0;i<16;i++) GRAYTOK.push(mk('rect',{rx:5,fill:DEAD,opacity:0}));  // valeur consommée (délavée)
+    const shield=mk('path',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0}); // le « bouclier » (S3)
+    const arrow=mk('polygon',{fill:YOU,opacity:0});               // le stop devenu instruction (S3)
+    let ik=0,tk=0,gk=0;
+    function reset(){ik=0;tk=0;gk=0;}
+    function ink(cx,cy,w,h,op){const e=INKTOK[ik++];if(e)setBox(e,cx,cy,w,h,op);}
+    function teal(cx,cy,w,h,op){const e=TEALTOK[tk++];if(e)setBox(e,cx,cy,w,h,op);}
+    function gray(cx,cy,w,h,op){const e=GRAYTOK[gk++];if(e)setBox(e,cx,cy,w,h,op);}
+    function flush(){for(let i=ik;i<INKTOK.length;i++)setOp(INKTOK[i],0);for(let i=tk;i<TEALTOK.length;i++)setOp(TEALTOK[i],0);for(let i=gk;i<GRAYTOK.length;i++)setOp(GRAYTOK[i],0);}
+    function setShield(cxp,arcY,op){shield.setAttribute('d',`M ${(cxp-46).toFixed(1)} ${arcY.toFixed(1)} Q ${cxp.toFixed(1)} ${(arcY-50).toFixed(1)} ${(cxp+46).toFixed(1)} ${arcY.toFixed(1)}`);setOp(shield,op);}
+    function setArrow(ax,ay,op){ax=+ax;ay=+ay;arrow.setAttribute('points',`${(ax+32).toFixed(1)},${ay.toFixed(1)} ${(ax-20).toFixed(1)},${(ay-26).toFixed(1)} ${(ax-6).toFixed(1)},${ay.toFixed(1)} ${(ax-20).toFixed(1)},${(ay+26).toFixed(1)}`);setOp(arrow,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0, aucun draw-on ──
+    const QLINES=['WHEN SOMEONE BUYS','A HUNDRED MILLION —','WHO SELLS TO THEM'];
+    const FS=70,lineH=98,y0=172,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+128,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle et borne le centre (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(38),capC=caption(38),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LA TENSION : un bloc géant tend contre un couloir presque vide, un seul petit teal (TOI) dedans ═══
+    // Verbe visuel : la STRAIN (déséquilibre géant/vide). Émotion frame 0 = tension + reconnaissance de soi (tu es minuscule devant lui).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); reset();
+      setOp(priceLine,0);setOp(shield,0);setOp(arrow,0);
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.2:u-(0.15+k*0.3)),ap=clamp(qt/0.2,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.15,qap=clamp(qm/0.25,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : le bloc est DÉJÀ énorme, la frontière DÉJÀ tendue au bord du vide — rien ne se construit. ──
+      const LY=1040+4*Math.sin(u*1.1);
+      const fx=560+11*Math.sin(u*1.3)+5*Math.sin(u*2.15);            // la frontière (le prix) pousse et tend (deux harmoniques)
+      setBox(bigBlock,(120+fx)/2,LY,fx-120,336,1);
+      frontier.setAttribute('stroke',YOU);frontier.setAttribute('stroke-dashoffset',(-u*55).toFixed(1));frontier.setAttribute('x1',fx.toFixed(1));frontier.setAttribute('x2',fx.toFixed(1));frontier.setAttribute('y1',(LY-192).toFixed(1));frontier.setAttribute('y2',(LY+192).toFixed(1));setOp(frontier,1);
+      const yb=8*Math.sin(u*1.5)+4*Math.sin(u*2.6);                  // TOI, seul dans le couloir, tu respires
+      teal(852,LY+yb,76,76,1);
+      putCap(capA,'A FUND WANTS IN',330,1306,INK,1);                 // gouttière SOUS le bloc (zone vide), moitié gauche
+      putCap(capB,'YOU',852,LY-72+yb,YOU,1);                         // au-dessus de ton ordre (zone vide), moitié droite
+      flush();
+    }
+
+    // ═══ S2 — L'APPARIEMENT : un achat rencontre une vente, les deux s'annulent ; sans vendeur, le prix S'ÉCHAPPE ═══
+    // Verbe visuel : la RENCONTRE/annulation, puis la FUITE. (distinct de la strain)
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      setOp(bigBlock,0);setOp(shield,0);setOp(arrow,0);setOp(priceLine,0);
+      const LY=1030, W=64;
+      const run=clamp((lf-0.60)/0.32,0,1);
+      const fx=540+run*330+6*Math.sin(u*1.4)+3*Math.sin(u*2.3);       // le prix : immobile, puis COURT vers la droite
+      frontier.setAttribute('stroke',YOU);frontier.setAttribute('stroke-dashoffset',(-u*55).toFixed(1));frontier.setAttribute('x1',fx.toFixed(1));frontier.setAttribute('x2',fx.toFixed(1));frontier.setAttribute('y1',(LY-190).toFixed(1));frontier.setAttribute('y2',(LY+190).toFixed(1));setOp(frontier,1);
+      // ACHETEURS (encre) — TOUJOURS 4, en file à gauche : ils avancent lentement + respirent (scène ouvre DÉJÀ pleine)
+      for(let n=0;n<4;n++){
+        const bx=fx-84-n*78+8*Math.sin(u*0.7+n*0.4);
+        const bob=7*Math.sin(u*2.4+n)+3*Math.sin(u*3.6+n*0.6);
+        ink(bx,LY+bob,W,W,1);
+      }
+      // VENDEURS (teal) — 4, consommés UN PAR UN (glissent vers la frontière, s'annulent avec un acheteur) : ils VIENNENT À MANQUER
+      for(let n=0;n<4;n++){
+        const ct=1.6+n*3.0, cons=clamp((u-ct)/0.9,0,1);
+        const bob=7*Math.sin(u*2.4+n+1.3)+3*Math.sin(u*3.6+n);
+        const homeX=fx+84+n*78, sx=lerp(homeX,fx+40,eIn(cons));
+        teal(sx,LY+bob,W,W,(1-cons));
+      }
+      putCap(capA,'EVERY TRADE HAS TWO SIDES',CX,796,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capB,'NO SELLER — THE PRICE RUNS AWAY',CX,1330,YOU,run);
+      flush();
+    }
+
+    // ═══ S3 — LE RETOURNEMENT : ton stop, tu le crois bouclier ; au contact il BASCULE en flèche (un ordre) qui nourrit la demande ═══
+    // Verbe visuel : le FLIP (bouclier -> flèche). Le moment « oh ».
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      setOp(frontier,0);
+      const TX=330, TY=1120;
+      const bw=150+6*Math.sin(u*1.5)+3*Math.sin(u*2.6);
+      setBox(bigBlock,905,1040+3*Math.sin(u*1.2),bw,300,1);          // la demande, qui attend, à droite
+      const approach=clamp((lf-0.06)/0.4,0,1);
+      const py=lerp(720,TY-96,approach)+5*Math.sin(u*1.6)+3*Math.sin(u*2.7);
+      priceLine.setAttribute('stroke',YOU);priceLine.setAttribute('stroke-dashoffset',(-u*55).toFixed(1));priceLine.setAttribute('x1',120);priceLine.setAttribute('x2',770);priceLine.setAttribute('y1',py.toFixed(1));priceLine.setAttribute('y2',py.toFixed(1));setOp(priceLine,1);
+      const bob=4*Math.sin(u*2.0)+2*Math.sin(u*3.1);
+      teal(TX,TY+bob,82,82,1);                                       // TOI, ton stop posé
+      const hit=lf>0.48;
+      if(!hit){ setShield(TX,TY-66+bob,1); setOp(arrow,0); }
+      else { setOp(shield,0);
+        const fp=clamp((lf-0.48)/0.4,0,1), ax=lerp(TX+44,820,eOut(fp));
+        setArrow(ax,TY+bob,1); }
+      putCap(capA,'YOUR STOP',TX,TY+104,YOU,1);
+      putCap(capB,'A SHIELD, YOU THINK',TX,932,DEAD,hit?0:clamp((u-1.2)/0.6,0,1));
+      putCap(capC,'A STOP IS AN INSTRUCTION',CX,660,INK,hit?clamp((lf-0.5)/0.12,0,1):0);
+      putCap(capD,'YOU VOLUNTEERED',800,TY+104,YOU,hit?clamp((lf-0.62)/0.12,0,1):0);
+      flush();
+    }
+
+    // ═══ S4 — LE BALAYAGE : mille stops au même prix, une rangée entière avalée en cadence (froid) ═══
+    // Verbe visuel : le SWEEP (accumulation consommée). Distinct.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      setOp(frontier,0);setOp(shield,0);setOp(arrow,0);
+      const ROWY=1150, N=11, x0=175, dx=66, W=54;
+      const desc=clamp((lf-0.05)/0.38,0,1);
+      const by=lerp(800,ROWY-96,desc)+9*Math.sin(u*1.4)+4*Math.sin(u*2.5);
+      setBox(bigBlock,545,by,830,150,1);                            // la demande descend sur le niveau
+      priceLine.setAttribute('stroke',YOU);priceLine.setAttribute('stroke-dashoffset',(-u*55).toFixed(1));priceLine.setAttribute('x1',130);priceLine.setAttribute('x2',960);priceLine.setAttribute('y1',(by+75).toFixed(1));priceLine.setAttribute('y2',(by+75).toFixed(1));setOp(priceLine,1);
+      for(let i=0;i<N;i++){
+        const ci=x0+i*dx, cT=0.48+i*0.035, c=clamp((lf-cT)/0.05,0,1);
+        const bob=5*Math.sin(u*2.2+i*0.6)+3*Math.sin(u*3.3+i);
+        if(c<=0){ teal(ci,ROWY+bob,W,W,1); }                        // ton stop, comme mille autres, au même prix
+        else { const ry=lerp(ROWY,by+75,eIn(c)); gray(ci,ry,W*(1-0.35*c),W*(1-0.35*c),(1-c)); } // avalé + délavé
+      }
+      putCap(capA,'SAME PRICE — A THOUSAND STOPS',CX,650,INK,1);
+      putCap(capB,'THE AUCTION FILLS WHERE THEY SIT',CX,1372,YOU,clamp((lf-0.45)/0.12,0,1));
+      flush();
+    }
+
+    // ═══ S5 — LE DIPTYQUE : offrir sa sortie où tout le monde l'offre (balayé) vs la CHOISIR (seul, au-dessus, survit) ═══
+    // Verbe visuel : la COMPARAISON A/B. Décharge du fusil : la SEULE variable changée = OÙ tu te places. Image finale tenue.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      setOp(bigBlock,0);setOp(shield,0);setOp(arrow,0);
+      // HAUT — la foule : ton teal noyé dans un amas ; le balayage (ligne encre qui MARCHE) passe, tout délave gris et coule
+      const TY=880, crowd=[312,378,444,510,576,642], yourTop=510;
+      const sweepA=clamp((lf-0.12)/0.42,0,1), sxT=lerp(150,760,sweepA);   // avance puis se GARE (mais les tirets marchent encore)
+      frontier.setAttribute('stroke',INK);frontier.setAttribute('stroke-dashoffset',(-u*55).toFixed(1));frontier.setAttribute('x1',sxT.toFixed(1));frontier.setAttribute('x2',sxT.toFixed(1));frontier.setAttribute('y1',(TY-74).toFixed(1));frontier.setAttribute('y2',(TY+74).toFixed(1));setOp(frontier,0.9);
+      for(let k=0;k<crowd.length;k++){
+        const cxk=crowd[k], bob=6*Math.sin(u*2.1+k)+3*Math.sin(u*3.0+k*0.7);
+        const gone=clamp((sxT-cxk)/40,0,1), yk=TY+bob+gone*36;   // léger enfoncement : ne descend PAS dans la ligne d'étiquette
+        if(cxk===yourTop){ if(gone<=0) teal(cxk,TY+bob,60,60,1); else gray(cxk,yk,60*(1-0.25*gone),60*(1-0.25*gone),(1-gone)); }
+        else gray(cxk,yk,54,54,clamp((1-gone*0.8),0.2,1));
+      }
+      // BAS — le choix : ton teal SEUL, placé au-dessus du balayage -> il passe dessous, tu survis, puis tu sors (montée continue), teal
+      const BY=1230, choX=520;
+      const sweepB=clamp((lf-0.12)/0.42,0,1), sxB=lerp(150,900,sweepB);
+      priceLine.setAttribute('stroke',INK);priceLine.setAttribute('stroke-dashoffset',(-u*55).toFixed(1));priceLine.setAttribute('x1',(sxB-80).toFixed(1));priceLine.setAttribute('x2',(sxB+80).toFixed(1));priceLine.setAttribute('y1',BY);priceLine.setAttribute('y2',BY);setOp(priceLine,0.85);
+      const rise=clamp((lf-0.6)/0.35,0,1), bobB=7*Math.sin(u*1.7)+4*Math.sin(u*2.9);
+      const ty=BY-88-rise*38+bobB;                               // survit et remonte, mais reste SOUS l'étiquette du milieu
+      teal(choX,ty,62,62,1);
+      putCap(capA,'OFFER IT WHERE EVERYONE DOES',CX,720,INK,1);
+      putCap(capB,'OR CHOOSE WHERE',CX,1002,YOU,clamp((lf-0.3)/0.15,0,1));
+      putCap(capC,"KNOW WHAT YOU'RE OFFERING — AND WHERE",CX,1402,INK,clamp((lf-0.55)/0.15,0,1));
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
