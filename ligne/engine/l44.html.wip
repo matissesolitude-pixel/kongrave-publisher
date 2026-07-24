@@ -260,14 +260,14 @@
     const NPOSE={"present_soft": {"w": 756, "h": 618}, "present_wide": {"w": 756, "h": 619}, "idle_soft": {"w": 449, "h": 618}, "idle_wide": {"w": 449, "h": 619}, "point_soft": {"w": 608, "h": 618}, "point_wide": {"w": 608, "h": 619}, "walk_soft": {"w": 443, "h": 619}, "walk_wide": {"w": 443, "h": 619}, "wave_hip_soft": {"w": 524, "h": 618}, "wave_hip_wide": {"w": 523, "h": 619}};
 
     // ═══ LE GRAPHE ═══ setup limpide à gauche, beau mouvement après l'instant de décision
-    const CH_X0=140, CH_X1=950, DECX=560, CH_Y=1230;
+    const CH_X0=190, CH_X1=985, DECX=590, CH_Y=1300;
     const CHART=[];
     for(let x=CH_X0;x<=CH_X1;x+=8){
       let y;
       if(x<DECX){const p=(x-CH_X0)/(DECX-CH_X0);
-        y=CH_Y-34*Math.sin(x*0.021)*(1-0.55*p)-12*Math.sin(x*0.058)*(1-0.4*p);}
+        y=CH_Y-46*Math.sin(x*0.021)*(1-0.55*p)-16*Math.sin(x*0.058)*(1-0.4*p);}
       else{const p=(x-DECX)/(CH_X1-DECX);
-        y=CH_Y-262*eOut(p)-16*Math.sin(x*0.055)*(1-0.45*p);}
+        y=CH_Y-380*eOut(p)-20*Math.sin(x*0.055)*(1-0.45*p);}
       CHART.push([x,y]);
     }
     const chartLine=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
@@ -277,10 +277,10 @@
     function chartUpTo(cut,op){const pts=CHART.filter(p=>p[0]<=cut);
       chartLine.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));setOp(chartLine,op);}
     function curtain(cut,op,y0,y1){edge.setAttribute('x1',cut);edge.setAttribute('x2',cut);
-      edge.setAttribute('y1',y0||900);edge.setAttribute('y2',y1||1400);setOp(edge,op);}
+      edge.setAttribute('y1',y0||860);edge.setAttribute('y2',y1||1380);setOp(edge,op);}
 
     // ── mini-graphes réutilisables (S2 comparaison, S3 split, S4 les dix) ──
-    const MINI=[]; for(let i=0;i<24;i++)MINI.push(mk('polyline',{fill:'none',stroke:INK,'stroke-width':4,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const MINI=[]; for(let i=0;i<24;i++)MINI.push(mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
     const MDOT=[]; for(let i=0;i<12;i++)MDOT.push(mk('circle',{r:8,fill:YOU,opacity:0}));
     let mi=0,md=0;
     function resetMini(){mi=0;md=0;}
@@ -289,7 +289,7 @@
       const p=[];const n=26, half=Math.floor(n*0.55);
       for(let i=0;i<n;i++){
         const f=i/(n-1);
-        if(i<=half){const q=i/half; p.push([x+w*f, y-h*0.22*Math.sin(q*7.1)*(1-0.5*q)]);}
+        if(i<=half){const q=i/half; p.push([x+w*f, y-h*0.46*Math.sin(q*7.1)*(1-0.4*q)]);}
         else{ if(!withAfter)break;
           const q=(i-half)/(n-1-half);
           const dir=(k%10===3)?1:-1;                                  // un seul court vraiment
@@ -351,10 +351,10 @@
       // ÉMOTION FRAME 0 : le graphe complet est là, ET le rideau est DÉJÀ entré. Rien ne se construit.
       const cut=lerp(838,690,eInOut(clamp(u/9,0,1)))+7*Math.sin(u*0.9)+3*Math.sin(u*1.9);
       chartUpTo(cut,1);
-      curtain(cut,1,880,1420);
+      curtain(cut,1,860,1380);
       decMark.setAttribute('cx',DECX);decMark.setAttribute('cy',CHART.find(p=>p[0]>=DECX)[1]);setOp(decMark,clamp((u-2.6)/0.8,0,1)*0.9);
       putCap(capA,'YESTERDAY — THE TRADE IS OBVIOUS',CX,830,INK,clamp((u-1.9)/0.7,0,1)*gf);
-      putCap(capC,'THE CHART ENDS HERE',cut,1470,DEAD,clamp((u-3.4)/0.8,0,1)*gf);
+      putCap(capC,'THE CHART ENDS HERE',cut,1440,DEAD,clamp((u-3.4)/0.8,0,1)*gf);
       // ── GAG DE HOOK (Bible II bis) — VERBE : se cogner · AGENT : le rideau · RÉACTION : sonné puis il montre
       //    TEMPS : EN PLEIN GESTE dès la frame 0 (il est déjà écrasé contre le rideau, aucune construction).
       //    RACCORD : il se relève, pointe le "?", puis s'écarte et laisse la place au schéma. ~1,5 s.
@@ -379,20 +379,20 @@
       const u=t-s; hideQ(); hideCaps(); resetMini(); hideAll();
       const cut=lerp(690,DECX,eInOut(clamp(u/2,0,1)));
       chartUpTo(cut,1);
-      curtain(cut,1,880,1420);
+      curtain(cut,1,860,1380);
       decMark.setAttribute('cx',DECX);decMark.setAttribute('cy',CHART.find(p=>p[0]>=DECX)[1]);setOp(decMark,1);
       // le vide respire (vie continue : position, deux harmoniques)
       const vy=1180+16*Math.sin(u*0.85)+7*Math.sin(u*1.75);
       voidHint.setAttribute('x1',cut+40);voidHint.setAttribute('x2',980);voidHint.setAttribute('y1',vy);voidHint.setAttribute('y2',vy);
       setOp(voidHint,clamp((u-1.4)/0.8,0,1)*0.85);
-      putCap(capA,'THE MOMENT OF DECISION',DECX,1470,YOU,clamp((u-0.8)/0.7,0,1));
+      putCap(capA,'THE MOMENT OF DECISION',DECX,1440,YOU,clamp((u-0.8)/0.7,0,1));
       putCap(capC,'NOTHING TO READ YET',800,1120,DEAD,clamp((u-2.0)/0.8,0,1));
       // comparaison : le graphe complet en petit, au-dessus
       const cap2=clamp((u-2.6)/0.9,0,1);
-      mini(200,760,300,120,3,true,DEAD,cap2*0.8);
-      mini(640,760,300,120,3,false,INK,cap2);
-      putCap(capD,'REVIEWED',350,830,DEAD,cap2);
-      putCap(capE,'LIVE',790,830,INK,cap2);
+      mini(140,800,380,165,3,true,DEAD,cap2*0.8);
+      mini(580,800,380,165,3,false,INK,cap2);
+      putCap(capD,'REVIEWED',330,872,DEAD,cap2);
+      putCap(capE,'LIVE',770,872,INK,cap2);
       putCap(capB,'THE LIVE CHART NEVER HAS THE AFTER',CX,610,INK,clamp((u-3.6)/0.8,0,1));
       // BEAT : il entre en marchant, s'arrête, DÉSIGNE le vide, puis ressort. Une apparition, pas un décor.
       const inW=eInOut(clamp((u-1.3)/1.0,0,1)), outW=eInOut(clamp((u-6.4)/1.2,0,1));
@@ -408,7 +408,7 @@
     // Verbe visuel : la comparaison de deux gestes (l'un glisse, l'autre reste suspendu).
     function s3(lf,t,s){
       const u=t-s; hideQ(); hideCaps(); resetMini(); hideAll();
-      const LY=980, RY=1330, W=360, H=150;
+      const LY=960, RY=1330, W=470, H=205;
       // GAUCHE — EXPLAINING : la forme est déjà là, le geste la repasse sans effort
       mini(120,LY,W,H,3,true,INK,1);
       const gp=(u*0.42)%1, gx=120+W*gp, gy=LY-H*0.14-H*0.72*eOut(clamp((gp-0.55)/0.45,0,1));
@@ -439,22 +439,22 @@
     // NARRATEUR ABSENT : la tension doit frapper sans accompagnement.
     function s4(lf,t,s){
       const u=t-s; hideQ(); hideCaps(); resetMini(); hideAll(); noNarrator();
-      const W=168, H=104, X0=110, Y0=1000, GAP=16;
+      const W=176, H=150, X0=76, Y0=1010, GAP=12;
       const closed=clamp((u-1.5)/1.1,0,1);          // le rideau se ferme sur les dix
       for(let k=0;k<10;k++){
-        const cx=X0+(k%5)*(W+GAP), cy=Y0+Math.floor(k/5)*(H+150);
+        const cx=X0+(k%5)*(W+GAP), cy=Y0+Math.floor(k/5)*(H+170);
         const win=(k===3);
         const col=win?YOU:DEAD;
         mini(cx,cy,W,H,k,true,col,(1-closed)*(win?1:0.75));
         mini(cx,cy,W,H,k,false,closed>0.02?(win?YOU:DEAD):col,closed*(win?1:0.8));
         if(closed>0.5)mdot(cx+W*0.56,cy-H*0.16,closed*0.9,win?YOU:DEAD);
       }
-      putCap(capA,'OPEN — ONE RAN, NINE DID NOT',CX,880,DEAD,clamp(1-(u-1.2)/0.6,0,1));
-      putCap(capB,'CLOSED — ALL TEN LOOK THE SAME',CX,880,INK,closed);
+      putCap(capA,'OPEN — ONE RAN, NINE DID NOT',CX,790,DEAD,clamp(1-(u-1.2)/0.6,0,1));
+      putCap(capB,'CLOSED — ALL TEN LOOK THE SAME',CX,790,INK,closed);
       // « be more decisive » : la décision les prend TOUS
       const dec=clamp((u-3.0)/1.0,0,1);
-      putCap(capC,'BE MORE DECISIVE',CX,1560,YOU,dec*clamp(1-(u-6.5)/1.0,0,1));
-      putCap(capD,'THE WINNER LOOKS EXACTLY LIKE THE NINE',CX,1630,INK,clamp((u-4.2)/0.9,0,1));
+      putCap(capC,'BE MORE DECISIVE',CX,1420,YOU,dec*clamp(1-(u-6.5)/1.0,0,1));
+      putCap(capD,'THE WINNER LOOKS EXACTLY LIKE THE NINE',CX,1490,INK,clamp((u-4.2)/0.9,0,1));
       flushMini();
     }
 
@@ -465,7 +465,7 @@
       const pull=eInOut(clamp(u/2,0,1));
       const cut=lerp(950,DECX,pull);
       chartUpTo(cut,1);
-      curtain(cut,1,880,1420);
+      curtain(cut,1,860,1380);
       decMark.setAttribute('cx',DECX);decMark.setAttribute('cy',CHART.find(p=>p[0]>=DECX)[1]);setOp(decMark,1);
       // la main qui tire : un repère teal sur le bord, il ne bouge plus une fois posé
       const grip=clamp((u-0.2)/1.6,0,1);
