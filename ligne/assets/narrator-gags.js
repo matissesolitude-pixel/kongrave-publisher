@@ -21,7 +21,7 @@
                  reaction:'sonné', raccord:'point',
                  rest:{x:170, y:1430, h:232}});
      // ailleurs (il accompagne, petit) :
-     MrD.show('point_soft', 152, 1440, 246, op, false);
+     MrD.show('point', 152, 1440, 246, op, false);
      // en S4 : MrD.hide();
    ═══════════════════════════════════════════════════════════════════════════ */
 (function (root) {
@@ -63,26 +63,42 @@
       'scale(' + fx.toFixed(4) + ',' + fy.toFixed(4) + ') translate(' + (-P.w / 2).toFixed(1) + ',' + (-P.h).toFixed(1) + ')');
     this.g.setAttribute('opacity', clamp(op == null ? 1 : op, 0, 1).toFixed(3));
   };
+  /* ── SYNCHRO LABIALE (Bible) ────────────────────────────────────────────
+     Mr Dollar EST la voix du Reel. À l'écran sa bouche bouge sur l'AMPLITUDE de
+     l'audio (jamais de bouche figée pendant qu'on l'entend parler) ; hors champ
+     la voix continue. Pas de lip-sync phonétique : les deux variantes de bouche
+     (_wide ouverte / _soft fermée) sont les positions du cycle. */
+  MrDollar.prototype.setAmp = function (arr, fps) { this.amp = arr || null; this.fps = fps || 30; };
+  MrDollar.prototype.mouth = function (t) {
+    if (!this.amp || !this.amp.length) return 'soft';
+    return (this.amp[Math.floor((t || 0) * this.fps)] || 0) > 0.30 ? 'wide' : 'soft';
+  };
+  MrDollar.prototype.resolve = function (pose, t) {
+    return /_(soft|wide)$/.test(pose) ? pose : pose + '_' + this.mouth(t);
+  };
+  MrDollar.prototype.say = function (base, t, x, y, h, op, flip, rot, sx, sy) {
+    this.draw(this.resolve(base, t), x, y, h, op, flip, rot, sx, sy);
+  };
   MrDollar.prototype.show = function (pose, x, y, h, op, flip) { this.draw(pose, x, y, h, op, flip, 0, 1, 1); };
   MrDollar.prototype.hide = function () { this.g.setAttribute('opacity', '0'); };
 
   /* La RÉACTION choisit la pose et une inflexion (Bible VARIABLE C). */
   var REACT = {
-    'sonné':      { pose: 'present_wide', tilt: 1.0,  bob: 1.0 },
-    'surpris':    { pose: 'present_wide', tilt: 0.5,  bob: 0.6 },
-    'résigné':    { pose: 'idle_soft',    tilt: 0.2,  bob: 0.2 },
-    'inquiet':    { pose: 'point_soft',   tilt: 0.4,  bob: 0.5 },
-    'impuissant': { pose: 'present_wide', tilt: 0.7,  bob: 0.7 },
-    'curieux':    { pose: 'point_soft',   tilt: 0.2,  bob: 0.3 },
-    'vexé':       { pose: 'idle_soft',    tilt: 0.0,  bob: 0.15 },
-    'fier puis humilié': { pose: 'present_wide', tilt: 0.9, bob: 0.9 }
+    'sonné':      { pose: 'present', tilt: 1.0,  bob: 1.0 },
+    'surpris':    { pose: 'present', tilt: 0.5,  bob: 0.6 },
+    'résigné':    { pose: 'idle',    tilt: 0.2,  bob: 0.2 },
+    'inquiet':    { pose: 'point',   tilt: 0.4,  bob: 0.5 },
+    'impuissant': { pose: 'present', tilt: 0.7,  bob: 0.7 },
+    'curieux':    { pose: 'point',   tilt: 0.2,  bob: 0.3 },
+    'vexé':       { pose: 'wave_hip', tilt: 0.0, bob: 0.15 },
+    'fier puis humilié': { pose: 'present', tilt: 0.9, bob: 0.9 }
   };
   /* Le RACCORD : comment il passe la main (Bible VARIABLE F). */
   var RACCORD = {
-    'point':   'point_soft',   // il se relève et pointe le "?"
-    'ecarte':  'idle_soft',    // il s'écarte et laisse la place
-    'sol':     'present_wide', // il reste au sol pendant que le "?" apparaît
-    'sortie':  'idle_soft'     // il sort du cadre
+    'point':   'point',     // il se relève et pointe le "?"
+    'ecarte':  'idle',      // il s'écarte et laisse la place
+    'sol':     'present',   // il reste au sol pendant que le "?" apparaît
+    'sortie':  'walk'       // il sort du cadre
   };
 
   /* ── FAMILLE 1 : IL SUBIT ─────────────────────────────────────────────────
@@ -132,27 +148,27 @@
     // il agit : signe, claquement, salto, sifflement
     gesture: function (u, type) {
       var c = clamp(u / 0.55, 0, 1);
-      if (type === 'salto') return { pose: 'walk_wide', dx: 0, dy: -120 * Math.sin(Math.PI * c), rot: -360 * eInOut(c), sx: 1, sy: 1 };
-      if (type === 'snap')  return { pose: 'point_soft', dx: 0, dy: 0, rot: -6 * Math.sin(u * 18) * (1 - c), sx: 1, sy: 1 };
-      if (type === 'whistle') return { pose: 'idle_soft', dx: 0, dy: -5 * Math.abs(Math.sin(u * 5)), rot: 0, sx: 1, sy: 1 };
-      return { pose: 'wave_wide', dx: 0, dy: 0, rot: 5 * Math.sin(u * 7) * (1 - 0.6 * c), sx: 1, sy: 1 }; // 'wave'
+      if (type === 'salto') return { pose: 'walk', dx: 0, dy: -120 * Math.sin(Math.PI * c), rot: -360 * eInOut(c), sx: 1, sy: 1 };
+      if (type === 'snap')  return { pose: 'point', dx: 0, dy: 0, rot: -6 * Math.sin(u * 18) * (1 - c), sx: 1, sy: 1 };
+      if (type === 'whistle') return { pose: 'idle', dx: 0, dy: -5 * Math.abs(Math.sin(u * 5)), rot: 0, sx: 1, sy: 1 };
+      return { pose: 'wave', dx: 0, dy: 0, rot: 5 * Math.sin(u * 7) * (1 - 0.6 * c), sx: 1, sy: 1 }; // 'wave'
     },
     // il EST : boucle courte, calme. Seule, elle n'arrête pas le pouce (Bible) :
     // à n'utiliser QU'AVEC contrast().
     idle: function (u, type) {
       var b = 3 * Math.sin(u * 1.15) + 1.4 * Math.sin(u * 2.25);
-      if (type === 'arms_crossed' || type === 'vexe') return { pose: 'wave_hip_soft', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
-      if (type === 'bored')  return { pose: 'idle_arms_down_soft', dx: 0, dy: b, rot: 2 * Math.sin(u * 0.6), sx: 1, sy: 1 };
-      if (type === 'waits')  return { pose: 'wave_hip_wide', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
-      return { pose: 'idle_soft', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
+      if (type === 'arms_crossed' || type === 'vexe') return { pose: 'wave_hip', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
+      if (type === 'bored')  return { pose: 'idle_arms_down', dx: 0, dy: b, rot: 2 * Math.sin(u * 0.6), sx: 1, sy: 1 };
+      if (type === 'waits')  return { pose: 'wave_hip', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
+      return { pose: 'idle', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
     },
     // il AGIT SUR l'agent de l'épisode : il tire / pousse / efface / soulève
     act: function (u, verb) {
       var c = eInOut(clamp(u / 0.9, 0, 1));
-      if (verb === 'push')  return { pose: 'present_wide', dx: 46 * c, dy: 0, rot: 8 * c, sx: 1, sy: 1 };
-      if (verb === 'erase') return { pose: 'point_soft', dx: 26 * Math.sin(u * 7), dy: 0, rot: 0, sx: 1, sy: 1 };
-      if (verb === 'lift')  return { pose: 'present_wide', dx: 0, dy: -30 * c, rot: 0, sx: 1, sy: 1 };
-      return { pose: 'point_soft', dx: -52 * c, dy: 0, rot: -8 * c, sx: 1, sy: 1 };   // 'pull'
+      if (verb === 'push')  return { pose: 'present', dx: 46 * c, dy: 0, rot: 8 * c, sx: 1, sy: 1 };
+      if (verb === 'erase') return { pose: 'point', dx: 26 * Math.sin(u * 7), dy: 0, rot: 0, sx: 1, sy: 1 };
+      if (verb === 'lift')  return { pose: 'present', dx: 0, dy: -30 * c, rot: 0, sx: 1, sy: 1 };
+      return { pose: 'point', dx: -52 * c, dy: 0, rot: -8 * c, sx: 1, sy: 1 };   // 'pull'
     }
   };
 
@@ -161,6 +177,10 @@
               idle, verb, type }                                                */
   MrDollar.prototype.gag = function (u, spec) {
     spec = spec || {};
+    // Le JSON écrit le raccord en clair ("il se relève et pointe le ?") : on le ramène à sa clé.
+    var rk = String(spec.raccord || 'point').toLowerCase();
+    spec.raccord = /point/.test(rk) ? 'point' : /écart|ecart/.test(rk) ? 'ecarte'
+                 : /sol|reste au sol/.test(rk) ? 'sol' : /sort|cadre/.test(rk) ? 'sortie' : 'point';
     var a = spec.agent || { x: 540, y: 1400 };
     var r = REACT[spec.reaction] || REACT['sonné'];
     var rest = spec.rest || { x: 170, y: a.y, h: 232 };
@@ -170,7 +190,7 @@
     if (P1[spec.primitive]) {                       // FAMILLE 1 — il subit
       st = P1[spec.primitive](u, a, r);
       var rise = clamp((u - HIT) / RAC, 0, 1);
-      pose = rise < 0.5 ? r.pose : (RACCORD[spec.raccord] || 'point_soft');
+      pose = rise < 0.5 ? r.pose : (RACCORD[spec.raccord] || 'point');
       st.rot = (st.rot || 0) * (1 - rise);           // il se redresse
       st.sx = lerp(st.sx == null ? 1 : st.sx, 1, rise);
       st.sy = lerp(st.sy == null ? 1 : st.sy, 1, rise);
@@ -190,13 +210,13 @@
     if (hand > 0 && spec.raccord === 'sortie') {
       // variante : il sort réellement du cadre
       var x0 = a.x + (st.dx || 0), y0 = a.y + (st.dy || 0);
-      this.draw(pose, lerp(x0, -240, hand), y0, h0, 1 - hand, spec.flip, st.rot, st.sx, st.sy);
+      this.draw(this.resolve(pose, spec.t), lerp(x0, -240, hand), y0, h0, 1 - hand, spec.flip, st.rot, st.sx, st.sy);
       return;
     }
     var bx = a.x + (st.dx || 0), by = a.y + (st.dy || 0) + (st.bob || 0);
     var px = lerp(bx, rest.x, hand), py = lerp(by, rest.y, hand), ph = lerp(h0, rest.h, hand);
     if (hand > 0.85) { px += 4 * Math.sin(u * 1.2) + 2 * Math.sin(u * 2.3); }   // vie continue une fois posé
-    this.draw(hand > 0.6 ? (RACCORD[spec.raccord] || 'idle_soft') : pose,
+    this.draw(this.resolve(hand > 0.6 ? (RACCORD[spec.raccord] || 'idle') : pose, spec.t),
               px, py, ph, (st.op == null ? 1 : st.op) * (spec.op == null ? 1 : spec.op), spec.flip, st.rot, st.sx, st.sy);
   };
 

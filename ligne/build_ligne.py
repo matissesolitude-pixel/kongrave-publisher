@@ -115,6 +115,33 @@ def timeline(durs, total=None):
     return {"sc": sc, "total": round(t, 3)}
 
 
+def amp_curve(work, tl, fps=30):
+    """Courbe d'AMPLITUDE de la voix (RMS par frame) -> SYNCHRO LABIALE de Mr Dollar.
+    Bible : pas de lip-sync phonétique ; 2 à 4 formes de bouche pilotées par l'amplitude.
+    Déterministe, tourne en cloud, zéro travail manuel par épisode. Les moteurs sans le
+    marqueur __AMP__ ne sont pas affectés (substitution sans effet)."""
+    import numpy as np
+    N = int(tl["total"] * fps) + 2
+    amp = [0.0] * N
+    for i in range(len(tl["sc"])):
+        f = work / f"v{i+1}.mp3"
+        if not f.exists():
+            continue
+        raw = subprocess.run([FF, "-v", "error", "-i", str(f), "-f", "s16le",
+                              "-ac", "1", "-ar", "8000", "-"], capture_output=True).stdout
+        a = np.frombuffer(raw, dtype="<i2").astype("float32") / 32768.0
+        if a.size == 0:
+            continue
+        win = max(1, int(8000 / fps))
+        k0 = int(round(tl["sc"][i]["s"] * fps))
+        for k in range(a.size // win):
+            idx = k0 + k
+            if 0 <= idx < N:
+                amp[idx] = float(np.sqrt(float((a[k * win:(k + 1) * win] ** 2).mean())))
+    m = max(amp) or 1.0
+    return [round(min(1.0, v / m), 3) for v in amp]
+
+
 def build_anim(ep, tl, work, rend):
     words = json.loads((work / "words.json").read_text())
     # index.html = engine VALIDÉ (L1/L2, figés). pivot.html = engine PIVOT/DSL (shapes+verbs+interpréteur).
@@ -183,7 +210,8 @@ def build_anim(ep, tl, work, rend):
             .replace("__SCENES__", json.dumps(tl["sc"]))
             .replace("__WORDS__", json.dumps(words))
             .replace("__SPEC__", json.dumps(ep["scenes"]))
-            .replace("__TOTAL__", f'{tl["total"]:.3f}'))
+            .replace("__TOTAL__", f'{tl["total"]:.3f}')
+            .replace("__AMP__", json.dumps(amp_curve(work, tl))))
     proj = rend / "proj"; proj.mkdir(parents=True, exist_ok=True)
     (proj / "index.html").write_text(html)
     out = rend / "anim.mp4"
