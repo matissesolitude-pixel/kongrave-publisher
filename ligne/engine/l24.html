@@ -250,8 +250,10 @@
       const inn=clamp((u-1.4)/0.8,0,1), out=clamp((u-6.8)/1.1,0,1);
       if(out>=1||inn<=0){ MrD.hide(); return; }
       const jit=4*Math.sin(u*1.15)+2*Math.sin(u*2.25);
-      if(b[0]==='point') MrD.pointAt('point',t,b[1]+jit,b[2],200,inn*(1-out),CX);
-      else MrD.say('idle',t,b[1]+jit,b[2],196,inn*(1-out),b[1]>CX);
+      // SÉQUENCEUR : il change d'attitude pendant l'apparition (jamais 5 s de pointage figé)
+      const pose=MrD.seq(u-1.4, b[0]==='point'?'designe':'attend');
+      if(pose==='point') MrD.pointAt('point',t,b[1]+jit,b[2],200,inn*(1-out),CX);
+      else MrD.say(pose,t,b[1]+jit,b[2],196,inn*(1-out),b[1]>CX);
     }
 
     const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);

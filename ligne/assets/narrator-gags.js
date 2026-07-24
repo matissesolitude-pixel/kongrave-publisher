@@ -199,17 +199,42 @@
     this.draw(pf, this._cur.x, this._cur.y, this._cur.h, op * f, fl, moving ? 0 : rot, 1, 1);
     return true;
   };
+  /* ── SÉQUENCEUR DE POSES ────────────────────────────────────────────────
+     Il ne tient JAMAIS la même attitude pendant toute une apparition : il enchaîne.
+     `seq` = liste de poses (noms de base), jouées dans l'ordre avec des durées
+     légèrement inégales (rythme naturel, pas métronomique) et déterministes. */
+  var ROUTINES = {
+    designe:  ['point', 'point', 'armscross', 'point'],           // il montre, il laisse regarder, il remontre
+    explique: ['point', 'present', 'point', 'hips'],              // il désigne puis développe
+    attend:   ['armscross', 'hips', 'flat', 'puzzled'],           // présence sans désignation
+    reagit:   ['startle', 'mouthcover', 'armscross', 'facepalm'], // il encaisse
+    doute:    ['puzzled', 'facepalm', 'armscross', 'peek'],
+    constate: ['flat', 'armscross', 'sad', 'hips']
+  };
+  /* Retourne la pose courante d'une routine. u = temps local de l'apparition. */
+  MrDollar.prototype.seq = function (u, routine) {
+    var L = (typeof routine === 'string') ? (ROUTINES[routine] || ROUTINES.attend) : (routine || ROUTINES.attend);
+    if (!L.length) return 'idle';
+    var acc = 0;
+    for (var i = 0; i < 40; i++) {
+      var k = i % L.length;
+      var d = 1.15 + 0.55 * ((i * 7 % 5) / 4);        // 1,15 à 1,70 s — irrégulier mais reproductible
+      if (u < acc + d) return L[k];
+      acc += d;
+    }
+    return L[L.length - 1];
+  };
   MrDollar.prototype.show = function (pose, x, y, h, op, flip) { this.draw(pose, x, y, h, op, flip, 0, 1, 1); };
   MrDollar.prototype.hide = function () { this.g.setAttribute('opacity', '0'); };
 
   /* La RÉACTION choisit la pose et une inflexion (Bible VARIABLE C). */
   var REACT = {
-    'sonné':               { pose: 'present',    tilt: 1.0, bob: 1.0 },
-    'surpris':             { pose: 'oh',         tilt: 0.5, bob: 0.6 },   // bouche en O
-    'résigné':             { pose: 'flat',       tilt: 0.2, bob: 0.2 },   // bras ballants
+    'sonné':               { pose: 'startle',    tilt: 1.0, bob: 1.0 },
+    'surpris':             { pose: 'startle',    tilt: 0.5, bob: 0.6 },   // sursaut, bras en l'air
+    'résigné':             { pose: 'sad',        tilt: 0.2, bob: 0.2 },   // abattu
     'inquiet':             { pose: 'mouthcover', tilt: 0.4, bob: 0.5 },   // mains sur la bouche
-    'impuissant':          { pose: 'present',    tilt: 0.7, bob: 0.7 },
-    'curieux':             { pose: 'peek',       tilt: 0.2, bob: 0.3 },   // regarde entre les doigts
+    'impuissant':          { pose: 'despair',    tilt: 0.7, bob: 0.7 },   // tête dans les mains
+    'curieux':             { pose: 'peekover',   tilt: 0.2, bob: 0.3 },   // il regarde par-dessus
     'vexé':                { pose: 'armscross',  tilt: 0.0, bob: 0.15 },  // bras croisés
     'faussement confiant': { pose: 'hips',       tilt: 0.3, bob: 0.4 },   // mains sur les hanches
     'soulagé trop tôt':    { pose: 'hipswave',   tilt: 0.2, bob: 0.3 },
@@ -219,7 +244,7 @@
   var RACCORD = {
     'point':   'point',     // il se relève et pointe le "?"
     'ecarte':  'back',      // il se détourne et laisse la place (pose de dos)
-    'sol':     'present',   // il reste au sol pendant que le "?" apparaît
+    'sol':     'floorpoint',// il reste au sol et pointe le "?"
     'sortie':  'walk'       // il sort du cadre
   };
 
@@ -241,25 +266,25 @@
     // l'agent le percute : il est projeté à l'opposé, en l'air
     hitBy: function (u, a, r) {
       var k = clamp(1 - u / HIT, 0, 1);
-      return { dx: -110 * k - 40, dy: -70 * k * eOut(1 - k + 0.001), rot: -34 * k * r.tilt,
+      return { pose: k > 0.25 ? 'blown' : null, dx: -110 * k - 40, dy: -70 * k * eOut(1 - k + 0.001), rot: -34 * k * r.tilt,
                sx: 1 + 0.12 * k, sy: 1 - 0.08 * k, bob: 8 * k * wob(u, 14, 4.5) * r.bob };
     },
     // l'agent descend sur lui : il est aplati, il reprend sa forme
     crushedBy: function (u, a, r) {
       var k = clamp(1 - u / HIT, 0, 1);
-      return { dx: -20, dy: 0, rot: 0, sx: 1 + 0.42 * k, sy: 1 - 0.46 * k,
+      return { pose: k > 0.25 ? 'flattened' : null, dx: -20, dy: 0, rot: 0, sx: 1 + 0.10 * k, sy: 1 - 0.10 * k,
                bob: 4 * k * wob(u, 16, 6) * r.bob };
     },
     // deux agents l'étirent : il est allongé horizontalement, il se rétracte
     stretchedBy: function (u, a, r) {
       var k = clamp(1 - u / HIT, 0, 1);
-      return { dx: 0, dy: 0, rot: 0, sx: 1 + 0.55 * k, sy: 1 - 0.24 * k,
+      return { pose: k > 0.25 ? 'squeezed' : null, dx: 0, dy: 0, rot: 0, sx: 1 + 0.15 * k, sy: 1 - 0.08 * k,
                bob: 5 * k * wob(u, 13, 5) * r.bob };
     },
     // il est aspiré/effacé par l'agent : il rétrécit vers lui puis revient
     vanishInto: function (u, a, r) {
       var k = clamp(1 - u / HIT, 0, 1);
-      return { dx: -40 + 40 * k, dy: 0, rot: 12 * k * r.tilt, sx: 1 - 0.45 * k, sy: 1 - 0.45 * k,
+      return { pose: k > 0.35 ? 'handonly' : null, dx: -40 + 40 * k, dy: 0, rot: 6 * k * r.tilt, sx: 1, sy: 1,
                op: 1 - 0.35 * k, bob: 3 * k * wob(u, 11, 5) * r.bob };
     }
   };
@@ -293,7 +318,7 @@
       if (verb === 'push')  return { pose: 'present', dx: 46 * c, dy: 0, rot: 8 * c, sx: 1, sy: 1 };
       if (verb === 'erase') return { pose: 'point', dx: 26 * Math.sin(u * 7), dy: 0, rot: 0, sx: 1, sy: 1 };
       if (verb === 'lift')  return { pose: 'present', dx: 0, dy: -30 * c, rot: 0, sx: 1, sy: 1 };
-      return { pose: 'point', dx: -52 * c, dy: 0, rot: -8 * c, sx: 1, sy: 1 };   // 'pull'
+      return { pose: 'pullrope', dx: -52 * c, dy: 0, rot: -4 * c, sx: 1, sy: 1 };   // 'pull'
     }
   };
 
@@ -315,7 +340,7 @@
     if (P1[spec.primitive]) {                       // FAMILLE 1 — il subit
       st = P1[spec.primitive](u, a, r);
       var rise = clamp((u - HIT) / RAC, 0, 1);
-      pose = rise < 0.5 ? r.pose : (RACCORD[spec.raccord] || 'point');
+      pose = (st.pose && rise < 0.5) ? st.pose : (rise < 0.5 ? r.pose : (RACCORD[spec.raccord] || 'point'));
       st.rot = (st.rot || 0) * (1 - rise);           // il se redresse
       st.sx = lerp(st.sx == null ? 1 : st.sx, 1, rise);
       st.sy = lerp(st.sy == null ? 1 : st.sy, 1, rise);
