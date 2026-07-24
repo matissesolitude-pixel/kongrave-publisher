@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L31 « THE LEVERAGE ISN'T THE RISK » — S1 : émotion frame 0 = CURIOSITÉ + CHOC. Deux paires absurdement disproportionnées, côte
+       à côte, DÉJÀ pleines à t=0 : à GAUCHE une immense « chambre » (levier) qui n'enferme qu'une position minuscule ; à DROITE une
+       chambre minuscule débordée par une position massive. Laquelle va exploser ? S2 : le levier se ré-étiquette — ce n'est pas une
+       force, c'est LA PLACE QU'ON T'AUTORISE ; à côté se tient l'équation du risque (taille × distance-au-stop = perte), et le levier
+       reste À L'ÉCART, non relié : il n'y figure pas. S3 : diptyque — LE PRO (levier énorme, position minuscule → une écharde sur un
+       mouvement normal) vs LE DÉBUTANT (petit levier, position énorme → une bouchée massive sur le MÊME mouvement). S4 : LA scène — le
+       faux sentiment de sécurité : le cadre-levier RÉTRÉCIT (le trader le baisse), un halo rassurant s'allume, mais SOUS le halo la
+       position teal GROSSIT sans surveillance ; un mouvement ordinaire arrive → tranche énorme, le halo s'éteint. S5 : décharge — retour
+       aux deux paires, verdict (coche teal à gauche, marque grise à droite : c'est le PETIT levier qui explose), puis la règle seule :
+       « IF THIS STOP GETS HIT, WHAT DOES IT COST? » + l'équation taille × distance. Doctrine : aucun chiffre ; toi/position = teal ;
+       perte = gris (délavage) ; le cadre-levier = encre ; pas de brun ; pas de nom de broker ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // vie continue ROBUSTE : trois harmoniques (dont une HAUTE fréquence) — jamais de vitesse nulle simultanée sur les trois,
+    // donc jamais de gel > seuil pendant une tenue (la sinusoïde unique se fige à ses extrêmes, deux peuvent coïncider ; trois non).
+    const vibe=(u,a,b,c,ph)=>a*Math.sin(u*1.25+(ph||0))+b*Math.sin(u*2.3+(ph||0))+c*Math.sin(u*5.3+(ph||0));
+
+    // ── OBJETS RÉUTILISABLES (chaque scène ouvre sur LES SIENS, déjà pleins) ──
+    // cadres-levier = la « place autorisée » (contour ENCRE) ; positions = TON bloc (teal plein) ; pertes = gris (délavage) ;
+    // comptes (S3) = contour encre ; halo (S4) = anneau rassurant ; marques de verdict (S5).
+    const FR=[0,1].map(()=>mk('rect',{rx:16,fill:'none',stroke:INK,'stroke-width':6,opacity:0}));
+    const BL=[0,1,2].map(()=>mk('rect',{rx:10,fill:YOU,opacity:0}));
+    const GR=[0,1].map(()=>mk('rect',{rx:10,fill:DEAD,opacity:0}));
+    const AC=[0,1].map(()=>mk('rect',{rx:12,fill:'none',stroke:INK,'stroke-width':5,opacity:0}));
+    const LN=[0,1,2,3].map(()=>mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    const DASH=[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':5,'stroke-dasharray':'14 12','stroke-linecap':'round',opacity:0}));
+    const halo=mk('ellipse',{fill:'none',stroke:DEAD,'stroke-width':10,opacity:0});
+    const meas=mk('line',{stroke:YOU,'stroke-width':9,'stroke-linecap':'round',opacity:0});   // marqueur qui MESURE la distance (glisse à vitesse constante)
+    const chk=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':14,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const crs=[0,1].map(()=>mk('line',{stroke:DEAD,'stroke-width':14,'stroke-linecap':'round',opacity:0}));
+    function glyph(txt){const e=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':78,fill:INK,opacity:0});e.textContent=txt;return e;}
+    const gMul=glyph('×'), gEq=glyph('=');
+    function R(el,x,y,w,h,op){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));el.setAttribute('width',Math.max(1,w).toFixed(1));el.setAttribute('height',Math.max(1,h).toFixed(1));setOp(el,op);}
+    function LSet(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));setOp(el,op);}
+    function hideShapes(){[...FR,...BL,...GR,...AC,...LN,...DASH,halo,meas,chk,...crs,gMul,gEq].forEach(e=>setOp(e,0));}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0, « ? » comme ancre ──
+    const QLINES=['WHICH ONE IS','ABOUT TO','BLOW UP'];
+    const FS=76,lineH=96,qy0=240,qY=QLINES.map((s,li)=>qy0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=qy0+3*lineH+66,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(40),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    const qbig1=caption(64),qbig2=caption(64);qbig1.setAttribute('font-weight',800);qbig2.setAttribute('font-weight',800);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,qbig1,qbig2])setOp(e,0);}
+
+    // ── L'ÉQUATION DU RISQUE : taille (bloc teal) × distance-au-stop (segment pointillé) = perte (gris) ──
+    function equation(cxc, by, op, u){
+      R(BL[2], cxc-260+vibe(u,4,3,3,0), by-60+vibe(u,4,3,3,1.1), 120, 120, op);   // SIZE (teal) — vit en continu
+      gMul.setAttribute('x',(cxc-110).toFixed(1));gMul.setAttribute('y',(by+26).toFixed(1));setOp(gMul,op);
+      const dx=cxc-40, dTop=by-95, dBot=by+95;
+      DASH[0].setAttribute('stroke-dashoffset',(-u*46).toFixed(0)); LSet(DASH[0],dx,dTop,dx,dBot,op);   // DISTANCE au stop (défile)
+      LSet(LN[0],dx-34,dTop,dx+34,dTop,op);                          // niveau d'entrée
+      LSet(LN[1],dx-34,dBot,dx+34,dBot,op);                          // le stop
+      // un marqueur teal MESURE la distance : il glisse le long du segment (ping-pong, vitesse constante — jamais figé)
+      const mfrac=Math.abs(((u*0.34)%2)-1), my=dTop+(dBot-dTop)*mfrac;
+      LSet(meas, dx-26, my, dx+26, my, op);
+      gEq.setAttribute('x',(cxc+40).toFixed(1));gEq.setAttribute('y',(by+26).toFixed(1));setOp(gEq,op);
+      const gx=cxc+110+vibe(u,5,3,4,0.5), gw=120+9*Math.sin(u*2.2)+6*Math.sin(u*5.1);
+      R(GR[0], gx, by-95+vibe(u,4,3,3,2), gw, 190, op);              // WHAT YOU LOSE (gris) — gnaw + tremble
+    }
+
+    /*INCLUDE:narrator*/
+
+    // ═══ S1 — L'ÉNIGME : deux paires disproportionnées, dès la frame 0 (levier CHOC + CURIOSITÉ) ═══
+    // Verbe visuel : la juxtaposition intrigante (deux paires, on ne sait pas laquelle est dangereuse).
+    function s1(lf,t,s){
+      const u=t-s; hideShapes(); hideCaps();
+      const gf=clamp(1-(lf-0.965)/0.03,0,1);   // fondu SEULEMENT après la fenêtre de voix (jamais de gel/pâleur pendant la voix)
+      // question POP ligne par ligne (seul draw-on autorisé), 1re ligne dès t=0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.20:u-(0.15+k*0.30)),ap=clamp(qt/0.2,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.15,qap=clamp(qm/0.22,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // GAUCHE — immense levier (chambre), position minuscule (trois harmoniques)
+      const lb=vibe(u,6,3,3,0), l2=vibe(u,4,2,3,1.4);
+      R(FR[0],150,660+lb,250,520,gf);
+      R(BL[0],229,1112+lb+l2,46,46,gf);
+      // DROITE — petit levier (chambre), position MASSIVE qui pèse et déborde
+      const rb=vibe(u,5,3,3,0.7), rw=vibe(u,10,5,4,2.1);
+      R(FR[1],720,700+rb,120,120,gf);
+      R(BL[1],660,980+rw,250,300,gf);
+      // Mr Dollar : brève apparition PERPLEXE — il incarne le « laquelle ? », puis il s'efface (la scène vit sans lui : les paires respirent)
+      const nWin=clamp((u-2.4)/0.5,0,1)*clamp(1-(u-5.4)/0.6,0,1);
+      if(nWin>0.02) MrD.enter(u-2.4,{t:t, routine:'doute', rest:{x:540,y:1412,h:196}, op:nWin*gf});
+      else MrD.hide();
+    }
+
+    // ═══ S2 — LE LEVIER SORT DE L'ÉQUATION : il autorise, il ne pousse rien ═══
+    // Verbe visuel : la mise à l'écart (l'équation du risque se tient, le levier reste dehors, non relié).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideShapes(); hideCaps();
+      // le cadre-levier, seul, à gauche : « la place qu'on t'autorise »
+      const fb=5*Math.sin(u*1.15)+3*Math.sin(u*2.2);
+      R(FR[0],110,780+fb,250,250,1);
+      // l'équation du risque, déjà pleine, à droite — elle respire
+      equation(660, 955, 1, u);
+      putCap(capA,'RISK = SIZE × DISTANCE',CX,650,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capB,'LEVERAGE = ROOM',235,748,INK,clamp(u/0.5,0,1));
+      putCap(capE,'NOT IN THE EQUATION',235,1092,DEAD,clamp((u-1.6)/0.7,0,1));
+      // Mr Dollar : il DÉSIGNE le cadre resté à l'écart (il pointe à gauche), puis s'efface
+      const nWin=clamp((u-4.2)/0.5,0,1)*clamp(1-(u-8.6)/0.7,0,1);
+      if(nWin>0.02) MrD.enter(u-4.2,{t:t, routine:'designe', lookAt:235, rest:{x:665,y:1412,h:196}, op:nWin});
+      else MrD.hide();
+    }
+
+    // ═══ S3 — DIPTYQUE : même mouvement, écharde (pro) vs bouchée (débutant) ═══
+    // Verbe visuel : la comparaison simultanée A/B (deux comptes, deux morsures).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideShapes(); hideCaps();
+      LSet(LN[3],120,1010,960,1010,0.6);                            // séparateur
+      // HAUT — LE PRO : levier ÉNORME, position minuscule → le compte à peine entamé
+      const tb=vibe(u,5,3,3,0);
+      R(FR[0],140,620+tb,360,230,1);
+      R(BL[0],290,802+tb,44,44,1);
+      LSet(LN[0],512,738,568,738,0.9);                             // → vers l'effet
+      R(AC[0],580,660,330,150,1);                                  // LE COMPTE (même taille que le bas)
+      R(GR[0],592, 675+vibe(u,2,2,3,1.7), 30+6*Math.sin(u*2.3)+4*Math.sin(u*5.0), 120, 0.95);  // écharde qui ronge
+      putCap(capC,'THE PRO',250,600,INK,1);
+      putCap(capD,'A SCRATCH',770,624,DEAD,clamp((u-0.8)/0.6,0,1));
+      // BAS — LE DÉBUTANT : petit levier, position ÉNORME → une bouchée massive
+      const bb=vibe(u,5,3,3,0.9);
+      R(FR[1],220,1080+bb,120,100,1);
+      R(BL[1],140,1180+bb,320,230,1);
+      LSet(LN[1],512,1245,568,1245,0.9);
+      R(AC[1],580,1170,330,150,1);
+      R(GR[1],592, 1185+vibe(u,2,2,3,1.2), 290+10*Math.sin(u*1.9)+6*Math.sin(u*5.1), 120, 0.95);  // bouchée qui ronge
+      putCap(capE,'THE BEGINNER',250,1052,INK,1);
+      putCap(capF,'A HUGE BITE',770,1140,DEAD,clamp((u-0.8)/0.6,0,1));
+      MrD.hide();  // le diptyque prend toute la hauteur : il s'écarte, la scène vit sans lui
+    }
+
+    // ═══ S4 — LE FAUX SENTIMENT DE SÉCURITÉ : le cadre rétrécit, la position enfle sous le halo ═══
+    // Verbe visuel : le leurre (l'attention rassurée pendant que le danger grossit), puis la coupe.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideShapes(); hideCaps();
+      // le cadre-levier RÉTRÉCIT (le trader le baisse)
+      const k=eInOut(clamp(u/1.5,0,1)), fjit=vibe(u,4,2,2,0);
+      const fx=lerp(360,470,k), fy=lerp(680,750,k), fw=lerp(340,120,k), fh=lerp(230,100,k);
+      R(FR[0],fx+fjit,fy+vibe(u,2,2,2,1),fw,fh,1);
+      // un halo « sécurité » s'allume autour de lui (bords en mouvement = vie continue)
+      const hcx=fx+fw/2+fjit, hcy=fy+fh/2, hr=88+14*Math.sin(u*1.4)+7*Math.sin(u*2.5);
+      halo.setAttribute('cx',hcx.toFixed(1));halo.setAttribute('cy',hcy.toFixed(1));halo.setAttribute('rx',(hr+30).toFixed(1));halo.setAttribute('ry',hr.toFixed(1));
+      setOp(halo, clamp((u-0.4)/0.6,0,1)*clamp(1-(u-3.0)/0.8,0,1)*0.5);
+      putCap(capB,'LOWER LEVERAGE — FEELS SAFE',CX,624,INK,clamp(u/0.6,0,1));
+      // SOUS le halo, la position teal GROSSIT sans surveillance ; une fois soufflée, elle TREMBLE (instable)
+      const g=eInOut(clamp((u-0.6)/2.4,0,1)), pbx=vibe(u,3,2,4,0.6), pby=vibe(u,6,4,5,1.9);
+      const px=lerp(470,300,g), py=lerp(1010,960,g), pw=lerp(120,460,g), ph=lerp(90,360,g);
+      R(BL[0], px+pbx, py+pby, pw, ph, 1);
+      // un mouvement ORDINAIRE arrive → une tranche énorme (délavage gris), le halo s'éteint ; la tranche ronge en continu
+      const hit=clamp((u-3.0)/1.2,0,1);
+      if(hit>0.01){ const lw=pw*0.62*eOut(hit)+9*Math.sin(u*2.2)+5*Math.sin(u*5.1); R(GR[0], px+pw-lw+pbx, py+pby, lw, ph, 1); }
+      putCap(capC, (u<3.0?'YOUR POSITION':'THE MOVE YOU NEVER SAW'), px+pw/2+pbx, py+ph+48+pby, (u<3.0?YOU:DEAD), 1);
+      MrD.hide();  // il n'apparaît pas en S4
+    }
+
+    // ═══ S5 — DÉCHARGE : le verdict, puis la règle à retenir ═══
+    // Verbe visuel : le jugement (les deux paires enfin marquées), puis la question-règle seule.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideShapes(); hideCaps();
+      // PHASE A — rappel des deux paires + verdict (elles s'effacent ensuite)
+      const aOut=clamp(1-(u-2.0)/1.0,0,1);
+      if(aOut>0.01){
+        const lb=vibe(u,5,3,4,0)+3*Math.sin(u*7.6), rb=vibe(u,5,3,4,0.8)+3*Math.sin(u*7.6+1.3);
+        R(FR[0],180,650+lb,200,240,aOut);   R(BL[0],262,822+lb,44,44,aOut);      // gauche : grand levier, petite position
+        R(FR[1],770,660+rb,110,100,aOut);   R(BL[1],640+0.5*rb,820+rb,220,220,aOut);    // droite : petit levier, grosse position
+        const vk=clamp((u-1.0)/0.5,0,1)*aOut;
+        chk.setAttribute('points','206,782 250,828 336,716');setOp(chk,vk);       // ✓ la paire GAUCHE est sûre
+        LSet(crs[0],778,904,896,1022,vk);   LSet(crs[1],896,904,778,1022,vk);    // ✗ la paire DROITE explose
+        putCap(capC,'SAFE',283,932,YOU,vk);
+        putCap(capD,'THIS ONE BLOWS UP',790,1104,DEAD,vk);
+      }
+      // PHASE B/C — la règle finale seule (fin actionnable, à enregistrer)
+      const rOn=clamp((u-2.2)/0.8,0,1);
+      putCap(qbig1,'IF THIS STOP GETS HIT',CX,700,INK,rOn);
+      putCap(qbig2,'WHAT DOES IT COST?',CX,792,INK,rOn);
+      equation(CX,1120,rOn,u);
+      putCap(capA,'SIZE × DISTANCE TO YOUR STOP',CX,1292,DEAD,clamp((u-2.8)/0.7,0,1));
+      // Mr Dollar : au verdict il DÉSIGNE la paire qui explose (à droite), puis il tire le rideau — la règle reste seule
+      const nWin=clamp((u-1.2)/0.4,0,1)*clamp(1-(u-3.0)/0.5,0,1);
+      if(nWin>0.02) MrD.enter(u-1.2,{t:t, routine:'designe', lookAt:820, rest:{x:300,y:1412,h:196}, op:nWin});
+      else MrD.hide();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
