@@ -40,6 +40,11 @@ Deux jeux d'expression, interchangeables :
   pas la démonstration.
 - **Absent en S4** (tension maximale) si sa présence dilue le choc. À arbitrer épisode par épisode.
 - **Jamais la même boucle d'un épisode à l'autre** : on varie les poses et les entrées.
+- **LA TAILLE EST UN OUTIL DE MISE EN SCÈNE.** Elle n'est pas fixe :
+  · s'il **gêne** un texte ou un objet de la démonstration → on le **rapetisse** (ou on le déplace) ;
+  · si le **hook** y gagne en impact → on l'**agrandit** franchement à l'ouverture, puis il
+    reprend une taille discrète dès qu'il passe la main.
+  Le schéma prime toujours : la taille du narrateur s'ajuste à lui, jamais l'inverse.
 
 ## Intégration technique
 

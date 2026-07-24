@@ -365,7 +365,7 @@
         const HG=(SPEC[0]&&SPEC[0].hook_gag)||{};      // ← 4 champs dans le JSON, rien à coder
         MrD.gag(u, {primitive:HG.primitive||'bumpInto', reaction:HG.reaction||'sonné',
                     raccord:HG.raccord||'point', agent:{x:cut, y:1430}, t:t,
-                    rest:{x:215, y:1430, h:236}, h:262, op:gf});
+                    rest:{x:215, y:1430, h:236}, h:340, op:gf});   // GRAND au choc, petit dès qu'il passe la main
       }else{                                        // il s'en va : la démonstration reste seule
         const o=clamp((u-4.0)/1.2,0,1);
         MrD.say('walk', t, lerp(215,-170,eInOut(o)), 1430, 236, (1-o)*gf, true, 0,1,1);
