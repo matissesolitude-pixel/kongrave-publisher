@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L22 « THE SPREAD ISN'T THE COST » — REPRODUCTION (refus Meta du master précédent : recodée DE ZÉRO, autres objets/
+       compositions/timings, même brief JSON). S1 : émotion frame 0 = levier CURIOSITÉ — un tout petit écart teal (le spread,
+       entre deux points d'encre) est net, rassurant, mais une MASSE grise beaucoup plus grande dérive déjà au-dessus/derrière
+       (qu'y a-t-il là-dedans ?). S2 : la révélation — le spread n'est que la barre la PLUS COURTE d'une pile de barres de coûts,
+       posée en façade ; les vrais coûts, derrière, sont plus longs. S3 : le slip — sur un marché qui FILE (verticales qui
+       balaient), le prix cliqué (repère teal) n'est pas le prix obtenu : le point de fill glisse un cran PLUS LOIN (pire),
+       l'écart gris EST le slip. S4 : la fréquence — le coût d'UN trade (grande unité) rétrécit et se DUPLIQUE en une MONTAGNE
+       de centaines d'unités, à côté du trade unique resté ridicule (fantôme pointillé). S5 : décharge — une BALANCE à deux
+       plateaux : spread serré + une TONNE d'unités (très tradé) fait PLONGER le plateau gauche ; spread large + très PEU
+       d'unités (touché rarement) reste haut à droite. La balance penche : le serré-très-tradé coûte plus. Doctrine : aucun
+       chiffre à l'écran (les quantités par la MASSE) ; gris = coût subi ; pas de brun ; bas du cadre vide ; aucun nom de broker. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── S1 : LA MASSE CACHÉE (silhouette grise) + LE SPREAD (petit écart teal entre deux points d'encre) ──
+    const s1mass=mk('rect',{x:250,y:770,width:580,height:250,rx:26,fill:DEAD,'fill-opacity':0.17,opacity:0});
+    const s1lay1=mk('line',{x1:300,x2:780,y1:858,y2:858,stroke:DEAD,'stroke-width':4,opacity:0});
+    const s1lay2=mk('line',{x1:322,x2:758,y1:938,y2:938,stroke:DEAD,'stroke-width':4,opacity:0});
+    const s1gap=mk('rect',{rx:5,fill:YOU,opacity:0});
+    const s1dotL=mk('circle',{r:15,fill:INK,opacity:0});
+    const s1dotR=mk('circle',{r:15,fill:INK,opacity:0});
+    function hideS1(){setOp(s1mass,0);setOp(s1lay1,0);setOp(s1lay2,0);setOp(s1gap,0);setOp(s1dotL,0);setOp(s1dotR,0);}
+
+    // ── S2 : LA PILE EN BARRES (le spread = la barre la plus COURTE, en façade ; les coûts derrière, plus longs) ──
+    const bar0=mk('rect',{rx:8,fill:YOU,opacity:0});
+    const bar1=mk('rect',{rx:8,fill:DEAD,opacity:0});
+    const bar2=mk('rect',{rx:8,fill:DEAD,opacity:0});
+    const bar3=mk('rect',{rx:8,fill:DEAD,opacity:0});
+    function hideS2(){setOp(bar0,0);setOp(bar1,0);setOp(bar2,0);setOp(bar3,0);}
+
+    // ── S3 : LE MARCHÉ QUI FILE (verticales qui balaient) + LE PRIX CLIQUÉ (teal) + LE SLIP (bande grise) ──
+    const SWEEP=[]; for(let i=0;i<11;i++)SWEEP.push(mk('line',{stroke:DEAD,'stroke-width':4,opacity:0}));
+    const s3tick=mk('line',{stroke:YOU,'stroke-width':8,opacity:0});
+    const s3band=mk('rect',{rx:4,fill:DEAD,'fill-opacity':0.55,opacity:0});
+    const s3dot=mk('circle',{r:18,fill:INK,opacity:0});
+    function hideS3(){for(const l of SWEEP)setOp(l,0);setOp(s3tick,0);setOp(s3band,0);setOp(s3dot,0);}
+
+    // ── S4 : L'UNITÉ DE COÛT MULTIPLIÉE EN MONTAGNE (pyramide d'unités) ──
+    const s4big=mk('g',{opacity:0});
+    mk('rect',{x:395,y:858,width:290,height:80,rx:8,fill:YOU},s4big);
+    mk('rect',{x:395,y:950,width:290,height:112,rx:8,fill:DEAD},s4big);
+    const SLOTS=[]; { const baseCols=22,cellW=26,cellH=24,baseY=1330;
+      for(let r=0;r<baseCols;r++){const cols=baseCols-r,x0=540-cols*cellW/2;
+        for(let c=0;c<cols;c++)SLOTS.push({x:x0+c*cellW+3,y:baseY-r*cellH-20,c:c,r:r});}}
+    const UNITS=[]; for(let i=0;i<SLOTS.length;i++){const g=mk('g',{opacity:0});
+      mk('rect',{x:0,y:0,width:20,height:8,rx:2,fill:YOU},g);
+      mk('rect',{x:0,y:10,width:20,height:11,rx:2,fill:DEAD},g);UNITS.push(g);}
+    const s4ghost=mk('g',{opacity:0});
+    mk('rect',{x:150,y:1300,width:20,height:8,rx:2,fill:'none',stroke:INK,'stroke-width':2.5,'stroke-dasharray':'5 4'},s4ghost);
+    mk('rect',{x:150,y:1311,width:20,height:11,rx:2,fill:'none',stroke:INK,'stroke-width':2.5,'stroke-dasharray':'5 4'},s4ghost);
+    function hideS4(){setOp(s4big,0);for(const u of UNITS)setOp(u,0);setOp(s4ghost,0);}
+
+    // ── S5 : LA BALANCE À DEUX PLATEAUX ──
+    const post=mk('line',{stroke:INK,'stroke-width':7,opacity:0});
+    const base=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const beam=mk('line',{stroke:INK,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const strandL=mk('line',{stroke:INK,'stroke-width':3,opacity:0});
+    const strandR=mk('line',{stroke:INK,'stroke-width':3,opacity:0});
+    const panL=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const panR=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const LUNITS=[]; for(let i=0;i<30;i++)LUNITS.push(mk('rect',{width:18,height:13,rx:2,fill:YOU,stroke:PAPER,'stroke-width':2,opacity:0}));
+    const RUNITS=[]; for(let i=0;i<5;i++)RUNITS.push(mk('rect',{width:104,height:24,rx:3,fill:YOU,stroke:PAPER,'stroke-width':2,opacity:0}));
+    function hideS5(){setOp(post,0);setOp(base,0);setOp(beam,0);setOp(strandL,0);setOp(strandR,0);setOp(panL,0);setOp(panR,0);for(const e of LUNITS)setOp(e,0);for(const e of RUNITS)setOp(e,0);}
+    function tray(cx,cy){const w=92;return `M ${(cx-w).toFixed(1)} ${(cy-16).toFixed(1)} Q ${cx.toFixed(1)} ${(cy+24).toFixed(1)} ${(cx+w).toFixed(1)} ${(cy-16).toFixed(1)}`;}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE SPREAD WAS TINY','WHY DID YOU PAY SO MUCH'];
+    const FS=62,lineH=88,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap COPIÉ TEL QUEL de l26.html (MESURE getComputedTextLength, borne le centre) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LE PETIT SPREAD, ET LA MASSE DÉJÀ TAPIE AU-DESSUS ═══
+    // Verbe visuel : l'énigme (un objet minuscule net, une masse énorme qui dérive derrière).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideS2(); hideS3(); hideS4(); hideS5();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier CURIOSITÉ) : la MASSE grise est DÉJÀ là, bien plus grande que le spread, et
+      //    elle dérive (deux harmoniques : la vitesse ne s'annule jamais). Aucun draw-on : tout est posé à t=0.
+      const mx=19*Math.sin(u*0.85)+8*Math.sin(u*1.7), my=11*Math.sin(u*1.15)+5*Math.sin(u*2.05);
+      const mtf=`translate(${mx.toFixed(1)} ${my.toFixed(1)})`;
+      s1mass.setAttribute('transform',mtf);s1mass.setAttribute('fill-opacity',(0.15+0.05*Math.sin(u*1.1)).toFixed(3));setOp(s1mass,1);
+      s1lay1.setAttribute('transform',mtf);setOp(s1lay1,0.20);
+      s1lay2.setAttribute('transform',mtf);setOp(s1lay2,0.20);
+      // le spread : minuscule et net devant, il respire (deux harmoniques)
+      const br=7*Math.sin(u*1.55)+3*Math.sin(u*2.75);
+      const scx=540, scy=1160+br, gw=150, gh=22;
+      s1gap.setAttribute('x',(scx-gw/2).toFixed(1));s1gap.setAttribute('y',(scy-gh/2).toFixed(1));s1gap.setAttribute('width',gw);s1gap.setAttribute('height',gh);setOp(s1gap,1);
+      s1dotL.setAttribute('cx',(scx-gw/2).toFixed(1));s1dotL.setAttribute('cy',scy.toFixed(1));setOp(s1dotL,1);
+      s1dotR.setAttribute('cx',(scx+gw/2).toFixed(1));s1dotR.setAttribute('cy',scy.toFixed(1));setOp(s1dotR,1);
+      putCap(capA,'THE SPREAD',540,1242+br,YOU,1);                              // sous le spread (zone vide)
+      putCap(capC,'SOMETHING BEHIND IT',540,700,DEAD,clamp((u-1.6)/0.7,0,1)*gf); // au-dessus de la masse (zone vide)
+    }
+
+    // ═══ S2 — LE SPREAD N'EST QUE LA BARRE LA PLUS COURTE D'UNE PILE DE COÛTS ═══
+    // Verbe visuel : la révélation en profondeur (les vraies barres, plus longues, s'allument derrière).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS1(); hideS3(); hideS4(); hideS5();
+      const BX=210;
+      const rows=[
+        {el:bar0,y:800,w:150,h:60,teal:true, d:0.0},   // le spread : la plus COURTE, en façade
+        {el:bar1,y:892,w:300,h:66,teal:false,d:0.9},
+        {el:bar2,y:984,w:440,h:66,teal:false,d:1.7},
+        {el:bar3,y:1076,w:580,h:66,teal:false,d:2.5}];
+      for(const r of rows){
+        const lit=clamp((u-r.d)/0.6,0,1);
+        const wob=6*Math.sin(u*1.6-r.y*0.01)+3*Math.sin(u*2.5-r.y*0.02);   // vie continue : dérive horizontale, deux harmoniques
+        r.el.setAttribute('x',(BX+wob).toFixed(1));r.el.setAttribute('y',r.y);
+        r.el.setAttribute('width',r.w);r.el.setAttribute('height',r.h);
+        setOp(r.el, r.teal?1:(0.16+0.7*lit));                              // les coûts : présents en filigrane dès t=0, ils s'allument
+      }
+      putCap(capA,'THE SHELF PRICE',680,838,YOU,clamp((u-0.4)/0.5,0,1));    // à DROITE du petit bar spread (zone vide)
+      putCap(capC,'THE COSTS BEHIND IT',540,700,DEAD,clamp((u-2.2)/0.6,0,1));
+      putCap(capB,'THE SMALLEST ONE IS THE ONE YOU CHECK',540,1200,INK,clamp((u-3.4)/0.7,0,1)); // sous la pile
+    }
+
+    // ═══ S3 — LE SLIP : sur un marché qui FILE, le prix cliqué n'est pas le prix obtenu ═══
+    // Verbe visuel : la cible manquée à l'horizontale (le point de fill glisse un cran plus loin, pire).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS1(); hideS2(); hideS4(); hideS5();
+      const BX0=200, BX1=880, BY=860, BY2=1140, CLICK=520, GOT=616, MIDY=1000;
+      const span=BX1-BX0;
+      // le marché qui FILE : verticales qui balaient vers la gauche (mouvement horizontal continu), confinées à la bande
+      for(let i=0;i<SWEEP.length;i++){
+        const x=BX0+((((i*(span/SWEEP.length))-u*260)%span)+span)%span;
+        SWEEP[i].setAttribute('x1',x.toFixed(1));SWEEP[i].setAttribute('x2',x.toFixed(1));
+        SWEEP[i].setAttribute('y1',BY);SWEEP[i].setAttribute('y2',BY2);setOp(SWEEP[i],0.28);}
+      // le prix cliqué : repère teal vertical
+      s3tick.setAttribute('x1',CLICK);s3tick.setAttribute('x2',CLICK);s3tick.setAttribute('y1',BY-6);s3tick.setAttribute('y2',BY2+6);setOp(s3tick,1);
+      // le point de fill entre et se pose un cran PLUS LOIN (pire) — en boucle, chaque tour ré-affirme l'écart
+      const CY=2.6, cyc=(u/CY)%1, approach=clamp(cyc/0.55,0,1);
+      const cx=lerp(BX0+40,GOT,eIn(approach));
+      s3dot.setAttribute('cx',cx.toFixed(1));s3dot.setAttribute('cy',MIDY);setOp(s3dot,1);
+      const shown=(cyc>0.55)?1:0, puls=0.78+0.22*Math.sin(u*3.4);
+      s3band.setAttribute('x',CLICK);s3band.setAttribute('width',(GOT-CLICK).toFixed(1));s3band.setAttribute('y',920);s3band.setAttribute('height',160);setOp(s3band,shown*puls);
+      putCap(capA,'THE PRICE YOU CLICKED',520,820,YOU,1);                    // AU-DESSUS de la bande (zone vide, hors verticales)
+      putCap(capC,'THE PRICE YOU GOT',660,1210,DEAD,shown);                  // SOUS la bande (zone vide)
+      putCap(capB,'THE SLIP IS NOT THE SPREAD',540,700,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA FRÉQUENCE : le même coût, payé des centaines de fois, monte en MONTAGNE ═══
+    // Verbe visuel : la duplication cadencée d'une seule unité en une pyramide qui domine le cadre.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS1(); hideS2(); hideS3(); hideS5();
+      // OUVERTURE (coupe franche, jamais d'écran vide) : UNE grande unité = le coût d'un seul trade, plein cadre, puis elle
+      // s'efface tandis que la MONTAGNE de petites unités identiques monte (cadence qui accélère, lent -> pluie).
+      setOp(s4big,1-clamp((u-0.6)/0.8,0,1));
+      const grow=eIn(clamp((u-0.5)/3.6,0,1));
+      const N=Math.max(1,Math.floor(SLOTS.length*grow));
+      for(let i=0;i<UNITS.length;i++){
+        if(i>=N){setOp(UNITS[i],0);continue;}
+        const sl=SLOTS[i];
+        const ry=5*Math.sin(u*1.9-sl.c*0.5)+2*Math.sin(u*3.1-sl.r*0.35);   // vie continue : une houle traverse la montagne (deux harmoniques)
+        UNITS[i].setAttribute('transform',`translate(${sl.x.toFixed(1)} ${(sl.y+ry).toFixed(1)})`);
+        setOp(UNITS[i],1);}
+      const gb=4*Math.sin(u*1.6)+2*Math.sin(u*2.7);
+      s4ghost.setAttribute('transform',`translate(0 ${gb.toFixed(1)})`);setOp(s4ghost,clamp((u-0.3)/0.6,0,1));
+      putCap(capE,'ONE TRADE',175,1362,INK,clamp((u-0.6)/0.6,0,1));         // gouttière gauche, près du fantôme
+      putCap(capA,'ONE MONTH',540,1394,INK,clamp((u-3.4)/0.6,0,1));         // sous la base de la montagne
+      putCap(capB,'THE SPREAD DID NOT GROW',540,660,INK,clamp((u-4.8)/0.7,0,1));
+      putCap(capD,'YOU PAID IT HUNDREDS OF TIMES',540,712,DEAD,clamp((u-5.4)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : la balance — serré-très-tradé PÈSE plus que large-touché-rarement ═══
+    // Verbe visuel : la balance qui penche (la masse des unités décide, pas la taille de l'écart).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideS1(); hideS2(); hideS3(); hideS4();
+      const PX=540, PY=840, L=240, strand=150;
+      // le fléau se pose vers la gauche (plateau gauche plus lourd), avec un léger balancement perpétuel (deux harmoniques : rien ne fige)
+      const theta=0.28*eOut(clamp(u/1.6,0,1))+0.014*Math.sin(u*1.25)+0.007*Math.sin(u*2.15);
+      const ct=Math.cos(theta), st=Math.sin(theta);
+      const lx=PX-L*ct, ly=PY+L*st, rx=PX+L*ct, ry=PY-L*st;
+      post.setAttribute('x1',PX);post.setAttribute('y1',PY);post.setAttribute('x2',PX);post.setAttribute('y2',1360);setOp(post,1);
+      base.setAttribute('x1',PX-92);base.setAttribute('y1',1360);base.setAttribute('x2',PX+92);base.setAttribute('y2',1360);setOp(base,1);
+      beam.setAttribute('x1',lx.toFixed(1));beam.setAttribute('y1',ly.toFixed(1));beam.setAttribute('x2',rx.toFixed(1));beam.setAttribute('y2',ry.toFixed(1));setOp(beam,1);
+      const lpy=ly+strand, rpy=ry+strand;
+      strandL.setAttribute('x1',lx.toFixed(1));strandL.setAttribute('y1',ly.toFixed(1));strandL.setAttribute('x2',lx.toFixed(1));strandL.setAttribute('y2',lpy.toFixed(1));setOp(strandL,1);
+      strandR.setAttribute('x1',rx.toFixed(1));strandR.setAttribute('y1',ry.toFixed(1));strandR.setAttribute('x2',rx.toFixed(1));strandR.setAttribute('y2',rpy.toFixed(1));setOp(strandR,1);
+      panL.setAttribute('d',tray(lx,lpy));setOp(panL,1);
+      panR.setAttribute('d',tray(rx,rpy));setOp(panR,1);
+      // plateau GAUCHE : une TONNE de petites unités (traded constantly) → lourd
+      for(let i=0;i<24;i++){const col=i%6,row=Math.floor(i/6);
+        const sh=3*Math.sin(u*2.2-i*0.4)+1.5*Math.sin(u*3.7-i*0.7);
+        LUNITS[i].setAttribute('x',(lx-66+col*22).toFixed(1));
+        LUNITS[i].setAttribute('y',(lpy-16-row*15+sh).toFixed(1));setOp(LUNITS[i],1);}
+      for(let i=24;i<LUNITS.length;i++)setOp(LUNITS[i],0);
+      // plateau DROIT : très PEU d'unités (touched rarely), même si l'écart est large → léger
+      for(let i=0;i<4;i++){const sh=3*Math.sin(u*2.0-i*0.6)+1.5*Math.sin(u*3.3-i*0.9);
+        RUNITS[i].setAttribute('x',(rx-52).toFixed(1));
+        RUNITS[i].setAttribute('y',(rpy-30-i*28+sh).toFixed(1));setOp(RUNITS[i],1);}
+      for(let i=4;i<RUNITS.length;i++)setOp(RUNITS[i],0);
+      putCap(capC,'TIGHT SPREAD',lx,lpy+92,YOU,1);                          // sous le plateau gauche (moitié gauche)
+      putCap(capE,'TRADED CONSTANTLY',lx,lpy+138,DEAD,1);
+      putCap(capD,'WIDE SPREAD',rx,rpy+92,YOU,1);                           // sous le plateau droit (moitié droite)
+      putCap(capF,'TOUCHED RARELY',rx,rpy+138,DEAD,1);
+      putCap(capB,'COST = SPREAD PLUS SLIP TIMES HOW OFTEN',540,640,INK,clamp((u-2.2)/0.7,0,1));
+      putCap(capA,'COUNT THE WHOLE BILL',540,712,DEAD,clamp((u-3.4)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
