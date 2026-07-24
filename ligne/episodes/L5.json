@@ -3,7 +3,7 @@
   "engine": "l5",
   "title": "L5 — SELLING WHAT YOU DON'T OWN",
   "voice": [
-    "You can sell something you've never owned. Not a copy. The actual thing. Right now, today. How?",
+    "People sell things they don't own every single day. Not stolen. Not fake. Borrowed — and sold before they give it back. It sounds impossible. It runs the whole market. Here's how.",
     "You borrow it. Someone owns a thousand shares, doing nothing. You borrow one. It's not yours — you just hold it, with a promise: you'll give it back.",
     "So you sell it. Right now, at today's price. Someone pays you, takes the share, walks away happy. Now you hold their cash — for something that was never yours. But you still owe one share back.",
     "Later, you buy the same share back to return it. If the price dropped, you buy it cheap, return it, keep the difference. That's your profit. But if the price rose, you buy it back more expensive. Same mechanism. Opposite result.",
@@ -166,13 +166,23 @@
       "clarity": "Il rend l'action empruntee. La boucle est fermee. Il garde l'ecart — ou il l'encaisse."
     }
   ],
-  "total": 55.0,
+  "total": 70.0,
   "_rules": {
     "casting": "boule=YOU jamais une figure jamais un bonhomme. lender(G)+buyer(D)=silhouettes encre.",
     "fusil": "le bloc teal part du lender (s1) et y revient (s5). charge et tire.",
     "interdits": "rien ne teleporte tout glisse; aucun chiffre a l'ecran (cash=masse); pas de brun (perte=delavage gris); bas du cadre VIDE (pas de ticker/ligne/sol).",
     "police": "Helvetica Neue 800 uppercase ls1px #20242A. titre 88 / ? 200 / lab 42.",
     "circuit": "M24: frames DoD seules d'abord, PO valide, PUIS video + montage + muet (M19).",
-    "clarity_test": "NIVEAU DE COMPREHENSION 8 ans = un adulte comprend SANS EFFORT. PAS du langage enfantin, PAS de jouets/vocabulaire bebe. Le sujet reste technique (short selling, vrais termes), explique avec une clarte limpide. Le champ 'clarity' de chaque scene = le test 'est-ce limpide ?', pas le ton du copy. Le copy (voice) garde son registre BEE adulte."
+    "clarity_test": "NIVEAU DE COMPREHENSION 8 ans = un adulte comprend SANS EFFORT. PAS du langage enfantin, PAS de jouets/vocabulaire bebe. Le sujet reste technique (short selling, vrais termes), explique avec une clarte limpide. Le champ 'clarity' de chaque scene = le test 'est-ce limpide ?', pas le ton du copy. Le copy (voice) garde son registre BEE adulte.",
+    "hook_v1_archived": "You can sell something you've never owned. Not a copy. The actual thing. Right now, today. How?",
+    "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  },
+  "caption": "You can sell something you've never owned. Here's exactly how it works — in 70 seconds.\n\nShort selling isn't a trick or a scam. It's a loop: borrow, sell, buy back, return. Miss one step and it falls apart.\n\nComment \"LINE\" and I'll send you episode 1 — the one that explains why your broker gives you everything for free.\n\nTHE LINE — no signals, no hype. Just how the machine actually works.\n\n#trading #trader #shortselling #daytrading #forex #stockmarket #tradingeducation #priceaction #investing #finance",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
   }
 }

@@ -10,59 +10,129 @@
     "So measure from where you started, not from where you peaked. Your line since the beginning tells you whether the process works. The distance from your high tells you nothing except how variance moved. One is information. The other is a number you're haunted by."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Son compte est en hausse sur l'année. Solidement. Et pourtant il a l'impression de perdre, parce qu'il y a trois semaines il était plus haut.",
       "question": "WHY DOES A NUMBER YOU NO LONGER HAVE RUN YOUR MOOD?",
       "emotion_lever": "TENSION + RECONNAISSANCE DE SOI — dès la frame 0, un compte manifestement EN HAUSSE, mais mesuré depuis un sommet lointain par une équerre grise qui le fait lire comme un déficit. La double lecture pique.",
       "cast": {
-        "account": { "type": "gauge", "note": "le compte, clairement au-dessus de sa ligne de départ" },
-        "highwater": { "type": "hline", "note": "un trait de plus-haut loin au-dessus + une équerre grise qui mesure vers le bas. le fusil = ce trait." } },
+        "account": {
+          "type": "gauge",
+          "note": "le compte, clairement au-dessus de sa ligne de départ"
+        },
+        "highwater": {
+          "type": "hline",
+          "note": "un trait de plus-haut loin au-dessus + une équerre grise qui mesure vers le bas. le fusil = ce trait."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : une barre de compte teal, clairement AU-DESSUS de sa ligne de départ (elle a monté, c'est visible). MAIS très au-dessus d'elle, un trait de PLUS-HAUT, et une grande équerre GRISE qui mesure DEPUIS ce sommet VERS LE BAS jusqu'au niveau actuel — présentant la même barre comme un déficit. Les deux lectures contradictoires cohabitent dès la première image." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : la barre respire, l'équerre grise pulse, le trait de sommet reste fixe et dominant. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : une barre de compte teal, clairement AU-DESSUS de sa ligne de départ (elle a monté, c'est visible). MAIS très au-dessus d'elle, un trait de PLUS-HAUT, et une grande équerre GRISE qui mesure DEPUIS ce sommet VERS LE BAS jusqu'au niveau actuel — présentant la même barre comme un déficit. Les deux lectures contradictoires cohabitent dès la première image."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : la barre respire, l'équerre grise pulse, le trait de sommet reste fixe et dominant. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le compte en hausse + l'équerre grise depuis le sommet qui le fait lire en déficit",
-      "fusil": "le trait de plus-haut — on va voir de quoi il est fait." },
-    { "id": "s2",
+      "fusil": "le trait de plus-haut — on va voir de quoi il est fait."
+    },
+    {
+      "id": "s2",
       "clarity": "L'esprit ne mesure pas depuis le départ : il mesure depuis le point le plus haut jamais atteint. Ce sommet devient la référence, et tout ce qui est dessous se lit comme une perte.",
       "label": "measured from the peak, not the start",
       "beats": [
-        { "t": "0-2", "do": "deux équerres de mesure s'affichent sur la MÊME barre. depuis le DÉPART : teal, positive, elle mesure une vraie croissance. depuis le SOMMET : grise, négative, elle mesure un manque." },
-        { "t": "2-3.5", "do": "un projecteur s'allume — et il éclaire UNIQUEMENT l'équerre grise (celle du sommet). l'équerre teal reste dans l'ombre, ignorée. c'est celle-là qu'on regarde tout le temps." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : l'équerre grise éclairée, la teal dans l'ombre, la même barre entre les deux." } ],
+        {
+          "t": "0-2",
+          "do": "deux équerres de mesure s'affichent sur la MÊME barre. depuis le DÉPART : teal, positive, elle mesure une vraie croissance. depuis le SOMMET : grise, négative, elle mesure un manque."
+        },
+        {
+          "t": "2-3.5",
+          "do": "un projecteur s'allume — et il éclaire UNIQUEMENT l'équerre grise (celle du sommet). l'équerre teal reste dans l'ombre, ignorée. c'est celle-là qu'on regarde tout le temps."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : l'équerre grise éclairée, la teal dans l'ombre, la même barre entre les deux."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux équerres (départ teal / sommet gris) sur la même barre, seule la grise éclairée",
-      "turn": "la même barre est une réussite ou un échec selon d'où on mesure." },
-    { "id": "s3",
+      "turn": "la même barre est une réussite ou un échec selon d'où on mesure."
+    },
+    {
+      "id": "s3",
       "clarity": "Le problème : les sommets sont faits en partie de variance. Une part était ton edge, une part une bonne série qui allait rendre une partie d'elle-même. Tu t'es ancré à un nombre en partie chanceux.",
       "beats": [
-        { "t": "0-2", "do": "le trait de sommet se DÉCOMPOSE en deux couches empilées : une base TEAL (l'edge, gagnée, qui reste) et au-dessus une couche GRISE instable (la bonne série, qui allait toujours rendre une partie)." },
-        { "t": "2-3.5", "do": "la couche grise se retire naturellement (elle était temporaire) → le niveau retombe à sa base teal. c'est NORMAL, ce n'est pas un échec. mais le trait de référence, lui, est resté marqué tout en haut, sur un niveau partiellement chanceux." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la base teal solide, la couche grise dissipée, et le trait de référence resté trop haut." } ],
+        {
+          "t": "0-2",
+          "do": "le trait de sommet se DÉCOMPOSE en deux couches empilées : une base TEAL (l'edge, gagnée, qui reste) et au-dessus une couche GRISE instable (la bonne série, qui allait toujours rendre une partie)."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la couche grise se retire naturellement (elle était temporaire) → le niveau retombe à sa base teal. c'est NORMAL, ce n'est pas un échec. mais le trait de référence, lui, est resté marqué tout en haut, sur un niveau partiellement chanceux."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la base teal solide, la couche grise dissipée, et le trait de référence resté trop haut."
+        }
+      ],
       "camera": "fixe",
       "dod": "le sommet décomposé en edge (teal, reste) + série (gris, se retire), la référence restée trop haut",
-      "turn": "tu t'es ancré à un nombre fait en partie de chance." },
-    { "id": "s4",
+      "turn": "tu t'es ancré à un nombre fait en partie de chance."
+    },
+    {
+      "id": "s4",
       "clarity": "Trader pour revenir à un ancien sommet, ce n'est pas trader : c'est courir après un nombre dont le marché n'a aucune mémoire. On grossit pour combler l'écart, on prend des setups qu'on passerait, et le creux s'approfondit.",
       "note": "LA scene — la course au sommet qui creuse.",
       "beats": [
-        { "t": "0-1.5", "do": "l'ÉCART entre le niveau actuel et le trait de sommet est surligné — il devient un objectif à combler, urgent. la barre se met en mouvement vers lui." },
-        { "t": "1.5-3", "do": "pour aller plus vite : la jauge de taille GONFLE, et des setups habituellement PASSÉS (ternes) sont pris quand même. le marché, lui, est montré indifférent — il n'a aucune mémoire de ce sommet (le trait n'existe pas pour lui)." },
-        { "t": "3-4.5", "do": "résultat : la barre DESCEND au lieu de monter, l'écart au sommet s'AGRANDIT. plus on court après, plus on s'en éloigne. 'the peak was never a promise'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : la barre plus basse, l'écart plus grand, le trait de sommet toujours là, indifférent." } ],
+        {
+          "t": "0-1.5",
+          "do": "l'ÉCART entre le niveau actuel et le trait de sommet est surligné — il devient un objectif à combler, urgent. la barre se met en mouvement vers lui."
+        },
+        {
+          "t": "1.5-3",
+          "do": "pour aller plus vite : la jauge de taille GONFLE, et des setups habituellement PASSÉS (ternes) sont pris quand même. le marché, lui, est montré indifférent — il n'a aucune mémoire de ce sommet (le trait n'existe pas pour lui)."
+        },
+        {
+          "t": "3-4.5",
+          "do": "résultat : la barre DESCEND au lieu de monter, l'écart au sommet s'AGRANDIT. plus on court après, plus on s'en éloigne. 'the peak was never a promise'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : la barre plus basse, l'écart plus grand, le trait de sommet toujours là, indifférent."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'écart poursuivi qui fait gonfler la taille et creuse davantage",
-      "turn": "courir après le sommet éloigne du sommet." },
-    { "id": "s5",
+      "turn": "courir après le sommet éloigne du sommet."
+    },
+    {
+      "id": "s5",
       "clarity": "Mesure depuis ton POINT DE DÉPART, pas depuis ton sommet. Ta ligne depuis le début dit si le process marche. La distance au plus-haut ne dit rien d'autre que comment la variance a bougé.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : le projecteur se DÉPLACE — il quitte l'équerre grise (sommet) et éclaire l'équerre TEAL (départ). la même barre se relit : elle est en hausse, le process fonctionne." },
-        { "t": "2-3.5", "do": "l'équerre du sommet est ÉTIQUETÉE pour ce qu'elle est : 'variance only — no information'. elle se grise et se barre. l'équerre du départ reçoit 'does the process work?' — la seule question utile." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : l'équerre depuis le départ éclairée en teal, celle du sommet barrée. immobile. mesurer depuis le départ." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : le projecteur se DÉPLACE — il quitte l'équerre grise (sommet) et éclaire l'équerre TEAL (départ). la même barre se relit : elle est en hausse, le process fonctionne."
+        },
+        {
+          "t": "2-3.5",
+          "do": "l'équerre du sommet est ÉTIQUETÉE pour ce qu'elle est : 'variance only — no information'. elle se grise et se barre. l'équerre du départ reçoit 'does the process work?' — la seule question utile."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : l'équerre depuis le départ éclairée en teal, celle du sommet barrée. immobile. mesurer depuis le départ."
+        }
+      ],
       "camera": "fixe",
       "dod": "le projecteur qui bascule sur l'équerre du départ + celle du sommet barrée",
-      "fusil_decharge": "le trait de plus-haut de S1 se résout : il est fait en partie de chance et ne mesure que la variance — la seule mesure utile part du début." }
+      "fusil_decharge": "le trait de plus-haut de S1 se résout : il est fait en partie de chance et ne mesure que la variance — la seule mesure utile part du début."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"PROFILE\" to find your trader type. Your account is up on the year — and it still feels like losing, because three weeks ago it was higher.\n\nYour mind measures from the highest point you ever touched, not from where you started. But peaks are made partly by variance, so you've anchored to a number that was partly luck. And trading to get back to it isn't trading — it's chasing a number the market has no memory of.\n\nTHE LINE — measure from where you started, not from where you peaked.\n\n#trading #trader #tradingpsychology #drawdown #mindset #daytrading #forex #tradingeducation #discipline #process",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'mesure depuis ton départ, pas depuis ton sommet' — un changement de repère concret et immédiat.",
     "interdits": "aucun chiffre; gris = variance/manque (M-couleur); pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · gain-edge/teal #1E5F6E · variance-manque/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

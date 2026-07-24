@@ -10,69 +10,154 @@
     "So when you size up, don't just ask if the trade is good. Ask if the staircase is deep enough to hold you. In a thin market, a big order walks a long way up before it's done — and that walk is a cost nobody quoted you. The price on the screen is where you start. Your size decides where you end."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "En achetant au marché il croit payer un prix, celui de l'écran. Mais un gros ordre remplit rarement à un seul prix. Pourquoi la taille change le prix ?",
       "question": "WHY DOES A BIG ORDER PAY MORE?",
       "cast": {
-        "screen": { "type": "hline", "note": "le prix affiché = un trait teal net" },
-        "order": { "type": "block", "note": "ton ordre = un bloc teal. le fusil = sa taille qui va le faire grimper." } },
+        "screen": {
+          "type": "hline",
+          "note": "le prix affiché = un trait teal net"
+        },
+        "order": {
+          "type": "block",
+          "note": "ton ordre = un bloc teal. le fusil = sa taille qui va le faire grimper."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: un trait teal 'the screen price', net. un petit bloc teal (ton ordre) se pose PILE dessus — un seul prix, propre." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: le petit bloc sur le trait, un seul prix. mais au-dessus du trait, des marches se devinent en filigrane. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: un trait teal 'the screen price', net. un petit bloc teal (ton ordre) se pose PILE dessus — un seul prix, propre."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: le petit bloc sur le trait, un seul prix. mais au-dessus du trait, des marches se devinent en filigrane. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le prix écran + le petit ordre posé dessus à un seul prix",
-      "fusil": "l'ordre à un seul prix — on va voir un gros ordre grimper l'escalier." },
-    { "id": "s2",
+      "fusil": "l'ordre à un seul prix — on va voir un gros ordre grimper l'escalier.",
+      "hook_gag": {
+        "primitive": "fall",
+        "agent": "l'escalier du carnet, marche après marche",
+        "reaction": "sonné",
+        "temps": "en plein geste",
+        "raccord": "il se relève à la dernière marche et pointe vers le haut",
+        "lien_sujet": "gravir l'escalier à ses dépens = le coût de la taille"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Derrière chaque prix, une pile d'ordres en attente : un peu ici, plus juste au-dessus, encore plus haut. Un escalier. Un petit ordre reste sur la 1re marche.",
       "label": "the order book is a staircase",
       "beats": [
-        { "t": "0-2", "do": "au-dessus du trait, l'ESCALIER se révèle: des marches encre, chacune portant une petite quantité d'ordres (des blocs gris posés sur chaque marche). la 1re marche est au niveau du prix écran." },
-        { "t": "2-3.5", "do": "le PETIT ordre teal se pose sur la 1re marche: elle a ASSEZ pour lui, il ne grimpe pas. un seul prix, propre. label 'small order = first step'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: l'escalier avec ses ordres en attente sur chaque marche, le petit ordre tranquille en bas." } ],
+        {
+          "t": "0-2",
+          "do": "au-dessus du trait, l'ESCALIER se révèle: des marches encre, chacune portant une petite quantité d'ordres (des blocs gris posés sur chaque marche). la 1re marche est au niveau du prix écran."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le PETIT ordre teal se pose sur la 1re marche: elle a ASSEZ pour lui, il ne grimpe pas. un seul prix, propre. label 'small order = first step'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: l'escalier avec ses ordres en attente sur chaque marche, le petit ordre tranquille en bas."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'escalier révélé + le petit ordre qui reste sur la première marche",
-      "turn": "derrière un prix il y a un escalier — un petit ordre reste en bas." },
-    { "id": "s3",
+      "turn": "derrière un prix il y a un escalier — un petit ordre reste en bas."
+    },
+    {
+      "id": "s3",
       "clarity": "Un gros ordre mange toute la 1re marche, doit grimper à la suivante pour finir — à un pire prix. Puis la suivante. Plus il est gros, plus il monte.",
       "note": "LA scene — le gros ordre qui grimpe.",
       "beats": [
-        { "t": "0-1.5", "do": "un GROS bloc teal (gros ordre) arrive sur la 1re marche: il la VIDE entièrement (les ordres en attente de la marche se consomment) mais il n'est pas rempli — il DÉBORDE." },
-        { "t": "1.5-3", "do": "pour finir, il GRIMPE à la 2e marche (plus haut = pire prix), la vide, déborde encore, grimpe à la 3e... l'escalade se voit: chaque marche gravie est un cran de prix plus mauvais. le bloc laisse une trace sur chaque marche." },
-        { "t": "3-4", "do": "arrêt: le gros ordre est rempli mais il a MARCHÉ sur 4 marches. son prix MOYEN (un trait pointille) est bien AU-DESSUS du prix écran de départ. 'you got the whole climb'." },
-        { "t": "4-14", "do": "TENUE VIVANTE longue: le gros ordre étalé sur l'escalier, son prix moyen loin du prix écran (rappelé en bas). l'écart = le climb." } ],
+        {
+          "t": "0-1.5",
+          "do": "un GROS bloc teal (gros ordre) arrive sur la 1re marche: il la VIDE entièrement (les ordres en attente de la marche se consomment) mais il n'est pas rempli — il DÉBORDE."
+        },
+        {
+          "t": "1.5-3",
+          "do": "pour finir, il GRIMPE à la 2e marche (plus haut = pire prix), la vide, déborde encore, grimpe à la 3e... l'escalade se voit: chaque marche gravie est un cran de prix plus mauvais. le bloc laisse une trace sur chaque marche."
+        },
+        {
+          "t": "3-4",
+          "do": "arrêt: le gros ordre est rempli mais il a MARCHÉ sur 4 marches. son prix MOYEN (un trait pointille) est bien AU-DESSUS du prix écran de départ. 'you got the whole climb'."
+        },
+        {
+          "t": "4-14",
+          "do": "TENUE VIVANTE longue: le gros ordre étalé sur l'escalier, son prix moyen loin du prix écran (rappelé en bas). l'écart = le climb."
+        }
+      ],
       "camera": "fixe",
       "dod": "le gros ordre qui gravit plusieurs marches, son prix moyen loin du prix écran",
-      "turn": "le gros ordre n'a pas eu le prix écran — il a payé toute la montée." },
-    { "id": "s4",
+      "turn": "le gros ordre n'a pas eu le prix écran — il a payé toute la montée."
+    },
+    {
+      "id": "s4",
       "clarity": "C'est pourquoi le même trade ne coûte presque rien à un petit compte et une vraie somme à un gros. La taille change le prix que le marché donne.",
       "note": "diptyque: petit ordre vs gros ordre, même marché.",
       "beats": [
-        { "t": "0-13", "do": "SPLIT VERTICAL, MÊME escalier des deux côtés. HAUT 'small': le petit ordre reste sur la 1re marche, prix moyen = prix écran, COLLÉ. aucun coût de montée." },
-        { "t": "0-13", "do": "BAS 'big': le gros ordre gravit 4 marches, prix moyen bien au-dessus. l'ÉCART entre les deux prix moyens (surligné) = ce que la taille coûte EN PLUS du prix affiché. même marché, deux prix reçus." } ],
+        {
+          "t": "0-13",
+          "do": "SPLIT VERTICAL, MÊME escalier des deux côtés. HAUT 'small': le petit ordre reste sur la 1re marche, prix moyen = prix écran, COLLÉ. aucun coût de montée."
+        },
+        {
+          "t": "0-13",
+          "do": "BAS 'big': le gros ordre gravit 4 marches, prix moyen bien au-dessus. l'ÉCART entre les deux prix moyens (surligné) = ce que la taille coûte EN PLUS du prix affiché. même marché, deux prix reçus."
+        }
+      ],
       "camera": "fixe, split",
       "dod": "petit ordre collé au prix écran vs gros ordre au prix moyen élevé, même escalier",
-      "turn": "la taille ne multiplie pas que le risque — elle change le prix reçu." },
-    { "id": "s5",
+      "turn": "la taille ne multiplie pas que le risque — elle change le prix reçu."
+    },
+    {
+      "id": "s5",
       "clarity": "En grossissant, ne demande pas juste si le trade est bon : demande si l'escalier est assez profond pour te tenir. Marché mince = longue montée non chiffrée.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: deux escaliers côte à côte. GAUCHE 'deep market': marches ÉPAISSES (beaucoup d'ordres par marche) → le gros ordre tient sur 1-2 marches, montée courte. DROITE 'thin market': marches FINES → le même gros ordre grimpe 8 marches, montée longue et chère." },
-        { "t": "2-3.5", "do": "le même gros ordre teal, posé sur les deux: à gauche il reste bas (peu de coût), à droite il grimpe loin (gros coût). 'is the staircase deep enough to hold you?'." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: les deux escaliers, le prix écran en bas (le départ), le prix reçu en haut (la fin décidée par la taille). immobile. la taille décide où tu finis." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: deux escaliers côte à côte. GAUCHE 'deep market': marches ÉPAISSES (beaucoup d'ordres par marche) → le gros ordre tient sur 1-2 marches, montée courte. DROITE 'thin market': marches FINES → le même gros ordre grimpe 8 marches, montée longue et chère."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le même gros ordre teal, posé sur les deux: à gauche il reste bas (peu de coût), à droite il grimpe loin (gros coût). 'is the staircase deep enough to hold you?'."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: les deux escaliers, le prix écran en bas (le départ), le prix reçu en haut (la fin décidée par la taille). immobile. la taille décide où tu finis."
+        }
+      ],
       "camera": "fixe",
       "dod": "marché profond vs mince: le même ordre monte peu vs beaucoup",
-      "fusil_decharge": "l'ordre à un seul prix de S1 se résout: seul un petit ordre reste sur une marche — la taille fait grimper l'escalier, et la profondeur du marché décide du coût (S5)." }
+      "fusil_decharge": "l'ordre à un seul prix de S1 se résout: seul un petit ordre reste sur une marche — la taille fait grimper l'escalier, et la profondeur du marché décide du coût (S5)."
+    }
   ],
   "total": 82.0,
-  "caption": "Comment \"MAP\" for the free beta of my indicator that shows where price is actually being pulled. The price on the screen is where you start — your size decides where you end.\n\nBehind every price is a staircase of orders. A small order stays on the first step and gets one clean price. A big order eats it and climbs — each step a worse price. In a thin market, that climb is a cost nobody quoted you.\n\nTHE LINE — a big order doesn't get the screen price. It pays the whole climb.\n\n#trading #trader #orderflow #liquidity #slippage #daytrading #forex #tradingeducation #priceaction #marketdepth",
+  "caption": "Comment \"MAP\" for the free beta of my indicator. The price on the screen is where you start — your size decides where you end.\n\nBehind every price is a staircase of orders. A small order stays on the first step and gets one clean price. A big order eats it and climbs — each step a worse price. In a thin market, that climb is a cost nobody quoted you.\n\nTHE LINE — a big order doesn't get the screen price. It pays the whole climb.\n\n#trading #trader #orderflow #liquidity #slippage #daytrading #forex #tradingeducation #priceaction #marketdepth",
   "_rules": {
     "doctrine": "profondeur de marché / slippage structurel démystifié: le carnet = escalier, la taille fait grimper, le prix moyen s'éloigne. Mécanique, factuel. Pas de nom de broker. Complément de L10 (levier) et L26 sur le coût de taille.",
     "cta_keyword": "MAP → indicateur 3T ENGINE (whop.com/otp-consulting/3t-engine-indicator)",
-    "caption_structure": "ligne 1 = accroche + CTA MAP visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "l'ordre à un prix (S1), l'escalier révélé (S2), le gros ordre qui grimpe (S3), petit vs gros (S4), résolu par profondeur du marché (S5).",
     "interdits": "aucun chiffre à l'écran (les prix par la HAUTEUR sur l'escalier); pas de brun; les ordres en attente = gris neutre; TON ordre=teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · attente-neutre/gris #474D50",
     "vie_continue": "regle 5: les ordres sur les marches frémissent, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (MAP). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "Your size decides where you end, not the screen. Comment \"MAP\" and I'll send you the free beta of my indicator 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

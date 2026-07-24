@@ -10,60 +10,133 @@
     "So judge yourself against your own numbers, not against a curated wall. Your last hundred trades tell you more than a thousand screenshots ever will. Everyone posts their best day. Almost nobody posts their average one — and the average one is the entire game."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il ouvre son feed : que du vert, des captures de gains, des comptes qui doublent. Et lui, avec ses résultats ordinaires, se sent le seul à ne pas y arriver.",
       "question": "WHAT ARE YOU ACTUALLY LOOKING AT?",
       "emotion_lever": "COLÈRE + RECONNAISSANCE DE SOI — dès la frame 0, un mur éclatant de gains face à toi, minuscule et terne. L'injustice ressentie est immédiate.",
       "cast": {
-        "wall": { "type": "block", "note": "un MUR de rectangles teal brillants (les captures de gains), immense" },
-        "you": { "type": "gauge", "note": "TOI = petite boule teal terne, écrasée devant le mur. le fusil = ce qu'il y a DERRIÈRE le mur." } },
+        "wall": {
+          "type": "block",
+          "note": "un MUR de rectangles teal brillants (les captures de gains), immense"
+        },
+        "you": {
+          "type": "gauge",
+          "note": "TOI = petite boule teal terne, écrasée devant le mur. le fusil = ce qu'il y a DERRIÈRE le mur."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : un MUR ÉCRASANT de rectangles teal éclatants (des dizaines de captures de gains, alignées, brillantes) occupe presque tout le cadre. Devant lui, minuscule et TERNE, la boule teal (TOI). L'écrasement est immédiat, l'injustice se ressent. Et derrière le mur, un liseré gris DÉPASSE légèrement — quelque chose est caché." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : le mur scintille (chaque capture pulse), la petite boule reste terne. le liseré gris derrière frémit. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un MUR ÉCRASANT de rectangles teal éclatants (des dizaines de captures de gains, alignées, brillantes) occupe presque tout le cadre. Devant lui, minuscule et TERNE, la boule teal (TOI). L'écrasement est immédiat, l'injustice se ressent. Et derrière le mur, un liseré gris DÉPASSE légèrement — quelque chose est caché."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : le mur scintille (chaque capture pulse), la petite boule reste terne. le liseré gris derrière frémit. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le mur écrasant de gains + toi minuscule et terne + le liseré gris qui dépasse derrière",
-      "fusil": "le liseré gris derrière le mur — on va voir ce qui est caché." },
-    { "id": "s2",
+      "fusil": "le liseré gris derrière le mur — on va voir ce qui est caché."
+    },
+    {
+      "id": "s2",
       "clarity": "Tu compares ta réalité COMPLÈTE (chaque trade, chaque perte, chaque jour ennuyeux) à une sélection filtrée de leurs meilleurs moments. Personne ne poste le trade qui n'a rien donné.",
       "label": "your whole reality vs their filtered best",
       "beats": [
-        { "t": "0-2", "do": "diptyque. GAUCHE 'yours' : une colonne MÉLANGÉE — des blocs teal (gains), des blocs gris (pertes), des blocs ternes (jours plats). tout y est, honnête, ordinaire." },
-        { "t": "2-3.5", "do": "DROITE 'theirs' : la MÊME colonne mélangée apparaît... puis un FILTRE passe et RETIRE tous les gris et les ternes. il ne reste que les blocs brillants, qui se réalignent en mur parfait. la sélection s'opère sous nos yeux." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : à gauche la réalité complète qui vit, à droite le mur filtré qui brille. la comparaison est truquée par construction." } ],
+        {
+          "t": "0-2",
+          "do": "diptyque. GAUCHE 'yours' : une colonne MÉLANGÉE — des blocs teal (gains), des blocs gris (pertes), des blocs ternes (jours plats). tout y est, honnête, ordinaire."
+        },
+        {
+          "t": "2-3.5",
+          "do": "DROITE 'theirs' : la MÊME colonne mélangée apparaît... puis un FILTRE passe et RETIRE tous les gris et les ternes. il ne reste que les blocs brillants, qui se réalignent en mur parfait. la sélection s'opère sous nos yeux."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : à gauche la réalité complète qui vit, à droite le mur filtré qui brille. la comparaison est truquée par construction."
+        }
+      ],
       "camera": "fixe, split",
       "dod": "le filtre qui retire les pertes et les jours plats pour ne garder que le mur brillant",
-      "turn": "on compare sa réalité entière à leur sélection." },
-    { "id": "s3",
+      "turn": "on compare sa réalité entière à leur sélection."
+    },
+    {
+      "id": "s3",
       "clarity": "Et le filtrage n'est pas que par personne. Sur des milliers de traders, certains ont une bonne semaine PAR HASARD. Ce sont eux qui postent. Ceux qui ont perdu se taisent.",
       "beats": [
-        { "t": "0-1.5", "do": "une FOULE de petits ronds encre (des milliers de traders) remplit le cadre. une pièce (fil-de-fer) tombe au-dessus d'eux : le hasard distribue. quelques ronds s'illuminent en teal (bonne semaine par chance), la grande majorité reste terne ou se délave." },
-        { "t": "1.5-3", "do": "SEULS les ronds illuminés MONTENT et forment le mur (ils postent). tous les autres — l'immense majorité — restent EN BAS, silencieux, et s'estompent progressivement jusqu'à devenir invisibles." },
-        { "t": "3-4", "do": "on voit le mur en haut (les gagnants d'une loterie) et, sous lui, la masse invisible de ceux qui ont acheté un ticket. 'the feed shows the winners and hides everyone who bought a ticket'." },
-        { "t": "4-13", "do": "TENUE VIVANTE : le mur brillant en haut, la masse silencieuse en bas qui s'efface." } ],
+        {
+          "t": "0-1.5",
+          "do": "une FOULE de petits ronds encre (des milliers de traders) remplit le cadre. une pièce (fil-de-fer) tombe au-dessus d'eux : le hasard distribue. quelques ronds s'illuminent en teal (bonne semaine par chance), la grande majorité reste terne ou se délave."
+        },
+        {
+          "t": "1.5-3",
+          "do": "SEULS les ronds illuminés MONTENT et forment le mur (ils postent). tous les autres — l'immense majorité — restent EN BAS, silencieux, et s'estompent progressivement jusqu'à devenir invisibles."
+        },
+        {
+          "t": "3-4",
+          "do": "on voit le mur en haut (les gagnants d'une loterie) et, sous lui, la masse invisible de ceux qui ont acheté un ticket. 'the feed shows the winners and hides everyone who bought a ticket'."
+        },
+        {
+          "t": "4-13",
+          "do": "TENUE VIVANTE : le mur brillant en haut, la masse silencieuse en bas qui s'efface."
+        }
+      ],
       "camera": "fixe",
       "dod": "la foule, la pièce du hasard, les gagnants qui montent former le mur, les autres qui s'effacent",
-      "turn": "le feed montre les gagnants d'une loterie et cache tous les joueurs." },
-    { "id": "s4",
+      "turn": "le feed montre les gagnants d'une loterie et cache tous les joueurs."
+    },
+    {
+      "id": "s4",
       "clarity": "Le dégât : la comparaison ne fait pas travailler plus dur, elle fait prendre de PIRES trades. On grossit pour rattraper. On abandonne un process qui marchait parce qu'il paraît lent.",
       "note": "LA scene — la discipline détruite par la comparaison.",
       "beats": [
-        { "t": "0-1.5", "do": "la petite boule teal regarde le mur. une PRESSION descend du mur vers elle (une onde d'écrasement). sous cette pression, sa jauge de taille GONFLE (elle grossit pour rattraper) et sa structure de process (un socle teal ordonné) se FISSURE." },
-        { "t": "1.5-3", "do": "le socle de process — qui était SAIN (on le montre : régulier, solide) — se craquelle et s'effondre, abandonné parce qu'il paraissait lent à côté du mur. la boule prend un trade plus gros, moins bon." },
-        { "t": "3-4.5", "do": "le résultat : elle se délave. et le mur, lui, continue de briller, indifférent. 'the feed didn't cost you attention, it cost you your discipline'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : le socle brisé, la boule entamée, le mur toujours éclatant au-dessus." } ],
+        {
+          "t": "0-1.5",
+          "do": "la petite boule teal regarde le mur. une PRESSION descend du mur vers elle (une onde d'écrasement). sous cette pression, sa jauge de taille GONFLE (elle grossit pour rattraper) et sa structure de process (un socle teal ordonné) se FISSURE."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le socle de process — qui était SAIN (on le montre : régulier, solide) — se craquelle et s'effondre, abandonné parce qu'il paraissait lent à côté du mur. la boule prend un trade plus gros, moins bon."
+        },
+        {
+          "t": "3-4.5",
+          "do": "le résultat : elle se délave. et le mur, lui, continue de briller, indifférent. 'the feed didn't cost you attention, it cost you your discipline'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : le socle brisé, la boule entamée, le mur toujours éclatant au-dessus."
+        }
+      ],
       "camera": "fixe",
       "dod": "la pression du mur qui gonfle la taille et fissure le socle de process",
-      "turn": "la comparaison ne coûte pas ton attention — elle coûte ta discipline." },
-    { "id": "s5",
+      "turn": "la comparaison ne coûte pas ton attention — elle coûte ta discipline."
+    },
+    {
+      "id": "s5",
       "clarity": "Juge-toi sur TES chiffres, pas sur un mur curé. Tes cent derniers trades en disent plus que mille captures. Tout le monde poste son meilleur jour, presque personne son jour moyen — et le jour moyen est tout le jeu.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : le mur commence à s'ESTOMPER (il pâlit, devient un fond gris sans importance). devant, la boule teal se retourne vers SA propre colonne — sa réalité complète, mélangée, honnête." },
-        { "t": "2-3.5", "do": "sa colonne se dépile en une ligne de cent petits blocs (ses cent derniers trades) : un TRAIT DE MOYENNE teal se trace à travers eux. c'est ÇA, son vrai résultat — mesurable, réel. le mur derrière achève de s'effacer." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la ligne des cent trades + le trait de moyenne teal, nets ; le mur réduit à une ombre pâle. immobile. juger sur ses propres cent." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : le mur commence à s'ESTOMPER (il pâlit, devient un fond gris sans importance). devant, la boule teal se retourne vers SA propre colonne — sa réalité complète, mélangée, honnête."
+        },
+        {
+          "t": "2-3.5",
+          "do": "sa colonne se dépile en une ligne de cent petits blocs (ses cent derniers trades) : un TRAIT DE MOYENNE teal se trace à travers eux. c'est ÇA, son vrai résultat — mesurable, réel. le mur derrière achève de s'effacer."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la ligne des cent trades + le trait de moyenne teal, nets ; le mur réduit à une ombre pâle. immobile. juger sur ses propres cent."
+        }
+      ],
       "camera": "fixe",
       "dod": "le mur qui s'efface + les cent derniers trades avec leur trait de moyenne",
-      "fusil_decharge": "le liseré gris caché derrière le mur (S1) était la masse des perdants silencieux — la sortie est de se juger sur ses cent derniers trades, pas sur un mur curé." }
+      "fusil_decharge": "le liseré gris caché derrière le mur (S1) était la masse des perdants silencieux — la sortie est de se juger sur ses cent derniers trades, pas sur un mur curé."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"PROFILE\" to find your trader type. You're comparing your complete reality to a filtered selection of other people's best moments.\n\nNobody screenshots the trade that went nowhere. And out of thousands of traders, some have a great week by chance alone — those are the ones who post. The feed shows you the winners of a lottery and hides everyone who bought a ticket. Then you size up to catch up, and abandon a process that was working.\n\nTHE LINE — your last hundred trades tell you more than a thousand screenshots.\n\n#trading #trader #tradingpsychology #discipline #mindset #daytrading #forex #tradingeducation #comparison #process",
@@ -77,5 +150,13 @@
     "fin_actionnable": "'juge-toi sur tes cent derniers trades, pas sur un mur curé' — une pratique concrète, mesurable, à enregistrer.",
     "interdits": "aucun chiffre; aucun compte/personne réel; gris = perte/silence (M-couleur); la foule = ronds fil-de-fer neutres; pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte-silence/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

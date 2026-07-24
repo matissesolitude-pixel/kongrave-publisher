@@ -127,7 +127,7 @@
       "fusil_decharge": "le vide de S1 etait un rayonnage (S3), vide par l'enchere (S4) — et ton stop n'y a plus rendez-vous (S5)."
     }
   ],
-  "total": 62.7,
+  "total": 72.0,
   "caption": "Comment \"LINE\" and I'll send you the checklist: 5 signs your stop is exactly where everyone else's is. Two equal tops. The textbook sees a wall. Here's what's actually sitting above it.\n\nThousands read the same chart, sold the same level, parked the same stop — one tick above the peaks. That's not protection. That's an appointment.\n\nTHE LINE — see what everyone sees. Don't park where everyone parks.\n\n#trading #trader #doubletop #stoploss #liquidity #daytrading #forex #tradingeducation #priceaction #smartmoney",
   "_rules": {
     "doctrine": "clustering ETABLI, intention JAMAIS affirmee ('whether anyone aims for them or not'). aucun chasseur dessine, aucun brun.",
@@ -138,5 +138,12 @@
     "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
     "hook_v1_archived": "Open any chart, any market, any year. Sooner or later you'll see it: two tops, exactly the same height. Every textbook has a name for it. But look closer — what's really sitting up there?",
     "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
   }
 }

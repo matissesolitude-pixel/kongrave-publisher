@@ -12,8 +12,8 @@
   "scenes": [
     {
       "id": "s1",
-      "clarity": "Il a mise 100, le marche bouge a peine, et tout est parti. Comment un si petit mouvement vide la mise ?",
-      "question": "HOW DOES A TINY MOVE WIPE YOU OUT?",
+      "clarity": "Il a mise 100, le marche bouge un peu, il perd 500. Comment perdre plus que ce qui bouge ?",
+      "question": "HOW DO YOU LOSE 5X WHAT YOU PUT DOWN?",
       "cast": {
         "stake": {
           "type": "block",
@@ -122,7 +122,7 @@
       "fusil_decharge": "le petit bloc de S1 retrouve son ombre — mais cette fois c'est TOI qui choisis la taille de l'ombre."
     }
   ],
-  "total": 59.0,
+  "total": 74.0,
   "caption": "Comment \"LINE\" for the checklist on how leverage really works. You put down 100 and it's gone — wiped out by a move you'd barely notice on the chart. That's leverage. It doesn't multiply your money. It multiplies the speed you reach zero.\n\nTHE LINE — size is a choice.\n\n#trading #trader #leverage #daytrading #forex #riskmanagement #tradingeducation #priceaction #margin #investing",
   "_rules": {
     "garde_fou": "JAMAIS 'perdre plus que son depot' (protection solde negatif Europe). Le pire cas montre = le depot vide (le trait de fin), pas une dette.",
@@ -133,5 +133,12 @@
     "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
     "hook_v1_archived": "Here's a riddle. A trader puts one hundred on the table. The market moves five percent against him. He loses five hundred. How do you lose five times what you put down?",
     "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
   }
 }

@@ -10,60 +10,133 @@
     "So when a streak has you hesitating, don't try to feel confident — that isn't available. Just take the trade at your normal size if it meets your rules. Those rules were written by a version of you that wasn't hurting. Trust that one. Feelings aren't a filter. Your criteria are."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Après une série de pertes, un setup propre apparaît — exactement ce qu'il prendrait sans réfléchir d'habitude. Et il ne le prend pas.",
       "question": "WHY DOES A LOSING STREAK MAKE YOU SKIP THE GOOD ONES?",
       "emotion_lever": "TENSION + RECONNAISSANCE DE SOI — dès la frame 0, TOI figé devant un setup éclatant, retenu par une traîne de pertes grises accrochées derrière. La situation vécue, immédiate.",
       "cast": {
-        "you": { "type": "gauge", "note": "TOI = boule teal, FIGÉE, retenue" },
-        "setup": { "type": "block", "note": "un setup ÉCLATANT juste devant, non pris" },
-        "streak": { "type": "block", "note": "une traîne de blocs gris accrochée derrière toi. le fusil = ce poids qui te retient." } },
+        "you": {
+          "type": "gauge",
+          "note": "TOI = boule teal, FIGÉE, retenue"
+        },
+        "setup": {
+          "type": "block",
+          "note": "un setup ÉCLATANT juste devant, non pris"
+        },
+        "streak": {
+          "type": "block",
+          "note": "une traîne de blocs gris accrochée derrière toi. le fusil = ce poids qui te retient."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : la boule teal (TOI) est FIGÉE, à un cheveu d'un setup ÉCLATANT (bloc teal brillant, parfait, juste devant elle). Mais derrière elle traîne une CHAÎNE DE BLOCS GRIS (la série de pertes) qui pèse et la retient. Le setup est là, à portée, non pris. La tension est immédiate." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : le setup brille et pulse (l'occasion vit), la boule tremble sur place, la traîne grise pèse. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : la boule teal (TOI) est FIGÉE, à un cheveu d'un setup ÉCLATANT (bloc teal brillant, parfait, juste devant elle). Mais derrière elle traîne une CHAÎNE DE BLOCS GRIS (la série de pertes) qui pèse et la retient. Le setup est là, à portée, non pris. La tension est immédiate."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : le setup brille et pulse (l'occasion vit), la boule tremble sur place, la traîne grise pèse. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule figée devant le setup éclatant, retenue par la traîne grise, dès la frame 0",
-      "fusil": "la traîne de pertes qui te retient — on va voir ce qu'elle coûte vraiment." },
-    { "id": "s2",
+      "fusil": "la traîne de pertes qui te retient — on va voir ce qu'elle coûte vraiment."
+    },
+    {
+      "id": "s2",
       "clarity": "Les pertes ne coûtent pas que de l'argent : elles coûtent de la certitude. Chaque perte ajoute du poids à l'idée qu'on a peut-être tort sur tout. Quand le setup arrive, on s'évalue SOI, pas lui.",
       "label": "you stop evaluating the setup",
       "beats": [
-        { "t": "0-2", "do": "chaque bloc gris de la traîne, en s'ajoutant, PRÉLÈVE un cran sur une jauge 'certainty' à côté de la boule. la jauge se vide progressivement — le coût invisible des pertes." },
-        { "t": "2-3.5", "do": "SUBSTITUTION : deux cibles d'évaluation s'affichent. 'THE SETUP' (teal, à mesurer) s'éteint, et 'YOURSELF' (grise) s'allume à sa place. le regard de la boule quitte le setup et se retourne vers elle-même." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la jauge de certitude vide, le regard retourné sur soi, le setup ignoré qui brille toujours." } ],
+        {
+          "t": "0-2",
+          "do": "chaque bloc gris de la traîne, en s'ajoutant, PRÉLÈVE un cran sur une jauge 'certainty' à côté de la boule. la jauge se vide progressivement — le coût invisible des pertes."
+        },
+        {
+          "t": "2-3.5",
+          "do": "SUBSTITUTION : deux cibles d'évaluation s'affichent. 'THE SETUP' (teal, à mesurer) s'éteint, et 'YOURSELF' (grise) s'allume à sa place. le regard de la boule quitte le setup et se retourne vers elle-même."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la jauge de certitude vide, le regard retourné sur soi, le setup ignoré qui brille toujours."
+        }
+      ],
       "camera": "fixe",
       "dod": "la jauge de certitude vidée par les pertes + le regard qui bascule du setup vers soi",
-      "turn": "on n'évalue plus le trade — on s'évalue soi." },
-    { "id": "s3",
+      "turn": "on n'évalue plus le trade — on s'évalue soi."
+    },
+    {
+      "id": "s3",
       "clarity": "Ce qui rend ça cher : l'edge n'a pas changé pendant la série. Le marché n'a aucune mémoire des derniers trades. Le setup est exactement aussi bon que le mois dernier.",
       "beats": [
-        { "t": "0-2", "do": "mesure objective du setup : une règle teal vient le mesurer → il s'illumine à SA valeur habituelle, exactement la même qu'avant la série. rien n'a baissé." },
-        { "t": "2-3.5", "do": "à côté, le marché (bloc encre neutre) est montré face à la traîne grise : il ne la VOIT pas — les pertes glissent sur lui sans laisser de trace. 'the market has no memory of your last few trades'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : le setup à pleine valeur, le marché indifférent, et pourtant la boule toujours retenue. l'écart est absurde." } ],
+        {
+          "t": "0-2",
+          "do": "mesure objective du setup : une règle teal vient le mesurer → il s'illumine à SA valeur habituelle, exactement la même qu'avant la série. rien n'a baissé."
+        },
+        {
+          "t": "2-3.5",
+          "do": "à côté, le marché (bloc encre neutre) est montré face à la traîne grise : il ne la VOIT pas — les pertes glissent sur lui sans laisser de trace. 'the market has no memory of your last few trades'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : le setup à pleine valeur, le marché indifférent, et pourtant la boule toujours retenue. l'écart est absurde."
+        }
+      ],
       "camera": "fixe",
       "dod": "le setup mesuré à sa valeur habituelle + le marché sans mémoire de la série",
-      "turn": "l'edge n'a pas bougé. seule ta main tremble." },
-    { "id": "s4",
+      "turn": "l'edge n'a pas bougé. seule ta main tremble."
+    },
+    {
+      "id": "s4",
       "clarity": "Le dégât s'aggrave : on saute le gagnant, la série paraît plus longue qu'elle ne l'est, on doute plus, on saute le suivant. Miroir de l'excès de confiance — même erreur : laisser les derniers résultats tarifer le prochain trade.",
       "note": "LA scene — la boucle du doute + le miroir.",
       "beats": [
-        { "t": "0-1.5", "do": "le setup non pris s'ÉTEINT — et un bloc gris FANTÔME (creux) s'ajoute à la traîne : il compte comme une perte de plus dans le ressenti, alors qu'aucun argent n'a été perdu. la traîne s'alourdit d'un faux poids." },
-        { "t": "1.5-3", "do": "boucle qui accélère : traîne plus lourde → doute plus grand → setup suivant sauté → nouveau fantôme → encore plus lourd. la boule s'enfonce, de plus en plus figée." },
-        { "t": "3-4.5", "do": "MIROIR : split rapide. HAUT (l'excès de confiance, rappel de L30) : la jauge de taille GONFLE sur les pires décisions. BAS (le doute) : la boule SAUTE ses meilleures. Les deux convergent vers une même étiquette : 'letting your last results price your next trade'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : la traîne alourdie de fantômes, la boule figée, et le miroir des deux erreurs symétriques." } ],
+        {
+          "t": "0-1.5",
+          "do": "le setup non pris s'ÉTEINT — et un bloc gris FANTÔME (creux) s'ajoute à la traîne : il compte comme une perte de plus dans le ressenti, alors qu'aucun argent n'a été perdu. la traîne s'alourdit d'un faux poids."
+        },
+        {
+          "t": "1.5-3",
+          "do": "boucle qui accélère : traîne plus lourde → doute plus grand → setup suivant sauté → nouveau fantôme → encore plus lourd. la boule s'enfonce, de plus en plus figée."
+        },
+        {
+          "t": "3-4.5",
+          "do": "MIROIR : split rapide. HAUT (l'excès de confiance, rappel de L30) : la jauge de taille GONFLE sur les pires décisions. BAS (le doute) : la boule SAUTE ses meilleures. Les deux convergent vers une même étiquette : 'letting your last results price your next trade'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : la traîne alourdie de fantômes, la boule figée, et le miroir des deux erreurs symétriques."
+        }
+      ],
       "camera": "fixe",
       "dod": "les fantômes qui alourdissent la traîne + le miroir confiance/doute = même erreur",
-      "turn": "confiance et doute sont la même erreur : les derniers résultats tarifent le prochain trade." },
-    { "id": "s5",
+      "turn": "confiance et doute sont la même erreur : les derniers résultats tarifent le prochain trade."
+    },
+    {
+      "id": "s5",
       "clarity": "Quand la série te fait hésiter, n'essaie pas de te sentir confiant — ce n'est pas disponible. Prends le trade à ta taille normale s'il coche tes règles. Ces règles ont été écrites par une version de toi qui n'avait pas mal.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : deux instruments côte à côte. la jauge 'feelings' (grise, au plus bas, tremblante) et une CHECKLIST de critères (teal, nette, immuable). une flèche barre la jauge des ressentis : ce n'est PAS un filtre." },
-        { "t": "2-3.5", "do": "le setup passe par la CHECKLIST : les critères se cochent un à un, en teal. la traîne grise se DÉCROCHE (elle n'a pas voix au chapitre). la boule reprend sa taille NORMALE (ni gonflée, ni réduite) et prend le trade." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la checklist cochée, la jauge des ressentis barrée, la boule à taille normale. immobile. les critères décident, pas l'humeur." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : deux instruments côte à côte. la jauge 'feelings' (grise, au plus bas, tremblante) et une CHECKLIST de critères (teal, nette, immuable). une flèche barre la jauge des ressentis : ce n'est PAS un filtre."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le setup passe par la CHECKLIST : les critères se cochent un à un, en teal. la traîne grise se DÉCROCHE (elle n'a pas voix au chapitre). la boule reprend sa taille NORMALE (ni gonflée, ni réduite) et prend le trade."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la checklist cochée, la jauge des ressentis barrée, la boule à taille normale. immobile. les critères décident, pas l'humeur."
+        }
+      ],
       "camera": "fixe",
       "dod": "la jauge des ressentis barrée + la checklist de critères qui décide + taille normale",
-      "fusil_decharge": "la traîne de S1 se décroche : les derniers résultats ne tarifent pas le prochain trade — les critères décident, l'humeur n'est pas un filtre." }
+      "fusil_decharge": "la traîne de S1 se décroche : les derniers résultats ne tarifent pas le prochain trade — les critères décident, l'humeur n'est pas un filtre."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"PROFILE\" to find your trader type. A losing streak doesn't just cost money — it makes you skip the good setups.\n\nLosses cost certainty. By the time a clean setup shows up, you're evaluating yourself instead of the trade. But your edge didn't change, and the market has no memory of your last few trades. Overconfidence makes you size up on your worst decisions. Doubt makes you skip your best ones. Same error.\n\nTHE LINE — feelings aren't a filter. Your criteria are.\n\n#trading #trader #tradingpsychology #discipline #mindset #daytrading #forex #tradingeducation #confidence #process",
@@ -77,5 +150,13 @@
     "fin_actionnable": "'feelings aren't a filter, your criteria are' + prendre à taille normale si les règles sont cochées — mémorisable et applicable.",
     "interdits": "aucun chiffre; gris = perte/doute (M-couleur); pas de brun; TOI=boule teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

@@ -10,59 +10,129 @@
     "So before you enter, ask one question: what is defending this level? If the answer is nothing, you're in the middle — and the middle is where trades go to die. The edges are uncomfortable. That's exactly where the fight is. Trade where something has to break."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il prend un trade au milieu d'un range. Ça semble propre, ça bouge. Et ça meurt. Encore. Pourquoi tant de trades meurent au milieu ?",
       "question": "WHY DO TRADES DIE IN THE MIDDLE?",
       "emotion_lever": "CHOC — un cimetière visible dès la frame 0 : le milieu du range jonché de fantômes gris empilés. L'accumulation de morts saisit.",
       "cast": {
-        "walls": { "type": "hline", "note": "deux murs (haut et bas du range), encre" },
-        "graveyard": { "type": "block", "note": "le milieu jonché de blocs gris (trades morts). le fusil = ce cimetière." } },
+        "walls": {
+          "type": "hline",
+          "note": "deux murs (haut et bas du range), encre"
+        },
+        "graveyard": {
+          "type": "block",
+          "note": "le milieu jonché de blocs gris (trades morts). le fusil = ce cimetière."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : un range avec deux murs (traits encre épais, haut et bas), et le MILIEU DÉJÀ JONCHÉ de fantômes gris — une dizaine de blocs délavés, empilés en désordre, comme un charnier. Les bords, eux, sont PROPRES. Le contraste est immédiat." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : les fantômes gris frémissent doucement au milieu, les murs pulsent. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un range avec deux murs (traits encre épais, haut et bas), et le MILIEU DÉJÀ JONCHÉ de fantômes gris — une dizaine de blocs délavés, empilés en désordre, comme un charnier. Les bords, eux, sont PROPRES. Le contraste est immédiat."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : les fantômes gris frémissent doucement au milieu, les murs pulsent. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le cimetière de fantômes gris au milieu du range, visible DÈS la frame 0",
-      "fusil": "le cimetière au milieu — on va découvrir pourquoi c'est là que ça meurt." },
-    { "id": "s2",
+      "fusil": "le cimetière au milieu — on va découvrir pourquoi c'est là que ça meurt."
+    },
+    {
+      "id": "s2",
       "clarity": "Un range a deux bords et un milieu. Aux bords, quelqu'un DÉFEND un niveau — s'il cède, tu apprends immédiatement. Au milieu, personne ne défend rien.",
       "label": "the edges are defended · the middle isn't",
       "beats": [
-        { "t": "0-2", "do": "zoom sur le mur du HAUT : des figures fil-de-fer (des défenseurs) sont ALIGNÉES dessus, arc-boutées — quelqu'un tient ce niveau. même chose sur le mur du BAS." },
-        { "t": "2-3.5", "do": "la caméra glisse vers le MILIEU : VIDE. aucune figure, aucun défenseur, juste de l'espace entre les deux murs. le prix y erre, sans rencontrer personne." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les défenseurs des bords bougent (ils tiennent), le milieu reste désert et le prix y flotte sans obstacle." } ],
+        {
+          "t": "0-2",
+          "do": "zoom sur le mur du HAUT : des figures fil-de-fer (des défenseurs) sont ALIGNÉES dessus, arc-boutées — quelqu'un tient ce niveau. même chose sur le mur du BAS."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la caméra glisse vers le MILIEU : VIDE. aucune figure, aucun défenseur, juste de l'espace entre les deux murs. le prix y erre, sans rencontrer personne."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les défenseurs des bords bougent (ils tiennent), le milieu reste désert et le prix y flotte sans obstacle."
+        }
+      ],
       "camera": "glissement haut → milieu → bas",
       "dod": "les défenseurs sur les deux bords vs le milieu totalement désert",
-      "turn": "aux bords quelqu'un défend. au milieu, personne — il n'y a rien à casser." },
-    { "id": "s3",
+      "turn": "aux bords quelqu'un défend. au milieu, personne — il n'y a rien à casser."
+    },
+    {
+      "id": "s3",
       "clarity": "Donc le milieu ne donne aucune information : entrée sans niveau derrière, stop sans protection, cible nulle part. Une position là où le marché n'a rien à dire.",
       "beats": [
-        { "t": "0-2", "do": "une position teal se pose AU MILIEU. trois vérifications s'allument autour d'elle et échouent une par une : 'level behind?' → rien (le contour cherche un mur et n'en trouve pas). 'stop protected?' → rien. 'target?' → une flèche part et se perd dans le vide." },
-        { "t": "2-3.5", "do": "les trois échecs restent affichés autour de la position, comme trois vides. elle flotte, sans appui." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la position teal flottante, entourée de ses trois vides. rien ne la soutient." } ],
+        {
+          "t": "0-2",
+          "do": "une position teal se pose AU MILIEU. trois vérifications s'allument autour d'elle et échouent une par une : 'level behind?' → rien (le contour cherche un mur et n'en trouve pas). 'stop protected?' → rien. 'target?' → une flèche part et se perd dans le vide."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les trois échecs restent affichés autour de la position, comme trois vides. elle flotte, sans appui."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la position teal flottante, entourée de ses trois vides. rien ne la soutient."
+        }
+      ],
       "camera": "fixe",
       "dod": "les trois vérifications qui échouent (niveau, protection, cible) autour de la position au milieu",
-      "turn": "au milieu, le marché n'a rien à te dire — aucune information." },
-    { "id": "s4",
+      "turn": "au milieu, le marché n'a rien à te dire — aucune information."
+    },
+    {
+      "id": "s4",
       "clarity": "Et c'est pour ça que c'est si convaincant : le milieu est là où le mouvement paraît le plus PROPRE — pas de rejet, pas de combat, le prix glisse. Cette fluidité se lit comme une opportunité. C'est en fait l'absence d'obstacle.",
       "note": "LA scene — la fluidité trompeuse.",
       "beats": [
-        { "t": "0-1.5", "do": "le prix GLISSE au milieu, magnifiquement fluide, sans une seule secousse — un ruban lisse. c'est BEAU. un halo 'clean' s'allume : ça ressemble à une opportunité parfaite." },
-        { "t": "1.5-3", "do": "puis on RÉVÈLE pourquoi c'est si lisse : la fluidité est SUPERPOSÉE au vide (aucun défenseur nulle part). le ruban lisse traverse le néant. 'the smoothness IS the absence of obstacle'." },
-        { "t": "3-4.5", "do": "la position teal, séduite par la fluidité, s'y engage → et le ruban se DÉLITE (il n'était soutenu par rien), la position se délave et rejoint le cimetière de fantômes." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : le cimetière compte un fantôme de plus. la beauté du milieu était son vide." } ],
+        {
+          "t": "0-1.5",
+          "do": "le prix GLISSE au milieu, magnifiquement fluide, sans une seule secousse — un ruban lisse. c'est BEAU. un halo 'clean' s'allume : ça ressemble à une opportunité parfaite."
+        },
+        {
+          "t": "1.5-3",
+          "do": "puis on RÉVÈLE pourquoi c'est si lisse : la fluidité est SUPERPOSÉE au vide (aucun défenseur nulle part). le ruban lisse traverse le néant. 'the smoothness IS the absence of obstacle'."
+        },
+        {
+          "t": "3-4.5",
+          "do": "la position teal, séduite par la fluidité, s'y engage → et le ruban se DÉLITE (il n'était soutenu par rien), la position se délave et rejoint le cimetière de fantômes."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : le cimetière compte un fantôme de plus. la beauté du milieu était son vide."
+        }
+      ],
       "camera": "fixe",
       "dod": "le ruban lisse révélé comme traversant le vide, puis la position qui s'y délite",
-      "turn": "la fluidité n'est pas une opportunité — c'est l'absence de tout obstacle." },
-    { "id": "s5",
+      "turn": "la fluidité n'est pas une opportunité — c'est l'absence de tout obstacle."
+    },
+    {
+      "id": "s5",
       "clarity": "Avant d'entrer, une question : qu'est-ce qui DÉFEND ce niveau ? Si la réponse est rien, tu es au milieu. Les bords sont inconfortables — c'est là qu'est le combat.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : le range entier réapparaît, cimetière au milieu. une question se pose sur le niveau visé : 'WHAT IS DEFENDING THIS LEVEL?'" },
-        { "t": "2-3.5", "do": "testée au MILIEU → rien ne s'allume (vide, la position irait au cimetière). testée au BORD → les défenseurs s'illuminent, quelque chose DOIT casser. la position teal se déplace du milieu vers le bord, s'y installe." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la question inscrite, la position posée au bord (là où quelque chose se défend), le cimetière du milieu laissé derrière. immobile." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : le range entier réapparaît, cimetière au milieu. une question se pose sur le niveau visé : 'WHAT IS DEFENDING THIS LEVEL?'"
+        },
+        {
+          "t": "2-3.5",
+          "do": "testée au MILIEU → rien ne s'allume (vide, la position irait au cimetière). testée au BORD → les défenseurs s'illuminent, quelque chose DOIT casser. la position teal se déplace du milieu vers le bord, s'y installe."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la question inscrite, la position posée au bord (là où quelque chose se défend), le cimetière du milieu laissé derrière. immobile."
+        }
+      ],
       "camera": "fixe",
       "dod": "la question testée aux deux endroits + la position qui migre du milieu vers le bord",
-      "fusil_decharge": "le cimetière de S1 se résout : on meurt au milieu parce que rien ne s'y défend — la question 'what is defending this level?' te sort du charnier." }
+      "fusil_decharge": "le cimetière de S1 se résout : on meurt au milieu parce que rien ne s'y défend — la question 'what is defending this level?' te sort du charnier."
+    }
   ],
   "total": 82.0,
   "caption": "Comment \"MAP\" for the free beta of my indicator. Most trades die in the exact middle of the chart — and the middle is where movement looks cleanest.\n\nAt the edges, someone is defending a level: if it breaks, you learn something. In the middle, nobody is defending anything. Your entry has no level behind it, your stop has nothing protecting it. That smoothness you read as opportunity is just the absence of any obstacle.\n\nTHE LINE — before you enter, ask what is defending this level.\n\n#trading #trader #priceaction #range #liquidity #daytrading #forex #tradingeducation #smartmoney #levels",
@@ -76,5 +146,13 @@
     "fin_actionnable": "la question 'WHAT IS DEFENDING THIS LEVEL?' — un critère mémorisable à appliquer avant chaque entrée.",
     "interdits": "aucun chiffre; les défenseurs = figures fil-de-fer NEUTRES (pas de brun, pas de camp adverse); gris = trades morts (M-couleur); bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · mort/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

@@ -10,67 +10,150 @@
     "So judge the decision, not the result. After a win, ask the uncomfortable question: would I make that same choice a thousand times? If yes, the win was earned. If no, you just got paid to learn something false — and the bill comes later. Right process survives a bad run. Lucky wins don't survive anything."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Un trade gagne. Mais : a-t-il gagné parce qu'il avait raison, ou parce qu'il a eu de la chance ? Sur un seul trade, ça se ressemble exactement.",
       "question": "DID YOU WIN, OR DID YOU GET LUCKY?",
-      "cast": { "win": { "type": "block", "note": "un gain = un bloc teal brillant. le fusil = son origine cachée (skill ou chance)." } },
+      "cast": {
+        "win": {
+          "type": "block",
+          "note": "un gain = un bloc teal brillant. le fusil = son origine cachée (skill ou chance)."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: un bloc teal brillant apparaît, étiqueté 'a win'. net, satisfaisant. mais son SOCLE (ce sur quoi il repose) est masqué par une ombre — on ne voit pas d'où il vient." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: le gain brille, son socle dans l'ombre. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: un bloc teal brillant apparaît, étiqueté 'a win'. net, satisfaisant. mais son SOCLE (ce sur quoi il repose) est masqué par une ombre — on ne voit pas d'où il vient."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: le gain brille, son socle dans l'ombre. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le bloc-gain brillant + son socle caché dans l'ombre",
-      "fusil": "le gain dont l'origine est masquée — on va révéler skill vs chance dessous." },
-    { "id": "s2",
+      "fusil": "le gain dont l'origine est masquée — on va révéler skill vs chance dessous.",
+      "hook_gag": {
+        "primitive": "contrast",
+        "agent": "le gain brillant dont il admire le reflet (le socle se fissure derrière)",
+        "reaction": "faussement confiant",
+        "temps": "en cours",
+        "raccord": "le reflet se ternit, il recule d'un pas",
+        "lien_sujet": "admirer un gain sans regarder son socle EST le sujet"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Bonne décision et bon résultat ne sont pas pareil. On peut suivre son plan et perdre (marché aléatoire), casser ses règles et gagner (la pièce tombe bien). Un trade ne dit presque rien.",
       "label": "decision ≠ outcome",
       "beats": [
-        { "t": "0-2", "do": "une GRILLE 2×2 se dessine: axe 'decision' (good/bad) × axe 'outcome' (win/loss). quatre cases. deux cases 'attendues' (bonne déc→win, mauvaise→loss) s'éclairent normalement." },
-        { "t": "2-3.5", "do": "les deux cases PIÈGES s'allument en contraste: 'good decision → LOSS' et 'bad decision → WIN'. ce sont elles qui trompent. une pièce (fil-de-fer) tombe au milieu: le hasard court terme." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: la grille 2×2, les deux cases pièges qui pulsent, la pièce qui tourne. 'one trade tells you nothing'." } ],
+        {
+          "t": "0-2",
+          "do": "une GRILLE 2×2 se dessine: axe 'decision' (good/bad) × axe 'outcome' (win/loss). quatre cases. deux cases 'attendues' (bonne déc→win, mauvaise→loss) s'éclairent normalement."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les deux cases PIÈGES s'allument en contraste: 'good decision → LOSS' et 'bad decision → WIN'. ce sont elles qui trompent. une pièce (fil-de-fer) tombe au milieu: le hasard court terme."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la grille 2×2, les deux cases pièges qui pulsent, la pièce qui tourne. 'one trade tells you nothing'."
+        }
+      ],
       "camera": "fixe",
       "dod": "la grille 2×2 décision×résultat, les deux cases pièges soulignées",
-      "turn": "gagner ou perdre ne dit pas si la décision était bonne — le hasard s'en mêle." },
-    { "id": "s3",
+      "turn": "gagner ou perdre ne dit pas si la décision était bonne — le hasard s'en mêle."
+    },
+    {
+      "id": "s3",
       "clarity": "Danger : quand une mauvaise décision est récompensée par un gain, le cerveau la classe en 'skill', pas en chance. Il apprend : ça a marché, refais. La pire habitude naît le jour le plus chanceux.",
       "note": "LA scene — la mauvaise habitude construite sur la chance.",
       "beats": [
-        { "t": "0-1.5", "do": "focus sur la case piège 'bad decision → WIN'. le gain teal en sort. mais une FLÈCHE d'apprentissage part du gain vers un 'classeur' mental: elle devrait aller dans le tiroir 'LUCK'..." },
-        { "t": "1.5-3", "do": "...mais elle se range dans le tiroir 'SKILL' (mauvais rangement). de ce mauvais classement, une HABITUDE se construit: une brique 'do it again' se pose, bâtie sur la mauvaise décision. l'habitude POUSSE sur le socle de la chance." },
-        { "t": "3-4", "do": "la mauvaise habitude grandit, solide en apparence, mais son fondement (la chance, gris) est instable. 'the worst habit built on your luckiest day'." },
-        { "t": "4-14", "do": "TENUE VIVANTE longue: l'habitude dressée sur un socle de chance grise, fissuré. elle a l'air solide, elle ne l'est pas." } ],
+        {
+          "t": "0-1.5",
+          "do": "focus sur la case piège 'bad decision → WIN'. le gain teal en sort. mais une FLÈCHE d'apprentissage part du gain vers un 'classeur' mental: elle devrait aller dans le tiroir 'LUCK'..."
+        },
+        {
+          "t": "1.5-3",
+          "do": "...mais elle se range dans le tiroir 'SKILL' (mauvais rangement). de ce mauvais classement, une HABITUDE se construit: une brique 'do it again' se pose, bâtie sur la mauvaise décision. l'habitude POUSSE sur le socle de la chance."
+        },
+        {
+          "t": "3-4",
+          "do": "la mauvaise habitude grandit, solide en apparence, mais son fondement (la chance, gris) est instable. 'the worst habit built on your luckiest day'."
+        },
+        {
+          "t": "4-14",
+          "do": "TENUE VIVANTE longue: l'habitude dressée sur un socle de chance grise, fissuré. elle a l'air solide, elle ne l'est pas."
+        }
+      ],
       "camera": "fixe",
       "dod": "le gain mal classé dans 'skill', l'habitude qui pousse sur un socle de chance",
-      "turn": "la chance récompensée s'enregistre comme compétence — et bâtit la pire habitude." },
-    { "id": "s4",
+      "turn": "la chance récompensée s'enregistre comme compétence — et bâtit la pire habitude."
+    },
+    {
+      "id": "s4",
       "clarity": "C'est pourquoi un bon mois peut être plus dangereux qu'un mauvais. Le mauvais force à regarder son process. Le bon, s'il vient de la chance, enseigne la mauvaise leçon. Le compte monte pendant que l'habitude pourrit.",
       "note": "diptyque: bon mois vs mauvais mois.",
       "beats": [
-        { "t": "0-13", "do": "SPLIT VERTICAL. GAUCHE 'bad month': le compte-barre a baissé (gris), MAIS le process (une structure teal à côté) est EXAMINÉ, renforcé — la baisse force à regarder. le fondement se solidifie." },
-        { "t": "0-13", "do": "DROITE 'good month (from luck)': le compte-barre MONTE (teal), séduisant — mais dessous, le process se FISSURE, l'habitude pourrit (des lézardes grises), et une 'confiance non méritée' gonfle. 'the account grows while the habit rots'." } ],
+        {
+          "t": "0-13",
+          "do": "SPLIT VERTICAL. GAUCHE 'bad month': le compte-barre a baissé (gris), MAIS le process (une structure teal à côté) est EXAMINÉ, renforcé — la baisse force à regarder. le fondement se solidifie."
+        },
+        {
+          "t": "0-13",
+          "do": "DROITE 'good month (from luck)': le compte-barre MONTE (teal), séduisant — mais dessous, le process se FISSURE, l'habitude pourrit (des lézardes grises), et une 'confiance non méritée' gonfle. 'the account grows while the habit rots'."
+        }
+      ],
       "camera": "fixe, split",
       "dod": "mauvais mois qui renforce le process vs bon mois (chance) qui pourrit l'habitude",
-      "turn": "le compte monte, l'habitude pourrit — le bon mois chanceux est le plus traître." },
-    { "id": "s5",
+      "turn": "le compte monte, l'habitude pourrit — le bon mois chanceux est le plus traître."
+    },
+    {
+      "id": "s5",
       "clarity": "Juger la décision, pas le résultat. Après un gain : ferais-je ce choix mille fois ? Si oui, mérité. Si non, on a été payé pour apprendre du faux. Le bon process survit à une mauvaise passe, pas la chance.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: retour au gain de S1, socle toujours dans l'ombre. cette fois, une question l'ÉCLAIRE par en dessous ('would I do this 1000 times?'): la lumière RÉVÈLE le socle." },
-        { "t": "2-3.5", "do": "deux issues montrées côte à côte: socle SOLIDE teal ('yes → earned, survives a bad run') vs socle de chance gris fissuré ('no → paid to learn something false, the bill comes later'). le gain lui-même est identique — c'est le SOCLE qui diffère." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: le gain posé sur un socle solide teal (celui qu'on veut), la question éclairante en dessous. immobile. juger la décision." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: retour au gain de S1, socle toujours dans l'ombre. cette fois, une question l'ÉCLAIRE par en dessous ('would I do this 1000 times?'): la lumière RÉVÈLE le socle."
+        },
+        {
+          "t": "2-3.5",
+          "do": "deux issues montrées côte à côte: socle SOLIDE teal ('yes → earned, survives a bad run') vs socle de chance gris fissuré ('no → paid to learn something false, the bill comes later'). le gain lui-même est identique — c'est le SOCLE qui diffère."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: le gain posé sur un socle solide teal (celui qu'on veut), la question éclairante en dessous. immobile. juger la décision."
+        }
+      ],
       "camera": "fixe",
       "dod": "la question qui révèle le socle: solide (mérité) vs chance fissurée",
-      "fusil_decharge": "le gain à l'origine cachée de S1 se résout: la question 'mille fois ?' révèle le socle — mérité (survit) ou chance (s'effondre plus tard) (S5)." }
+      "fusil_decharge": "le gain à l'origine cachée de S1 se résout: la question 'mille fois ?' révèle le socle — mérité (survit) ou chance (s'effondre plus tard) (S5)."
+    }
   ],
   "total": 84.0,
-  "caption": "Comment \"PROFILE\" to find out what type of trader you are and where it costs you. A good month can be more dangerous than a bad one.\n\nA good decision and a good outcome aren't the same. When a bad decision gets rewarded, your brain files it as skill, not luck — and builds your worst habit on your luckiest day. Judge the decision, not the result: would you make that same choice a thousand times?\n\nTHE LINE — right process survives a bad run. Lucky wins don't survive anything.\n\n#trading #trader #tradingpsychology #process #discipline #daytrading #forex #tradingeducation #mindset #probability",
+  "caption": "Comment \"PROFILE\" to find your trader type. A good month can be more dangerous than a bad one.\n\nA good decision and a good outcome aren't the same. When a bad decision gets rewarded, your brain files it as skill, not luck — and builds your worst habit on your luckiest day. Judge the decision, not the result: would you make that same choice a thousand times?\n\nTHE LINE — right process survives a bad run. Lucky wins don't survive anything.\n\n#trading #trader #tradingpsychology #process #discipline #daytrading #forex #tradingeducation #mindset #probability",
   "_rules": {
     "doctrine": "résultat vs décision (outcome bias), en psycho MÉCANIQUE: le gain = bloc à socle caché, la grille 2×2, le mauvais classement skill/luck, l'habitude sur socle de chance. Émotion/cognition par objets. Garde-fou: la baisse = compte-barre gris, pas de dette.",
     "cta_keyword": "PROFILE → LTTI (whop.com/otp-consulting/profil-de-trader)",
-    "caption_structure": "ligne 1 = accroche + CTA PROFILE visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "le gain à origine cachée (S1), décision≠résultat (S2), le mauvais classement (S3), bon vs mauvais mois (S4), résolu par la question qui révèle le socle (S5).",
     "interdits": "aucun chiffre; gris = chance instable/perte (M-couleur), pas de rouge; pas de brun; la pièce = fil-de-fer; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · solide/teal #1E5F6E · chance-perte/gris #474D50",
     "vie_continue": "regle 5: la pièce tourne, les cases pulsent, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (PROFILE). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "A good month can be more dangerous than a bad one. Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

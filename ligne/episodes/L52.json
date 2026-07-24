@@ -10,59 +10,129 @@
     "So raise the bar for what counts as evidence. A move is information only if the same thing happens repeatedly, at a scale that couldn't be chance. Anything you saw once and explained afterwards is a story, not a signal — and most of your chart is stories."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Le prix bouge toute la journée. Chaque mouvement a l'air de vouloir dire quelque chose. Mais une grande partie ne porte aucune information.",
       "question": "HOW MUCH OF THIS MEANS ANYTHING?",
       "emotion_lever": "CHOC — dès la frame 0, un tracé de prix dont la MAJEURE PARTIE se désagrège en poussière, ne laissant que quelques fragments solides. La proportion saisit.",
       "cast": {
-        "chart": { "type": "path", "note": "un tracé de prix complet" },
-        "dust": { "type": "block", "note": "la majeure partie du tracé désagrégée en particules; quelques fragments restent en encre pleine. le fusil = le rapport poussière/solide." } },
+        "chart": {
+          "type": "path",
+          "note": "un tracé de prix complet"
+        },
+        "dust": {
+          "type": "block",
+          "note": "la majeure partie du tracé désagrégée en particules; quelques fragments restent en encre pleine. le fusil = le rapport poussière/solide."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : un tracé de prix qui traverse le cadre — mais l'ESSENTIEL de ce tracé est DÉSAGRÉGÉ en fines particules éparses (de la poussière), et seuls quelques COURTS fragments restent en encre pleine et solide. La proportion — presque tout en poussière — frappe immédiatement." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : les particules dérivent doucement, les rares fragments solides restent nets et immobiles. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un tracé de prix qui traverse le cadre — mais l'ESSENTIEL de ce tracé est DÉSAGRÉGÉ en fines particules éparses (de la poussière), et seuls quelques COURTS fragments restent en encre pleine et solide. La proportion — presque tout en poussière — frappe immédiatement."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : les particules dérivent doucement, les rares fragments solides restent nets et immobiles. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le tracé majoritairement en poussière, quelques fragments solides, dès la frame 0",
-      "fusil": "le rapport poussière/solide — on va voir ce qui fait la différence." },
-    { "id": "s2",
+      "fusil": "le rapport poussière/solide — on va voir ce qui fait la différence."
+    },
+    {
+      "id": "s2",
       "clarity": "Une part du mouvement vient de quelque chose de réel : un vrai déséquilibre qui pousse. Le reste est du brassage — des ordres qui arrivent et repartent sans rapport avec la direction. À l'écran, les deux sont identiques.",
       "label": "imbalance vs churn — identical on screen",
       "beats": [
-        { "t": "0-2", "do": "deux sources montrées séparément. RÉEL : des figures fil-de-fer penchent nettement d'un côté (un déséquilibre) → le prix pousse, le tracé est SOLIDE. BRASSAGE : des figures arrivent et repartent dans tous les sens, sans direction → le prix bouge aussi, mais le tracé est POUSSIÈRE." },
-        { "t": "2-3.5", "do": "on SUPERPOSE les deux résultats à l'écran : les deux tracés sont INDISCERNABLES. même amplitude, même allure. rien à la surface ne dit lequel portait une information." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les deux sources qui travaillent en dessous, les deux tracés identiques au-dessus." } ],
+        {
+          "t": "0-2",
+          "do": "deux sources montrées séparément. RÉEL : des figures fil-de-fer penchent nettement d'un côté (un déséquilibre) → le prix pousse, le tracé est SOLIDE. BRASSAGE : des figures arrivent et repartent dans tous les sens, sans direction → le prix bouge aussi, mais le tracé est POUSSIÈRE."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on SUPERPOSE les deux résultats à l'écran : les deux tracés sont INDISCERNABLES. même amplitude, même allure. rien à la surface ne dit lequel portait une information."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les deux sources qui travaillent en dessous, les deux tracés identiques au-dessus."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux sources (déséquilibre / brassage) produisant des tracés indiscernables",
-      "turn": "les deux se ressemblent à l'écran. un seul dit quelque chose." },
-    { "id": "s3",
+      "turn": "les deux se ressemblent à l'écran. un seul dit quelque chose."
+    },
+    {
+      "id": "s3",
       "clarity": "Et l'esprit refuse d'accepter que quelque chose n'ait rien voulu dire. Il est fait pour trouver des causes. Il colle une explication à un mouvement aléatoire, la range comme un motif, et la fois suivante, on agit dessus.",
       "beats": [
-        { "t": "0-2", "do": "un mouvement de POUSSIÈRE (donc sans information) se produit. aussitôt, une EXPLICATION se forme et vient s'y COLLER — bien formée, convaincante, encre nette." },
-        { "t": "2-3.5", "do": "l'ensemble (poussière + explication) est RANGÉ dans un casier étiqueté 'PATTERN', avec un sceau personnel dessus ('je l'ai vu'). aucune vérification n'a eu lieu. la coïncidence vient de recevoir une autorité." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : le motif rangé, scellé, alors que son cœur est de la poussière." } ],
+        {
+          "t": "0-2",
+          "do": "un mouvement de POUSSIÈRE (donc sans information) se produit. aussitôt, une EXPLICATION se forme et vient s'y COLLER — bien formée, convaincante, encre nette."
+        },
+        {
+          "t": "2-3.5",
+          "do": "l'ensemble (poussière + explication) est RANGÉ dans un casier étiqueté 'PATTERN', avec un sceau personnel dessus ('je l'ai vu'). aucune vérification n'a eu lieu. la coïncidence vient de recevoir une autorité."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : le motif rangé, scellé, alors que son cœur est de la poussière."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'explication collée à un mouvement de poussière puis rangée comme motif scellé",
-      "turn": "tu n'as pas appris une règle — tu as mémorisé une coïncidence." },
-    { "id": "s4",
+      "turn": "tu n'as pas appris une règle — tu as mémorisé une coïncidence."
+    },
+    {
+      "id": "s4",
       "clarity": "C'est ainsi qu'une méthode se remplit de règles qui ne marchent pas. Chacune paraît méritée (tu l'as VUE). Mais la plupart reposent sur du mouvement qui n'a jamais été un signal — et ce sont les plus dures à remettre en cause.",
       "note": "LA scene — l'étagère de règles bâtie sur de la poussière.",
       "beats": [
-        { "t": "0-1.5", "do": "une ÉTAGÈRE de règles se remplit, brique après brique, cadence qui accélère. chaque brique porte le sceau personnel ('je l'ai vu de mes yeux'). l'ensemble paraît solide et mérité." },
-        { "t": "1.5-3", "do": "on regarde SOUS l'étagère : la fondation est faite de POUSSIÈRE pour la plupart des briques. seules quelques-unes reposent sur du solide. l'étagère tient en apparence." },
-        { "t": "3-4.5", "do": "point clé : les briques scellées personnellement sont les PLUS DURES à retirer — le sceau les protège de la remise en cause. on retirerait plutôt une bonne règle qu'une mauvaise qu'on a vue soi-même." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : l'étagère pleine sur une fondation de poussière, les sceaux qui la verrouillent." } ],
+        {
+          "t": "0-1.5",
+          "do": "une ÉTAGÈRE de règles se remplit, brique après brique, cadence qui accélère. chaque brique porte le sceau personnel ('je l'ai vu de mes yeux'). l'ensemble paraît solide et mérité."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on regarde SOUS l'étagère : la fondation est faite de POUSSIÈRE pour la plupart des briques. seules quelques-unes reposent sur du solide. l'étagère tient en apparence."
+        },
+        {
+          "t": "3-4.5",
+          "do": "point clé : les briques scellées personnellement sont les PLUS DURES à retirer — le sceau les protège de la remise en cause. on retirerait plutôt une bonne règle qu'une mauvaise qu'on a vue soi-même."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : l'étagère pleine sur une fondation de poussière, les sceaux qui la verrouillent."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'étagère de règles scellées personnellement, bâtie majoritairement sur de la poussière",
-      "turn": "les règles qu'on a vues soi-même sont les dernières qu'on retire." },
-    { "id": "s5",
+      "turn": "les règles qu'on a vues soi-même sont les dernières qu'on retire."
+    },
+    {
+      "id": "s5",
       "clarity": "Relève la barre de ce qui compte comme preuve. Un mouvement n'est une information que s'il se REPRODUIT, à une échelle qui ne peut pas être due au hasard. Vu une fois puis expliqué après coup = une histoire.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : un TEST s'installe devant l'étagère : 'DOES IT REPEAT, BEYOND CHANCE?'. chaque brique doit passer dessous." },
-        { "t": "2-3.5", "do": "les briques passent : celles bâties sur de la poussière se DÉSAGRÈGENT et retournent en particules. celles bâties sur du solide restent, en teal. l'étagère se VIDE massivement — il ne reste que peu de règles, mais elles tiennent." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : l'étagère presque vide, quelques règles teal solides, le test posé devant. immobile. peu de règles, mais vraies." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : un TEST s'installe devant l'étagère : 'DOES IT REPEAT, BEYOND CHANCE?'. chaque brique doit passer dessous."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les briques passent : celles bâties sur de la poussière se DÉSAGRÈGENT et retournent en particules. celles bâties sur du solide restent, en teal. l'étagère se VIDE massivement — il ne reste que peu de règles, mais elles tiennent."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : l'étagère presque vide, quelques règles teal solides, le test posé devant. immobile. peu de règles, mais vraies."
+        }
+      ],
       "camera": "fixe",
       "dod": "le test de répétition qui désagrège les fausses règles et ne laisse que les solides",
-      "fusil_decharge": "le rapport poussière/solide de S1 se résout : presque tout est du bruit — seule la répétition au-delà du hasard sépare un signal d'une histoire." }
+      "fusil_decharge": "le rapport poussière/solide de S1 se résout : presque tout est du bruit — seule la répétition au-delà du hasard sépare un signal d'une histoire."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"LINE\" for the checklist on the traps nobody shows you. Most of what moves on your chart carries no information at all.\n\nSome movement is a real imbalance. The rest is churn — and both look identical on screen. But your mind refuses to accept that something meant nothing, so it attaches an explanation to a random move and files it as a pattern. That's how a method fills with rules built on noise, sealed by the fact that you saw them yourself.\n\nTHE LINE — a move is information only if it repeats beyond chance.\n\n#trading #trader #noise #priceaction #backtesting #daytrading #forex #tradingeducation #process #edge",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'un mouvement n'est une information que s'il se reproduit au-delà du hasard' — un critère de tri applicable à chaque règle qu'on possède.",
     "interdits": "aucun chiffre; les figures = fil-de-fer neutres; gris/poussière = absence d'information (M-couleur); pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · signal-solide/teal #1E5F6E · bruit/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

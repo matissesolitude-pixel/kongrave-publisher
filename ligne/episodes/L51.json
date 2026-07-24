@@ -10,59 +10,129 @@
     "So confirm the fill, not the click. The click is your request. The fill is the reality. Before you manage a trade, look at what you actually own — because every calculation you make after that is built on that number, and it's the one number you assumed instead of checking."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il passe un ordre et il est dedans. Sauf que non — pas en entier. Une partie a rempli, l'autre non, et il gère une position moitié moins grosse qu'il ne croit.",
       "question": "WHAT DID YOU ACTUALLY GET?",
       "emotion_lever": "CHOC + CURIOSITÉ — dès la frame 0, un emplacement d'ordre à MOITIÉ REMPLI, et par-dessus, un plan déjà tracé sur la totalité — y compris sur la moitié vide. Le décalage saute aux yeux.",
       "cast": {
-        "slot": { "type": "block", "note": "l'ordre demandé : un emplacement, moitié teal plein, moitié contour vide" },
-        "plan": { "type": "block", "note": "un plan (risque/cible) tracé par-dessus la TOTALITÉ. le fusil = la moitié creuse sous le plan." } },
+        "slot": {
+          "type": "block",
+          "note": "l'ordre demandé : un emplacement, moitié teal plein, moitié contour vide"
+        },
+        "plan": {
+          "type": "block",
+          "note": "un plan (risque/cible) tracé par-dessus la TOTALITÉ. le fusil = la moitié creuse sous le plan."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : un emplacement d'ordre — la MOITIÉ est remplie en teal plein, l'autre moitié n'est qu'un CONTOUR VIDE. Et PAR-DESSUS, un plan (une équerre risque/cible) est déjà tracé sur la TOTALITÉ de l'emplacement, y compris la moitié creuse. Le décalage entre ce qu'on possède et ce sur quoi on calcule est visible instantanément." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : la moitié pleine respire, la moitié creuse reste vide, le plan tracé dessus vibre légèrement. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un emplacement d'ordre — la MOITIÉ est remplie en teal plein, l'autre moitié n'est qu'un CONTOUR VIDE. Et PAR-DESSUS, un plan (une équerre risque/cible) est déjà tracé sur la TOTALITÉ de l'emplacement, y compris la moitié creuse. Le décalage entre ce qu'on possède et ce sur quoi on calcule est visible instantanément."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : la moitié pleine respire, la moitié creuse reste vide, le plan tracé dessus vibre légèrement. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'emplacement moitié plein + le plan tracé sur la totalité, dès la frame 0",
-      "fusil": "la moitié creuse sous le plan — on va voir ce qu'elle coûte." },
-    { "id": "s2",
+      "fusil": "la moitié creuse sous le plan — on va voir ce qu'elle coûte."
+    },
+    {
+      "id": "s2",
       "clarity": "Un ordre n'est pas un événement unique : c'est une DEMANDE, confrontée à ce qui est disponible à cet instant. S'il n'y a pas assez en face à ton prix, une partie remplit et le reste attend — ou n'arrive jamais.",
       "label": "you asked for a size — you received an answer",
       "beats": [
-        { "t": "0-2", "do": "la DEMANDE part (un bloc teal de taille voulue) vers l'autre côté. en face, la disponibilité est visiblement PLUS PETITE que la demande — il n'y a pas assez." },
-        { "t": "2-3.5", "do": "l'appariement se fait : la partie qui trouve preneur SE REMPLIT (teal plein), le reste reste en CONTOUR (non rempli) — il attend, puis s'efface. deux objets distincts naissent : la demande et la réponse." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la demande (en pointillé, ce qu'on voulait) à côté de la réponse (plein, ce qu'on a). l'écart visible." } ],
+        {
+          "t": "0-2",
+          "do": "la DEMANDE part (un bloc teal de taille voulue) vers l'autre côté. en face, la disponibilité est visiblement PLUS PETITE que la demande — il n'y a pas assez."
+        },
+        {
+          "t": "2-3.5",
+          "do": "l'appariement se fait : la partie qui trouve preneur SE REMPLIT (teal plein), le reste reste en CONTOUR (non rempli) — il attend, puis s'efface. deux objets distincts naissent : la demande et la réponse."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la demande (en pointillé, ce qu'on voulait) à côté de la réponse (plein, ce qu'on a). l'écart visible."
+        }
+      ],
       "camera": "fixe",
       "dod": "la demande confrontée à une disponibilité plus petite, une partie remplie, le reste vide",
-      "turn": "tu as demandé une taille. tu as reçu une réponse." },
-    { "id": "s3",
+      "turn": "tu as demandé une taille. tu as reçu une réponse."
+    },
+    {
+      "id": "s3",
       "clarity": "Le problème : tout ce qui suit suppose que tu as eu ce que tu as demandé. Le risque, la cible, et ta perception du trade sont calculés sur une taille qui n'existe pas.",
       "beats": [
-        { "t": "0-2", "do": "trois calculs se construisent au-dessus de l'emplacement, tous alignés sur la TOTALITÉ : 'risk', 'target', et ta perception du trade. tous les trois s'appuient sur la moitié creuse." },
-        { "t": "2-3.5", "do": "la moitié creuse se SURLIGNE sous eux → les trois calculs vacillent en même temps, faux du même montant. une seule hypothèse non vérifiée fausse tout l'étage du dessus." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les trois calculs posés sur le vide, instables." } ],
+        {
+          "t": "0-2",
+          "do": "trois calculs se construisent au-dessus de l'emplacement, tous alignés sur la TOTALITÉ : 'risk', 'target', et ta perception du trade. tous les trois s'appuient sur la moitié creuse."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la moitié creuse se SURLIGNE sous eux → les trois calculs vacillent en même temps, faux du même montant. une seule hypothèse non vérifiée fausse tout l'étage du dessus."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les trois calculs posés sur le vide, instables."
+        }
+      ],
       "camera": "fixe",
       "dod": "les trois calculs (risque, cible, perception) construits sur la moitié creuse",
-      "turn": "une seule hypothèse fausse en amont fausse tout ce qui suit." },
-    { "id": "s4",
+      "turn": "une seule hypothèse fausse en amont fausse tout ce qui suit."
+    },
+    {
+      "id": "s4",
       "clarity": "Et ça coupe dans les deux sens : moitié à l'ENTRÉE = le gagnant paie moitié. Moitié à la SORTIE = tu tiens encore alors que tu te croyais à plat, et ce qui suit t'appartient.",
       "note": "LA scene — les deux sens du remplissage partiel.",
       "beats": [
-        { "t": "0-1.5", "do": "CAS ENTRÉE : le trade gagne bien, la colonne de gain monte haut → mais seule la MOITIÉ est encaissée (l'autre moitié du gain reste en contour, jamais gagnée, elle s'efface). le gagnant a payé moitié." },
-        { "t": "1.5-3", "do": "CAS SORTIE : l'ordre de sortie ne remplit qu'à moitié → la position teal est toujours là, à moitié, alors que le regard s'est DÉTOURNÉ (on se croyait à plat, on ne surveille plus)." },
-        { "t": "3-4.5", "do": "et le marché bouge : une tranche grise arrive sur cette position non surveillée. elle t'appartenait, sans que tu le saches. 'the expensive version is the one where you'd stopped paying attention'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : le gain à moitié encaissé d'un côté, la position fantôme entamée de l'autre." } ],
+        {
+          "t": "0-1.5",
+          "do": "CAS ENTRÉE : le trade gagne bien, la colonne de gain monte haut → mais seule la MOITIÉ est encaissée (l'autre moitié du gain reste en contour, jamais gagnée, elle s'efface). le gagnant a payé moitié."
+        },
+        {
+          "t": "1.5-3",
+          "do": "CAS SORTIE : l'ordre de sortie ne remplit qu'à moitié → la position teal est toujours là, à moitié, alors que le regard s'est DÉTOURNÉ (on se croyait à plat, on ne surveille plus)."
+        },
+        {
+          "t": "3-4.5",
+          "do": "et le marché bouge : une tranche grise arrive sur cette position non surveillée. elle t'appartenait, sans que tu le saches. 'the expensive version is the one where you'd stopped paying attention'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : le gain à moitié encaissé d'un côté, la position fantôme entamée de l'autre."
+        }
+      ],
       "camera": "fixe",
       "dod": "gain à moitié encaissé (entrée) + position résiduelle non surveillée qui prend une perte (sortie)",
-      "turn": "à l'entrée tu gagnes moitié, à la sortie tu perds ce que tu ne surveillais plus." },
-    { "id": "s5",
+      "turn": "à l'entrée tu gagnes moitié, à la sortie tu perds ce que tu ne surveillais plus."
+    },
+    {
+      "id": "s5",
       "clarity": "Confirme le REMPLISSAGE, pas le clic. Le clic est ta demande, le remplissage est la réalité. Avant de gérer un trade, regarde ce que tu possèdes VRAIMENT.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : deux objets bien séparés s'affichent, étiquetés. 'THE CLICK' (une demande, en pointillé) et 'THE FILL' (la réalité, en plein). ils ne sont PAS la même chose." },
-        { "t": "2-3.5", "do": "une VÉRIFICATION s'insère entre les deux (un regard qui descend sur le fill avant toute gestion). puis le plan est RETRACÉ — cette fois exactement sur la taille réellement possédée. les trois calculs se reposent sur du plein, stables." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : le clic et le fill distingués, le plan aligné sur le fill réel. immobile. vérifier avant de gérer." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : deux objets bien séparés s'affichent, étiquetés. 'THE CLICK' (une demande, en pointillé) et 'THE FILL' (la réalité, en plein). ils ne sont PAS la même chose."
+        },
+        {
+          "t": "2-3.5",
+          "do": "une VÉRIFICATION s'insère entre les deux (un regard qui descend sur le fill avant toute gestion). puis le plan est RETRACÉ — cette fois exactement sur la taille réellement possédée. les trois calculs se reposent sur du plein, stables."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : le clic et le fill distingués, le plan aligné sur le fill réel. immobile. vérifier avant de gérer."
+        }
+      ],
       "camera": "fixe",
       "dod": "le clic et le fill séparés + le plan retracé sur la taille réellement possédée",
-      "fusil_decharge": "la moitié creuse de S1 se résout : le plan doit être tracé sur le fill, pas sur la demande — confirmer ce qu'on possède avant de gérer." }
+      "fusil_decharge": "la moitié creuse de S1 se résout : le plan doit être tracé sur le fill, pas sur la demande — confirmer ce qu'on possède avant de gérer."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"LINE\" for the checklist on what your order really did. You can spend an hour managing a position that's half the size you think it is.\n\nAn order is a request matched against whatever is available. If there isn't enough on the other side, part fills and the rest doesn't. But your risk, your target and your whole sense of the trade were calculated on the full size — and it cuts both ways: half in means your winner pays half, half out means you're still holding when you thought you were flat.\n\nTHE LINE — confirm the fill, not the click.\n\n#trading #trader #execution #orderflow #liquidity #daytrading #forex #tradingeducation #riskmanagement #priceaction",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'confirme le fill, pas le clic' — un geste concret avant toute gestion de trade.",
     "interdits": "aucun chiffre; gris = perte (M-couleur); pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

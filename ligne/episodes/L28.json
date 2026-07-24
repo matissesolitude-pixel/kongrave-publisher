@@ -10,69 +10,159 @@
     "So before you hold anything for the long haul, check the direction of the funding. Not just where price is going — which way the holding itself is pushing. The best trades pay you to be patient. The worst ones bleed you slowly while you wait to be right. Same position, opposite drift. Know which one you're in."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Deux traders tiennent la même position, mais l'un est payé et l'autre paie, juste pour tenir. Même trade — d'où vient l'argent ?",
       "question": "SAME TRADE. WHY IS ONE PAID TO HOLD?",
       "cast": {
-        "gA": { "type": "gauge", "x": 340, "note": "position A teal" },
-        "gB": { "type": "gauge", "x": 740, "note": "position B teal, identique en apparence. le fusil = leur dérive opposée cachée." } },
+        "gA": {
+          "type": "gauge",
+          "x": 340,
+          "note": "position A teal"
+        },
+        "gB": {
+          "type": "gauge",
+          "x": 740,
+          "note": "position B teal, identique en apparence. le fusil = leur dérive opposée cachée."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: deux jauges teal IDENTIQUES côte à côte, même sens, même taille. jumelles parfaites." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: sous A, une petite flèche discrète pointe vers le HAUT (reçoit); sous B, une vers le BAS (paie) — à peine visibles, elles se dévoileront. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: deux jauges teal IDENTIQUES côte à côte, même sens, même taille. jumelles parfaites."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: sous A, une petite flèche discrète pointe vers le HAUT (reçoit); sous B, une vers le BAS (paie) — à peine visibles, elles se dévoileront. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "deux jauges identiques + deux micro-flèches opposées qui se devinent dessous",
-      "fusil": "les deux jumelles avec une dérive cachée opposée — on va la révéler." },
-    { "id": "s2",
+      "fusil": "les deux jumelles avec une dérive cachée opposée — on va la révéler.",
+      "hook_gag": {
+        "primitive": "stretchedBy",
+        "agent": "les deux dérives opposées (payé d'un côté, chargé de l'autre)",
+        "reaction": "curieux",
+        "temps": "en cours",
+        "raccord": "il se stabilise au centre et désigne les deux jumelles",
+        "lien_sujet": "être tiré dans deux sens par le funding = le sujet exact"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Tenir en levier = emprunter pour tenir. L'emprunt a un sens. Parfois tu empruntes le côté cher (tu paies la nuit), parfois tu tiens le côté qu'on veut t'emprunter (tu es payé). C'est le funding, il s'inverse selon ton sens.",
       "label": "the funding flips with your side",
       "beats": [
-        { "t": "0-2", "do": "sous chaque jauge, un petit MÉCANISME se révèle: deux plateaux (le côté emprunté / le côté prêté). pour A, la jauge tient le côté 'prêté' → une petite encoche teal ENTRE (elle reçoit). pour B, la jauge tient le côté 'emprunté cher' → une encoche SORT (elle paie)." },
-        { "t": "2-3.5", "do": "les deux flèches de S1 se CONFIRMENT: A reçoit (flèche haut teal), B paie (flèche bas grise). 'it flips depending which way you lean'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: A reçoit une micro-encoche par cycle, B en perd une. le mécanisme tourne." } ],
+        {
+          "t": "0-2",
+          "do": "sous chaque jauge, un petit MÉCANISME se révèle: deux plateaux (le côté emprunté / le côté prêté). pour A, la jauge tient le côté 'prêté' → une petite encoche teal ENTRE (elle reçoit). pour B, la jauge tient le côté 'emprunté cher' → une encoche SORT (elle paie)."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les deux flèches de S1 se CONFIRMENT: A reçoit (flèche haut teal), B paie (flèche bas grise). 'it flips depending which way you lean'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: A reçoit une micro-encoche par cycle, B en perd une. le mécanisme tourne."
+        }
+      ],
       "camera": "fixe",
       "dod": "le mécanisme funding: A reçoit une encoche, B en paie une",
-      "turn": "tenir, c'est emprunter — et selon ton côté, tu paies ou tu es payé." },
-    { "id": "s3",
+      "turn": "tenir, c'est emprunter — et selon ton côté, tu paies ou tu es payé."
+    },
+    {
+      "id": "s3",
       "clarity": "La plupart ne vérifient jamais leur côté. Ils fixent le prix (montera-t-il ?) et ignorent que tenir a un coût ou une récompense, chaque jour, que le prix bouge ou non.",
       "beats": [
-        { "t": "0-2", "do": "sur les deux jauges, un gros regard (l'attention du trader) est ENTIÈREMENT braqué sur le PRIX (une flèche up/down au-dessus, clignotante) — le mécanisme funding en dessous est dans l'angle mort, ignoré." },
-        { "t": "2-3.5", "do": "le prix reste PLAT (ne bouge pas) — pourtant, dessous, A continue de recevoir et B de payer, cycle après cycle. la dérive tourne MÊME quand le prix ne fait rien. 'ticking every day whether price moves or not'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: prix plat en haut, funding qui tourne en bas (A monte doucement, B descend doucement) — l'angle mort." } ],
+        {
+          "t": "0-2",
+          "do": "sur les deux jauges, un gros regard (l'attention du trader) est ENTIÈREMENT braqué sur le PRIX (une flèche up/down au-dessus, clignotante) — le mécanisme funding en dessous est dans l'angle mort, ignoré."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le prix reste PLAT (ne bouge pas) — pourtant, dessous, A continue de recevoir et B de payer, cycle après cycle. la dérive tourne MÊME quand le prix ne fait rien. 'ticking every day whether price moves or not'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: prix plat en haut, funding qui tourne en bas (A monte doucement, B descend doucement) — l'angle mort."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'attention sur le prix (plat) pendant que le funding tourne, ignoré, en dessous",
-      "turn": "on fixe le prix et on ignore la dérive qui tourne, prix immobile ou non." },
-    { "id": "s4",
+      "turn": "on fixe le prix et on ignore la dérive qui tourne, prix immobile ou non."
+    },
+    {
+      "id": "s4",
       "clarity": "Sur un trade rapide, le funding est négligeable. Sur des semaines, il compose. Payé pour attendre = vent arrière quotidien. Chargé = tu dois avoir raison de PLUS pour compenser.",
       "note": "LA scene — la dérive qui compose sur la durée.",
       "beats": [
-        { "t": "0-1.5", "do": "les deux jauges, tenues LONGTEMPS (des cycles jour/nuit défilent, cadence qui accélère). A reçoit à chaque cycle → une COLONNE teal pousse SOUS elle (vent arrière qui s'accumule)." },
-        { "t": "1.5-3", "do": "B paie à chaque cycle → une DETTE grise s'accumule sous elle, et pour atteindre le seuil de rentabilité, B doit désormais monter BEAUCOUP plus haut (une barre 'break-even' recule au-dessus de B). 'right by MORE just to break even'." },
-        { "t": "3-4", "do": "après des semaines: A a un socle teal qui la POUSSE, B traîne une dette grise qui la RETIENT. même position au départ, dérives OPPOSÉES accumulées." },
-        { "t": "4-14", "do": "TENUE VIVANTE longue: A portée par son vent arrière, B freinée par sa dette. l'écart s'est creusé sans qu'aucun prix ne bouge différemment." } ],
+        {
+          "t": "0-1.5",
+          "do": "les deux jauges, tenues LONGTEMPS (des cycles jour/nuit défilent, cadence qui accélère). A reçoit à chaque cycle → une COLONNE teal pousse SOUS elle (vent arrière qui s'accumule)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "B paie à chaque cycle → une DETTE grise s'accumule sous elle, et pour atteindre le seuil de rentabilité, B doit désormais monter BEAUCOUP plus haut (une barre 'break-even' recule au-dessus de B). 'right by MORE just to break even'."
+        },
+        {
+          "t": "3-4",
+          "do": "après des semaines: A a un socle teal qui la POUSSE, B traîne une dette grise qui la RETIENT. même position au départ, dérives OPPOSÉES accumulées."
+        },
+        {
+          "t": "4-14",
+          "do": "TENUE VIVANTE longue: A portée par son vent arrière, B freinée par sa dette. l'écart s'est creusé sans qu'aucun prix ne bouge différemment."
+        }
+      ],
       "camera": "fixe",
       "dod": "A avec un socle-vent arrière qui pousse, B avec une dette qui recule son break-even",
-      "turn": "sur la durée, la dérive compose: l'un poussé, l'autre freiné, même trade." },
-    { "id": "s5",
+      "turn": "sur la durée, la dérive compose: l'un poussé, l'autre freiné, même trade."
+    },
+    {
+      "id": "s5",
       "clarity": "Avant de tenir longtemps, vérifie le SENS du funding. Pas juste où va le prix — dans quel sens le fait de tenir te pousse. Les meilleurs trades paient ta patience.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: une jauge unique. avant de la tenir, un regard descend VÉRIFIER le mécanisme funding en dessous (pas seulement le prix au-dessus): la flèche de dérive s'affiche clairement — haut (payé) ou bas (chargé)." },
-        { "t": "2-3.5", "do": "on ORIENTE le choix vers le vent arrière: la jauge se pose sur le côté 'payé' (flèche haut teal), un petit socle teal apparaît dessous ('pays you to be patient'). le contraire (dette grise) est montré barré à côté." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la jauge avec sa dérive vérifiée et favorable, le socle teal qui pousse. immobile. connaître le sens de la dérive." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: une jauge unique. avant de la tenir, un regard descend VÉRIFIER le mécanisme funding en dessous (pas seulement le prix au-dessus): la flèche de dérive s'affiche clairement — haut (payé) ou bas (chargé)."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on ORIENTE le choix vers le vent arrière: la jauge se pose sur le côté 'payé' (flèche haut teal), un petit socle teal apparaît dessous ('pays you to be patient'). le contraire (dette grise) est montré barré à côté."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la jauge avec sa dérive vérifiée et favorable, le socle teal qui pousse. immobile. connaître le sens de la dérive."
+        }
+      ],
       "camera": "fixe",
       "dod": "le regard qui vérifie le funding sous la jauge + le choix du vent arrière",
-      "fusil_decharge": "les jumelles de S1, dérives opposées cachées, se résolvent: vérifier le sens du funding avant de tenir — les meilleurs trades paient la patience (S5)." }
+      "fusil_decharge": "les jumelles de S1, dérives opposées cachées, se résolvent: vérifier le sens du funding avant de tenir — les meilleurs trades paient la patience (S5)."
+    }
   ],
   "total": 84.0,
-  "caption": "Comment \"MAP\" for the free beta of my indicator that shows where price is actually being pulled. The best trades pay you to be patient. The worst ones bleed you slowly while you wait.\n\nHold a leveraged position and you're borrowing — and borrowing has a direction. Some trades pay you to hold overnight, others charge you, ticking every day whether price moves or not. On a long hold it compounds: a tailwind, or a drift you have to fight just to break even.\n\nTHE LINE — same position, opposite drift. Know which one you're in.\n\n#trading #trader #swap #funding #daytrading #forex #tradingeducation #swingtrading #carrytrade #priceaction",
+  "caption": "Comment \"MAP\" for the free beta of my indicator. The best trades pay you to be patient. The worst ones bleed you while you wait.\n\nHold a leveraged position and you're borrowing — and borrowing has a direction. Some trades pay you to hold overnight, others charge you, ticking every day whether price moves or not. On a long hold it compounds: a tailwind, or a drift you have to fight just to break even.\n\nTHE LINE — same position, opposite drift. Know which one you're in.\n\n#trading #trader #swap #funding #daytrading #forex #tradingeducation #swingtrading #carrytrade #priceaction",
   "_rules": {
     "doctrine": "funding/swap directionnel démystifié (prolonge L9 the fee that waits, mais sur l'ASYMÉTRIE payé/chargé): tenir = emprunter, le sens décide, ça compose sur la durée. Mécanique, factuel. Pas de nom de broker/produit spécifique.",
     "cta_keyword": "MAP → indicateur 3T ENGINE (whop.com/otp-consulting/3t-engine-indicator)",
-    "caption_structure": "ligne 1 = accroche + CTA MAP visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "les jumelles à dérive cachée (S1), le mécanisme funding (S2), l'angle mort (S3), la dérive qui compose (S4), résolue par vérifier le sens (S5).",
     "interdits": "aucun chiffre; teal = reçu/vent arrière, gris = payé/dette (M-couleur, la dette est une forme de perte de valeur — pas de rouge); pas de brun; TOI=jauge teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · reçu/teal #1E5F6E · dette/gris #474D50",
     "vie_continue": "regle 5: le mécanisme funding tourne, les cycles jour/nuit défilent, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (MAP). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "Same position, opposite drift. Comment \"MAP\" and I'll send you the free beta of my indicator — see where price is pulled 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

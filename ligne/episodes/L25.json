@@ -10,69 +10,157 @@
     "So the rule isn't don't have a stop. It's don't move it once it's live. Set it where you're wrong, and let the calm version of you win the argument with the scared one. Your stop isn't the trade failing. It's the one part of the trade you already got right."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il a placé son stop calmement, puis le prix s'en approche — et juste avant qu'il touche, il le déplace. Qu'a-t-il fait ?",
       "question": "WHAT HAPPENS WHEN YOU MOVE YOUR STOP?",
       "cast": {
-        "gauge": { "type": "gauge", "note": "ta position = jauge teal" },
-        "stopline": { "type": "hline", "note": "le stop = un trait horizontal net, posé tôt. le fusil = ce trait qu'on va déplacer." } },
+        "gauge": {
+          "type": "gauge",
+          "note": "ta position = jauge teal"
+        },
+        "stopline": {
+          "type": "hline",
+          "note": "le stop = un trait horizontal net, posé tôt. le fusil = ce trait qu'on va déplacer."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: la jauge teal, et un trait net (le stop) posé à distance en dessous — placé fermement, calmement. un petit cadenas teal dessus (une promesse)." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: le prix commence à descendre vers le trait, le cadenas sur le stop pulse doucement. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: la jauge teal, et un trait net (le stop) posé à distance en dessous — placé fermement, calmement. un petit cadenas teal dessus (une promesse)."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: le prix commence à descendre vers le trait, le cadenas sur le stop pulse doucement. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la jauge + le stop posé tôt avec son cadenas (la promesse)",
-      "fusil": "le stop verrouillé calmement — on va le voir bouger sous la peur." },
-    { "id": "s2",
+      "fusil": "le stop verrouillé calmement — on va le voir bouger sous la peur.",
+      "hook_gag": {
+        "primitive": "act",
+        "agent": "le trait du stop, qu'il tente de tirer comme une corde",
+        "reaction": "vexé",
+        "temps": "en plein geste",
+        "raccord": "le cadenas tient, il lâche et s'écarte",
+        "lien_sujet": "déplacer le stop est précisément ce que l'épisode interdit"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Un stop est une promesse faite quand on pense clair : si le prix atteint ici, j'avais tort, je sors. Décidé avant que peur et espoir entrent.",
       "label": "a promise made while thinking clearly",
       "beats": [
-        { "t": "0-2", "do": "au moment où le stop est posé, deux petites présences sont ABSENTES de la scène (deux emplacements vides marqués 'fear' / 'hope', hors du cadre de décision). le stop est placé dans le CALME, avant elles." },
-        { "t": "2-3.5", "do": "le trait du stop se solidifie, net, avec le cadenas: 'the clearest version of you knew something'. c'est la décision propre." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: le stop ferme, les deux présences encore absentes. la clarté d'avant." } ],
+        {
+          "t": "0-2",
+          "do": "au moment où le stop est posé, deux petites présences sont ABSENTES de la scène (deux emplacements vides marqués 'fear' / 'hope', hors du cadre de décision). le stop est placé dans le CALME, avant elles."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le trait du stop se solidifie, net, avec le cadenas: 'the clearest version of you knew something'. c'est la décision propre."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: le stop ferme, les deux présences encore absentes. la clarté d'avant."
+        }
+      ],
       "camera": "fixe",
       "dod": "le stop posé dans le calme, fear/hope encore absents",
-      "turn": "le stop est la décision prise AVANT que la peur entre — c'est sa force." },
-    { "id": "s3",
+      "turn": "le stop est la décision prise AVANT que la peur entre — c'est sa force."
+    },
+    {
+      "id": "s3",
       "clarity": "Quand le prix approche et qu'on glisse le stop plus loin, on ne gère pas le trade : on remplace sa version la plus claire par la plus effrayée.",
       "beats": [
-        { "t": "0-1.5", "do": "le prix arrive TOUT PRÈS du stop. soudain les deux présences 'fear'/'hope' ENTRENT dans la scène (elles s'allument, envahissent le cadre de décision)." },
-        { "t": "1.5-3", "do": "sous leur poussée, le cadenas SAUTE et le trait du stop GLISSE vers le bas, plus loin — 'just a little more room'. le stop calme est écrasé par le stop paniqué." },
-        { "t": "3-13", "do": "TENUE VIVANTE: le stop déplacé plus bas, l'ancienne position en pointille clair (on VOIT le déplacement), fear/hope aux commandes." } ],
+        {
+          "t": "0-1.5",
+          "do": "le prix arrive TOUT PRÈS du stop. soudain les deux présences 'fear'/'hope' ENTRENT dans la scène (elles s'allument, envahissent le cadre de décision)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "sous leur poussée, le cadenas SAUTE et le trait du stop GLISSE vers le bas, plus loin — 'just a little more room'. le stop calme est écrasé par le stop paniqué."
+        },
+        {
+          "t": "3-13",
+          "do": "TENUE VIVANTE: le stop déplacé plus bas, l'ancienne position en pointille clair (on VOIT le déplacement), fear/hope aux commandes."
+        }
+      ],
       "camera": "fixe",
       "dod": "le stop qui glisse plus loin sous fear/hope, l'ancienne position en fantôme",
-      "turn": "déplacer le stop = laisser la version effrayée écraser la version claire." },
-    { "id": "s4",
+      "turn": "déplacer le stop = laisser la version effrayée écraser la version claire."
+    },
+    {
+      "id": "s4",
       "clarity": "Un stop déplacé une fois se déplacera encore. On s'est appris que la ligne n'est pas réelle. La petite perte refusée devient moyenne, puis totale.",
       "note": "LA scene — l'escalade du stop qui recule.",
       "beats": [
-        { "t": "0-1.5", "do": "le prix rattrape le stop déplacé → au lieu de sortir, le stop GLISSE ENCORE (il a appris à bouger). puis encore. cadence qui accélère: prix-approche / stop-recule, prix-approche / stop-recule." },
-        { "t": "1.5-3.5", "do": "à chaque recul, la jauge teal se délave un peu plus (la perte grandit): scratch → moyenne → grosse. les anciennes positions du stop laissent une TRAÎNÉE de fantômes derrière, un escalier vers le bas." },
-        { "t": "3.5-4.5", "do": "dernier recul: le stop atteint le fond, la jauge s'effondre ENTIÈREMENT en gris. 'takes the whole account'. à côté, rappelé en pointille: où le PREMIER stop était — une éraflure minuscule. l'écart est vertigineux." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue: l'escalier de stops fantômes, la jauge vidée, et le premier stop (l'éraflure évitée) en haut. le contraste EST la leçon." } ],
+        {
+          "t": "0-1.5",
+          "do": "le prix rattrape le stop déplacé → au lieu de sortir, le stop GLISSE ENCORE (il a appris à bouger). puis encore. cadence qui accélère: prix-approche / stop-recule, prix-approche / stop-recule."
+        },
+        {
+          "t": "1.5-3.5",
+          "do": "à chaque recul, la jauge teal se délave un peu plus (la perte grandit): scratch → moyenne → grosse. les anciennes positions du stop laissent une TRAÎNÉE de fantômes derrière, un escalier vers le bas."
+        },
+        {
+          "t": "3.5-4.5",
+          "do": "dernier recul: le stop atteint le fond, la jauge s'effondre ENTIÈREMENT en gris. 'takes the whole account'. à côté, rappelé en pointille: où le PREMIER stop était — une éraflure minuscule. l'écart est vertigineux."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue: l'escalier de stops fantômes, la jauge vidée, et le premier stop (l'éraflure évitée) en haut. le contraste EST la leçon."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'escalier de stops qui reculent + la jauge vidée vs le premier stop (éraflure)",
-      "turn": "la ligne qui bouge une fois bouge toujours — l'éraflure devient le compte entier." },
-    { "id": "s5",
+      "turn": "la ligne qui bouge une fois bouge toujours — l'éraflure devient le compte entier."
+    },
+    {
+      "id": "s5",
       "clarity": "La règle n'est pas 'pas de stop', c'est 'ne le bouge pas une fois actif'. Place-le où tu as tort, et laisse le calme gagner contre la peur.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: retour à la jauge + stop posé + cadenas. le prix approche, fear/hope tentent d'entrer et de pousser le trait — mais cette fois le CADENAS TIENT, le trait NE BOUGE PAS. la version calme gagne l'argument." },
-        { "t": "2-3.5", "do": "le prix touche le stop, la jauge sort PROPREMENT (une petite tranche grise, une éraflure, contrôlée) — et la jauge restante, à 95%, se redresse, intacte, prête pour la suite. 'the one part you already got right'." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: le stop honoré, le cadenas intact, la jauge quasi pleine sauvée. immobile. laisser le calme gagner." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: retour à la jauge + stop posé + cadenas. le prix approche, fear/hope tentent d'entrer et de pousser le trait — mais cette fois le CADENAS TIENT, le trait NE BOUGE PAS. la version calme gagne l'argument."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le prix touche le stop, la jauge sort PROPREMENT (une petite tranche grise, une éraflure, contrôlée) — et la jauge restante, à 95%, se redresse, intacte, prête pour la suite. 'the one part you already got right'."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: le stop honoré, le cadenas intact, la jauge quasi pleine sauvée. immobile. laisser le calme gagner."
+        }
+      ],
       "camera": "fixe",
       "dod": "le stop qui tient sous fear/hope, la sortie propre, la jauge sauvée à 95%",
-      "fusil_decharge": "le stop verrouillé de S1, écrasé par la peur (S3) et fuyant à l'infini (S4), se résout: honoré, il n'était qu'une éraflure — la seule chose déjà juste (S5)." }
+      "fusil_decharge": "le stop verrouillé de S1, écrasé par la peur (S3) et fuyant à l'infini (S4), se résout: honoré, il n'était qu'une éraflure — la seule chose déjà juste (S5)."
+    }
   ],
   "total": 82.0,
-  "caption": "Comment \"PROFILE\" to find out what type of trader you are and where it costs you. The exit you honored costs a scratch. The one you keep moving takes the whole account.\n\nA stop is a promise made while thinking clearly — before fear and hope enter the room. Move it once and you've taught yourself the line isn't real. It bends every time you push, until the small loss you refused becomes the whole account.\n\nTHE LINE — your stop isn't the trade failing. It's the one part you already got right.\n\n#trading #trader #tradingpsychology #stoploss #discipline #daytrading #forex #tradingeducation #riskmanagement #mindset",
+  "caption": "Comment \"PROFILE\" to find your trader type. The exit you honored costs a scratch. The one you keep moving takes the whole account.\n\nA stop is a promise made while thinking clearly — before fear and hope enter the room. Move it once and you've taught yourself the line isn't real. It bends every time you push, until the small loss you refused becomes the whole account.\n\nTHE LINE — your stop isn't the trade failing. It's the one part you already got right.\n\n#trading #trader #tradingpsychology #stoploss #discipline #daytrading #forex #tradingeducation #riskmanagement #mindset",
   "_rules": {
     "doctrine": "déplacer son stop, en psycho MÉCANIQUE: le stop = trait + cadenas (promesse), fear/hope = présences qui entrent et poussent, l'escalade = escalier de stops fantômes. Émotion par objets. Garde-fou: le pire = jauge vidée/compte épuisé, JAMAIS de dette.",
     "cta_keyword": "PROFILE → LTTI (whop.com/otp-consulting/profil-de-trader)",
-    "caption_structure": "ligne 1 = accroche + CTA PROFILE visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "le stop verrouillé (S1), promesse dans le calme (S2), écrasé par fear/hope (S3), l'escalier qui vide tout (S4), résolu en stop honoré (S5).",
     "interdits": "aucun chiffre; gris = perte/délavage (M-couleur), pas de rouge; pas de brun; fear/hope = présences abstraites (petits ronds encre pulsants), PAS des visages; TOI=jauge teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "vie_continue": "regle 5: le prix descend, le cadenas pulse, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (PROFILE). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "The exit you keep moving takes the whole account. Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

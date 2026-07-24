@@ -10,59 +10,129 @@
     "So before you add a position, ask what would have to happen for this one and the ones you already hold to lose together. If you can answer that in a single sentence, you don't have separate trades. You have one bet — and you should size it as one."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il a trois trades. Noms différents, graphes différents, trois décisions séparées. Ça semble diversifié. Puis une seule chose arrive, et les trois perdent en même temps.",
       "question": "THREE TRADES. OR ONE?",
       "emotion_lever": "CURIOSITÉ + TENSION — dès la frame 0, trois positions bien séparées en haut, mais trois fils qui descendent et convergent vers UNE SEULE ancre cachée en bas. La racine commune inquiète.",
       "cast": {
-        "positions": { "type": "gauge", "note": "trois positions teal, bien séparées, sur trois zones distinctes" },
-        "anchor": { "type": "block", "note": "UNE ancre unique en bas, reliée aux trois par trois fils. le fusil = cette racine commune." } },
+        "positions": {
+          "type": "gauge",
+          "note": "trois positions teal, bien séparées, sur trois zones distinctes"
+        },
+        "anchor": {
+          "type": "block",
+          "note": "UNE ancre unique en bas, reliée aux trois par trois fils. le fusil = cette racine commune."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : trois positions teal bien SÉPARÉES en haut du cadre, sur trois zones distinctes — l'image même de la diversification. MAIS de chacune descend un FIL, et les trois fils CONVERGENT vers une seule ancre encre en bas, déjà visible. La racine commune est là dès la première image, et elle contredit la séparation." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : les trois positions respirent séparément, mais les fils vibrent à l'unisson — ils sont reliés. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : trois positions teal bien SÉPARÉES en haut du cadre, sur trois zones distinctes — l'image même de la diversification. MAIS de chacune descend un FIL, et les trois fils CONVERGENT vers une seule ancre encre en bas, déjà visible. La racine commune est là dès la première image, et elle contredit la séparation."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : les trois positions respirent séparément, mais les fils vibrent à l'unisson — ils sont reliés. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "trois positions séparées reliées par trois fils à une seule ancre, dès la frame 0",
-      "fusil": "l'ancre commune — on va voir ce qui arrive quand elle bouge." },
-    { "id": "s2",
+      "fusil": "l'ancre commune — on va voir ce qui arrive quand elle bouge."
+    },
+    {
+      "id": "s2",
       "clarity": "Les marchés ne sont pas indépendants. Beaucoup sont poussés par la même force sous-jacente. Trois positions penchées du même côté sur le même moteur ne sont pas trois trades : c'est un trade en trois costumes, à trois fois la taille.",
       "label": "one trade in three costumes",
       "beats": [
-        { "t": "0-2", "do": "l'ancre se révèle : c'est un MOTEUR (une masse encre qui pousse). il se déplace d'un cran → les trois fils tirent → les trois positions s'inclinent EXACTEMENT de la même façon, au même instant. elles ne sont pas indépendantes." },
-        { "t": "2-3.5", "do": "les trois positions se RASSEMBLENT visuellement en une seule (elles glissent l'une sur l'autre et fusionnent) — et la position fusionnée est TROIS FOIS plus grosse que chacune. 'one trade, three costumes, three times the size'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la position fusionnée triple pulse au rythme du moteur, seule." } ],
+        {
+          "t": "0-2",
+          "do": "l'ancre se révèle : c'est un MOTEUR (une masse encre qui pousse). il se déplace d'un cran → les trois fils tirent → les trois positions s'inclinent EXACTEMENT de la même façon, au même instant. elles ne sont pas indépendantes."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les trois positions se RASSEMBLENT visuellement en une seule (elles glissent l'une sur l'autre et fusionnent) — et la position fusionnée est TROIS FOIS plus grosse que chacune. 'one trade, three costumes, three times the size'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la position fusionnée triple pulse au rythme du moteur, seule."
+        }
+      ],
       "camera": "fixe",
       "dod": "le moteur qui incline les trois à l'identique + leur fusion en une position triple",
-      "turn": "ce ne sont pas trois trades — c'est un pari, en trois costumes, en triple." },
-    { "id": "s3",
+      "turn": "ce ne sont pas trois trades — c'est un pari, en trois costumes, en triple."
+    },
+    {
+      "id": "s3",
       "clarity": "C'est pourquoi le risque calculé est faux : chaque position a été dimensionnée pour que UNE seule qui tourne mal soit supportable. Jamais pour les trois au même instant.",
       "beats": [
-        { "t": "0-2", "do": "le calcul d'origine se rejoue : une seule position tourne mal → une tranche FINE se délave du compte. supportable. coche teal. c'est ce qui avait été prévu." },
-        { "t": "2-3.5", "do": "puis la réalité : les TROIS tournent mal ensemble → trois tranches se délavent AU MÊME INSTANT, formant une entaille bien plus profonde que prévue. l'écart entre le risque calculé et le risque réel se matérialise." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la tranche prévue (fine, en rappel) à côté de l'entaille réelle (triple). l'erreur de dimensionnement est visible." } ],
+        {
+          "t": "0-2",
+          "do": "le calcul d'origine se rejoue : une seule position tourne mal → une tranche FINE se délave du compte. supportable. coche teal. c'est ce qui avait été prévu."
+        },
+        {
+          "t": "2-3.5",
+          "do": "puis la réalité : les TROIS tournent mal ensemble → trois tranches se délavent AU MÊME INSTANT, formant une entaille bien plus profonde que prévue. l'écart entre le risque calculé et le risque réel se matérialise."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la tranche prévue (fine, en rappel) à côté de l'entaille réelle (triple). l'erreur de dimensionnement est visible."
+        }
+      ],
       "camera": "fixe",
       "dod": "la tranche prévue (une position) vs l'entaille réelle (les trois ensemble)",
-      "turn": "tu as dimensionné pour une, tu as reçu les trois." },
-    { "id": "s4",
+      "turn": "tu as dimensionné pour une, tu as reçu les trois."
+    },
+    {
+      "id": "s4",
       "clarity": "Et ça arrive au pire moment : au calme, les liens sont lâches et les positions se comportent vraiment différemment. Dans un choc, tout ce qui tient au même moteur se resserre et bouge comme un seul bloc.",
       "note": "LA scene — les fils qui se tendent au moment du choc.",
       "beats": [
-        { "t": "0-1.5", "do": "MARCHÉ CALME : les trois fils sont LÂCHES, détendus. les positions bougent chacune de leur côté, désynchronisées — la diversification est RÉELLE, on la voit fonctionner. tout va bien." },
-        { "t": "1.5-3", "do": "CHOC : une secousse traverse le cadre. les trois fils se TENDENT D'UN COUP, raides comme des câbles — et les trois positions se mettent à bouger comme UN SEUL bloc, parfaitement synchronisées. la diversification vient de disparaître." },
-        { "t": "3-4.5", "do": "le point clé s'affiche : c'est le CHOC LUI-MÊME qui a créé la corrélation. la protection s'évapore exactement à l'instant où elle devait servir. les trois se délavent ensemble." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : les fils tendus, les trois positions synchronisées et entamées. 'the diversification disappears precisely when you need it'." } ],
+        {
+          "t": "0-1.5",
+          "do": "MARCHÉ CALME : les trois fils sont LÂCHES, détendus. les positions bougent chacune de leur côté, désynchronisées — la diversification est RÉELLE, on la voit fonctionner. tout va bien."
+        },
+        {
+          "t": "1.5-3",
+          "do": "CHOC : une secousse traverse le cadre. les trois fils se TENDENT D'UN COUP, raides comme des câbles — et les trois positions se mettent à bouger comme UN SEUL bloc, parfaitement synchronisées. la diversification vient de disparaître."
+        },
+        {
+          "t": "3-4.5",
+          "do": "le point clé s'affiche : c'est le CHOC LUI-MÊME qui a créé la corrélation. la protection s'évapore exactement à l'instant où elle devait servir. les trois se délavent ensemble."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : les fils tendus, les trois positions synchronisées et entamées. 'the diversification disappears precisely when you need it'."
+        }
+      ],
       "camera": "fixe",
       "dod": "les fils lâches au calme puis tendus d'un coup au choc, les trois synchronisées",
-      "turn": "le choc crée la corrélation — la protection disparaît quand elle devait servir." },
-    { "id": "s5",
+      "turn": "le choc crée la corrélation — la protection disparaît quand elle devait servir."
+    },
+    {
+      "id": "s5",
       "clarity": "Avant d'ajouter une position, demande : que faudrait-il pour que celle-ci et celles que j'ai déjà perdent ENSEMBLE ? Si tu peux répondre en une phrase, ce n'est pas trois trades — c'est un pari, à dimensionner comme un.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : une nouvelle position se présente pour être ajoutée. avant de l'accepter, la question s'inscrit : 'WHAT WOULD MAKE THIS AND WHAT I HOLD LOSE TOGETHER?'" },
-        { "t": "2-3.5", "do": "TEST : si une réponse courte apparaît (un fil se dessine immédiatement vers l'ancre commune) → les positions se REGROUPENT en un seul bloc et la taille TOTALE est réduite pour tenir comme UN pari. si aucun fil n'apparaît → la position reste vraiment séparée, taille normale." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la question inscrite, le regroupement en un seul pari dimensionné comme tel. immobile. la règle à appliquer avant chaque ajout." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : une nouvelle position se présente pour être ajoutée. avant de l'accepter, la question s'inscrit : 'WHAT WOULD MAKE THIS AND WHAT I HOLD LOSE TOGETHER?'"
+        },
+        {
+          "t": "2-3.5",
+          "do": "TEST : si une réponse courte apparaît (un fil se dessine immédiatement vers l'ancre commune) → les positions se REGROUPENT en un seul bloc et la taille TOTALE est réduite pour tenir comme UN pari. si aucun fil n'apparaît → la position reste vraiment séparée, taille normale."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la question inscrite, le regroupement en un seul pari dimensionné comme tel. immobile. la règle à appliquer avant chaque ajout."
+        }
+      ],
       "camera": "fixe",
       "dod": "la question testée + le regroupement en un pari unique correctement dimensionné",
-      "fusil_decharge": "l'ancre commune de S1 se résout : trois positions reliées au même moteur sont un seul pari — la question 'que faudrait-il pour qu'elles perdent ensemble ?' le révèle avant d'ajouter." }
+      "fusil_decharge": "l'ancre commune de S1 se résout : trois positions reliées au même moteur sont un seul pari — la question 'que faudrait-il pour qu'elles perdent ensemble ?' le révèle avant d'ajouter."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"MAP\" for the free beta of my indicator. Three trades that lose together were never three trades.\n\nMarkets aren't independent. Three positions leaning the same way on the same driver are one trade, in three costumes, at three times the size. And in calm markets the links are loose — so your diversification looks real, right up until a shock snaps everything together and it disappears exactly when you needed it.\n\nTHE LINE — if you can say in one sentence what would sink them all, it's one bet.\n\n#trading #trader #correlation #riskmanagement #diversification #daytrading #forex #tradingeducation #positionsizing #portfolio",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'que faudrait-il pour que celle-ci et celles que j'ai perdent ensemble ?' — à poser avant chaque ajout de position.",
     "interdits": "aucun chiffre; aucun marché/paire nommé; gris = perte (M-couleur); pas de brun; TOI=positions teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

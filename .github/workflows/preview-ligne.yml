@@ -1,0 +1,95 @@
+name: LIGNE aperçu (validation PO)
+
+# APERÇU : fabrique UN épisode avec la VRAIE voix et dépose le mp4 en artifact.
+# NE MET RIEN EN FILE, NE PUBLIE RIEN, NE COMMITTE RIEN. C'est l'outil de
+# validation : on regarde/écoute avant de laisser un épisode entrer en production.
+# Fonctionne aussi sur un moteur en .wip (les épisodes en cours de validation le sont).
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Épisode à fabriquer pour aperçu (ex : L44)"
+        required: true
+        type: string
+
+# Jamais deux aperçus en parallèle (chacun lance un rendu lourd).
+concurrency:
+  group: ligne-preview
+  cancel-in-progress: false
+
+# Lecture seule : l'aperçu ne doit RIEN pouvoir écrire dans le dépôt.
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API }}
+      EP: ${{ github.event.inputs.episode }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Système (ffmpeg, chromium, polices Arial-like)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg chromium-browser fontconfig fonts-liberation
+          fc-cache -f >/dev/null 2>&1 || true
+
+      - name: Localiser Chromium (le chemin varie selon l'image du runner)
+        run: |
+          for p in /usr/bin/chromium-browser /usr/bin/chromium /snap/bin/chromium \
+                   /usr/lib/chromium-browser/chromium-browser; do
+            if [ -x "$p" ]; then echo "PUPPETEER_EXECUTABLE_PATH=$p" >> "$GITHUB_ENV"; echo "chromium: $p"; exit 0; fi
+          done
+          echo "::error::Chromium introuvable — le rendu ne peut pas tourner"; exit 1
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Deps Python
+        run: pip install -r ligne/requirements-ligne.txt
+
+      - name: Pré-chauffe hyperframes
+        run: npx --yes hyperframes@0.7.37 --version || true
+
+      - name: Rendre le moteur disponible (y compris s'il est en .wip)
+        run: |
+          set -e
+          ENG=$(python3 -c "import json;print(json.load(open('ligne/episodes/${EP}.json'))['engine'])")
+          if [ -f "ligne/engine/${ENG}.html" ]; then
+            echo "moteur actif : ${ENG}.html"
+          elif [ -f "ligne/engine/${ENG}.html.wip" ]; then
+            cp "ligne/engine/${ENG}.html.wip" "ligne/engine/${ENG}.html"
+            echo "moteur .wip matérialisé pour l'aperçu : ${ENG}.html (copie locale au runner, non committée)"
+          else
+            echo "::error::Aucun moteur pour ${EP} (ni ${ENG}.html ni .wip)"; exit 1
+          fi
+
+      - name: Fabriquer avec la vraie voix (voix + anim + montage)
+        run: cd ligne && python3 build_ligne.py "${EP}" all
+
+      - name: Déposer l'aperçu en artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apercu-${{ github.event.inputs.episode }}
+          path: |
+            output/pilotes/${{ github.event.inputs.episode }}.mp4
+            ligne/render/${{ github.event.inputs.episode }}/anim.mp4
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Rappel
+        run: |
+          echo "Aperçu déposé en artifact. RIEN n'a été mis en file ni publié."
+          echo "Télécharge-le depuis l'onglet Summary de ce run."

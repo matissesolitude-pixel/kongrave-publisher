@@ -10,67 +10,145 @@
     "So count what you leave, not just what you lose. A trade you passed on for a reason isn't a mistake — it's discipline. But a trade you passed on out of fear, and then chased somewhere worse? That's the one that actually costs you. Know which one it was."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il a vu un setup parfait, ne l'a pas pris, ça a filé au but sans lui. Il n'a rien perdu — pourquoi ça fait mal ?",
       "question": "HOW DO YOU LOSE A TRADE YOU NEVER TOOK?",
-      "cast": { "path": { "type": "path", "note": "un tracé de prix qui monte vers une cible; TOI = boule teal restée en bas. le fusil = la distance non parcourue." } },
+      "cast": {
+        "path": {
+          "type": "path",
+          "note": "un tracé de prix qui monte vers une cible; TOI = boule teal restée en bas. le fusil = la distance non parcourue."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: un tracé de prix s'élève de gauche vers une CIBLE marquée en haut à droite. la boule teal (toi) reste POSÉE en bas, immobile, à l'écart du tracé." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: le tracé pulse doucement (le mouvement a eu lieu), la boule teal en bas ne bouge pas — elle REGARDE. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: un tracé de prix s'élève de gauche vers une CIBLE marquée en haut à droite. la boule teal (toi) reste POSÉE en bas, immobile, à l'écart du tracé."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: le tracé pulse doucement (le mouvement a eu lieu), la boule teal en bas ne bouge pas — elle REGARDE. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le tracé monté vers la cible + la boule teal restée en bas, spectatrice",
-      "fusil": "la boule immobile en bas et la cible atteinte en haut — l'écart entre les deux est le fusil." },
-    { "id": "s2",
+      "fusil": "la boule immobile en bas et la cible atteinte en haut — l'écart entre les deux est le fusil."
+    },
+    {
+      "id": "s2",
       "clarity": "Le compte a deux colonnes : celle qu'on regarde (les trades pris) et celle qu'on n'ouvre jamais (les trades vus et laissés).",
       "label": "two columns",
       "beats": [
-        { "t": "0-2", "do": "deux colonnes se dessinent côte à côte. GAUCHE 'taken' : des briques pleines encre, comptables. DROITE 'let go' : un cadre VIDE, juste contouré — la colonne qu'on n'ouvre pas." },
-        { "t": "2-3.5", "do": "un projecteur (halo teal léger) éclaire la colonne gauche; la droite reste dans la pénombre. on ne regarde qu'un côté." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: la colonne gauche vit (une brique pulse), la droite reste sombre et vide — mais l'œil est attiré par ce vide." } ],
+        {
+          "t": "0-2",
+          "do": "deux colonnes se dessinent côte à côte. GAUCHE 'taken' : des briques pleines encre, comptables. DROITE 'let go' : un cadre VIDE, juste contouré — la colonne qu'on n'ouvre pas."
+        },
+        {
+          "t": "2-3.5",
+          "do": "un projecteur (halo teal léger) éclaire la colonne gauche; la droite reste dans la pénombre. on ne regarde qu'un côté."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la colonne gauche vit (une brique pulse), la droite reste sombre et vide — mais l'œil est attiré par ce vide."
+        }
+      ],
       "camera": "fixe",
       "dod": "colonne 'taken' pleine et éclairée vs colonne 'let go' vide et sombre",
-      "turn": "il y a une deuxième colonne — celle qu'on refuse de regarder." },
-    { "id": "s3",
+      "turn": "il y a une deuxième colonne — celle qu'on refuse de regarder."
+    },
+    {
+      "id": "s3",
       "clarity": "Le trade manqué ne coûte pas l'argent qu'on avait, mais celui qu'on devait avoir. Invisible car jamais rouge.",
       "beats": [
-        { "t": "0-2", "do": "dans la colonne droite (let go), une brique FANTÔME apparaît — contour pointillé, intérieur vide. elle a la même taille qu'un vrai gain, mais elle est CREUSE." },
-        { "t": "2-3.5", "do": "on tente de la colorer en rouge (perte) → le rouge GLISSE dessus sans accrocher, elle reste vide. 'never shows up as red'. mais son contour, lui, est bien là — le manque est réel." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: la brique fantôme creuse dans la colonne sombre, indélébile bien qu'invisible." } ],
+        {
+          "t": "0-2",
+          "do": "dans la colonne droite (let go), une brique FANTÔME apparaît — contour pointillé, intérieur vide. elle a la même taille qu'un vrai gain, mais elle est CREUSE."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on tente de la colorer en rouge (perte) → le rouge GLISSE dessus sans accrocher, elle reste vide. 'never shows up as red'. mais son contour, lui, est bien là — le manque est réel."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la brique fantôme creuse dans la colonne sombre, indélébile bien qu'invisible."
+        }
+      ],
       "camera": "fixe",
       "dod": "la brique fantôme creuse que le rouge ne peut pas remplir",
-      "turn": "ce n'est pas une perte rouge. c'est un manque — et le manque est réel." },
-    { "id": "s4",
+      "turn": "ce n'est pas une perte rouge. c'est un manque — et le manque est réel."
+    },
+    {
+      "id": "s4",
       "clarity": "La douleur du gain manqué pousse à saisir le prochain truc qui bouge, même hors setup. Un skip, et on chasse.",
       "note": "LA scene — le manque qui pousse à la faute.",
       "beats": [
-        { "t": "0-1.5", "do": "la brique fantôme creuse se met à PULSER fort (la douleur du manque). de cette pulsation, une onde part vers la boule teal (toi)." },
-        { "t": "1.5-3", "do": "l'onde POUSSE la boule teal — elle se met en mouvement, précipitée, vers un NOUVEAU tracé qui apparaît (n'importe lequel, pas le bon). elle saute dessus sans attendre." },
-        { "t": "3-4.5", "do": "ce nouveau tracé, à peine touché, S'EFFONDRE (délavage gris) : le trade chassé tourne mal. la boule teal se délave à moitié." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue: la brique fantôme (le manque) et à côté la boule à moitié délavée (la faute qu'il a provoquée). le manque a coûté DEUX fois." } ],
+        {
+          "t": "0-1.5",
+          "do": "la brique fantôme creuse se met à PULSER fort (la douleur du manque). de cette pulsation, une onde part vers la boule teal (toi)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "l'onde POUSSE la boule teal — elle se met en mouvement, précipitée, vers un NOUVEAU tracé qui apparaît (n'importe lequel, pas le bon). elle saute dessus sans attendre."
+        },
+        {
+          "t": "3-4.5",
+          "do": "ce nouveau tracé, à peine touché, S'EFFONDRE (délavage gris) : le trade chassé tourne mal. la boule teal se délave à moitié."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue: la brique fantôme (le manque) et à côté la boule à moitié délavée (la faute qu'il a provoquée). le manque a coûté DEUX fois."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'onde du manque qui pousse la boule vers un mauvais trade qui s'effondre",
-      "turn": "le trade manqué ne coûte pas une fois — il pousse à en prendre un pire." },
-    { "id": "s5",
+      "turn": "le trade manqué ne coûte pas une fois — il pousse à en prendre un pire."
+    },
+    {
+      "id": "s5",
       "clarity": "Compter ce qu'on laisse. Un trade passé par raison = discipline. Un trade passé par peur puis chassé ailleurs = la vraie perte.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: la boule teal (redevenue nette) fait face à DEUX briques fantômes côte à côte. l'une reçoit une coche teal ('passed on purpose — discipline'), l'autre une marque grise ('passed on fear, then chased — the real cost')." },
-        { "t": "2-3.5", "do": "la boule teal se pose CALMEMENT à côté de la brique-discipline (la coche), et s'écarte de la brique-peur. le choix se voit : savoir laquelle était laquelle." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la boule teal posée, les deux briques étiquetées. immobile. connaître la différence." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: la boule teal (redevenue nette) fait face à DEUX briques fantômes côte à côte. l'une reçoit une coche teal ('passed on purpose — discipline'), l'autre une marque grise ('passed on fear, then chased — the real cost')."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la boule teal se pose CALMEMENT à côté de la brique-discipline (la coche), et s'écarte de la brique-peur. le choix se voit : savoir laquelle était laquelle."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la boule teal posée, les deux briques étiquetées. immobile. connaître la différence."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux briques fantômes distinguées: discipline (coche) vs peur-puis-chasse (gris)",
-      "fusil_decharge": "la boule immobile de S1 (le trade manqué) se résout: le manque n'est une perte que s'il te pousse à chasser — sinon c'est de la discipline." }
+      "fusil_decharge": "la boule immobile de S1 (le trade manqué) se résout: le manque n'est une perte que s'il te pousse à chasser — sinon c'est de la discipline."
+    }
   ],
   "total": 76.0,
-  "caption": "Comment \"PROFILE\" to find out what type of trader you are and where it costs you. A missed winner isn't a loss — until it makes you chase.\n\nYou watched a clean setup run to target without you. You lost nothing, but it hurts — and that pain pushes you to grab the next thing that moves. The missed trade doesn't cost you once. It makes you take a worse one.\n\nTHE LINE — count what you leave, not just what you lose.\n\n#trading #trader #tradingpsychology #discipline #daytrading #forex #tradingeducation #mindset #patience #fomo",
+  "caption": "Comment \"PROFILE\" to find your trader type. A missed winner isn't a loss — until it makes you chase.\n\nYou watched a clean setup run to target without you. You lost nothing, but it hurts — and that pain pushes you to grab the next thing that moves. The missed trade doesn't cost you once. It makes you take a worse one.\n\nTHE LINE — count what you leave, not just what you lose.\n\n#trading #trader #tradingpsychology #discipline #daytrading #forex #tradingeducation #mindset #patience #fomo",
   "_rules": {
     "source": "Loom Matisse (l'or pris la veille, le trade manqué). Psycho MÉCANIQUE: le manque = brique creuse, la douleur = onde, la faute = boule qui chasse. Émotion montrée par objets, jamais incarnée.",
     "cta_keyword": "PROFILE → LTTI (whop.com/otp-consulting/profil-de-trader)",
-    "caption_structure": "ligne 1 = accroche + CTA PROFILE visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice court), PUIS l'accroche. Le mot-clé est la première chose visible sans déplier — garanti. L'accroche complète suit sur la même ligne / en dessous.",
     "fusil": "la boule immobile + cible atteinte (S1), colonne cachée (S2), brique creuse (S3), l'onde qui pousse à chasser (S4), résolue en discipline vs peur (S5).",
     "interdits": "aucun chiffre; le rouge/gris UNIQUEMENT en délavage de perte (M-couleur); pas de brun; TOI=boule teal jamais une figure; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "vie_continue": "regle 5: tracés et briques pulsent, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en PREMIER COMMENTAIRE ÉPINGLÉ (double filet : visible même sans lire la caption, amorce la section commentaires, déclenche ManyChat)."
+  },
+  "pinned_comment": "The column you never open is the one that's quietly costing you. Comment \"PROFILE\" and I'll send you the free trader profile test — 16 types, find out which one you are 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

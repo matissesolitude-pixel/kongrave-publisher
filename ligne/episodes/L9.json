@@ -140,7 +140,7 @@
       "fusil_decharge": "la jauge pleine de S1, erodee en S4, se resout en S5: le trade doit battre le loyer du temps."
     }
   ],
-  "total": 54.0,
+  "total": 72.0,
   "caption": "Comment \"LINE\" for the checklist on what holding a trade really costs. You did nothing overnight. Your position still shrank. Here's the fee nobody shows you.\n\nHolding a trade has a rent — tiny per night, relentless over weeks. Your idea doesn't just need to be right. It needs to be right faster than the rent eats the win.\n\nTHE LINE — the proof is on the chart.\n\n#trading #trader #daytrading #forex #swap #overnightfee #tradingeducation #priceaction #swingtrading #investing",
   "_rules": {
     "fusil": "la jauge pleine (S1) erodee nuit apres nuit (S4), resolue par la course win vs rent (S5).",
@@ -151,5 +151,12 @@
     "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
     "hook_v1_archived": "Close your platform. Go to sleep. Touch nothing. And tomorrow morning, your position is worth a little less than you left it. Nothing moved against you. So what happened overnight?",
     "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
   }
 }

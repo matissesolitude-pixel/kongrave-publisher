@@ -10,60 +10,133 @@
     "So decide your exposure across a close on purpose, not by default. Either you accept that a gap can move your exit and size smaller for it — or you're flat before the bell. What you can't do is calculate your risk from a stop the market is able to jump straight over."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il a posé un stop et est allé dormir. À la réouverture, le prix était déjà loin au-delà — sans jamais l'avoir touché. Comment un stop se fait-il sauter ?",
       "question": "HOW DOES A STOP GET SKIPPED?",
       "emotion_lever": "CHOC — dès la frame 0, un gouffre béant dans le prix et le trait du stop qui PEND DANS LE VIDE, traversé sans être touché. L'absurdité saisit.",
       "cast": {
-        "chasm": { "type": "path", "note": "le prix coupé en deux par un GOUFFRE vide" },
-        "stopline": { "type": "hline", "note": "le stop, un trait qui pend au milieu du gouffre, intact, inutile. le fusil = ce trait dans le vide." } },
+        "chasm": {
+          "type": "path",
+          "note": "le prix coupé en deux par un GOUFFRE vide"
+        },
+        "stopline": {
+          "type": "hline",
+          "note": "le stop, un trait qui pend au milieu du gouffre, intact, inutile. le fusil = ce trait dans le vide."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : le prix arrive de la gauche, S'ARRÊTE NET au bord d'un GOUFFRE noir, et REPREND très loin en dessous à droite. Entre les deux : le VIDE. Et le trait du stop PEND EN PLEIN MILIEU de ce gouffre — intact, jamais touché, complètement inutile. L'absurdité est immédiate." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : le trait du stop oscille doucement dans le vide, les deux bouts du prix pulsent de part et d'autre du gouffre. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : le prix arrive de la gauche, S'ARRÊTE NET au bord d'un GOUFFRE noir, et REPREND très loin en dessous à droite. Entre les deux : le VIDE. Et le trait du stop PEND EN PLEIN MILIEU de ce gouffre — intact, jamais touché, complètement inutile. L'absurdité est immédiate."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : le trait du stop oscille doucement dans le vide, les deux bouts du prix pulsent de part et d'autre du gouffre. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le gouffre + le trait du stop pendant dans le vide, intact, dès la frame 0",
-      "fusil": "le stop qui pend dans le vide — on va comprendre pourquoi il n'a rien pu faire." },
-    { "id": "s2",
+      "fusil": "le stop qui pend dans le vide — on va comprendre pourquoi il n'a rien pu faire."
+    },
+    {
+      "id": "s2",
       "clarity": "Un stop dit : sors quand le prix ATTEINT ce niveau. Il suppose que le prix va PASSER par là. Le cas normal : le prix marche, touche, on sort.",
       "label": "a stop assumes price walks through",
       "beats": [
-        { "t": "0-2", "do": "cas NORMAL montré proprement : le prix MARCHE pas à pas vers le bas (une progression continue, chaque pas visible), touche le trait du stop → une sortie NETTE se déclenche, la position sort à la tranche prévue. tout va bien." },
-        { "t": "2-3.5", "do": "on souligne le mécanisme : c'est la CONTINUITÉ qui rend le stop fiable. le trait s'allume quand un prix le touche. sans contact, rien ne se déclenche." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : le cas normal rejoue en boucle lente — marche, contact, sortie propre." } ],
+        {
+          "t": "0-2",
+          "do": "cas NORMAL montré proprement : le prix MARCHE pas à pas vers le bas (une progression continue, chaque pas visible), touche le trait du stop → une sortie NETTE se déclenche, la position sort à la tranche prévue. tout va bien."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on souligne le mécanisme : c'est la CONTINUITÉ qui rend le stop fiable. le trait s'allume quand un prix le touche. sans contact, rien ne se déclenche."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : le cas normal rejoue en boucle lente — marche, contact, sortie propre."
+        }
+      ],
       "camera": "fixe",
       "dod": "le prix qui marche pas à pas, touche le stop, sortie nette (le cas normal)",
-      "turn": "le stop fonctionne parce que le prix marche à travers le niveau." },
-    { "id": "s3",
+      "turn": "le stop fonctionne parce que le prix marche à travers le niveau."
+    },
+    {
+      "id": "s3",
       "clarity": "Mais les marchés ne bougent pas toujours en continu. Ils FERMENT. Et pendant qu'ils sont fermés, des choses arrivent. À la réouverture, le premier prix peut être très loin du dernier — un SAUT, pas une marche.",
       "beats": [
-        { "t": "0-1.5", "do": "le marché FERME : le tracé s'arrête net, un voile passe (le cadre s'assombrit légèrement, les cycles jour/nuit défilent). le prix est figé, aucun échange." },
-        { "t": "1.5-3", "do": "pendant la fermeture, une PRESSION s'accumule HORS du cadre (des ondes qui poussent depuis l'extérieur, invisibles mais senties) — le monde continue de tourner." },
-        { "t": "3-4", "do": "RÉOUVERTURE : le premier prix apparaît TRÈS LOIN du dernier, d'un coup. pas de trajet entre les deux — un SAUT. le gouffre de S1 vient de se créer sous nos yeux." },
-        { "t": "4-13", "do": "TENUE VIVANTE : les deux extrémités du saut, le vide entre elles." } ],
+        {
+          "t": "0-1.5",
+          "do": "le marché FERME : le tracé s'arrête net, un voile passe (le cadre s'assombrit légèrement, les cycles jour/nuit défilent). le prix est figé, aucun échange."
+        },
+        {
+          "t": "1.5-3",
+          "do": "pendant la fermeture, une PRESSION s'accumule HORS du cadre (des ondes qui poussent depuis l'extérieur, invisibles mais senties) — le monde continue de tourner."
+        },
+        {
+          "t": "3-4",
+          "do": "RÉOUVERTURE : le premier prix apparaît TRÈS LOIN du dernier, d'un coup. pas de trajet entre les deux — un SAUT. le gouffre de S1 vient de se créer sous nos yeux."
+        },
+        {
+          "t": "4-13",
+          "do": "TENUE VIVANTE : les deux extrémités du saut, le vide entre elles."
+        }
+      ],
       "camera": "fixe",
       "dod": "la fermeture, la pression hors cadre, puis le saut qui crée le gouffre",
-      "turn": "à la réouverture, le prix saute — il ne marche pas." },
-    { "id": "s4",
+      "turn": "à la réouverture, le prix saute — il ne marche pas."
+    },
+    {
+      "id": "s4",
       "clarity": "Le stop était assis dans cet espace vide. Aucun prix pour le déclencher (aucun échange entre les deux points). Il s'exécute au premier prix disponible de l'autre côté — bien pire que le niveau choisi.",
       "note": "LA scene — le stop traversé sans contact.",
       "beats": [
-        { "t": "0-1.5", "do": "gros plan sur le gouffre : le trait du stop est là, au milieu du vide. le saut du prix le TRAVERSE — mais sans le TOUCHER (le prix n'existe pas dans cet espace, il n'y a rien qui passe par là). le trait reste intact, jamais activé." },
-        { "t": "1.5-3", "do": "arrivé de l'autre côté, le stop s'exécute enfin — mais au PREMIER PRIX DISPONIBLE, bien plus bas. l'écart entre le niveau choisi (trait) et le prix obtenu (point d'exécution) se matérialise : une tranche SUPPLÉMENTAIRE, non prévue, se délave en gris." },
-        { "t": "3-4.5", "do": "comparaison : la perte PRÉVUE (petite tranche, au niveau du trait) vs la perte RÉELLE (tranche plus large, au prix de réouverture). l'écart EST le coût du saut." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : le trait intact dans le vide, l'exécution loin en dessous, l'écart visible entre les deux. 'an intention, not a guarantee'." } ],
+        {
+          "t": "0-1.5",
+          "do": "gros plan sur le gouffre : le trait du stop est là, au milieu du vide. le saut du prix le TRAVERSE — mais sans le TOUCHER (le prix n'existe pas dans cet espace, il n'y a rien qui passe par là). le trait reste intact, jamais activé."
+        },
+        {
+          "t": "1.5-3",
+          "do": "arrivé de l'autre côté, le stop s'exécute enfin — mais au PREMIER PRIX DISPONIBLE, bien plus bas. l'écart entre le niveau choisi (trait) et le prix obtenu (point d'exécution) se matérialise : une tranche SUPPLÉMENTAIRE, non prévue, se délave en gris."
+        },
+        {
+          "t": "3-4.5",
+          "do": "comparaison : la perte PRÉVUE (petite tranche, au niveau du trait) vs la perte RÉELLE (tranche plus large, au prix de réouverture). l'écart EST le coût du saut."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : le trait intact dans le vide, l'exécution loin en dessous, l'écart visible entre les deux. 'an intention, not a guarantee'."
+        }
+      ],
       "camera": "zoom sur le gouffre",
       "dod": "le saut qui traverse le stop sans le toucher + l'écart entre perte prévue et perte réelle",
-      "turn": "à travers une fermeture, le stop n'est plus une garantie — c'est une intention." },
-    { "id": "s5",
+      "turn": "à travers une fermeture, le stop n'est plus une garantie — c'est une intention."
+    },
+    {
+      "id": "s5",
       "clarity": "Décide ton exposition à travers une fermeture EXPRÈS, pas par défaut. Soit tu acceptes qu'un gap déplace ta sortie et tu réduis la taille, soit tu es à plat avant la cloche.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : deux chemins clairs face à la fermeture qui approche (une barre verticale 'CLOSE' se rapproche). CHEMIN A 'accept & size smaller' : la position teal RÉDUIT sa taille, et même avec un gap, la tranche reste supportable. CHEMIN B 'flat before the close' : la position se ferme avant la barre, aucun risque de saut." },
-        { "t": "2-3.5", "do": "et le chemin INTERDIT se barre : 'calculate your risk from a stop the market can jump over' → une croix. le trait de S1, celui qui pendait dans le vide, s'affiche barré. c'était l'erreur." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : les deux chemins valides (réduire ou sortir), le troisième barré. immobile. le choix se fait AVANT la cloche." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : deux chemins clairs face à la fermeture qui approche (une barre verticale 'CLOSE' se rapproche). CHEMIN A 'accept & size smaller' : la position teal RÉDUIT sa taille, et même avec un gap, la tranche reste supportable. CHEMIN B 'flat before the close' : la position se ferme avant la barre, aucun risque de saut."
+        },
+        {
+          "t": "2-3.5",
+          "do": "et le chemin INTERDIT se barre : 'calculate your risk from a stop the market can jump over' → une croix. le trait de S1, celui qui pendait dans le vide, s'affiche barré. c'était l'erreur."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : les deux chemins valides (réduire ou sortir), le troisième barré. immobile. le choix se fait AVANT la cloche."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux chemins valides (réduire / être à plat) + le calcul-sur-stop-sautable barré",
-      "fusil_decharge": "le trait qui pendait dans le vide (S1) se résout : à travers une fermeture, le stop peut être sauté — donc on décide son exposition avant, on ne calcule pas son risque dessus." }
+      "fusil_decharge": "le trait qui pendait dans le vide (S1) se résout : à travers une fermeture, le stop peut être sauté — donc on décide son exposition avant, on ne calcule pas son risque dessus."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"LINE\" for the checklist on what your stop can't protect. Your stop can be skipped without ever being touched.\n\nA stop assumes price walks through the level. But markets close, and while they're closed things happen. At the reopen, the first price can be far from the last — a jump, not a walk. Your stop sat in that empty space with nothing to trigger it, and filled at the first price on the other side.\n\nTHE LINE — across a close, a stop is an intention, not a guarantee.\n\n#trading #trader #stoploss #gap #riskmanagement #daytrading #forex #tradingeducation #weekendrisk #slippage",
@@ -77,5 +150,13 @@
     "fin_actionnable": "deux chemins concrets avant chaque fermeture : réduire la taille, ou être à plat. Et ne jamais calculer son risque sur un stop sautable.",
     "interdits": "aucun chiffre; gris = perte (M-couleur), pas de rouge; pas de brun; JAMAIS 'perdre plus que son dépôt'; pas de nom de broker/marché; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

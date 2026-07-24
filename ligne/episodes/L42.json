@@ -10,59 +10,129 @@
     "So after a loss, write the explanation down. Then ask one thing: if this had been a win, would I be telling the same story? If the reason only shows up when you lose, it isn't a reason. It's a shield. The trades that teach you anything are the ones you're willing to blame yourself for."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il prend une perte. En quelques secondes, il a une explication : les news, un mouvement inhabituel, un jour spécial. L'histoire arrive vite, convaincante, et la perte n'est plus vraiment sa décision.",
       "question": "WHERE DOES THE EXPLANATION COME FROM?",
       "emotion_lever": "RECONNAISSANCE DE SOI + CURIOSITÉ — dès la frame 0, une perte grise en train d'être RECOUVERTE par une belle forme qui glisse dessus. On voit la dissimulation en cours, et on s'y reconnaît.",
       "cast": {
-        "loss": { "type": "block", "note": "un bloc gris = la perte, en train d'être couverte" },
-        "story": { "type": "block", "note": "une forme ornée qui glisse par-dessus et la masque. le fusil = ce couvercle." } },
+        "loss": {
+          "type": "block",
+          "note": "un bloc gris = la perte, en train d'être couverte"
+        },
+        "story": {
+          "type": "block",
+          "note": "une forme ornée qui glisse par-dessus et la masque. le fusil = ce couvercle."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : un bloc gris (la perte) au centre — et DÉJÀ, une forme ornée, lisse et convaincante (l'histoire) est en train de GLISSER par-dessus pour le recouvrir. Elle est aux trois quarts du chemin. On voit la dissimulation EN COURS, arrêtée en plein geste. Immédiatement reconnaissable." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : le couvercle glisse encore un peu, la perte disparaît progressivement dessous. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un bloc gris (la perte) au centre — et DÉJÀ, une forme ornée, lisse et convaincante (l'histoire) est en train de GLISSER par-dessus pour le recouvrir. Elle est aux trois quarts du chemin. On voit la dissimulation EN COURS, arrêtée en plein geste. Immédiatement reconnaissable."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : le couvercle glisse encore un peu, la perte disparaît progressivement dessous. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la perte grise en train d'être recouverte par la forme-histoire, geste saisi en cours",
-      "fusil": "le couvercle-histoire — on va voir ce qu'il protège et ce qu'il coûte." },
-    { "id": "s2",
+      "fusil": "le couvercle-histoire — on va voir ce qu'il protège et ce qu'il coûte."
+    },
+    {
+      "id": "s2",
       "clarity": "L'esprit l'écrit pour protéger quelque chose : la croyance qu'on est un bon trader avec de la malchance, plutôt que quelqu'un qui a mal décidé. C'est confortable — et c'est exactement ce qui empêche de progresser.",
       "label": "the story protects a belief",
       "beats": [
-        { "t": "0-2", "do": "on SOULÈVE légèrement le couvercle : dessous, à côté de la perte, un petit objet teal FRAGILE (une croyance : 'bon trader, mauvaise chance'). le couvercle est là pour LUI, pas pour la perte." },
-        { "t": "2-3.5", "do": "le couvercle se repose : l'objet fragile est protégé, intact, confortable. mais la perte, elle, est enfermée dessous — INEXAMINABLE. une main teal (l'examen) tente d'atteindre la perte, bute sur le couvercle." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la croyance protégée pulse tranquillement, la perte inaccessible dessous." } ],
+        {
+          "t": "0-2",
+          "do": "on SOULÈVE légèrement le couvercle : dessous, à côté de la perte, un petit objet teal FRAGILE (une croyance : 'bon trader, mauvaise chance'). le couvercle est là pour LUI, pas pour la perte."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le couvercle se repose : l'objet fragile est protégé, intact, confortable. mais la perte, elle, est enfermée dessous — INEXAMINABLE. une main teal (l'examen) tente d'atteindre la perte, bute sur le couvercle."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la croyance protégée pulse tranquillement, la perte inaccessible dessous."
+        }
+      ],
       "camera": "fixe",
       "dod": "la croyance fragile protégée sous le couvercle + la perte devenue inexaminable",
-      "turn": "l'histoire protège une croyance — et enferme la leçon avec la perte." },
-    { "id": "s3",
+      "turn": "l'histoire protège une croyance — et enferme la leçon avec la perte."
+    },
+    {
+      "id": "s3",
       "clarity": "Les histoires sont assez vraies pour être crédibles. Les news SONT sorties. Le mouvement ÉTAIT inhabituel. Mais 'ceci est arrivé' et 'voilà pourquoi j'ai perdu' sont deux affirmations différentes — et la seconde n'est jamais testée.",
       "beats": [
-        { "t": "0-2", "do": "deux affirmations distinctes s'affichent. GAUCHE : 'THIS HAPPENED' — un fait solide, encre, vérifiable, qui reçoit une coche. VRAI." },
-        { "t": "2-3.5", "do": "DROITE : 'THIS IS WHY I LOST' — et entre le fait et la perte, un LIEN se dessine... en POINTILLÉ, jamais vérifié. aucune coche ne vient. le lien est supposé, pas démontré. c'est LUI qu'on n'a jamais testé." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : le fait solide d'un côté, le lien pointillé de l'autre, qui n'a jamais été mis à l'épreuve." } ],
+        {
+          "t": "0-2",
+          "do": "deux affirmations distinctes s'affichent. GAUCHE : 'THIS HAPPENED' — un fait solide, encre, vérifiable, qui reçoit une coche. VRAI."
+        },
+        {
+          "t": "2-3.5",
+          "do": "DROITE : 'THIS IS WHY I LOST' — et entre le fait et la perte, un LIEN se dessine... en POINTILLÉ, jamais vérifié. aucune coche ne vient. le lien est supposé, pas démontré. c'est LUI qu'on n'a jamais testé."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : le fait solide d'un côté, le lien pointillé de l'autre, qui n'a jamais été mis à l'épreuve."
+        }
+      ],
       "camera": "fixe",
       "dod": "le fait vérifié (coche) vs le lien fait→perte en pointillé jamais testé",
-      "turn": "le fait est vrai. le LIEN entre le fait et ta perte n'a jamais été vérifié." },
-    { "id": "s4",
+      "turn": "le fait est vrai. le LIEN entre le fait et ta perte n'a jamais été vérifié."
+    },
+    {
+      "id": "s4",
       "clarity": "Donc la même erreur survit : on garde les critères d'entrée qui ont échoué, la taille trop grosse, le stop à l'endroit évident — parce qu'aucun n'a jamais été nommé comme cause.",
       "note": "LA scene — les causes intactes sous la pile de couvercles.",
       "beats": [
-        { "t": "0-1.5", "do": "sous le couvercle, on montre les VRAIES causes, alignées et intactes : les critères d'entrée, la taille, l'emplacement du stop. aucune n'est marquée, aucune n'a été nommée. elles sont neuves." },
-        { "t": "1.5-3", "do": "la boucle s'enclenche : nouvelle perte → nouveau couvercle → empilé sur le précédent. encore. encore. la PILE de couvercles monte, cadence qui accélère. et DESSOUS, les mêmes causes, toujours identiques, jamais touchées." },
-        { "t": "3-4.5", "do": "la pile devient haute et les causes en dessous sont maintenant profondément enfouies — chacune ayant produit une perte de plus. 'every loss gets a story, no loss gets a lesson'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : la haute pile de couvercles, les causes intactes tout en bas. le motif se répète." } ],
+        {
+          "t": "0-1.5",
+          "do": "sous le couvercle, on montre les VRAIES causes, alignées et intactes : les critères d'entrée, la taille, l'emplacement du stop. aucune n'est marquée, aucune n'a été nommée. elles sont neuves."
+        },
+        {
+          "t": "1.5-3",
+          "do": "la boucle s'enclenche : nouvelle perte → nouveau couvercle → empilé sur le précédent. encore. encore. la PILE de couvercles monte, cadence qui accélère. et DESSOUS, les mêmes causes, toujours identiques, jamais touchées."
+        },
+        {
+          "t": "3-4.5",
+          "do": "la pile devient haute et les causes en dessous sont maintenant profondément enfouies — chacune ayant produit une perte de plus. 'every loss gets a story, no loss gets a lesson'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : la haute pile de couvercles, les causes intactes tout en bas. le motif se répète."
+        }
+      ],
       "camera": "fixe",
       "dod": "la pile de couvercles qui monte + les mêmes causes intactes en dessous",
-      "turn": "chaque perte reçoit une histoire, aucune ne reçoit une leçon." },
-    { "id": "s5",
+      "turn": "chaque perte reçoit une histoire, aucune ne reçoit une leçon."
+    },
+    {
+      "id": "s5",
       "clarity": "Après une perte, écris l'explication. Puis demande une seule chose : si ça avait été un gain, est-ce que je raconterais la même histoire ? Si la raison n'apparaît que quand tu perds, ce n'est pas une raison — c'est un bouclier.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : le couvercle-histoire est SORTI de la pile et posé à l'épreuve. la question s'inscrit : 'IF THIS HAD BEEN A WIN — WOULD I TELL THE SAME STORY?'" },
-        { "t": "2-3.5", "do": "TEST : on rejoue le même événement mais avec une issue GAGNANTE → l'histoire ne s'active PAS (elle reste plate, inutile : personne n'invoque les news quand ça gagne). le couvercle est donc démasqué : c'est un BOUCLIER, pas une raison. il se soulève enfin, révélant la vraie cause, qui reçoit une marque teal — nommée, donc corrigeable." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la question inscrite, le couvercle levé, la cause enfin nommée en teal. immobile. le test à retenir." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : le couvercle-histoire est SORTI de la pile et posé à l'épreuve. la question s'inscrit : 'IF THIS HAD BEEN A WIN — WOULD I TELL THE SAME STORY?'"
+        },
+        {
+          "t": "2-3.5",
+          "do": "TEST : on rejoue le même événement mais avec une issue GAGNANTE → l'histoire ne s'active PAS (elle reste plate, inutile : personne n'invoque les news quand ça gagne). le couvercle est donc démasqué : c'est un BOUCLIER, pas une raison. il se soulève enfin, révélant la vraie cause, qui reçoit une marque teal — nommée, donc corrigeable."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la question inscrite, le couvercle levé, la cause enfin nommée en teal. immobile. le test à retenir."
+        }
+      ],
       "camera": "fixe",
       "dod": "le test 'si ça avait été un gain' qui démasque le bouclier et révèle la cause nommée",
-      "fusil_decharge": "le couvercle de S1 se lève : une raison qui n'apparaît qu'en cas de perte est un bouclier — le test 'et si ça avait gagné ?' rend la cause visible, donc corrigeable." }
+      "fusil_decharge": "le couvercle de S1 se lève : une raison qui n'apparaît qu'en cas de perte est un bouclier — le test 'et si ça avait gagné ?' rend la cause visible, donc corrigeable."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"PROFILE\" to find your trader type. The explanation arrives seconds after the loss, and it's always convincing.\n\nYour mind writes it to protect a belief: good trader, bad luck. Comfortable — and it's exactly what stops you improving, because a loss that wasn't your fault has nothing to teach you. The news did come out. But this happened and this is why I lost are two different claims, and you never test the second.\n\nTHE LINE — if this had been a win, would you be telling the same story?\n\n#trading #trader #tradingpsychology #accountability #discipline #daytrading #forex #tradingeducation #mindset #process",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'si ça avait été un gain, est-ce que je raconterais la même histoire ?' — un test mémorisable à appliquer après chaque perte.",
     "interdits": "aucun chiffre; aucun événement réel/news nommé; gris = perte (M-couleur); pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi-croyance/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

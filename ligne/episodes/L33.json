@@ -10,59 +10,129 @@
     "So when you catch yourself waiting for break-even, name it: I'm anchored. Then ask the only useful question — if I had no position right now, would I open this one at this price? If the answer is no, your entry price isn't a reason to stay. It's just a number you happen to remember."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il est en perte, pas dramatique, juste faux. Et il attend UNE chose : revenir à son prix d'entrée pour sortir à zéro. Pourquoi ce nombre a-t-il cette emprise ?",
       "question": "WHY DOES YOUR ENTRY PRICE HOLD YOU?",
       "emotion_lever": "TENSION + RECONNAISSANCE DE SOI — dès la frame 0, TOI enchaîné à un trait pendant que le marché s'éloigne. On se reconnaît, ça pique.",
       "cast": {
-        "you": { "type": "gauge", "note": "TOI = boule teal, ENCHAÎNÉE" },
-        "entry": { "type": "hline", "note": "ton prix d'entrée = un trait, avec une CHAÎNE qui te relie à lui. le fusil = la chaîne." } },
+        "you": {
+          "type": "gauge",
+          "note": "TOI = boule teal, ENCHAÎNÉE"
+        },
+        "entry": {
+          "type": "hline",
+          "note": "ton prix d'entrée = un trait, avec une CHAÎNE qui te relie à lui. le fusil = la chaîne."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : la boule teal (TOI) est ENCHAÎNÉE par un maillon épais à un trait horizontal (ton prix d'entrée). Le prix, lui, s'est déjà ÉLOIGNÉ loin en dessous et continue de dériver. La chaîne est TENDUE à craquer. La contrainte est visible immédiatement." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : la chaîne vibre sous la tension, la boule tire vers le trait, le prix continue de s'éloigner. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : la boule teal (TOI) est ENCHAÎNÉE par un maillon épais à un trait horizontal (ton prix d'entrée). Le prix, lui, s'est déjà ÉLOIGNÉ loin en dessous et continue de dériver. La chaîne est TENDUE à craquer. La contrainte est visible immédiatement."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : la chaîne vibre sous la tension, la boule tire vers le trait, le prix continue de s'éloigner. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule teal enchaînée au trait d'entrée, chaîne tendue, dès la frame 0",
-      "fusil": "la chaîne qui te relie à ton prix d'entrée — on va voir si elle mérite de tenir." },
-    { "id": "s2",
+      "fusil": "la chaîne qui te relie à ton prix d'entrée — on va voir si elle mérite de tenir."
+    },
+    {
+      "id": "s2",
       "clarity": "Ton prix d'entrée est le seul nombre du graphe que TOI SEUL peux voir. Le marché ne le connaît pas. Personne ne le défend. Il n'a de sens que pour toi.",
       "label": "the only level nobody else can see",
       "beats": [
-        { "t": "0-2", "do": "vue élargie : plusieurs niveaux sur le graphe, chacun avec des figures fil-de-fer POSTÉES dessus (des gens qui les défendent, du monde). ces niveaux existent pour tous." },
-        { "t": "2-3.5", "do": "puis on montre TON trait d'entrée : il est DÉSERT. aucune figure dessus. il est même dessiné en pointillé pâle pour les autres — INVISIBLE. seule la chaîne (ta chaîne) l'ancre dans le réel." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les niveaux peuplés vivent, ton trait reste vide et pâle, tenu uniquement par ta chaîne." } ],
+        {
+          "t": "0-2",
+          "do": "vue élargie : plusieurs niveaux sur le graphe, chacun avec des figures fil-de-fer POSTÉES dessus (des gens qui les défendent, du monde). ces niveaux existent pour tous."
+        },
+        {
+          "t": "2-3.5",
+          "do": "puis on montre TON trait d'entrée : il est DÉSERT. aucune figure dessus. il est même dessiné en pointillé pâle pour les autres — INVISIBLE. seule la chaîne (ta chaîne) l'ancre dans le réel."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les niveaux peuplés vivent, ton trait reste vide et pâle, tenu uniquement par ta chaîne."
+        }
+      ],
       "camera": "fixe",
       "dod": "les niveaux peuplés de défenseurs vs ton trait d'entrée désert et invisible aux autres",
-      "turn": "personne d'autre ne voit ce niveau. il n'a de sens que pour toi." },
-    { "id": "s3",
+      "turn": "personne d'autre ne voit ce niveau. il n'a de sens que pour toi."
+    },
+    {
+      "id": "s3",
       "clarity": "C'est l'ancrage : il transforme une décision de trading en décision personnelle. On cesse de demander 'cette position est-elle bonne ?' pour demander 'puis-je sortir sans admettre que j'avais tort ?'",
       "beats": [
-        { "t": "0-2", "do": "deux questions s'affichent côte à côte, distinctes. GAUCHE (teal, la bonne) : 'IS THIS POSITION STILL GOOD?'. DROITE (grise, celle qu'on pose vraiment) : 'CAN I GET OUT WITHOUT BEING WRONG?'." },
-        { "t": "2-3.5", "do": "la chaîne TIRE le regard de la question de gauche vers celle de droite — l'ancrage opère la substitution. la question saine s'éteint, la question d'ego s'allume." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la mauvaise question allumée, la bonne éteinte, la chaîne qui maintient le basculement." } ],
+        {
+          "t": "0-2",
+          "do": "deux questions s'affichent côte à côte, distinctes. GAUCHE (teal, la bonne) : 'IS THIS POSITION STILL GOOD?'. DROITE (grise, celle qu'on pose vraiment) : 'CAN I GET OUT WITHOUT BEING WRONG?'."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la chaîne TIRE le regard de la question de gauche vers celle de droite — l'ancrage opère la substitution. la question saine s'éteint, la question d'ego s'allume."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la mauvaise question allumée, la bonne éteinte, la chaîne qui maintient le basculement."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux questions distinctes + la chaîne qui substitue l'une à l'autre",
-      "turn": "l'ancrage remplace 'est-ce bon ?' par 'puis-je éviter d'avoir tort ?'" },
-    { "id": "s4",
+      "turn": "l'ancrage remplace 'est-ce bon ?' par 'puis-je éviter d'avoir tort ?'"
+    },
+    {
+      "id": "s4",
       "clarity": "Le coût : on tient une position perdante au-delà de toute raison, parce que revenir à zéro ressemble à ne pas perdre. Pendant ce temps le capital est bloqué et de meilleurs setups passent.",
       "note": "LA scene — le capital enchaîné pendant que les occasions défilent.",
       "beats": [
-        { "t": "0-1.5", "do": "la boule teal, enchaînée, reste immobile sur sa position morte. le temps passe (des cycles défilent, cadence qui accélère)." },
-        { "t": "1.5-3", "do": "pendant ce temps, DE BONS SETUPS défilent à côté — des points teal brillants, nets, qui apparaissent et disparaissent l'un après l'autre. la boule TIRE sur sa chaîne vers eux mais ne peut pas les atteindre. elle est retenue." },
-        { "t": "3-4.5", "do": "les setups continuent de passer et de s'éteindre, non pris. le capital reste immobilisé sur une position sans avenir. 'locked to a number the market has never heard of'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : la boule enchaînée, les setups qui s'éteignent au loin. la perte n'est pas la position — c'est tout ce qu'on ne fait pas." } ],
+        {
+          "t": "0-1.5",
+          "do": "la boule teal, enchaînée, reste immobile sur sa position morte. le temps passe (des cycles défilent, cadence qui accélère)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "pendant ce temps, DE BONS SETUPS défilent à côté — des points teal brillants, nets, qui apparaissent et disparaissent l'un après l'autre. la boule TIRE sur sa chaîne vers eux mais ne peut pas les atteindre. elle est retenue."
+        },
+        {
+          "t": "3-4.5",
+          "do": "les setups continuent de passer et de s'éteindre, non pris. le capital reste immobilisé sur une position sans avenir. 'locked to a number the market has never heard of'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : la boule enchaînée, les setups qui s'éteignent au loin. la perte n'est pas la position — c'est tout ce qu'on ne fait pas."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule enchaînée pendant que les bons setups défilent et s'éteignent, hors de portée",
-      "turn": "le vrai coût n'est pas la perte — c'est le capital immobilisé pendant que les occasions passent." },
-    { "id": "s5",
+      "turn": "le vrai coût n'est pas la perte — c'est le capital immobilisé pendant que les occasions passent."
+    },
+    {
+      "id": "s5",
       "clarity": "Quand tu te surprends à attendre le break-even, nomme-le : je suis ancré. Puis pose la seule question utile — si je n'avais aucune position, est-ce que j'ouvrirais celle-ci à ce prix ?",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : la boule enchaînée. une question s'inscrit et vient frapper la chaîne : 'IF I HAD NO POSITION — WOULD I OPEN THIS ONE, AT THIS PRICE?'" },
-        { "t": "2-3.5", "do": "la réponse 'NO' fait CÉDER la chaîne (les maillons se brisent, le trait d'entrée s'efface — il n'a jamais rien valu). la boule teal se LIBÈRE et se pose, libre, prête à choisir. si la réponse était 'YES', la chaîne deviendrait un simple appui teal (rester est alors un choix, pas une prison)." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la question inscrite, la chaîne brisée, la boule libre. immobile. la règle à retenir." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : la boule enchaînée. une question s'inscrit et vient frapper la chaîne : 'IF I HAD NO POSITION — WOULD I OPEN THIS ONE, AT THIS PRICE?'"
+        },
+        {
+          "t": "2-3.5",
+          "do": "la réponse 'NO' fait CÉDER la chaîne (les maillons se brisent, le trait d'entrée s'efface — il n'a jamais rien valu). la boule teal se LIBÈRE et se pose, libre, prête à choisir. si la réponse était 'YES', la chaîne deviendrait un simple appui teal (rester est alors un choix, pas une prison)."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la question inscrite, la chaîne brisée, la boule libre. immobile. la règle à retenir."
+        }
+      ],
       "camera": "fixe",
       "dod": "la question qui brise la chaîne + la boule libérée du trait d'entrée",
-      "fusil_decharge": "la chaîne de S1 se brise sur la seule question qui vaille : ton prix d'entrée n'est pas une raison de rester, juste un nombre dont tu te souviens." }
+      "fusil_decharge": "la chaîne de S1 se brise sur la seule question qui vaille : ton prix d'entrée n'est pas une raison de rester, juste un nombre dont tu te souviens."
+    }
   ],
   "total": 84.0,
   "caption": "Comment \"PROFILE\" to find your trader type. Your entry price is the one number on the chart that only you can see — and it's running your decisions.\n\nThe market doesn't know it. Nobody is defending it. But waiting for break-even converts a trading decision into a personal one: you stop asking if the position is good and start asking if you can get out without being wrong. Meanwhile your capital sits locked while better setups pass by.\n\nTHE LINE — if you had no position right now, would you open this one at this price?\n\n#trading #trader #tradingpsychology #anchoring #discipline #daytrading #forex #tradingeducation #mindset #riskmanagement",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'If I had no position right now, would I open this one at this price?' — une question mémorisable, applicable immédiatement.",
     "interdits": "aucun chiffre; gris = perte (M-couleur); les défenseurs des niveaux = fil-de-fer neutres, pas de brun; TOI=boule teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

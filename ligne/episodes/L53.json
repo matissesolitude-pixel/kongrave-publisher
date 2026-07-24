@@ -10,60 +10,133 @@
     "So name which one is speaking before you act. If you're about to enter and the reason is that it's already moving, that's the first fear. If you're about to exit and nothing in your plan changed, that's the second. Your plan was written when neither of them was in the room. That's the entire point of having one."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Deux peurs tirent en sens opposés. Rater te tire dedans, perdre te tire dehors. Celle qui parle le plus fort à l'instant décide du trade.",
       "question": "WHICH FEAR IS RUNNING YOUR TRADE?",
       "emotion_lever": "TENSION + RECONNAISSANCE DE SOI — dès la frame 0, TOI visiblement ÉTIRÉ et déformé entre deux forces grises qui tirent en sens contraires. On sent la traction.",
       "cast": {
-        "you": { "type": "gauge", "note": "TOI = boule teal, étirée et déformée" },
-        "pullIn": { "type": "block", "note": "une force grise qui tire vers le marché en mouvement" },
-        "pullOut": { "type": "block", "note": "une force grise qui tire vers la sortie. le fusil = les deux forces." } },
+        "you": {
+          "type": "gauge",
+          "note": "TOI = boule teal, étirée et déformée"
+        },
+        "pullIn": {
+          "type": "block",
+          "note": "une force grise qui tire vers le marché en mouvement"
+        },
+        "pullOut": {
+          "type": "block",
+          "note": "une force grise qui tire vers la sortie. le fusil = les deux forces."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : la boule teal (TOI) au centre, visiblement ÉTIRÉE et DÉFORMÉE — deux forces grises la tirent en sens EXACTEMENT opposés, l'une vers un prix qui file (dedans), l'autre vers l'écart (dehors). Elle est écartelée. La traction se ressent immédiatement." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : les deux forces tirent en alternance, la boule oscille et se déforme sans jamais se poser. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : la boule teal (TOI) au centre, visiblement ÉTIRÉE et DÉFORMÉE — deux forces grises la tirent en sens EXACTEMENT opposés, l'une vers un prix qui file (dedans), l'autre vers l'écart (dehors). Elle est écartelée. La traction se ressent immédiatement."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : les deux forces tirent en alternance, la boule oscille et se déforme sans jamais se poser. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule teal étirée entre deux forces grises opposées, dès la frame 0",
-      "fusil": "les deux forces — on va voir quand chacune parle." },
-    { "id": "s2",
+      "fusil": "les deux forces — on va voir quand chacune parle."
+    },
+    {
+      "id": "s2",
       "clarity": "Elles ne se relaient pas équitablement : rater crie quand le prix file et que tu es dehors. Perdre crie quand tu es dedans et que ça va contre toi. Donc l'une gouverne les entrées, l'autre les sorties.",
       "label": "one runs entries · the other runs exits",
       "beats": [
-        { "t": "0-2", "do": "condition A : le prix FILE et la boule est DEHORS → la force 'rater' s'ALLUME fort, l'autre reste éteinte. condition B : la boule est DEDANS et ça va contre → la force 'perdre' s'ALLUME, la première s'éteint." },
-        { "t": "2-3.5", "do": "les deux déclencheurs s'inscrivent clairement, chacun lié à sa condition. et le partage se révèle : l'une commande les ENTRÉES, l'autre les SORTIES. tes deux décisions les plus importantes." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les deux forces qui s'allument alternativement selon la condition, jamais ensemble." } ],
+        {
+          "t": "0-2",
+          "do": "condition A : le prix FILE et la boule est DEHORS → la force 'rater' s'ALLUME fort, l'autre reste éteinte. condition B : la boule est DEDANS et ça va contre → la force 'perdre' s'ALLUME, la première s'éteint."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les deux déclencheurs s'inscrivent clairement, chacun lié à sa condition. et le partage se révèle : l'une commande les ENTRÉES, l'autre les SORTIES. tes deux décisions les plus importantes."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les deux forces qui s'allument alternativement selon la condition, jamais ensemble."
+        }
+      ],
       "camera": "fixe",
       "dod": "chaque force liée à sa condition de déclenchement, l'une aux entrées l'autre aux sorties",
-      "turn": "chacune a son moment — et ensemble elles gouvernent tes deux décisions clés." },
-    { "id": "s3",
+      "turn": "chacune a son moment — et ensemble elles gouvernent tes deux décisions clés."
+    },
+    {
+      "id": "s3",
       "clarity": "Ce que cette combinaison produit : tu entres TARD (rater ne crie qu'une fois le mouvement visible) et tu sors TÔT (perdre chuchote dès que tu es exposé). Tard dedans, tôt dehors.",
       "beats": [
-        { "t": "0-2", "do": "un mouvement de prix complet se déroule. l'ENTRÉE se déclenche seulement quand le mouvement est DÉJÀ bien visible — donc tard, une bonne partie du trajet est passée." },
-        { "t": "2-3.5", "do": "la SORTIE se déclenche dès la première secousse contraire — donc tôt, bien avant la fin du mouvement. la tranche réellement capturée est SURLIGNÉE : une petite portion médiane, la moins intéressante du trajet." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : le mouvement entier, la petite tranche capturée au milieu, le début et la fin abandonnés." } ],
+        {
+          "t": "0-2",
+          "do": "un mouvement de prix complet se déroule. l'ENTRÉE se déclenche seulement quand le mouvement est DÉJÀ bien visible — donc tard, une bonne partie du trajet est passée."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la SORTIE se déclenche dès la première secousse contraire — donc tôt, bien avant la fin du mouvement. la tranche réellement capturée est SURLIGNÉE : une petite portion médiane, la moins intéressante du trajet."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : le mouvement entier, la petite tranche capturée au milieu, le début et la fin abandonnés."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'entrée tardive et la sortie précoce ne capturant qu'une tranche médiane du mouvement",
-      "turn": "tard dedans, tôt dehors — exactement l'inverse de ce qu'il faudrait." },
-    { "id": "s4",
+      "turn": "tard dedans, tôt dehors — exactement l'inverse de ce qu'il faudrait."
+    },
+    {
+      "id": "s4",
       "clarity": "Le plus cruel : les deux peurs ressemblent à de la prudence. Entrer donne l'impression de saisir. Sortir donne l'impression de se protéger. Aucune ne se signale comme une erreur.",
       "note": "LA scene — deux erreurs déguisées en responsabilité.",
       "beats": [
-        { "t": "0-1.5", "do": "l'entrée tardive se produit → une étiquette 'SEIZING THE OPPORTUNITY' se pose dessus, valorisante, en encre nette. ça ressemble à de la décision." },
-        { "t": "1.5-3", "do": "la sortie précoce se produit → une étiquette 'PROTECTING MYSELF' se pose dessus, tout aussi valorisante. les deux actions se sentent RESPONSABLES." },
-        { "t": "3-4.5", "do": "conséquence : aucune n'est jamais signalée comme une erreur, donc le motif se RÉPÈTE — la boucle tourne, cadence qui accélère, année après année, sans jamais être nommée. la tranche capturée reste minuscule à chaque tour." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : la boucle qui tourne, les deux étiquettes rassurantes, le motif jamais interrogé." } ],
+        {
+          "t": "0-1.5",
+          "do": "l'entrée tardive se produit → une étiquette 'SEIZING THE OPPORTUNITY' se pose dessus, valorisante, en encre nette. ça ressemble à de la décision."
+        },
+        {
+          "t": "1.5-3",
+          "do": "la sortie précoce se produit → une étiquette 'PROTECTING MYSELF' se pose dessus, tout aussi valorisante. les deux actions se sentent RESPONSABLES."
+        },
+        {
+          "t": "3-4.5",
+          "do": "conséquence : aucune n'est jamais signalée comme une erreur, donc le motif se RÉPÈTE — la boucle tourne, cadence qui accélère, année après année, sans jamais être nommée. la tranche capturée reste minuscule à chaque tour."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : la boucle qui tourne, les deux étiquettes rassurantes, le motif jamais interrogé."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux étiquettes valorisantes qui empêchent de voir l'erreur + la boucle qui se répète",
-      "turn": "les deux se sentent responsables — c'est pour ça que ça dure des années." },
-    { "id": "s5",
+      "turn": "les deux se sentent responsables — c'est pour ça que ça dure des années."
+    },
+    {
+      "id": "s5",
       "clarity": "Nomme celle qui parle AVANT d'agir. J'entre parce que ça bouge déjà ? C'est la première. Je sors alors que rien n'a changé dans mon plan ? C'est la seconde. Ton plan a été écrit quand aucune des deux n'était là.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : deux tests s'inscrivent, un par force. 'AM I ENTERING BECAUSE IT'S ALREADY MOVING?' → nomme la première. 'AM I EXITING THOUGH NOTHING IN THE PLAN CHANGED?' → nomme la seconde." },
-        { "t": "2-3.5", "do": "quand une force est NOMMÉE, elle devient visible et perd sa prise : elle se détache de la boule. le PLAN (écrit en amont, teal, stable) reprend l'autorité — il était rédigé quand aucune des deux n'était dans la pièce." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la boule teal enfin ronde et posée, les deux forces nommées et détachées, le plan au centre. immobile." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : deux tests s'inscrivent, un par force. 'AM I ENTERING BECAUSE IT'S ALREADY MOVING?' → nomme la première. 'AM I EXITING THOUGH NOTHING IN THE PLAN CHANGED?' → nomme la seconde."
+        },
+        {
+          "t": "2-3.5",
+          "do": "quand une force est NOMMÉE, elle devient visible et perd sa prise : elle se détache de la boule. le PLAN (écrit en amont, teal, stable) reprend l'autorité — il était rédigé quand aucune des deux n'était dans la pièce."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la boule teal enfin ronde et posée, les deux forces nommées et détachées, le plan au centre. immobile."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux questions qui nomment les forces + le plan qui reprend l'autorité",
-      "fusil_decharge": "les deux forces de S1 se résolvent : nommées, elles perdent leur prise — le plan a été écrit quand aucune n'était présente, c'est tout son intérêt." }
+      "fusil_decharge": "les deux forces de S1 se résolvent : nommées, elles perdent leur prise — le plan a été écrit quand aucune n'était présente, c'est tout son intérêt."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"PROFILE\" to find your trader type. Two fears run your account and they pull in opposite directions.\n\nMissing out gets loud when price is moving and you're outside. Losing gets loud when you're in and it's against you. So one runs your entries and the other runs your exits — late in, early out. And both feel like caution: seizing an opportunity, protecting yourself. Neither registers as a mistake, which is why the pattern survives for years.\n\nTHE LINE — your plan was written when neither fear was in the room.\n\n#trading #trader #tradingpsychology #fomo #discipline #daytrading #forex #tradingeducation #mindset #process",
@@ -77,5 +150,13 @@
     "fin_actionnable": "deux questions de nommage à poser avant d'agir — 'est-ce que j'entre parce que ça bouge déjà ?' / 'est-ce que je sors alors que rien n'a changé ?'",
     "interdits": "aucun chiffre; les forces = grises et ABSTRAITES (jamais des visages); pas de brun; TOI=boule teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi-plan/teal #1E5F6E · peurs/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

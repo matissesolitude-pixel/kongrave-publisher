@@ -10,69 +10,157 @@
     "So the question isn't whether averaging down can work. It's whether you have a line where you stop adding and admit you're wrong. Averaging into a plan is position building. Averaging because you can't accept the loss is digging. The difference is whether you decided the levels before the trade — or you're just refusing to be wrong, one add at a time."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Le trade va contre lui, il y croit encore, il rajoute au meilleur prix (moyenne à la baisse). L'entrée s'améliore, ça semble malin. Pourquoi tant de comptes meurent ici ?",
       "question": "WHY DO ACCOUNTS DIE FROM A BETTER AVERAGE?",
       "cast": {
-        "pos": { "type": "gauge", "note": "ta position teal" },
-        "entry": { "type": "hline", "note": "ton prix moyen = un trait teal. le fusil = la position qui grossit en descendant." } },
+        "pos": {
+          "type": "gauge",
+          "note": "ta position teal"
+        },
+        "entry": {
+          "type": "hline",
+          "note": "ton prix moyen = un trait teal. le fusil = la position qui grossit en descendant."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: une jauge teal (position) et un trait (prix moyen). le prix descend sous le trait; un DEUXIÈME bloc teal s'ajoute plus bas → le trait moyen DESCEND (s'améliore), la jauge GROSSIT." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: le prix continue de baisser, la jauge plus grosse, le prix moyen amélioré — ça 'semble' mieux. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: une jauge teal (position) et un trait (prix moyen). le prix descend sous le trait; un DEUXIÈME bloc teal s'ajoute plus bas → le trait moyen DESCEND (s'améliore), la jauge GROSSIT."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: le prix continue de baisser, la jauge plus grosse, le prix moyen amélioré — ça 'semble' mieux. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la position qui grossit + le prix moyen qui descend en ajoutant plus bas",
-      "fusil": "la position qui grossit en descendant — on va voir la facture cachée." },
-    { "id": "s2",
+      "fusil": "la position qui grossit en descendant — on va voir la facture cachée.",
+      "hook_gag": {
+        "primitive": "vanishInto",
+        "agent": "la position qui grossit et l'engloutit à chaque ajout",
+        "reaction": "résigné",
+        "temps": "en cours",
+        "raccord": "seule sa main dépasse encore et pointe le ?",
+        "lien_sujet": "s'enfoncer en moyennant, littéralement"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Moyenner à la baisse a une logique : si le trade était bon au 1er prix, il est meilleur plus bas. Sur le papier, même chose en solde. Parfois ça marche.",
       "label": "the discount logic",
       "beats": [
-        { "t": "0-2", "do": "on montre la logique 'saine': le même bloc teal, acheté plus bas = 'on discount'. une étiquette 'same thing, cheaper'. le prix moyen amélioré brille." },
-        { "t": "2-3.5", "do": "scénario qui marche: le prix REMONTE, franchit le prix moyen amélioré → la position vire au vert (teal plein), perte devenue gain. 'sometimes it works'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: le cas gagnant montré honnêtement — le prix moyen amélioré a sauvé le coup. (mais c'est un des cas.)" } ],
+        {
+          "t": "0-2",
+          "do": "on montre la logique 'saine': le même bloc teal, acheté plus bas = 'on discount'. une étiquette 'same thing, cheaper'. le prix moyen amélioré brille."
+        },
+        {
+          "t": "2-3.5",
+          "do": "scénario qui marche: le prix REMONTE, franchit le prix moyen amélioré → la position vire au vert (teal plein), perte devenue gain. 'sometimes it works'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: le cas gagnant montré honnêtement — le prix moyen amélioré a sauvé le coup. (mais c'est un des cas.)"
+        }
+      ],
       "camera": "fixe",
       "dod": "la logique du discount + le cas où le prix remonte et sauve la position",
-      "turn": "moyenner a une vraie logique — parfois le prix revient et ça paie." },
-    { "id": "s3",
+      "turn": "moyenner a une vraie logique — parfois le prix revient et ça paie."
+    },
+    {
+      "id": "s3",
       "clarity": "Mais regarde ce que tu as fait : grossi la taille pile quand le marché te dit que tu as tort. Position plus grosse, idée plus faible. Chaque pas contre toi coûte plus.",
       "beats": [
-        { "t": "0-2", "do": "retour au cas réel. deux courbes DIVERGENTES se dessinent sur la jauge: 'your size' MONTE (la position grossit) pendant que 'your idea' (une barre de conviction/validité teal) DESCEND — le marché contre toi. elles se croisent: taille max, idée min." },
-        { "t": "2-3.5", "do": "le prix fait un pas de plus contre → cette fois la perte est PLUS grosse (la jauge grossie se délave d'une tranche plus épaisse qu'au début). 'every step costs more'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: taille et idée en ciseaux inversés, la perte qui s'alourdit à chaque pas. la facture cachée du discount." } ],
+        {
+          "t": "0-2",
+          "do": "retour au cas réel. deux courbes DIVERGENTES se dessinent sur la jauge: 'your size' MONTE (la position grossit) pendant que 'your idea' (une barre de conviction/validité teal) DESCEND — le marché contre toi. elles se croisent: taille max, idée min."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le prix fait un pas de plus contre → cette fois la perte est PLUS grosse (la jauge grossie se délave d'une tranche plus épaisse qu'au début). 'every step costs more'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: taille et idée en ciseaux inversés, la perte qui s'alourdit à chaque pas. la facture cachée du discount."
+        }
+      ],
       "camera": "fixe",
       "dod": "les ciseaux taille-monte/idée-descend + la perte qui s'alourdit à chaque pas",
-      "turn": "tu as grossi ta position pendant que ton idée s'affaiblissait — chaque pas coûte plus." },
-    { "id": "s4",
+      "turn": "tu as grossi ta position pendant que ton idée s'affaiblissait — chaque pas coûte plus."
+    },
+    {
+      "id": "s4",
       "clarity": "Le piège qui tue : aucun point d'arrêt naturel. Ça baisse, tu moyennes. Encore, c'est plus tentant, tu rajoutes. Une position toujours plus grosse dans un mouvement qui ne s'arrête pas. La fois où ça ne revient pas, ça prend TOUT.",
       "note": "LA scene — l'absence de point d'arrêt.",
       "beats": [
-        { "t": "0-1.5", "do": "cycle qui accélère: prix baisse → add (jauge grossit) → baisse → add → baisse → add. chaque add semble rationnel (une petite coche 'rational' clignote à chaque fois) mais la jauge devient ÉNORME, l'escalier de blocs descend sans fin." },
-        { "t": "1.5-3", "do": "le prix ne s'arrête PAS de baisser. la jauge géante, gonflée par tous les ajouts, est maintenant immense — et la baisse continue de la manger, vite." },
-        { "t": "3-4", "do": "la fois de trop: le prix continue, la jauge géante S'EFFONDRE ENTIÈREMENT en gris — pas une perte, TOUT. 'it doesn't take a loss, it takes everything'. à côté, minuscule, ce qu'aurait coûté un stop au premier prix: une éraflure." },
-        { "t": "4-14", "do": "TENUE VIVANTE longue: l'escalier d'ajouts, la jauge géante vidée, l'éraflure évitée en rappel. le contraste EST la leçon." } ],
+        {
+          "t": "0-1.5",
+          "do": "cycle qui accélère: prix baisse → add (jauge grossit) → baisse → add → baisse → add. chaque add semble rationnel (une petite coche 'rational' clignote à chaque fois) mais la jauge devient ÉNORME, l'escalier de blocs descend sans fin."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le prix ne s'arrête PAS de baisser. la jauge géante, gonflée par tous les ajouts, est maintenant immense — et la baisse continue de la manger, vite."
+        },
+        {
+          "t": "3-4",
+          "do": "la fois de trop: le prix continue, la jauge géante S'EFFONDRE ENTIÈREMENT en gris — pas une perte, TOUT. 'it doesn't take a loss, it takes everything'. à côté, minuscule, ce qu'aurait coûté un stop au premier prix: une éraflure."
+        },
+        {
+          "t": "4-14",
+          "do": "TENUE VIVANTE longue: l'escalier d'ajouts, la jauge géante vidée, l'éraflure évitée en rappel. le contraste EST la leçon."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'escalier d'ajouts 'rationnels' + la jauge géante qui s'effondre entièrement",
-      "turn": "pas de point d'arrêt: la position géante ne prend pas une perte, elle prend tout." },
-    { "id": "s5",
+      "turn": "pas de point d'arrêt: la position géante ne prend pas une perte, elle prend tout."
+    },
+    {
+      "id": "s5",
       "clarity": "La question n'est pas si moyenner peut marcher. C'est si tu as une ligne où tu arrêtes d'ajouter et admets ton tort. Moyenner selon un plan = construire. Moyenner car on refuse la perte = creuser.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: deux versions côte à côte. GAUCHE 'position building': les niveaux d'ajout sont DÉCIDÉS À L'AVANCE (des traits teal prévus), avec une LIGNE D'ARRÊT ferme en bas (un stop) — construction maîtrisée. DROITE 'digging': les ajouts sont improvisés sans fin, AUCUNE ligne d'arrêt — on creuse." },
-        { "t": "2-3.5", "do": "la différence se surligne: la ligne d'arrêt décidée AVANT le trade (gauche, coche teal) vs le refus d'avoir tort, un ajout à la fois (droite, gris). 'did you decide the levels before — or just refusing to be wrong?'." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la version 'building' avec sa ligne d'arrêt nette. immobile. avoir une ligne où on s'arrête." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: deux versions côte à côte. GAUCHE 'position building': les niveaux d'ajout sont DÉCIDÉS À L'AVANCE (des traits teal prévus), avec une LIGNE D'ARRÊT ferme en bas (un stop) — construction maîtrisée. DROITE 'digging': les ajouts sont improvisés sans fin, AUCUNE ligne d'arrêt — on creuse."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la différence se surligne: la ligne d'arrêt décidée AVANT le trade (gauche, coche teal) vs le refus d'avoir tort, un ajout à la fois (droite, gris). 'did you decide the levels before — or just refusing to be wrong?'."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la version 'building' avec sa ligne d'arrêt nette. immobile. avoir une ligne où on s'arrête."
+        }
+      ],
       "camera": "fixe",
       "dod": "building (niveaux + ligne d'arrêt décidés avant) vs digging (sans fin, sans arrêt)",
-      "fusil_decharge": "la position qui grossit de S1 se résout: moyenner n'est tenable qu'avec une ligne d'arrêt décidée avant — sinon c'est creuser jusqu'à tout perdre (S5)." }
+      "fusil_decharge": "la position qui grossit de S1 se résout: moyenner n'est tenable qu'avec une ligne d'arrêt décidée avant — sinon c'est creuser jusqu'à tout perdre (S5)."
+    }
   ],
   "total": 84.0,
-  "caption": "Comment \"LINE\" and I'll send you the checklist on the traps nobody shows you. Averaging into a plan is building. Averaging because you can't accept the loss is digging.\n\nWhen you average down, you increase your size at the exact moment the market says you're wrong. Your position gets bigger while your idea gets weaker — and there's no natural stopping point. The one time price doesn't come back, it doesn't take a loss. It takes everything.\n\nTHE LINE — did you decide the levels before the trade, or are you just refusing to be wrong?\n\n#trading #trader #riskmanagement #averagingdown #discipline #daytrading #forex #tradingeducation #positionsizing #mindset",
+  "caption": "Comment \"LINE\" for the checklist on hidden traps. Averaging into a plan is building. Averaging because you can't accept the loss is digging.\n\nWhen you average down, you increase your size at the exact moment the market says you're wrong. Your position gets bigger while your idea gets weaker — and there's no natural stopping point. The one time price doesn't come back, it doesn't take a loss. It takes everything.\n\nTHE LINE — did you decide the levels before the trade, or are you just refusing to be wrong?\n\n#trading #trader #riskmanagement #averagingdown #discipline #daytrading #forex #tradingeducation #positionsizing #mindset",
   "_rules": {
     "doctrine": "averaging down / martingale démystifié: la logique du discount est réelle MAIS l'absence de point d'arrêt tue. La distinction building (niveaux décidés avant) vs digging (refus d'avoir tort). Mécanique + mental mêlés, factuel. Garde-fou: l'effondrement = compte vidé, JAMAIS de dette au-delà.",
     "cta_keyword": "LINE → checklist (whop.com/otp-consulting/5-signs-checklist)",
-    "caption_structure": "ligne 1 = accroche + CTA LINE visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "la position qui grossit en descendant (S1), la logique discount (S2), les ciseaux taille/idée (S3), l'escalier sans fin qui vide tout (S4), résolu en building vs digging (S5).",
     "interdits": "aucun chiffre; gris = perte/délavage (M-couleur), pas de rouge; pas de brun; TOI=jauge teal; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "vie_continue": "regle 5: le prix baisse en continu, les ajouts s'empilent, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (LINE). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "Averaging because you can't accept the loss is digging. Comment \"LINE\" and I'll send you the checklist on the traps nobody shows you 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

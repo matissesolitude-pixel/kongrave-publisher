@@ -10,67 +10,150 @@
     "So when you feel it stand up — the urge to get it back now — that feeling is the signal to size down, not up. The market doesn't owe you the loss back. Take the next trade at your normal size, or don't take it at all. Revenge always costs more than the loss it was chasing."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il vient de perdre normalement, et un truc en lui dit 'récupère, maintenant'. Il grossit la taille et fonce. D'où ça vient ?",
       "question": "WHY DOES A LOSS MAKE YOU BET BIGGER?",
-      "cast": { "gauge": { "type": "gauge", "note": "ta taille de position = jauge teal. le fusil = ce qui la fait gonfler." } },
+      "cast": {
+        "gauge": {
+          "type": "gauge",
+          "note": "ta taille de position = jauge teal. le fusil = ce qui la fait gonfler."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.6", "do": "DRAW-ON: une jauge teal de taille MODÉRÉE (ta taille normale). à côté, une petite brique se délave en gris (la perte qui vient d'arriver)." },
-        { "t": "2.6-10", "do": "TENUE VIVANTE: la brique grise (la perte) PULSE — une pression. la jauge normale à côté, encore calme. le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.6",
+          "do": "DRAW-ON: une jauge teal de taille MODÉRÉE (ta taille normale). à côté, une petite brique se délave en gris (la perte qui vient d'arriver)."
+        },
+        {
+          "t": "2.6-10",
+          "do": "TENUE VIVANTE: la brique grise (la perte) PULSE — une pression. la jauge normale à côté, encore calme. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la jauge de taille normale + la perte grise qui pulse à côté",
-      "fusil": "la jauge à taille normale — on va la voir gonfler sous la pression de la perte." },
-    { "id": "s2",
+      "fusil": "la jauge à taille normale — on va la voir gonfler sous la pression de la perte.",
+      "hook_gag": {
+        "primitive": "hitBy",
+        "agent": "la jauge de taille qui gonfle d'un coup",
+        "reaction": "surpris",
+        "temps": "déjà arrivé",
+        "raccord": "il revient en se frottant l'épaule et pointe le ?",
+        "lien_sujet": "la jauge qui enfle sous la pression est le cœur du sujet"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "La perte laisse une marque sur TOI, pas sur le compte. Une pression qui veut être soulagée vite. La taille devient un antidouleur.",
       "label": "size becomes a painkiller",
       "beats": [
-        { "t": "0-2", "do": "de la brique grise (la perte), une ONDE de pression irradie vers la jauge. à chaque pulsation de la perte, la jauge teal GONFLE d'un cran — elle grossit, poussée par la douleur, pas par un calcul." },
-        { "t": "2-3.5", "do": "la jauge, maintenant plus grosse, se colore d'un halo (le 'soulagement' promis). label: la taille n'est plus une décision, c'est un remède." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: la jauge gonflée pulse au rythme de la perte — liée à elle. 'a painkiller'." } ],
+        {
+          "t": "0-2",
+          "do": "de la brique grise (la perte), une ONDE de pression irradie vers la jauge. à chaque pulsation de la perte, la jauge teal GONFLE d'un cran — elle grossit, poussée par la douleur, pas par un calcul."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la jauge, maintenant plus grosse, se colore d'un halo (le 'soulagement' promis). label: la taille n'est plus une décision, c'est un remède."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la jauge gonflée pulse au rythme de la perte — liée à elle. 'a painkiller'."
+        }
+      ],
       "camera": "fixe",
       "dod": "la jauge qui gonfle poussée par les pulsations de la perte",
-      "turn": "la taille cesse d'être un choix — elle devient un antidouleur." },
-    { "id": "s3",
+      "turn": "la taille cesse d'être un choix — elle devient un antidouleur."
+    },
+    {
+      "id": "s3",
       "clarity": "La taille normale risque une tranche petite et stable. La revenge risque 3-4x, sur un pire setup, dans un pire état. Taille max, jugement min.",
       "note": "diptyque: taille normale vs revenge.",
       "beats": [
-        { "t": "0-13", "do": "SPLIT VERTICAL. HAUT 'normal': jauge modérée, un compte-barre à côté qui perd une LAMELLE fine. calme, stable." },
-        { "t": "0-13", "do": "BAS 'revenge': jauge GONFLÉE (3-4x), et surtout un indicateur de 'jugement' (une petite jauge secondaire) qui, elle, est au PLUS BAS — délavée. le contraste: taille MAX, jugement MIN, au même instant. le compte-barre risque une TRANCHE épaisse." } ],
+        {
+          "t": "0-13",
+          "do": "SPLIT VERTICAL. HAUT 'normal': jauge modérée, un compte-barre à côté qui perd une LAMELLE fine. calme, stable."
+        },
+        {
+          "t": "0-13",
+          "do": "BAS 'revenge': jauge GONFLÉE (3-4x), et surtout un indicateur de 'jugement' (une petite jauge secondaire) qui, elle, est au PLUS BAS — délavée. le contraste: taille MAX, jugement MIN, au même instant. le compte-barre risque une TRANCHE épaisse."
+        }
+      ],
       "camera": "fixe, split",
       "dod": "taille max + jugement min côte à côte (la jauge secondaire délavée)",
-      "turn": "tu as doublé la taille pile quand ton jugement est au plus faible." },
-    { "id": "s4",
+      "turn": "tu as doublé la taille pile quand ton jugement est au plus faible."
+    },
+    {
+      "id": "s4",
       "clarity": "Si ça gagne c'est pire : le cerveau apprend que la revenge paie. On resize encore, jusqu'à ce qu'une revenge reprenne dix pertes, pas une.",
       "note": "LA scene — l'escalade de la boucle.",
       "beats": [
-        { "t": "0-1.5", "do": "la jauge gonflée GAGNE une fois (elle brille, la perte grise s'efface): 'revenge pays'. mais un fil se noue de cette victoire vers la prochaine perte." },
-        { "t": "1.5-3.5", "do": "cycle qui ACCÉLÈRE: perte → jauge gonfle ENCORE plus → gagne → perte → gonfle → à chaque tour la jauge est plus GROSSE, la cadence plus rapide. l'escalade est visible." },
-        { "t": "3.5-4.5", "do": "dernier tour: jauge à taille MAXIMALE, sur un setup délavé (mauvais) → elle S'EFFONDRE d'un coup en gris, ENGLOUTISSANT le compte-barre entier (pas une tranche: tout). 'takes back not one loss but ten'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue: le compte-barre vidé, la jauge éteinte. la piqûre est devenue la blessure fatale." } ],
+        {
+          "t": "0-1.5",
+          "do": "la jauge gonflée GAGNE une fois (elle brille, la perte grise s'efface): 'revenge pays'. mais un fil se noue de cette victoire vers la prochaine perte."
+        },
+        {
+          "t": "1.5-3.5",
+          "do": "cycle qui ACCÉLÈRE: perte → jauge gonfle ENCORE plus → gagne → perte → gonfle → à chaque tour la jauge est plus GROSSE, la cadence plus rapide. l'escalade est visible."
+        },
+        {
+          "t": "3.5-4.5",
+          "do": "dernier tour: jauge à taille MAXIMALE, sur un setup délavé (mauvais) → elle S'EFFONDRE d'un coup en gris, ENGLOUTISSANT le compte-barre entier (pas une tranche: tout). 'takes back not one loss but ten'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue: le compte-barre vidé, la jauge éteinte. la piqûre est devenue la blessure fatale."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'escalade jauge-qui-gonfle à chaque tour puis l'effondrement qui vide tout le compte",
-      "turn": "la revenge qui paie apprend à recommencer — jusqu'à la revenge qui vide tout." },
-    { "id": "s5",
+      "turn": "la revenge qui paie apprend à recommencer — jusqu'à la revenge qui vide tout."
+    },
+    {
+      "id": "s5",
       "clarity": "Quand tu sens l'urgence monter, c'est le signal de RÉDUIRE, pas de grossir. Le marché ne te doit rien. Taille normale, ou rien.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: retour à la perte grise qui pulse (la pression) + la jauge. cette fois, quand l'onde de pression frappe la jauge, la jauge RÉSISTE et RÉTRÉCIT à sa taille normale (au lieu de gonfler) — le réflexe inversé." },
-        { "t": "2-3.5", "do": "la jauge se STABILISE à taille normale, calme, déconnectée de la pulsation de la perte (le fil se coupe). label 'the urge to get it back = size DOWN'." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la jauge à taille normale, sereine, la perte grise inerte à côté (elle ne commande plus rien). immobile." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: retour à la perte grise qui pulse (la pression) + la jauge. cette fois, quand l'onde de pression frappe la jauge, la jauge RÉSISTE et RÉTRÉCIT à sa taille normale (au lieu de gonfler) — le réflexe inversé."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la jauge se STABILISE à taille normale, calme, déconnectée de la pulsation de la perte (le fil se coupe). label 'the urge to get it back = size DOWN'."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la jauge à taille normale, sereine, la perte grise inerte à côté (elle ne commande plus rien). immobile."
+        }
+      ],
       "camera": "fixe",
       "dod": "la jauge qui RÉTRÉCIT à taille normale sous la pression au lieu de gonfler, le fil coupé",
-      "fusil_decharge": "la jauge de S1 (taille normale) a failli être engloutie par l'escalade (S4) — elle se résout en résistant à la pression: l'urgence est le signal de réduire (S5)." }
+      "fusil_decharge": "la jauge de S1 (taille normale) a failli être engloutie par l'escalade (S4) — elle se résout en résistant à la pression: l'urgence est le signal de réduire (S5)."
+    }
   ],
   "total": 80.0,
-  "caption": "Comment \"PROFILE\" to find out what type of trader you are and where it costs you. The urge to win it back now? That's the signal to size DOWN, not up.\n\nA loss leaves a mark on you, not your account. Your size stops being a decision and becomes a painkiller — bigger, on a worse setup, at the exact moment your judgement is weakest. Revenge always costs more than the loss it was chasing.\n\nTHE LINE — the market doesn't owe you the loss back.\n\n#trading #trader #tradingpsychology #riskmanagement #discipline #daytrading #forex #tradingeducation #mindset #revengetrading",
+  "caption": "Comment \"PROFILE\" to find your trader type. The urge to win it back now? That's the signal to size DOWN, not up.\n\nA loss leaves a mark on you, not your account. Your size stops being a decision and becomes a painkiller — bigger, on a worse setup, at the exact moment your judgement is weakest. Revenge always costs more than the loss it was chasing.\n\nTHE LINE — the market doesn't owe you the loss back.\n\n#trading #trader #tradingpsychology #riskmanagement #discipline #daytrading #forex #tradingeducation #mindset #revengetrading",
   "_rules": {
     "doctrine": "revenge trading en psycho MÉCANIQUE: la perte = brique grise qui pulse, la pression = onde, la taille = jauge qui gonfle, l'escalade = boucle qui accélère. Émotion par objets, jamais incarnée. Garde-fou: l'effondrement max = compte vidé, JAMAIS de dette au-delà.",
     "cta_keyword": "PROFILE → LTTI (whop.com/otp-consulting/profil-de-trader)",
-    "caption_structure": "ligne 1 = accroche + CTA PROFILE visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "la jauge à taille normale (S1) gonflée par la pression (S2), taille max/jugement min (S3), l'escalade qui vide tout (S4), résolue en résistance (S5).",
     "interdits": "aucun chiffre; gris = perte/délavage (M-couleur), pas de rouge; pas de brun; TOI jamais une figure; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "vie_continue": "regle 5: la perte pulse, la jauge respire, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (PROFILE). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "The urge to win it back is the signal to size down. Comment \"PROFILE\" and I'll send you the free trader profile test — find out where it costs you 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

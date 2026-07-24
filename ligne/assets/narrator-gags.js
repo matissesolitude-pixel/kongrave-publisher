@@ -62,6 +62,7 @@
       'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') rotate(' + (rot || 0).toFixed(1) + ') ' +
       'scale(' + fx.toFixed(4) + ',' + fy.toFixed(4) + ') translate(' + (-P.w / 2).toFixed(1) + ',' + (-P.h).toFixed(1) + ')');
     this.g.setAttribute('opacity', clamp(op == null ? 1 : op, 0, 1).toFixed(3));
+    this._drawEyes(pose, this._t);
   };
   /* ── SYNCHRO LABIALE (Bible) ────────────────────────────────────────────
      Mr Dollar EST la voix du Reel. À l'écran sa bouche bouge sur l'AMPLITUDE de
@@ -77,7 +78,43 @@
     return /_(soft|wide)$/.test(pose) ? pose : pose + '_' + this.mouth(t);
   };
   MrDollar.prototype.say = function (base, t, x, y, h, op, flip, rot, sx, sy) {
+    this._t = t;
     this.draw(this.resolve(base, t), x, y, h, op, flip, rot, sx, sy);
+  };
+  /* IL DÉSIGNE QUELQUE CHOSE — le sens est calculé, jamais deviné.
+     Les poses visent à DROITE par défaut : si la cible est à sa gauche, on miroite.
+     Règle : il regarde et pointe TOUJOURS vers ce qu'il désigne. */
+  MrDollar.prototype.pointAt = function (base, t, x, y, h, op, targetX, rot, sx, sy) {
+    this._t = t;
+    this.draw(this.resolve(base, t), x, y, h, op, (targetX < x), rot, sx, sy);
+  };
+  /* ── LES YEUX : CLIGNEMENT + REGARD (il s'adresse à nous) ────────────────
+     Les pupilles sont peintes dans le dessin vectorisé : on les RECOUVRE et on
+     les redessine, ce qui donne d'un coup le clignement et le contrôle du regard.
+     Par DÉFAUT il regarde la CAMÉRA — il narre, il s'adresse au spectateur.
+     Quand il désigne quelque chose, son regard part vers la cible. */
+  MrDollar.prototype.setEyes = function (map) { this.eyeMap = map || {}; };
+  MrDollar.prototype.gaze = function (gx, gy) { this._gx = gx; this._gy = (gy == null ? 0.10 : gy); };
+  MrDollar.prototype._blink = function (t) {
+    // deux périodes premières entre elles -> jamais métronomique, mais déterministe
+    var a = (t / 3.7) % 1, b = (t / 5.3) % 1;
+    var d = 0.038;                                  // ~0.14 s de fermeture
+    return (a < d || b < d) ? 1 : 0;
+  };
+  MrDollar.prototype._drawEyes = function (pose, t) {
+    var E = this.eyeMap && this.eyeMap[pose];
+    if (!this.eyeG) { this.eyeG = document.createElementNS(NS, 'g'); this.g.appendChild(this.eyeG); }
+    // YEUX OUVERTS = ON NE TOUCHE À RIEN. Le dessin d'origine est le bon ; le recouvrir
+    // donnait un regard inquiétant. On n'intervient QUE le temps du clignement.
+    if (!E || !E.eyes || !this._blink(t || 0)) { this.eyeG.innerHTML = ''; return; }
+    var h = '';
+    for (var i = 0; i < E.eyes.length; i++) {
+      var e = E.eyes[i];
+      h += '<circle cx="' + e.x + '" cy="' + e.y + '" r="' + (e.r * 1.5).toFixed(1) + '" fill="#F2EFE7"/>' +
+           '<path d="M' + (e.x - e.r * 1.1).toFixed(1) + ' ' + e.y + ' q' + (e.r * 1.1).toFixed(1) + ' ' +
+           (e.r * 0.5).toFixed(1) + ' ' + (e.r * 2.2).toFixed(1) + ' 0" fill="none" stroke="#20242A" stroke-width="6" stroke-linecap="round"/>';
+    }
+    this.eyeG.innerHTML = h;
   };
   MrDollar.prototype.show = function (pose, x, y, h, op, flip) { this.draw(pose, x, y, h, op, flip, 0, 1, 1); };
   MrDollar.prototype.hide = function () { this.g.setAttribute('opacity', '0'); };
@@ -214,8 +251,11 @@
       return;
     }
     var bx = a.x + (st.dx || 0), by = a.y + (st.dy || 0) + (st.bob || 0);
+    // le raccord regarde vers la cible (spec.lookAt), sinon on garde spec.flip
+    if (spec.lookAt != null) spec.flip = (spec.lookAt < bx);
     var px = lerp(bx, rest.x, hand), py = lerp(by, rest.y, hand), ph = lerp(h0, rest.h, hand);
     if (hand > 0.85) { px += 4 * Math.sin(u * 1.2) + 2 * Math.sin(u * 2.3); }   // vie continue une fois posé
+    this._t = spec.t;
     this.draw(this.resolve(hand > 0.6 ? (RACCORD[spec.raccord] || 'idle') : pose, spec.t),
               px, py, ph, (st.op == null ? 1 : st.op) * (spec.op == null ? 1 : spec.op), spec.flip, st.rot, st.sx, st.sy);
   };

@@ -10,59 +10,129 @@
     "So when a level breaks, don't delete it — flip it. The floor you were watching just became a ceiling, and it's likely to matter again from the other side. The line stays. What changed is who needs something from it."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Un niveau a soutenu le prix pendant des semaines. Puis il a cassé. Et maintenant ce même niveau empêche le prix de remonter. Même prix, rôle inverse.",
       "question": "SAME LINE. WHY THE OPPOSITE JOB?",
       "emotion_lever": "CURIOSITÉ + CHOC — dès la frame 0, la MÊME ligne montrée dans ses deux états : des figures DEBOUT DESSUS d'un côté, des figures BLOQUÉES DESSOUS de l'autre. Le même trait, deux fonctions opposées.",
       "cast": {
-        "level": { "type": "hline", "note": "une seule ligne horizontale, montrée dans ses deux rôles" },
-        "crowd": { "type": "figure", "note": "figures fil-de-fer : debout dessus (support) / bloquées dessous (résistance). le fusil = les deux rôles du même trait." } },
+        "level": {
+          "type": "hline",
+          "note": "une seule ligne horizontale, montrée dans ses deux rôles"
+        },
+        "crowd": {
+          "type": "figure",
+          "note": "figures fil-de-fer : debout dessus (support) / bloquées dessous (résistance). le fusil = les deux rôles du même trait."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : une seule ligne horizontale traverse le cadre. À GAUCHE, des figures fil-de-fer se tiennent DEBOUT DESSUS, arc-boutées, la soutenant. À DROITE, sur la MÊME ligne, des figures poussent DEPUIS LE DESSOUS et sont BLOQUÉES par elle. Même trait, deux fonctions strictement opposées, simultanément visibles." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : les figures du dessus tiennent, celles du dessous poussent en vain, la ligne reste immobile. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : une seule ligne horizontale traverse le cadre. À GAUCHE, des figures fil-de-fer se tiennent DEBOUT DESSUS, arc-boutées, la soutenant. À DROITE, sur la MÊME ligne, des figures poussent DEPUIS LE DESSOUS et sont BLOQUÉES par elle. Même trait, deux fonctions strictement opposées, simultanément visibles."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : les figures du dessus tiennent, celles du dessous poussent en vain, la ligne reste immobile. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la même ligne avec figures debout dessus et figures bloquées dessous, dès la frame 0",
-      "fusil": "les deux rôles du même trait — on va comprendre ce qui bascule." },
-    { "id": "s2",
+      "fusil": "les deux rôles du même trait — on va comprendre ce qui bascule."
+    },
+    {
+      "id": "s2",
       "clarity": "Un niveau n'est pas une propriété du prix : c'est un ENDROIT où beaucoup de décisions ont été prises. Tant que le prix est au-dessus, ceux qui ont acheté là sont en gain — et ils le défendent.",
       "label": "a level is where decisions were made",
       "beats": [
-        { "t": "0-2", "do": "on remonte dans le temps : le prix est AU-DESSUS de la ligne. des figures ACHÈTENT exactement sur ce trait — leurs positions s'y ancrent, marquées, nombreuses." },
-        { "t": "2-3.5", "do": "ces positions sont EN GAIN (teal). quand le prix redescend vers la ligne, ces mêmes figures la DÉFENDENT (elles s'arc-boutent) — elles ont un intérêt à ce qu'elle tienne. le rebond se produit." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les positions ancrées en teal sur la ligne, défendue à chaque approche." } ],
+        {
+          "t": "0-2",
+          "do": "on remonte dans le temps : le prix est AU-DESSUS de la ligne. des figures ACHÈTENT exactement sur ce trait — leurs positions s'y ancrent, marquées, nombreuses."
+        },
+        {
+          "t": "2-3.5",
+          "do": "ces positions sont EN GAIN (teal). quand le prix redescend vers la ligne, ces mêmes figures la DÉFENDENT (elles s'arc-boutent) — elles ont un intérêt à ce qu'elle tienne. le rebond se produit."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les positions ancrées en teal sur la ligne, défendue à chaque approche."
+        }
+      ],
       "camera": "fixe",
       "dod": "les positions ancrées sur le niveau, en gain, qui le défendent",
-      "turn": "le niveau tient parce que des gens ont un intérêt à ce qu'il tienne." },
-    { "id": "s3",
+      "turn": "le niveau tient parce que des gens ont un intérêt à ce qu'il tienne."
+    },
+    {
+      "id": "s3",
       "clarity": "Une fois le prix EN DESSOUS, ces mêmes positions sont sous l'eau. Le niveau cesse d'être un plancher qu'on protège et devient un endroit où l'on veut SORTIR.",
       "beats": [
-        { "t": "0-2", "do": "le prix CASSE et passe sous la ligne. les positions ancrées, sans bouger, changent d'état : elles se DÉLAVENT en gris — elles sont maintenant sous l'eau." },
-        { "t": "2-3.5", "do": "leur intention s'INVERSE visiblement : elles ne défendent plus, elles se TOURNENT vers la ligne comme vers une porte de sortie — revenir à leur prix d'entrée pour partir à zéro. la ligne devient une file d'attente." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : les positions grises massées sous la ligne, tournées vers elle, attendant de sortir." } ],
+        {
+          "t": "0-2",
+          "do": "le prix CASSE et passe sous la ligne. les positions ancrées, sans bouger, changent d'état : elles se DÉLAVENT en gris — elles sont maintenant sous l'eau."
+        },
+        {
+          "t": "2-3.5",
+          "do": "leur intention s'INVERSE visiblement : elles ne défendent plus, elles se TOURNENT vers la ligne comme vers une porte de sortie — revenir à leur prix d'entrée pour partir à zéro. la ligne devient une file d'attente."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : les positions grises massées sous la ligne, tournées vers elle, attendant de sortir."
+        }
+      ],
       "camera": "fixe",
       "dod": "les positions passées sous l'eau et retournées vers la ligne comme vers une sortie",
-      "turn": "le trait n'a pas changé — la relation de la foule à lui, si." },
-    { "id": "s4",
+      "turn": "le trait n'a pas changé — la relation de la foule à lui, si."
+    },
+    {
+      "id": "s4",
       "clarity": "C'est pourquoi suivre une cassure échoue si souvent PILE au niveau : le prix revient à la ligne, on lit 'cassure ratée' — alors que ce retour est exactement ce que la bascule prédit.",
       "note": "LA scene — le retour lu comme un échec alors que c'est le mécanisme.",
       "beats": [
-        { "t": "0-1.5", "do": "la cassure a lieu, la boule teal (toi) la suit vers le bas. logique, propre." },
-        { "t": "1.5-3", "do": "le prix REMONTE vers la ligne. la boule lit 'la cassure a raté' et se fait SECOUER dehors, pile au niveau. mais on montre POURQUOI ça remonte : les positions grises massées sous la ligne sortent enfin à leur prix d'entrée — c'est leur sortie qui crée le retour." },
-        { "t": "3-4.5", "do": "révélation : ce retour n'était pas un échec, c'était le MÉCANISME QUI SE CONFIRMAIT. une fois la file de sortie écoulée, le prix repart vers le bas — sans la boule, sortie trop tôt." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : la boule secouée dehors au niveau, la file écoulée, le prix reparti sans elle." } ],
+        {
+          "t": "0-1.5",
+          "do": "la cassure a lieu, la boule teal (toi) la suit vers le bas. logique, propre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le prix REMONTE vers la ligne. la boule lit 'la cassure a raté' et se fait SECOUER dehors, pile au niveau. mais on montre POURQUOI ça remonte : les positions grises massées sous la ligne sortent enfin à leur prix d'entrée — c'est leur sortie qui crée le retour."
+        },
+        {
+          "t": "3-4.5",
+          "do": "révélation : ce retour n'était pas un échec, c'était le MÉCANISME QUI SE CONFIRMAIT. une fois la file de sortie écoulée, le prix repart vers le bas — sans la boule, sortie trop tôt."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : la boule secouée dehors au niveau, la file écoulée, le prix reparti sans elle."
+        }
+      ],
       "camera": "fixe",
       "dod": "le retour au niveau expliqué par la sortie des positions piégées, mal lu comme un échec",
-      "turn": "le retour au niveau n'est pas un échec — c'est le mécanisme qui se confirme." },
-    { "id": "s5",
+      "turn": "le retour au niveau n'est pas un échec — c'est le mécanisme qui se confirme."
+    },
+    {
+      "id": "s5",
       "clarity": "Quand un niveau casse, ne l'EFFACE pas — RETOURNE-LE. Le plancher que tu regardais vient de devenir un plafond, et il comptera probablement encore, depuis l'autre côté.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : après la cassure, un geste : effacer la ligne → BARRÉ. à la place, la ligne RESTE, et son étiquette PIVOTE : 'FLOOR' devient 'CEILING'. le trait est identique, sa fonction est inversée." },
-        { "t": "2-3.5", "do": "la ligne retournée est ensuite montrée EN SERVICE : le prix remonte vers elle depuis le dessous et se fait REPOUSSER — elle compte toujours, depuis l'autre côté. label : 'the line stays. what changed is who needs something from it'." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la ligne conservée, étiquette retournée, active depuis l'autre face. immobile. retourner, pas effacer." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : après la cassure, un geste : effacer la ligne → BARRÉ. à la place, la ligne RESTE, et son étiquette PIVOTE : 'FLOOR' devient 'CEILING'. le trait est identique, sa fonction est inversée."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la ligne retournée est ensuite montrée EN SERVICE : le prix remonte vers elle depuis le dessous et se fait REPOUSSER — elle compte toujours, depuis l'autre côté. label : 'the line stays. what changed is who needs something from it'."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la ligne conservée, étiquette retournée, active depuis l'autre face. immobile. retourner, pas effacer."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'effacement barré + l'étiquette qui pivote FLOOR→CEILING + la ligne active depuis l'autre côté",
-      "fusil_decharge": "les deux rôles de S1 se résolvent : c'est la même ligne, et c'est la relation de la foule qui bascule — on la retourne, on ne l'efface jamais." }
+      "fusil_decharge": "les deux rôles de S1 se résolvent : c'est la même ligne, et c'est la relation de la foule qui bascule — on la retourne, on ne l'efface jamais."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"MAP\" for the free beta of my indicator. The exact line that held price up for weeks is now stopping it from going back up.\n\nA level is a place where a lot of decisions were made. Above it, the buyers there are in profit and defend it. Below it, those same positions are underwater and want out at their entry. Same price, opposite job — which is why a break so often rallies right back to the line, and why traders read that as failure when it's the mechanism confirming itself.\n\nTHE LINE — when a level breaks, flip it. Don't delete it.\n\n#trading #trader #supportresistance #priceaction #marketstructure #daytrading #forex #tradingeducation #levels #smartmoney",
@@ -76,5 +146,13 @@
     "fin_actionnable": "'quand un niveau casse, retourne-le, ne l'efface pas' — un geste concret de gestion de graphe.",
     "interdits": "aucun chiffre; foule = fil-de-fer NEUTRES (pas de brun, pas de camp adverse — ce sont des positions ordinaires); gris = sous l'eau (M-couleur); bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · en-gain/teal #1E5F6E · sous-l'eau/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

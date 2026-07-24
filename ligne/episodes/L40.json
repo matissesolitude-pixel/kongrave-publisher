@@ -10,60 +10,133 @@
     "So before you judge a method, ask how many trades the result would need to actually mean something — and it's a lot more than ten. Until you're there, you aren't evaluating a system. You're reading noise and calling it a verdict."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il teste une stratégie sur dix trades. Six pertes, il est en négatif, il l'abandonne. Mais ces dix trades ne prouvent peut-être rien du tout.",
       "question": "TEN TRADES. WHAT DID THEY ACTUALLY PROVE?",
       "emotion_lever": "CHOC + CURIOSITÉ — dès la frame 0, deux séries de résultats OPPOSÉES (l'une gagnante, l'autre perdante) sortent visiblement de LA MÊME source. La contradiction saute aux yeux.",
       "cast": {
-        "source": { "type": "block", "note": "UNE source unique (un récipient), qui alimente les deux séries" },
-        "runs": { "type": "block", "note": "deux séries de dix blocs : l'une majoritairement teal, l'autre majoritairement grise. le fusil = la source commune." } },
+        "source": {
+          "type": "block",
+          "note": "UNE source unique (un récipient), qui alimente les deux séries"
+        },
+        "runs": {
+          "type": "block",
+          "note": "deux séries de dix blocs : l'une majoritairement teal, l'autre majoritairement grise. le fusil = la source commune."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : deux séries de dix blocs, côte à côte, DÉJÀ visibles. GAUCHE : majoritairement TEAL (une belle série gagnante). DROITE : majoritairement GRISE (une série perdante). Et entre elles, en évidence, UNE SEULE source (un récipient encre) reliée aux deux par deux tuyaux. Même origine, résultats opposés. La contradiction frappe." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : la source pulse doucement, les deux séries frémissent. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : deux séries de dix blocs, côte à côte, DÉJÀ visibles. GAUCHE : majoritairement TEAL (une belle série gagnante). DROITE : majoritairement GRISE (une série perdante). Et entre elles, en évidence, UNE SEULE source (un récipient encre) reliée aux deux par deux tuyaux. Même origine, résultats opposés. La contradiction frappe."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : la source pulse doucement, les deux séries frémissent. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "les deux séries opposées reliées à une source unique, dès la frame 0",
-      "fusil": "la source commune — on va comprendre comment elle produit les deux." },
-    { "id": "s2",
+      "fusil": "la source commune — on va comprendre comment elle produit les deux."
+    },
+    {
+      "id": "s2",
       "clarity": "Une stratégie avec un vrai edge perd souvent quand même. Si elle gagne à peine plus d'une fois sur deux, perdre six fois sur dix est parfaitement ordinaire. Ce n'est pas une preuve contre l'edge.",
       "label": "a real edge still loses often",
       "beats": [
-        { "t": "0-2", "do": "on ouvre la source : elle a un edge RÉEL mais MINCE (une bascule teal à peine penchée du bon côté). elle déverse un LONG flux de résultats — des centaines de blocs qui défilent, teal et gris mélangés." },
-        { "t": "2-3.5", "do": "une petite FENÊTRE (dix blocs) se pose au hasard sur ce long flux → elle attrape six gris. on la déplace ailleurs → elle attrape sept teal. on la déplace encore → cinq/cinq. la même source produit n'importe quelle fenêtre courte." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la fenêtre glisse sur le flux, ramassant des combinaisons différentes à chaque position." } ],
+        {
+          "t": "0-2",
+          "do": "on ouvre la source : elle a un edge RÉEL mais MINCE (une bascule teal à peine penchée du bon côté). elle déverse un LONG flux de résultats — des centaines de blocs qui défilent, teal et gris mélangés."
+        },
+        {
+          "t": "2-3.5",
+          "do": "une petite FENÊTRE (dix blocs) se pose au hasard sur ce long flux → elle attrape six gris. on la déplace ailleurs → elle attrape sept teal. on la déplace encore → cinq/cinq. la même source produit n'importe quelle fenêtre courte."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la fenêtre glisse sur le flux, ramassant des combinaisons différentes à chaque position."
+        }
+      ],
       "camera": "fixe",
       "dod": "la fenêtre de dix qui glisse sur un long flux et ramasse des résultats opposés",
-      "turn": "sur un échantillon court, la même source donne n'importe quoi." },
-    { "id": "s3",
+      "turn": "sur un échantillon court, la même source donne n'importe quoi."
+    },
+    {
+      "id": "s3",
       "clarity": "L'inverse est aussi vrai, et bien plus dangereux : une stratégie SANS aucun edge peut sortir huit gains sur dix par pur hasard. Tu la gardes, tu l'agrandis, tu bâtis une routine dessus.",
       "beats": [
-        { "t": "0-1.5", "do": "deuxième source, celle-ci PARFAITEMENT neutre (bascule à l'équilibre exact, aucun edge). elle déverse aussi un long flux." },
-        { "t": "1.5-3", "do": "la fenêtre de dix se pose → huit blocs TEAL. la série paraît excellente. une coche 'keep it!' s'allume, la position teal GRANDIT dessus (on scale), une routine se construit autour (des briques s'empilent)." },
-        { "t": "3-4", "do": "puis on REMONTE à la source : elle est neutre, plate, sans edge. la belle série était une coïncidence. la routine bâtie repose sur rien. 'a coincidence with good timing'." },
-        { "t": "4-13", "do": "TENUE VIVANTE : la routine empilée au-dessus d'une source vide. le déséquilibre est visible." } ],
+        {
+          "t": "0-1.5",
+          "do": "deuxième source, celle-ci PARFAITEMENT neutre (bascule à l'équilibre exact, aucun edge). elle déverse aussi un long flux."
+        },
+        {
+          "t": "1.5-3",
+          "do": "la fenêtre de dix se pose → huit blocs TEAL. la série paraît excellente. une coche 'keep it!' s'allume, la position teal GRANDIT dessus (on scale), une routine se construit autour (des briques s'empilent)."
+        },
+        {
+          "t": "3-4",
+          "do": "puis on REMONTE à la source : elle est neutre, plate, sans edge. la belle série était une coïncidence. la routine bâtie repose sur rien. 'a coincidence with good timing'."
+        },
+        {
+          "t": "4-13",
+          "do": "TENUE VIVANTE : la routine empilée au-dessus d'une source vide. le déséquilibre est visible."
+        }
+      ],
       "camera": "fixe",
       "dod": "la source sans edge qui produit huit teal + la routine bâtie sur du vide",
-      "turn": "sans edge, une belle série arrive quand même — et on construit dessus." },
-    { "id": "s4",
+      "turn": "sans edge, une belle série arrive quand même — et on construit dessus."
+    },
+    {
+      "id": "s4",
       "clarity": "C'est pourquoi les traders enchaînent les systèmes à l'infini : chacun testé sur un échantillon bien trop court, jugé, abandonné, remplacé. On ne sélectionne pas l'edge, on sélectionne ce qui a chauffé pendant son audition.",
       "note": "LA scene — le carrousel des systèmes.",
       "beats": [
-        { "t": "0-1.5", "do": "un CARROUSEL de systèmes défile : chacun passe devant une petite fenêtre d'audition (dix blocs), reçoit un verdict immédiat — gardé (teal) ou jeté (gris) — et le suivant arrive. la cadence accélère." },
-        { "t": "1.5-3", "do": "on RÉVÈLE la règle réelle du tri : ce n'est pas l'edge qui décide (les sources restent cachées, jamais mesurées) — c'est UNIQUEMENT ce qui a chauffé pendant les dix. les systèmes gardés sont les chanceux du moment, pas les bons." },
-        { "t": "3-4.5", "do": "le tas des 'jetés' grossit (dont certains avaient un vrai edge, marqués d'un liseré teal qu'on n'a jamais vu), et le tas des 'gardés' contient des sources vides. le tri est inversé par le bruit." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : le carrousel qui tourne, les deux tas mal triés. 'you're selecting for whichever ran hot'." } ],
+        {
+          "t": "0-1.5",
+          "do": "un CARROUSEL de systèmes défile : chacun passe devant une petite fenêtre d'audition (dix blocs), reçoit un verdict immédiat — gardé (teal) ou jeté (gris) — et le suivant arrive. la cadence accélère."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on RÉVÈLE la règle réelle du tri : ce n'est pas l'edge qui décide (les sources restent cachées, jamais mesurées) — c'est UNIQUEMENT ce qui a chauffé pendant les dix. les systèmes gardés sont les chanceux du moment, pas les bons."
+        },
+        {
+          "t": "3-4.5",
+          "do": "le tas des 'jetés' grossit (dont certains avaient un vrai edge, marqués d'un liseré teal qu'on n'a jamais vu), et le tas des 'gardés' contient des sources vides. le tri est inversé par le bruit."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : le carrousel qui tourne, les deux tas mal triés. 'you're selecting for whichever ran hot'."
+        }
+      ],
       "camera": "fixe",
       "dod": "le carrousel d'auditions courtes + le tri inversé (bons jetés, vides gardés)",
-      "turn": "on ne sélectionne pas l'edge — on sélectionne la chance du moment." },
-    { "id": "s5",
+      "turn": "on ne sélectionne pas l'edge — on sélectionne la chance du moment."
+    },
+    {
+      "id": "s5",
       "clarity": "Avant de juger une méthode, demande combien de trades il faudrait pour que le résultat veuille dire quelque chose — et c'est bien plus que dix. Avant ça, tu lis du bruit et tu appelles ça un verdict.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : l'échantillon GRANDIT progressivement. à dix blocs : le signal est noyé, la mesure oscille sauvagement (le trait de résultat part dans tous les sens). à cinquante : ça se calme un peu. à plusieurs centaines : le trait CONVERGE et se stabilise sur la vraie valeur de la source." },
-        { "t": "2-3.5", "do": "la zone 'noise' (petits échantillons, grise) et la zone 'signal' (grands échantillons, teal) se marquent nettement sur l'axe. le verdict n'est possible que dans la zone teal." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la courbe qui converge, la zone bruit grise et la zone signal teal séparées. immobile. savoir où on se trouve avant de juger." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : l'échantillon GRANDIT progressivement. à dix blocs : le signal est noyé, la mesure oscille sauvagement (le trait de résultat part dans tous les sens). à cinquante : ça se calme un peu. à plusieurs centaines : le trait CONVERGE et se stabilise sur la vraie valeur de la source."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la zone 'noise' (petits échantillons, grise) et la zone 'signal' (grands échantillons, teal) se marquent nettement sur l'axe. le verdict n'est possible que dans la zone teal."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la courbe qui converge, la zone bruit grise et la zone signal teal séparées. immobile. savoir où on se trouve avant de juger."
+        }
+      ],
       "camera": "fixe",
       "dod": "l'échantillon qui grandit et la mesure qui converge, zone bruit vs zone signal",
-      "fusil_decharge": "la source commune de S1 se résout : deux séries opposées peuvent sortir de la même source — seul un grand échantillon distingue le signal du bruit." }
+      "fusil_decharge": "la source commune de S1 se résout : deux séries opposées peuvent sortir de la même source — seul un grand échantillon distingue le signal du bruit."
+    }
   ],
   "total": 86.0,
   "caption": "Comment \"PROFILE\" to find your trader type. Ten trades can tell you absolutely nothing about whether a strategy works.\n\nA real edge still loses often — losing six out of ten is ordinary. And a strategy with no edge at all can produce eight wins by chance, which you'd keep and scale. So traders cycle through systems forever, selecting not for edge but for whichever one happened to run hot during its short audition.\n\nTHE LINE — until the sample is big enough, you're reading noise and calling it a verdict.\n\n#trading #trader #edge #backtesting #variance #daytrading #forex #tradingeducation #process #mindset",
@@ -77,5 +150,13 @@
     "fin_actionnable": "'combien de trades faut-il pour que ce résultat veuille dire quelque chose ?' — la question à poser avant de juger toute méthode.",
     "interdits": "AUCUN chiffre à l'écran (les quantités par la MASSE et la longueur des séries); gris = perte/bruit (M-couleur); pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · gain-signal/teal #1E5F6E · perte-bruit/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

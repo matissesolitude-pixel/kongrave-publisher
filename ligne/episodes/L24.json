@@ -10,67 +10,153 @@
     "So when the screen offers nothing and the waiting starts to burn, name it: this is the hard part of the job, and I'm doing it right now. Sitting on your hands through a dead market is not you missing out. It's you refusing to hand the boredom your account. The setup that never comes cost you nothing. The one you invented costs everything."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Il a des règles, attend un setup précis, rien ne matche. Le marché dérive, plat. Attendre devient insupportable. Pourquoi ne rien faire est si dur ?",
       "question": "WHY IS DOING NOTHING SO HARD?",
-      "cast": { "you": { "type": "gauge", "note": "TOI = boule teal en attente. le fusil = la pression de l'attente." } },
+      "cast": {
+        "you": {
+          "type": "gauge",
+          "note": "TOI = boule teal en attente. le fusil = la pression de l'attente."
+        }
+      },
       "beats": [
-        { "t": "0-1.6", "do": "question POP, ? 200px" },
-        { "t": "1.6-2.8", "do": "DRAW-ON: la boule teal (toi) posée, calme, devant un tracé de prix PLAT qui ondule à peine (marché mort). elle attend son setup." },
-        { "t": "2.8-10", "do": "TENUE VIVANTE: le tracé plat oscille mollement, la boule attend. mais un léger tremblement commence en elle (la pression naît). le ? fade." } ],
+        {
+          "t": "0-1.6",
+          "do": "question POP, ? 200px"
+        },
+        {
+          "t": "1.6-2.8",
+          "do": "DRAW-ON: la boule teal (toi) posée, calme, devant un tracé de prix PLAT qui ondule à peine (marché mort). elle attend son setup."
+        },
+        {
+          "t": "2.8-10",
+          "do": "TENUE VIVANTE: le tracé plat oscille mollement, la boule attend. mais un léger tremblement commence en elle (la pression naît). le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule teal en attente devant un marché plat",
-      "fusil": "la boule calme en attente — on va voir la pression monter jusqu'à la faire craquer." },
-    { "id": "s2",
+      "fusil": "la boule calme en attente — on va voir la pression monter jusqu'à la faire craquer.",
+      "hook_gag": {
+        "primitive": "contrast",
+        "agent": "le marché plat qui n'offre rien (il fait la sieste devant)",
+        "reaction": "s'ennuie",
+        "temps": "en cours",
+        "raccord": "il se réveille en sursaut quand le ? apparaît",
+        "lien_sujet": "l'attente insupportable, jouée au premier plan"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Ton edge vit dans peu de moments. La plupart du temps, rien à prendre. Ne rien faire est correct — mais ça ne ressemble pas à un choix, ça ressemble à un échec.",
       "label": "your edge lives in few moments",
       "beats": [
-        { "t": "0-2", "do": "sur le tracé plat, on marque les RARES moments d'edge: quelques points teal brillants, très espacés, séparés par de longues zones VIDES. l'edge est rare." },
-        { "t": "2-3.5", "do": "dans une longue zone vide (maintenant), la boule ne fait rien = CORRECT (une coche teal apparaît). mais la boule, elle, se délave légèrement comme si c'était un échec (perception fausse: 'feels like failure')." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: les points d'edge rares au loin, la boule dans le vide entre deux — juste, mais mal vécu." } ],
+        {
+          "t": "0-2",
+          "do": "sur le tracé plat, on marque les RARES moments d'edge: quelques points teal brillants, très espacés, séparés par de longues zones VIDES. l'edge est rare."
+        },
+        {
+          "t": "2-3.5",
+          "do": "dans une longue zone vide (maintenant), la boule ne fait rien = CORRECT (une coche teal apparaît). mais la boule, elle, se délave légèrement comme si c'était un échec (perception fausse: 'feels like failure')."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: les points d'edge rares au loin, la boule dans le vide entre deux — juste, mais mal vécu."
+        }
+      ],
       "camera": "fixe",
       "dod": "les rares points d'edge espacés + la boule qui ne fait rien (juste) mais se sent en échec",
-      "turn": "ne rien faire est correct — mais ça se vit comme un échec." },
-    { "id": "s3",
+      "turn": "ne rien faire est correct — mais ça se vit comme un échec."
+    },
+    {
+      "id": "s3",
       "clarity": "La pression monte, et pour la soulager on baisse ses standards. Un setup presque bon. On n'a pas décidé un pire trade — on n'a plus supporté d'attendre.",
       "beats": [
-        { "t": "0-2", "do": "la pression (un halo qui serre la boule) MONTE, la boule tremble de plus en plus. au-dessus d'elle, une BARRE 'standards' est placée haut." },
-        { "t": "2-3.5", "do": "sous la pression, la barre 'standards' DESCEND, cran par cran — chaque cran, un setup 'presque bon' devient acceptable. la boule n'a pas choisi: la pression a POUSSÉ la barre vers le bas. 'boredom made the decision'." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE: la barre des standards affaissée, la boule prête à sauter sur n'importe quoi. le seuil a cédé." } ],
+        {
+          "t": "0-2",
+          "do": "la pression (un halo qui serre la boule) MONTE, la boule tremble de plus en plus. au-dessus d'elle, une BARRE 'standards' est placée haut."
+        },
+        {
+          "t": "2-3.5",
+          "do": "sous la pression, la barre 'standards' DESCEND, cran par cran — chaque cran, un setup 'presque bon' devient acceptable. la boule n'a pas choisi: la pression a POUSSÉ la barre vers le bas. 'boredom made the decision'."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE: la barre des standards affaissée, la boule prête à sauter sur n'importe quoi. le seuil a cédé."
+        }
+      ],
       "camera": "fixe",
       "dod": "la barre 'standards' qui descend sous la pression de l'attente",
-      "turn": "on n'a pas décidé un pire trade — l'ennui a baissé la barre à notre place." },
-    { "id": "s4",
+      "turn": "on n'a pas décidé un pire trade — l'ennui a baissé la barre à notre place."
+    },
+    {
+      "id": "s4",
       "clarity": "Les trades qui explosent viennent rarement des meilleurs setups, mais des moments creux où on a fabriqué quelque chose pour se sentir actif. La patience EST le trading.",
       "note": "LA scene — le trade fabriqué qui explose.",
       "beats": [
-        { "t": "0-1.5", "do": "la barre des standards au plus bas: la boule SAUTE sur un 'setup' du vide (un point terne, pas un vrai edge) — juste pour agir. elle le fabrique." },
-        { "t": "1.5-3", "do": "ce trade fabriqué GONFLE puis EXPLOSE (délavage gris violent) — la boule se délave fortement. et un rappel visuel: les VRAIS points d'edge (teal brillants), eux, sont restés intacts, non pris. le désastre vient du creux, pas du sommet." },
-        { "t": "3-4", "do": "superposition: 'blow-ups come from the in-between' — la zone morte surlignée comme la vraie source du danger, pas les moments d'edge." },
-        { "t": "4-14", "do": "TENUE VIVANTE longue: la boule délavée sur le trade fabriqué, les points d'edge intacts au loin. 'patience IS the trading'." } ],
+        {
+          "t": "0-1.5",
+          "do": "la barre des standards au plus bas: la boule SAUTE sur un 'setup' du vide (un point terne, pas un vrai edge) — juste pour agir. elle le fabrique."
+        },
+        {
+          "t": "1.5-3",
+          "do": "ce trade fabriqué GONFLE puis EXPLOSE (délavage gris violent) — la boule se délave fortement. et un rappel visuel: les VRAIS points d'edge (teal brillants), eux, sont restés intacts, non pris. le désastre vient du creux, pas du sommet."
+        },
+        {
+          "t": "3-4",
+          "do": "superposition: 'blow-ups come from the in-between' — la zone morte surlignée comme la vraie source du danger, pas les moments d'edge."
+        },
+        {
+          "t": "4-14",
+          "do": "TENUE VIVANTE longue: la boule délavée sur le trade fabriqué, les points d'edge intacts au loin. 'patience IS the trading'."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule qui fabrique un trade dans le vide et explose, les vrais edges restés intacts",
-      "turn": "le désastre vient du creux fabriqué, pas des vrais setups. patienter EST trader." },
-    { "id": "s5",
+      "turn": "le désastre vient du creux fabriqué, pas des vrais setups. patienter EST trader."
+    },
+    {
+      "id": "s5",
       "clarity": "Quand l'écran n'offre rien et que l'attente brûle, nomme-la : c'est la partie dure du métier, et je la fais. S'asseoir sur ses mains n'est pas rater — c'est refuser de donner son compte à l'ennui.",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE: retour à la boule sous pression. cette fois, quand la barre des standards veut descendre, la boule la RETIENT en place (elle nomme la pression: un label 'this is the hard part — I'm doing it' se pose, et la barre se BLOQUE haut)." },
-        { "t": "2-3.5", "do": "la boule se pose calmement, standards intacts, laissant passer le marché mort SANS agir. la pression reflue. deux briques fantômes s'affichent: 'the setup that never came — cost nothing' (creuse, neutre) vs 'the one you invented — costs everything' (grise)." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s: la boule sereine, standards hauts, les deux briques étiquetées. immobile. tenir la barre." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE: retour à la boule sous pression. cette fois, quand la barre des standards veut descendre, la boule la RETIENT en place (elle nomme la pression: un label 'this is the hard part — I'm doing it' se pose, et la barre se BLOQUE haut)."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la boule se pose calmement, standards intacts, laissant passer le marché mort SANS agir. la pression reflue. deux briques fantômes s'affichent: 'the setup that never came — cost nothing' (creuse, neutre) vs 'the one you invented — costs everything' (grise)."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s: la boule sereine, standards hauts, les deux briques étiquetées. immobile. tenir la barre."
+        }
+      ],
       "camera": "fixe",
       "dod": "la boule qui bloque la barre des standards en place, les deux briques (rien vs tout)",
-      "fusil_decharge": "la boule en attente de S1 a failli craquer sous la pression (S3-S4) — elle se résout en nommant l'attente comme le métier lui-même (S5)." }
+      "fusil_decharge": "la boule en attente de S1 a failli craquer sous la pression (S3-S4) — elle se résout en nommant l'attente comme le métier lui-même (S5)."
+    }
   ],
   "total": 84.0,
-  "caption": "Comment \"PROFILE\" to find out what type of trader you are and where it costs you. The setup that never comes costs you nothing. The one you invent costs everything.\n\nYour edge lives in a few moments — the rest is waiting, and waiting burns. So you lower your standards just to feel active. But blow-ups come from the in-between moments, not your best setups. Patience isn't the boring part before the trading. Patience IS the trading.\n\nTHE LINE — refuse to hand the boredom your account.\n\n#trading #trader #tradingpsychology #patience #discipline #daytrading #forex #tradingeducation #mindset #overtrading",
+  "caption": "Comment \"PROFILE\" to find your trader type. The setup that never comes costs you nothing. The one you invent costs everything.\n\nYour edge lives in a few moments — the rest is waiting, and waiting burns. So you lower your standards just to feel active. But blow-ups come from the in-between moments, not your best setups. Patience isn't the boring part before the trading. Patience IS the trading.\n\nTHE LINE — refuse to hand the boredom your account.\n\n#trading #trader #tradingpsychology #patience #discipline #daytrading #forex #tradingeducation #mindset #overtrading",
   "_rules": {
     "doctrine": "patience/sur-trading en psycho MÉCANIQUE: l'edge = points rares, la pression = halo qui serre, les standards = barre qui descend, le trade fabriqué = explosion. Émotion par objets, jamais incarnée. Garde-fou: l'explosion = délavage du compte, pas de dette.",
     "cta_keyword": "PROFILE → LTTI (whop.com/otp-consulting/profil-de-trader)",
-    "caption_structure": "ligne 1 = accroche + CTA PROFILE visible sans déplier.",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD (Comment [MOT] + bénéfice), PUIS l'accroche. Mot-clé visible immédiatement sans déplier.",
     "fusil": "la boule en attente (S1), l'edge rare (S2), la barre qui cède (S3), le trade fabriqué qui explose (S4), résolu en nommant l'attente (S5).",
     "interdits": "aucun chiffre; gris = perte/délavage (M-couleur), pas de rouge; pas de brun; TOI=boule teal jamais une figure; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "vie_continue": "regle 5: le marché plat ondule, la pression pulse, jamais figé hors image finale.",
     "hook_v2_veille": "payoff <3s, framing contre-intuitif, curiosity gap.",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord.",
+    "pinned_comment": "CTA aussi en premier commentaire épinglé (PROFILE). Double filet : visible sans lire la caption, amorce les commentaires, déclenche ManyChat."
+  },
+  "pinned_comment": "The setup you invent costs everything. Comment \"PROFILE\" and I'll send you the free trader profile test — 16 types 👊",
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
+  }
 }

@@ -117,7 +117,7 @@
       "fusil_decharge": "le vide de S1 s'est peuple (S3), a grandi en rouge (S4) — et finit COMPTE (S5). les fantomes ont un registre."
     }
   ],
-  "total": 58.2,
+  "total": 72.0,
   "caption": "Comment \"LINE\" for the checklist on what your P&L doesn't tell you. Ask a trader what he lost this month. His number is wrong — half his losses never show up anywhere.\n\nThe trade you analyzed, validated, and didn't take? It cost you money you should have had. And that invisible column grows faster than the visible one.\n\nTHE LINE — count your ghosts.\n\n#trading #trader #tradingpsychology #daytrading #forex #tradingeducation #priceaction #mindset #discipline #journaling",
   "_rules": {
     "source": "decline du prop saga ep31 THE GHOST LOSSES (meme image mere, format Ligne autonome). lien Loom 15/07 (le trade rate) — anonymise.",
@@ -128,5 +128,12 @@
     "vie_continue": "regle 5: aucune tenue figee hors image finale — chaque tenue longue porte la vie thematique decrite dans ses beats.",
     "hook_v1_archived": "Ask a trader what he lost this month, and he'll give you a number. He's wrong. Not because he's lying — because half his losses never show up anywhere. Where do they hide?",
     "hook_v2_veille": "payoff <3s, framing negatif/contre-intuitif, curiosity gap (lois veille concurrente juillet 2026). Doctrine gardee: aucun mensonge, BEE."
+  },
+  "_narrator": {
+    "regle_unique": "Mr Dollar est la voix qu'on entend narrer ce Reel. QUAND IL EST À L'ÉCRAN, SA BOUCHE BOUGE EN SYNCHRO AVEC LA VOIX. QUAND IL N'EST PAS À L'ÉCRAN, LA VOIX CONTINUE en off. C'est la seule règle.",
+    "aucun_gabarit": "AUCUN GABARIT DE PLACEMENT. Entrées, sorties, présence par scène = décision de mise en scène propre à CET épisode, prise par Code à la fabrication. Ses apparitions doivent être des ÉVÉNEMENTS, pas un rythme prévisible. Référence : L44 (11 moments variés, absent en S4, c'est lui qui tire le rideau en S5).",
+    "doctrine": "ENCRE #20242A, JAMAIS teal (le teal reste TOI). Il souffre COMIQUEMENT ; la boule teal souffre MÉCANIQUEMENT — il ne prend jamais son rôle. Il s'écarte quand le schéma a besoin de place : le schéma prime toujours.",
+    "synchro_labiale": "Pas de lip-sync phonétique : 2 à 4 formes de bouche pilotées par l'AMPLITUDE de l'audio ElevenLabs. Déterministe, en cloud, zéro travail manuel. Bouche large = présentation/accueil, bouche discrète = explication.",
+    "pointage": "Utiliser MrD.pointAt(...) avec la cible déclarée en clair. Le sens se calcule, il ne se devine pas."
   }
 }
