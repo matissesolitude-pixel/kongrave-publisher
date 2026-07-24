@@ -10,59 +10,136 @@
     "So before you call a break a turn, ask what sequence it belongs to. Did the pattern of pushes and pullbacks actually change — or did one line get crossed inside a trend still doing exactly what it was doing? A break is an event. A turn is a change in the sequence."
   ],
   "scenes": [
-    { "id": "s1",
+    {
+      "id": "s1",
       "clarity": "Le prix casse un niveau surveillé. Cassure nette. Il le prend pour le retournement — et le prix continue exactement ce qu'il faisait. La cassure a eu lieu, rien n'a changé.",
       "question": "THE LEVEL BROKE. WHY DID NOTHING CHANGE?",
       "emotion_lever": "CURIOSITÉ — dès la frame 0, une ligne VIOLEMMENT brisée (éclats visibles) et, juste au-dessus, une séquence qui continue sereinement, indifférente. La contradiction intrigue immédiatement.",
       "cast": {
-        "brokenline": { "type": "hline", "note": "un niveau BRISÉ, éclats d'encre visibles, spectaculaire" },
-        "sequence": { "type": "path", "note": "au-dessus, une séquence de poussées/replis qui continue, intacte. le fusil = l'écart entre le fracas et l'indifférence." } },
+        "brokenline": {
+          "type": "hline",
+          "note": "un niveau BRISÉ, éclats d'encre visibles, spectaculaire"
+        },
+        "sequence": {
+          "type": "path",
+          "note": "au-dessus, une séquence de poussées/replis qui continue, intacte. le fusil = l'écart entre le fracas et l'indifférence."
+        }
+      },
       "beats": [
-        { "t": "0-0.5", "do": "FRAME 0 À TENSION MAX : au centre, un trait horizontal ÉCLATÉ — brisé net, avec des éclats d'encre projetés, spectaculaire. Et juste au-dessus, une séquence de poussées et de replis poursuit sa marche, PARFAITEMENT SEREINE, comme si de rien n'était. Le fracas et l'indifférence, côte à côte, dès la première image." },
-        { "t": "0.5-1.8", "do": "le ? POP par-dessus, 200px." },
-        { "t": "1.8-10", "do": "TENUE VIVANTE : les éclats du niveau brisé frémissent encore, la séquence au-dessus continue son rythme régulier, imperturbable. le ? fade." } ],
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : au centre, un trait horizontal ÉCLATÉ — brisé net, avec des éclats d'encre projetés, spectaculaire. Et juste au-dessus, une séquence de poussées et de replis poursuit sa marche, PARFAITEMENT SEREINE, comme si de rien n'était. Le fracas et l'indifférence, côte à côte, dès la première image."
+        },
+        {
+          "t": "0.5-1.8",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.8-10",
+          "do": "TENUE VIVANTE : les éclats du niveau brisé frémissent encore, la séquence au-dessus continue son rythme régulier, imperturbable. le ? fade."
+        }
+      ],
       "camera": "fixe",
       "dod": "le niveau brisé spectaculaire + la séquence sereine au-dessus, dès la frame 0",
-      "fusil": "le fracas ignoré par la séquence — on va comprendre lequel des deux compte." },
-    { "id": "s2",
+      "fusil": "le fracas ignoré par la séquence — on va comprendre lequel des deux compte.",
+      "hook_gag": {
+        "primitive": "fall",
+        "agent": "le niveau qui se brise sous lui",
+        "reaction": "impuissant",
+        "temps": "en plein geste",
+        "raccord": "il s'écarte et laisse la place"
+      }
+    },
+    {
+      "id": "s2",
       "clarity": "Une cassure est UN événement. La structure est une SÉQUENCE. Ce qui dit qu'une tendance tient, c'est le motif : chaque poussée plus loin que la précédente, chaque repli s'arrêtant avant le précédent.",
       "label": "one event vs a sequence",
       "beats": [
-        { "t": "0-2", "do": "la séquence se DESSINE explicitement comme un rythme : poussée (plus loin), repli (moins loin), poussée (plus loin encore), repli. deux repères se posent à chaque étape (le plus haut atteint, le plus bas du repli) — le motif devient lisible." },
-        { "t": "2-3.5", "do": "à côté, la cassure isolée est montrée pour ce qu'elle est : UN point, un instant, sans avant ni après. la comparaison est frappante : un point vs un rythme." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : le rythme de la séquence bat régulièrement, le point isolé clignote seul." } ],
+        {
+          "t": "0-2",
+          "do": "la séquence se DESSINE explicitement comme un rythme : poussée (plus loin), repli (moins loin), poussée (plus loin encore), repli. deux repères se posent à chaque étape (le plus haut atteint, le plus bas du repli) — le motif devient lisible."
+        },
+        {
+          "t": "2-3.5",
+          "do": "à côté, la cassure isolée est montrée pour ce qu'elle est : UN point, un instant, sans avant ni après. la comparaison est frappante : un point vs un rythme."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : le rythme de la séquence bat régulièrement, le point isolé clignote seul."
+        }
+      ],
       "camera": "fixe",
       "dod": "la séquence dessinée comme un rythme (poussées/replis) vs la cassure comme point isolé",
-      "turn": "une ligne qui casse est un événement. la structure est une séquence." },
-    { "id": "s3",
+      "turn": "une ligne qui casse est un événement. la structure est une séquence."
+    },
+    {
+      "id": "s3",
       "clarity": "Donc une cassure peut arriver DANS une séquence que ça ne dérange pas du tout. Le prix enlève un petit niveau au passage, et le motif plus grand — celui qui mène vraiment — n'a jamais été touché.",
       "beats": [
-        { "t": "0-2", "do": "DÉZOOM progressif : on s'éloigne du niveau brisé. il RÉTRÉCIT, devient un petit détail sur le trajet. autour, la séquence entière apparaît, bien plus vaste." },
-        { "t": "2-3.5", "do": "on vérifie les repères de la séquence : le plus haut est toujours dépassé, le repli s'arrête toujours avant — AUCUN des deux n'a bougé. la cassure était hors du motif qui compte." },
-        { "t": "3.5-13", "do": "TENUE VIVANTE : la séquence intacte, la cassure réduite à un accident de parcours." } ],
+        {
+          "t": "0-2",
+          "do": "DÉZOOM progressif : on s'éloigne du niveau brisé. il RÉTRÉCIT, devient un petit détail sur le trajet. autour, la séquence entière apparaît, bien plus vaste."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on vérifie les repères de la séquence : le plus haut est toujours dépassé, le repli s'arrête toujours avant — AUCUN des deux n'a bougé. la cassure était hors du motif qui compte."
+        },
+        {
+          "t": "3.5-13",
+          "do": "TENUE VIVANTE : la séquence intacte, la cassure réduite à un accident de parcours."
+        }
+      ],
       "camera": "dézoom",
       "dod": "le dézoom qui réduit la cassure à un détail + les repères de séquence inchangés",
-      "turn": "la cassure a eu lieu hors du motif qui mène. la séquence n'a rien enregistré." },
-    { "id": "s4",
+      "turn": "la cassure a eu lieu hors du motif qui mène. la séquence n'a rien enregistré."
+    },
+    {
+      "id": "s4",
       "clarity": "Le piège : les cassures sont visuellement BRUYANTES — c'est le plus dramatique du graphe. La séquence est SILENCIEUSE : une forme étalée dans le temps qu'il faut tenir en tête.",
       "note": "LA scene — le bruyant qui vole l'attention au silencieux.",
       "beats": [
-        { "t": "0-1.5", "do": "la cassure se REJOUE, amplifiée : éclats, secousse, tout le cadre vibre. c'est spectaculaire, impossible à rater. un regard (une flèche d'attention) est INSTANTANÉMENT aspiré dessus." },
-        { "t": "1.5-3", "do": "pendant ce temps, la séquence continue au-dessus, SANS aucun effet visuel — juste sa forme calme, étalée. elle ne fait aucun bruit. le regard, capté par le fracas, ne la voit pas." },
-        { "t": "3-4.5", "do": "conséquence : la position teal suit le regard, entre sur la cassure → et se délave, parce que la séquence (qui menait vraiment) a continué dans l'autre sens. 'the loud thing gets your attention, the quiet thing gets your money'." },
-        { "t": "4.5-14", "do": "TENUE VIVANTE longue : le fracas éteint, la séquence toujours là, imperturbable, et la position délavée entre les deux." } ],
+        {
+          "t": "0-1.5",
+          "do": "la cassure se REJOUE, amplifiée : éclats, secousse, tout le cadre vibre. c'est spectaculaire, impossible à rater. un regard (une flèche d'attention) est INSTANTANÉMENT aspiré dessus."
+        },
+        {
+          "t": "1.5-3",
+          "do": "pendant ce temps, la séquence continue au-dessus, SANS aucun effet visuel — juste sa forme calme, étalée. elle ne fait aucun bruit. le regard, capté par le fracas, ne la voit pas."
+        },
+        {
+          "t": "3-4.5",
+          "do": "conséquence : la position teal suit le regard, entre sur la cassure → et se délave, parce que la séquence (qui menait vraiment) a continué dans l'autre sens. 'the loud thing gets your attention, the quiet thing gets your money'."
+        },
+        {
+          "t": "4.5-14",
+          "do": "TENUE VIVANTE longue : le fracas éteint, la séquence toujours là, imperturbable, et la position délavée entre les deux."
+        }
+      ],
       "camera": "fixe",
       "dod": "le regard aspiré par le fracas pendant que la séquence silencieuse continue ignorée",
-      "turn": "le bruyant capte l'attention, le silencieux prend l'argent." },
-    { "id": "s5",
+      "turn": "le bruyant capte l'attention, le silencieux prend l'argent."
+    },
+    {
+      "id": "s5",
       "clarity": "Avant d'appeler une cassure un retournement, demande à quelle séquence elle appartient. Le motif des poussées et des replis a-t-il vraiment changé ?",
       "beats": [
-        { "t": "0-2", "do": "DÉCHARGE : la question s'inscrit et s'applique à la séquence : 'DID THE PUSHES AND PULLBACKS CHANGE?'. les deux repères de la séquence s'illuminent, prêts à être vérifiés." },
-        { "t": "2-3.5", "do": "TEST : le repli s'arrête-t-il plus TÔT et la poussée va-t-elle moins LOIN ? → si NON (les repères tiennent), la cassure reçoit l'étiquette 'EVENT' (grise, à ignorer). si OUI (les repères s'inversent), elle reçoit 'TURN' (teal). la distinction se fait sur la séquence, pas sur le fracas." },
-        { "t": "3.5-14", "do": "IMAGE FINALE TENUE >=3s : la séquence avec ses deux repères, la question, et les deux étiquettes possibles. immobile. le test à retenir." } ],
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE : la question s'inscrit et s'applique à la séquence : 'DID THE PUSHES AND PULLBACKS CHANGE?'. les deux repères de la séquence s'illuminent, prêts à être vérifiés."
+        },
+        {
+          "t": "2-3.5",
+          "do": "TEST : le repli s'arrête-t-il plus TÔT et la poussée va-t-elle moins LOIN ? → si NON (les repères tiennent), la cassure reçoit l'étiquette 'EVENT' (grise, à ignorer). si OUI (les repères s'inversent), elle reçoit 'TURN' (teal). la distinction se fait sur la séquence, pas sur le fracas."
+        },
+        {
+          "t": "3.5-14",
+          "do": "IMAGE FINALE TENUE >=3s : la séquence avec ses deux repères, la question, et les deux étiquettes possibles. immobile. le test à retenir."
+        }
+      ],
       "camera": "fixe",
       "dod": "le test des deux repères (poussée/repli) qui décide EVENT vs TURN",
-      "fusil_decharge": "le fracas ignoré de S1 se résout : la cassure était un événement dans une séquence intacte — un retournement est un changement de séquence, pas un bruit." }
+      "fusil_decharge": "le fracas ignoré de S1 se résout : la cassure était un événement dans une séquence intacte — un retournement est un changement de séquence, pas un bruit."
+    }
   ],
   "total": 84.0,
   "caption": "Comment \"MAP\" for the free beta of my indicator. A level can break spectacularly and change absolutely nothing.\n\nA break is one event. Structure is a sequence: each push going further, each pullback stopping short. Breaks are visually loud — a line, then a move straight through it. The sequence is quiet, a shape spread across time. So the loud thing gets your attention and the quiet thing gets your money.\n\nTHE LINE — a break is an event. A turn is a change in the sequence.\n\n#trading #trader #priceaction #marketstructure #breakout #daytrading #forex #tradingeducation #smartmoney #levels",
@@ -76,5 +153,6 @@
     "fin_actionnable": "'le motif des poussées et des replis a-t-il changé ?' — un test binaire mémorisable avant de trader une cassure.",
     "interdits": "aucun chiffre; gris = perte/événement à ignorer (M-couleur); pas de brun; bas du cadre vide.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "circuit": "M24 frames DoD d'abord." }
+    "circuit": "M24 frames DoD d'abord."
+  }
 }

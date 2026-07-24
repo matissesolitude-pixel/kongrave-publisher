@@ -42,6 +42,7 @@ est déjà codé. `temps` documente l'état à la frame 0 (déjà arrivé / immi
 
 | Épisode | Primitive | Agent | Réaction | Temps | Raccord |
 |---|---|---|---|---|---|
+| **L37** — THE BREAK THAT CHANGED NOTHING | `fall` | le niveau qui se brise sous lui | impuissant | en plein geste | il s'écarte et laisse la place |
 | **L44** — WHERE THE CHART ENDS | `bumpInto` | le rideau qui masque la droite | sonné | en plein geste | il se relève et pointe le ? |
 
 <!-- Une ligne par épisode. Ne jamais supprimer une ligne : le registre est l'historique
