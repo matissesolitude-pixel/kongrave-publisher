@@ -75,7 +75,11 @@
     return (this.amp[Math.floor((t || 0) * this.fps)] || 0) > 0.30 ? 'wide' : 'soft';
   };
   MrDollar.prototype.resolve = function (pose, t) {
-    return /_(soft|wide)$/.test(pose) ? pose : pose + '_' + this.mouth(t);
+    if (/_(soft|wide)$/.test(pose)) return pose;
+    var m = this.mouth(t), a = pose + '_' + m, b = pose + '_' + (m === 'wide' ? 'soft' : 'wide');
+    if (this.poses[a]) return a;
+    if (this.poses[b]) return b;      // pas de variante de bouche : on garde LA pose (jamais une autre)
+    return this.poses[pose] ? pose : a;
   };
   MrDollar.prototype.say = function (base, t, x, y, h, op, flip, rot, sx, sy) {
     this._t = t;
@@ -200,19 +204,21 @@
 
   /* La RÉACTION choisit la pose et une inflexion (Bible VARIABLE C). */
   var REACT = {
-    'sonné':      { pose: 'present', tilt: 1.0,  bob: 1.0 },
-    'surpris':    { pose: 'present', tilt: 0.5,  bob: 0.6 },
-    'résigné':    { pose: 'idle',    tilt: 0.2,  bob: 0.2 },
-    'inquiet':    { pose: 'point',   tilt: 0.4,  bob: 0.5 },
-    'impuissant': { pose: 'present', tilt: 0.7,  bob: 0.7 },
-    'curieux':    { pose: 'point',   tilt: 0.2,  bob: 0.3 },
-    'vexé':       { pose: 'wave_hip', tilt: 0.0, bob: 0.15 },
-    'fier puis humilié': { pose: 'present', tilt: 0.9, bob: 0.9 }
+    'sonné':               { pose: 'present',    tilt: 1.0, bob: 1.0 },
+    'surpris':             { pose: 'oh',         tilt: 0.5, bob: 0.6 },   // bouche en O
+    'résigné':             { pose: 'flat',       tilt: 0.2, bob: 0.2 },   // bras ballants
+    'inquiet':             { pose: 'mouthcover', tilt: 0.4, bob: 0.5 },   // mains sur la bouche
+    'impuissant':          { pose: 'present',    tilt: 0.7, bob: 0.7 },
+    'curieux':             { pose: 'peek',       tilt: 0.2, bob: 0.3 },   // regarde entre les doigts
+    'vexé':                { pose: 'armscross',  tilt: 0.0, bob: 0.15 },  // bras croisés
+    'faussement confiant': { pose: 'hips',       tilt: 0.3, bob: 0.4 },   // mains sur les hanches
+    'soulagé trop tôt':    { pose: 'hipswave',   tilt: 0.2, bob: 0.3 },
+    'fier puis humilié':   { pose: 'present',    tilt: 0.9, bob: 0.9 }
   };
   /* Le RACCORD : comment il passe la main (Bible VARIABLE F). */
   var RACCORD = {
     'point':   'point',     // il se relève et pointe le "?"
-    'ecarte':  'idle',      // il s'écarte et laisse la place
+    'ecarte':  'back',      // il se détourne et laisse la place (pose de dos)
     'sol':     'present',   // il reste au sol pendant que le "?" apparaît
     'sortie':  'walk'       // il sort du cadre
   };
@@ -273,9 +279,12 @@
     // à n'utiliser QU'AVEC contrast().
     idle: function (u, type) {
       var b = 3 * Math.sin(u * 1.15) + 1.4 * Math.sin(u * 2.25);
-      if (type === 'arms_crossed' || type === 'vexe') return { pose: 'wave_hip', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
-      if (type === 'bored')  return { pose: 'idle_arms_down', dx: 0, dy: b, rot: 2 * Math.sin(u * 0.6), sx: 1, sy: 1 };
-      if (type === 'waits')  return { pose: 'wave_hip', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
+      if (type === 'arms_crossed' || type === 'vexe') return { pose: 'armscross', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
+      if (type === 'bored')  return { pose: 'flat', dx: 0, dy: b, rot: 2 * Math.sin(u * 0.6), sx: 1, sy: 1 };
+      if (type === 'waits')  return { pose: 'hips', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
+      // ⚠ 'chill' (lunettes + cocktail) = imagerie guru : UNIQUEMENT en IRONIE (famille CONTRASTE),
+      //   jamais en ouverture neutre — une frame suffit à envoyer le signal inverse de la marque.
+      if (type === 'chill')  return { pose: 'chill', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
       return { pose: 'idle', dx: 0, dy: b, rot: 0, sx: 1, sy: 1 };
     },
     // il AGIT SUR l'agent de l'épisode : il tire / pousse / efface / soulève

@@ -52,3 +52,30 @@ Chaque pose est un SVG autonome (chemins pleins en encre, fond transparent). Dan
 on injecte la pose voulue dans un `<g>` positionné/mis à l'échelle, et on **change de pose**
 au beat (swap), avec translations/échelle pour les entrées, sorties et gros plans.
 Le gros plan du hook = la même pose, simplement agrandie et recadrée.
+
+## Poses ajoutées le 24/07 (enrichissement du jeu d'acteur)
+
+| Fichier | Pose | Usage |
+|---|---|---|
+| `armscross_soft` | bras croisés | vexé, il attend, il n'est pas impressionné |
+| `hips_wide`, `hipswave_wide` | mains sur les hanches (+ salut) | assurance, faussement confiant |
+| `flat_soft`, `flat_wide` | bras ballants | résigné, neutre |
+| `oh_soft` | bouche en O | surpris |
+| `mouthcover_soft` | mains sur la bouche | inquiet, il en dit trop |
+| `eyescover_soft` | mains sur les yeux | il refuse de voir (pas d'yeux → pas de clignement) |
+| `peek_soft` | regarde entre les doigts | curieux, il ose regarder |
+| `back_soft` | **de dos** | il se détourne, il laisse la place (raccord « s'écarte ») |
+| `walkworry_soft` | marche inquiète | déplacement tendu |
+| `chill_wide` | lunettes + cocktail | ⚠️ **IRONIE UNIQUEMENT** |
+
+### ⚠️ Garde-fou imagerie
+`chill_wide` (lunettes de soleil, cocktail, pouces levés) est le **langage visuel du guru-trading**
+dont THE LINE se distingue. Il n'est utilisable qu'en **ironie** — typiquement la primitive
+`contrast` (il sirote pendant que le tracé s'effondre derrière lui). **Jamais** en ouverture
+neutre ou aspirationnelle : une seule frame suffit à envoyer le signal inverse de la marque.
+
+### Variantes de bouche
+Toutes les poses n'existent pas en `_soft` ET `_wide`. Quand une variante manque, le moteur
+**garde la pose demandée** (il ne bascule jamais vers une autre pose) : la synchro labiale
+est simplement absente sur celle-là. Ajouter un SVG dans ce dossier suffit à l'embarquer —
+`build_ligne` les inclut toutes automatiquement.

@@ -213,8 +213,8 @@ def build_anim(ep, tl, work, rend):
     if "/*INCLUDE:narrator*/" in html:
         import re as _re
         A = LIGNE / "assets"
-        bases = ["present", "idle", "point", "walk", "wave_hip"]
-        poses = [f"{b}_{m}" for b in bases for m in ("soft", "wide")]
+        # toutes les poses disponibles : ajouter un SVG dans assets/narrator suffit
+        poses = sorted(f.stem for f in (A / "narrator").glob("*.svg"))
         defs, sizes = [], {}
         for name in poses:
             f = A / "narrator" / f"{name}.svg"
