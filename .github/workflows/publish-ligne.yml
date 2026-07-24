@@ -65,12 +65,21 @@ jobs:
       - name: Persister le déplacement + le journal
         if: ${{ github.event.inputs.dry_run != 'true' && always() }}
         run: |
-          if [ -n "$(git status --porcelain ligne/)" ]; then
-            git config user.name  "kongrave-bot"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A ligne/
-            git commit -m "ligne: publication $(date -u +%FT%TZ) [skip ci]"
-            git push
-          else
-            echo "Aucune publication — rien à committer."
+          if [ -z "$(git status --porcelain ligne/)" ]; then
+            echo "Aucune publication — rien à committer."; exit 0
           fi
+          git config user.name  "kongrave-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A ligne/
+          git commit -m "ligne: publication $(date -u +%FT%TZ) [skip ci]"
+          # PUSH RÉSILIENT : pull --rebase --autostash + retry (même boucle que l'autoprod).
+          # Sans ça, une collision avec autoprod-ligne rejette le push APRÈS la publication IG
+          # réelle -> file/journal non persistés -> risque de DOUBLE publication (vu sur L20).
+          for i in 1 2 3 4 5; do
+            if git push; then echo "push ok (essai $i)"; exit 0; fi
+            echo "push rejeté (essai $i) — pull --rebase puis retry…"
+            git pull --rebase --autostash origin main || true
+            sleep 3
+          done
+          echo "::error::push échoué après 5 essais — publication faite mais file/journal NON persistés (réparer à la main)"
+          exit 1

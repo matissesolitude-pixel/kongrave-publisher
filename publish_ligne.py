@@ -248,16 +248,20 @@ def _count_meta_holds(name: str) -> int:
 
 
 def _engine_name(name: str) -> str:
-    """Nom du moteur d'un épisode = champ 'engine' de son JSON (repli : 'L24' -> 'l24')."""
-    jp = EPISODES_DIR / f"{name}.json"
-    if jp.is_file():
-        try:
-            eng = (json.loads(jp.read_text(encoding="utf-8")) or {}).get("engine")
-            if eng:
-                return str(eng)
-        except (ValueError, OSError):
-            pass
-    return name.lower()
+    """Nom du moteur d'un épisode = champ 'engine' de son JSON. Gère le padding : un dossier
+    'L05' correspond au JSON 'L5.json' et au moteur 'l5' (repli dé-paddé si pas de champ engine)."""
+    m = re.fullmatch(r"L0*(\d+)", name)
+    candidates = [name] + ([f"L{m.group(1)}"] if m and f"L{m.group(1)}" != name else [])
+    for cand in candidates:
+        jp = EPISODES_DIR / f"{cand}.json"
+        if jp.is_file():
+            try:
+                eng = (json.loads(jp.read_text(encoding="utf-8")) or {}).get("engine")
+                if eng:
+                    return str(eng)
+            except (ValueError, OSError):
+                pass
+    return f"l{m.group(1)}" if m else name.lower()
 
 
 def _request_rebuild(name: str) -> bool:
@@ -377,6 +381,15 @@ def run(dry_run: bool = False, force: bool = False) -> int:
                 _set_fail_count(name, 0)
                 notify.send(f"⛔️ LIGNE {name} écarté (dossier malformé) : {exc}\nFile débloquée.")
             _append_log({"episode": name, "status": "error", "error": str(exc), "logged_at": _iso(now)})
+            continue
+
+        # GARDE-FOU LÉGENDE VIDE : ne JAMAIS publier un Reel sans caption/CTA (perte du funnel
+        # ManyChat). On saute au suivant ; l'épisode reste en file jusqu'à ce qu'une caption existe.
+        if not caption.strip():
+            print(f"[ligne] {name} : légende VIDE — non publié.", file=sys.stderr)
+            if not dry_run:
+                notify.send(f"⚠️ LIGNE {name} : légende VIDE — non publié. "
+                            f"Ajoute un champ `caption` (CTA « Comment \"MOT\"… ») à episodes/{name}.json.")
             continue
 
         pub, exc = _try_publish(mp4, caption, dry_run)

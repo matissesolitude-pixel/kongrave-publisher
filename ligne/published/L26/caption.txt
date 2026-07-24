@@ -1,4 +1,4 @@
-The price on the screen is where you start — your size decides where you end. Comment "MAP" for the free beta of my indicator that shows where price is actually being pulled.
+Comment "MAP" for the free beta of my indicator that shows where price is actually being pulled. The price on the screen is where you start — your size decides where you end.
 
 Behind every price is a staircase of orders. A small order stays on the first step and gets one clean price. A big order eats it and climbs — each step a worse price. In a thin market, that climb is a cost nobody quoted you.
 

@@ -370,26 +370,36 @@ Code. Tout JSON s'écrit dessus. L'essentiel, au-delà des lois déjà gravées 
 - Le test du muet se vérifie EN ENCHAÎNANT LES clarity des 5 scènes : elles
   doivent raconter une histoire complète sans le son.
 
-## LE JSON PORTE SA CAPTION (obligatoire)
+## LE JSON PORTE SA CAPTION (obligatoire) — LE CTA EN PREMIER
 
-Chaque `episodes/LX.json` inclut un champ `"caption"` : le texte Instagram
-complet de l'épisode. Sans lui, le publisher se met en pause (il refuse de
-publier un post sans légende). Structure de la caption (moule L1) :
-- ligne 1 = le HOOK + CTA : "Comment 'LINE' and I'll send you..." (le mot
-  LINE nourrit le workflow setter des DM).
-- corps : 2-3 phrases qui résument la valeur de l'épisode, registre BEE.
-- signature : "THE LINE — ..." (une variante par épisode).
-- hashtags : ~10, mêlant génériques (#trading #forex) et spécifiques au
-  sujet (#slippage, #shortselling, #bbook...).
-Doctrine : jamais de promesse de chasse aux stops, jamais "perdre plus que
-son dépôt". Auto-diagnostic et mécanique, comme le contenu.
+Chaque `episodes/LX.json` inclut un champ `"caption"` : le texte Instagram complet.
+Sans lui, l'épisode NE PART PAS (le publisher refuse une légende vide et alerte).
 
-STRUCTURE OBLIGATOIRE (Instagram tronque la caption) : la PREMIÈRE LIGNE
-contient une accroche courte ET le CTA avec le mot-clé (LINE/MAP/PROFILE).
-Le mot-clé doit être visible SANS déplier "... plus" — sinon la majorité
-qui ne développe pas ne le voit jamais. Le corps développé (le résumé de
-valeur, la signature, les hashtags) vient EN DESSOUS, pour ceux qui déplient.
-Modèle ligne 1 : "[accroche 5-8 mots]. Comment "[MOT]" for/if [bénéfice court]."
+**RÈGLE ABSOLUE — les tout PREMIERS MOTS de la caption sont le CTA :**
+`Comment "MOT" [livrable]…`. La 1re ligne est la SEULE visible avant « … plus » ; le
+mot-clé (LINE/MAP/PROFILE) nourrit le workflow setter des DM et doit être lu SANS déplier.
+L'accroche vient APRÈS le CTA, puis le corps. (Payé le 24/07 : L9→L30 étaient en
+« accroche d'abord », corrigés en CTA-first ; L31→L42 étaient déjà bons. Ne JAMAIS
+repasser accroche-d'abord.)
+
+- **Livrable canonique par mot-clé** (réutiliser tel quel) :
+  · LINE → `for the checklist on …` (checklist) · MAP → `for the free beta of my indicator …`
+  (indicateur 3T ENGINE) · PROFILE → `to find out what type of trader you are …` (test LTTI).
+- Le mot-clé suit le SUJET : stops/liquidité→LINE, structure/lecture du prix→MAP, mental→PROFILE.
+- corps : 2-3 phrases (registre BEE) ; signature `THE LINE — …` (variante par épisode) ; ~10 hashtags.
+- Doctrine : jamais de chasse aux stops, jamais « perdre plus que son dépôt ».
+
+Modèle ligne 1 : `Comment "[MOT]" [livrable canonique]. [accroche 5-8 mots].`
+
+## LE COMMENTAIRE ÉPINGLÉ (champ `pinned_comment`)
+
+Chaque épisode porte aussi un champ `"pinned_comment"` : le CTA reformulé, destiné à être posté
+EN COMMENTAIRE sous le Reel (renfort du funnel). ⚠️ La publication auto de ce commentaire est
+BLOQUÉE tant que la permission Meta `instagram_manage_comments` n'est pas accordée (App Review) —
+le champ existe mais n'est encore posté NULLE PART (aucun code, aucune permission). Le rédiger
+quand même : dès la permission obtenue, le publisher le postera à la publication.
+
+Code extrait `caption` → `caption.txt` au dépôt en file. C'est le geste qui débloque la publication.
 
 Code extrait ce champ vers caption.txt au dépôt en file. C'est le geste qui
 débloque la publication automatique.

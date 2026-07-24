@@ -130,7 +130,7 @@
     }
   ],
   "total": 61.0,
-  "caption": "There's a line on your chart you never drew. If price touches it, your trade is closed — not by you.\n\nThe liquidation level isn't placed by luck. Its distance is decided by one thing: your size. You can't delete it. But you decide where it stands.\n\nComment \"LINE\" for the full series.\n\nTHE LINE — of all the lines on your chart, this is the only one that can erase you.\n\n#trading #trader #liquidation #leverage #daytrading #forex #riskmanagement #tradingeducation #margin #priceaction",
+  "caption": "Comment \"LINE\" for the checklist on the line that can erase you. There's a line on your chart you never drew. If price touches it, your trade is closed — not by you.\n\nThe liquidation level isn't placed by luck. Its distance is decided by one thing: your size. You can't delete it. But you decide where it stands.\n\nTHE LINE — of all the lines on your chart, this is the only one that can erase you.\n\n#trading #trader #liquidation #leverage #daytrading #forex #riskmanagement #tradingeducation #margin #priceaction",
   "_rules": {
     "garde_fou": "le pire cas = la position fermee / le depot epuise. JAMAIS de dette au-dela.",
     "fusil": "la ligne etrangere (S1) revele son auteur (ta taille, S3), frappe (S4), et devient un choix (S5).",

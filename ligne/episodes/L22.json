@@ -62,7 +62,7 @@
       "fusil_decharge": "le petit spread de S1 révèle sa pile (S2), son slip (S3), sa multiplication (S4), et se résout: le vrai coût = (spread + slip) × fréquence (S5)." }
   ],
   "total": 80.0,
-  "caption": "A tight spread on a strategy that trades constantly can cost more than a wide one you touch rarely. Comment \"LINE\" and I'll send you the checklist on the costs nobody shows you.\n\nThe spread is just the shelf price — the smallest cost of the pile. Behind it: the slip (the fill you didn't get) and frequency (paying that tiny gap hundreds of times a month). Count the whole bill.\n\nTHE LINE — the real cost is spread plus slip, times how often you trade.\n\n#trading #trader #spread #slippage #daytrading #forex #tradingeducation #scalping #tradingcosts #priceaction",
+  "caption": "Comment \"LINE\" and I'll send you the checklist on the costs nobody shows you. A tight spread on a strategy that trades constantly can cost more than a wide one you touch rarely.\n\nThe spread is just the shelf price — the smallest cost of the pile. Behind it: the slip (the fill you didn't get) and frequency (paying that tiny gap hundreds of times a month). Count the whole bill.\n\nTHE LINE — the real cost is spread plus slip, times how often you trade.\n\n#trading #trader #spread #slippage #daytrading #forex #tradingeducation #scalping #tradingcosts #priceaction",
   "_rules": {
     "doctrine": "coûts de transaction démystifiés (prolonge L6 l'invisible fee): le spread n'est que la façade, le slip et la fréquence sont les vrais coûts. Mécanique, factuel, auto-diagnostic. Aucun nom de broker.",
     "cta_keyword": "LINE → checklist (whop.com/otp-consulting/5-signs-checklist)",

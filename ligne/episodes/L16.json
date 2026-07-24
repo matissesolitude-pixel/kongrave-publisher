@@ -130,7 +130,7 @@
     }
   ],
   "total": 74.0,
-  "caption": "A price doesn't 'remember' a level — it runs out of orders. Comment \"MAP\" for the free beta of my indicator that shows where price is really pulled.\n\nTraders talk about levels like the chart has a memory — price 'respects support' as if the line pushes back. It doesn't. A level holds because of how many orders sit there right now. When they're eaten, it stops working — instantly.\n\nTHE LINE — respect the pile, not the paint.\n\n#trading #trader #supportandresistance #priceaction #liquidity #daytrading #forex #tradingeducation #smartmoney #orderflow",
+  "caption": "Comment \"MAP\" for the free beta of my indicator that shows where price is really pulled. A price doesn't 'remember' a level — it runs out of orders.\n\nTraders talk about levels like the chart has a memory — price 'respects support' as if the line pushes back. It doesn't. A level holds because of how many orders sit there right now. When they're eaten, it stops working — instantly.\n\nTHE LINE — respect the pile, not the paint.\n\n#trading #trader #supportandresistance #priceaction #liquidity #daytrading #forex #tradingeducation #smartmoney #orderflow",
   "_rules": {
     "doctrine": "support/resistance demythifie: le niveau n'a pas de pouvoir magique, il tient par le STOCK d'ordres present. Pas d'intention, pas de memoire — de l'inventaire. Etabli, pas speculatif.",
     "fusil": "le trait qui 'repousse' (S1) revele sa pile d'ordres (S3), qui s'use (S4), et devient une jauge de stock a lire (S5).",
