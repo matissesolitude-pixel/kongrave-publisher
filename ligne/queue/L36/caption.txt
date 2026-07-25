@@ -1,0 +1,7 @@
+Comment "MAP" for the free beta of my indicator. The same setup at a different hour is a different setup.
+
+A pattern is a picture of a crowd — and the crowd isn't the same size at every hour. In a thin hour, a small order moves price further, levels get poked through, your stop is easier to reach by accident. Same shape, different material: solid in one hour, dust in another. And your average hides it.
+
+THE LINE — split your results by hour before you split them by anything else.
+
+#trading #trader #liquidity #sessions #priceaction #daytrading #forex #tradingeducation #backtesting #edge
