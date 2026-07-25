@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L4 « WHY THEY NEED YOU » — REPRODUCTION (refus Meta des rendus « balance/marée » puis « bloc/couloir »). MÉTAPHORE NEUVE =
+       LES DEUX CÔTÉS DU TRADE en FIGURES FIL-DE-FER (jamais utilisées dans les deux masters refusés). Un verbe visuel DISTINCT par
+       scène : S1 émotion frame 0 = TENSION + reconnaissance de soi — une GRANDE figure encre (le fonds) tend les deux bras vers le VIDE,
+       et loin à gauche un seul minuscule jeton teal (TOI) : qui lui vend ? S2 = L'APPARIEMENT — chaque achat (tick encre du haut)
+       rencontre une vente (tick encre du bas) sur un rail teal et les deux se scellent en un trade (barre grise) ; à droite, un achat
+       sans vendeur → le rail teal S'ÉCHAPPE vers le haut. S3 = LE RETOURNEMENT — ton stop, cru BOUCLIER (ligne teal + jeton posé) ;
+       le prix (point teal) descend en feuille morte et le TOUCHE → le jeton se convertit en FLÈCHE teal (un ordre de vente) qui file
+       dans la main ouverte du fonds : tu t'es porté volontaire. S4 = LE BALAYAGE — mille stops empilés comme un stock sur une étagère
+       (boîtes teal), le bras du fonds les avale colonne par colonne en cadence pressée. S5 = LE DIPTYQUE — offrir sa sortie là où tout
+       le monde l'offre (pile balayée, délavée gris) vs la CHOISIR (un jeton seul, au-dessus, survit teal). La SEULE variable changée =
+       OÙ. Doctrine : aucun chiffre à l'écran ; teal = toi / le prix que tu regardes ; encre = les participants neutres (« on purpose or
+       not ») ; gris = valeur consommée ; pas de brun, pas de rouge ; bas du cadre vide ; putCap MESURE (copié TEL QUEL de l26) ;
+       narrateur en encre, petit, événementiel (S3 il DÉSIGNE le stop qui bascule, S5 il CONSTATE), jamais en S4, jamais de gabarit. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    /*INCLUDE:narrator*/
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // le narrateur n'est présent qu'au vrai build ; en pré-vol il n'est pas injecté → on le lit sans planter
+    function NAR(){return (typeof MrD!=='undefined')?MrD:null;}
+
+    // ── FIGURE FIL-DE-FER (les participants du marché ; encre, sans visage — décision Ligne) ──
+    function makeFig(){const g=mk('g',{opacity:0});
+      const head=mk('circle',{fill:'none',stroke:INK,'stroke-width':7},g);
+      const spine=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},g);
+      const armL=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},g);
+      const armR=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},g);
+      const legL=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},g);
+      const legR=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},g);
+      const hand=mk('circle',{fill:'none',stroke:INK,'stroke-width':7},g);   // main qui reçoit (S3)
+      return {g,head,spine,armL,armR,legL,legR,hand};}
+    // aLx,aLy / aRx,aRy = déport du bout de chaque bras depuis l'épaule ; handOn=bras qui porte la main ouverte
+    function drawFig(F,cx,topY,h,aLx,aLy,aRx,aRy,op,handOn){
+      const hr=h*0.11, shY=topY+h*0.30, hipY=topY+h*0.64, footY=topY+h;
+      F.head.setAttribute('cx',cx);F.head.setAttribute('cy',topY+hr);F.head.setAttribute('r',hr);
+      F.spine.setAttribute('x1',cx);F.spine.setAttribute('y1',topY+2*hr);F.spine.setAttribute('x2',cx);F.spine.setAttribute('y2',hipY);
+      F.armL.setAttribute('x1',cx);F.armL.setAttribute('y1',shY);F.armL.setAttribute('x2',cx+aLx);F.armL.setAttribute('y2',shY+aLy);
+      F.armR.setAttribute('x1',cx);F.armR.setAttribute('y1',shY);F.armR.setAttribute('x2',cx+aRx);F.armR.setAttribute('y2',shY+aRy);
+      F.legL.setAttribute('x1',cx);F.legL.setAttribute('y1',hipY);F.legL.setAttribute('x2',cx-h*0.12);F.legL.setAttribute('y2',footY);
+      F.legR.setAttribute('x1',cx);F.legR.setAttribute('y1',hipY);F.legR.setAttribute('x2',cx+h*0.12);F.legR.setAttribute('y2',footY);
+      if(handOn==='L'){F.hand.setAttribute('cx',cx+aLx);F.hand.setAttribute('cy',shY+aLy);F.hand.setAttribute('r',h*0.05);setOp(F.hand,op);}
+      else if(handOn==='R'){F.hand.setAttribute('cx',cx+aRx);F.hand.setAttribute('cy',shY+aRy);F.hand.setAttribute('r',h*0.05);setOp(F.hand,op);}
+      else setOp(F.hand,0);
+      setOp(F.g,op);}
+    const FUND=makeFig();
+    function hideFig(F){setOp(F.g,0);}
+
+    // ── OBJETS TEAL / ENCRE / GRIS (pools réutilisés par scène) ──
+    const YT=[]; for(let i=0;i<44;i++)YT.push(mk('rect',{rx:5,fill:YOU,opacity:0}));   // TOI : jeton / stop / boîte d'inventaire
+    const IT=[]; for(let i=0;i<32;i++)IT.push(mk('rect',{rx:4,fill:INK,opacity:0}));   // participants neutres (ticks buy/sell)
+    const GT=[]; for(let i=0;i<34;i++)GT.push(mk('rect',{rx:4,fill:DEAD,opacity:0}));  // valeur consommée / trade scellé
+    let yi=0,ii=0,gi=0;
+    function pools(){yi=0;ii=0;gi=0;}
+    function yt(x,y,w,h,op){const e=YT[yi++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function it(x,y,w,h,op){const e=IT[ii++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function gt(x,y,w,h,op){const e=GT[gi++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function flush(){for(let i=yi;i<YT.length;i++)setOp(YT[i],0);for(let i=ii;i<IT.length;i++)setOp(IT[i],0);for(let i=gi;i<GT.length;i++)setOp(GT[i],0);}
+
+    // ── LIGNES / FLÈCHE NOMMÉES ──
+    const rail=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0});      // le prix que tu regardes
+    const railSeg=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // le prix qui s'échappe (S2)
+    const stopLine=mk('line',{stroke:YOU,'stroke-width':7,'stroke-dasharray':'2 0','stroke-linecap':'round',opacity:0});
+    const shelf=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});      // l'étagère (S4)
+    const arrowShaft=mk('line',{stroke:YOU,'stroke-width':9,'stroke-linecap':'round',opacity:0}); // ton stop devenu ordre (S3)
+    const arrowHead=mk('polygon',{fill:YOU,opacity:0});
+    const priceDot=mk('circle',{r:20,fill:YOU,opacity:0});
+    function drawArrow(x1,y1,x2,y2,op){arrowShaft.setAttribute('x1',x1.toFixed(1));arrowShaft.setAttribute('y1',y1.toFixed(1));arrowShaft.setAttribute('x2',x2.toFixed(1));arrowShaft.setAttribute('y2',y2.toFixed(1));setOp(arrowShaft,op);
+      const ang=Math.atan2(y2-y1,x2-x1),L=30,W=17,bx=x2-L*Math.cos(ang),by=y2-L*Math.sin(ang),px=-Math.sin(ang),py=Math.cos(ang);
+      arrowHead.setAttribute('points',[[x2,y2],[bx+px*W,by+py*W],[bx-px*W,by-py*W]].map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' '));setOp(arrowHead,op);}
+    function hideNamed(){setOp(rail,0);setOp(railSeg,0);setOp(stopLine,0);setOp(shelf,0);setOp(arrowShaft,0);setOp(arrowHead,0);setOp(priceDot,0);hideFig(FUND);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHEN SOMEONE BUYS','A HUNDRED MILLION —','WHO SELLS IT?'];
+    const FS=70,lineH=98,y0=178,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':132,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LA DEMANDE TEND LES BRAS VERS LE VIDE : un fonds géant, et un seul jeton (TOI) au loin ═══
+    // Verbe visuel : la STRAIN de la demande — bras tendus vers le vide. Émotion frame 0 = tension + reconnaissance de soi.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); pools(); hideNamed();
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      // question ligne par ligne (seul draw-on autorisé — la 1re ligne est pleine dès t=0)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.05+k*0.26)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : le fonds est DÉJÀ là, énorme, bras tendus vers la gauche vide ; rien ne se construit ──
+      const lean=22*Math.sin(u*0.85)+9*Math.sin(u*1.63);          // il se penche, il veut (deux harmoniques)
+      const reach=1+0.16*Math.sin(u*1.25)+0.06*Math.sin(u*2.15);  // les bras s'allongent et se rétractent
+      const fcx=792+lean, fy=712+10*Math.sin(u*1.1)+5*Math.sin(u*1.9);
+      drawFig(FUND,fcx,fy,520,-300*reach,-64,-232*reach,96,1,'L');
+      // TOI : minuscule, loin à gauche, tu trembles dans le vide
+      const yx=196+9*Math.sin(u*1.7)+4*Math.sin(u*2.9), yy=1112+7*Math.sin(u*1.35)+3*Math.sin(u*2.4);
+      yt(yx-21,yy-21,42,42,1);
+      putCap(capB,'A FUND WANTS TO BUY — NOW',CX,648,INK,clamp((u-0.4)/0.6,0,1)*gf);
+      putCap(capC,'YOU',yx,yy+58,YOU,clamp((u-0.7)/0.6,0,1)*gf);
+      putCap(capD,'WHO SELLS TO HIM?',300,1372,DEAD,clamp((u-2.1)/0.8,0,1)*gf);
+      flush();
+    }
+
+    // ═══ S2 — L'APPARIEMENT : chaque achat rencontre une vente et se scelle en un trade ; sans vendeur, le prix S'ÉCHAPPE ═══
+    // Verbe visuel : la RENCONTRE haut/bas sur le rail (scellage), puis la FUITE du rail à droite. Distinct de la strain.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); pools(); hideNamed();
+      const RY=1060, wob=10*Math.sin(u*0.9)+4*Math.sin(u*1.7);
+      rail.setAttribute('x1',140);rail.setAttribute('y1',RY+wob);rail.setAttribute('x2',780);rail.setAttribute('y2',RY-wob*0.5);setOp(rail,1);
+      // 6 colonnes d'appariement, cadence qui presse (lent -> pressé)
+      const NX=6, X0=210, DX=104, START=[0.2,0.75,1.2,1.55,1.85,2.1];
+      for(let i=0;i<NX;i++){const cx=X0+i*DX;const p=clamp((u-START[i])/0.5,0,1);
+        const ry=RY - (cx-140)*(wob*1.5)/640;   // suit l'inclinaison du rail
+        if(p<0.92){
+          // le buy descend du haut, le sell monte du bas, chacun frémit (deux harmoniques) tant qu'il approche
+          const jb=4*Math.sin(u*2.3-i*0.7)+2*Math.sin(u*3.9-i);
+          const by=lerp(ry-190,ry-30,eInOut(p))+jb, sy=lerp(ry+190,ry+8,eInOut(p))-jb;
+          it(cx-30,by,60,22,0.92); it(cx-30,sy,60,22,0.92);
+        } else {
+          // scellés : un trade fait, gris, posé sur le rail
+          gt(cx-34,ry-14+2*Math.sin(u*1.8-i),68,28,0.85);
+        }}
+      // LA FUITE : à droite, un achat sans vendeur — le prix teal S'ÉCHAPPE et ne se pose jamais ; l'acheteur le pourchasse
+      const ep=clamp((u-2.4)/1.1,0,1), chase=Math.max(0,u-2.4);
+      const climb=300*eIn(ep)+34*Math.sin(u*1.6)+16*Math.sin(u*2.7);   // il grimpe, oscille, ne se fige jamais (deux harmoniques)
+      const ex=852+18*Math.sin(u*1.3), sy0=clamp(RY-24-climb,600,RY-24);
+      railSeg.setAttribute('x1',ex-70);railSeg.setAttribute('y1',sy0);railSeg.setAttribute('x2',ex+70);railSeg.setAttribute('y2',sy0-30);setOp(railSeg,clamp(ep*1.4,0,1));
+      it(ex-30,sy0+40+10*Math.sin(u*2.2),60,22,clamp(ep*1.4,0,1));    // l'acheteur seul monte à la poursuite
+      putCap(capB,'EVERY TRADE HAS TWO SIDES',CX,640,INK,clamp((u-0.6)/0.7,0,1));
+      putCap(capC,'BUY MEETS SELL',430,1360,DEAD,clamp((u-1.6)/0.6,0,1));   // sous les colonnes, hors de leur bande animée
+      putCap(capD,'NO SELLER — PRICE RUNS',840,988,YOU,ep);                 // à droite, sous le prix une fois échappé en haut
+      flush();
+    }
+
+    // ═══ S3 — LE RETOURNEMENT : ton stop, cru bouclier, BASCULE en flèche de vente dans la main du fonds ═══
+    // Verbe visuel : le FLIP (jeton posé -> flèche qui file). Le moment « oh ». Le prix descend en feuille morte et le déclenche.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); pools(); hideNamed();
+      const SY=1180;                                   // niveau du stop
+      // le fonds attend à droite, main ouverte, prêt à recevoir (continuité de S1)
+      const flex=1+0.12*Math.sin(u*1.2)+0.05*Math.sin(u*2.05), lean=10*Math.sin(u*0.8);
+      drawFig(FUND,928+lean*0.3,900+5*Math.sin(u*1.1),340,-150*flex,70,-96*flex,150*flex,1,'R');
+      const handX=928-96*flex, handY=900+340*0.30+150*flex;
+      // ta ligne de stop + le jeton (ta position) posé dessus
+      const jit=(1-clamp((u-0.2)/0.5,0,1))*0 + 3*Math.sin(u*2.6)+1.5*Math.sin(u*4.1); // vibre : tension au bord
+      stopLine.setAttribute('x1',150);stopLine.setAttribute('y1',SY);stopLine.setAttribute('x2',640);stopLine.setAttribute('y2',SY);setOp(stopLine,1);
+      // le prix descend en FEUILLE MORTE (zigzag irrégulier) jusqu'au contact
+      const CONTACT=3.4, pp=clamp(u/CONTACT,0,1);
+      const px=380+120*Math.sin(u*1.15)+60*Math.sin(u*1.9+1);
+      const py=lerp(660,SY-22,eIn(pp));
+      const fired=u>=CONTACT;
+      if(!fired){
+        setOp(priceDot,1);priceDot.setAttribute('cx',px.toFixed(1));priceDot.setAttribute('cy',py.toFixed(1));
+        yt(300,SY-46-jit,120,46,1);                    // ta position, posée sur le stop, elle frémit
+        putCap(capC,'YOU CALL IT A SHIELD',300,SY+70,DEAD,clamp((u-0.5)/0.6,0,1));
+        putCap(capB,'A STOP IS NOT PROTECTION',CX,620,INK,clamp((u-1.2)/0.7,0,1));
+      } else {
+        // BASCULE : le jeton devient une flèche teal qui file vers la main du fonds
+        const fp=clamp((u-CONTACT)/1.3,0,1);
+        const ax1=lerp(360,handX+70,eInOut(fp)), ay1=lerp(SY-24,handY-70,eInOut(fp));
+        const ax2=lerp(360,handX,eInOut(fp))+18*Math.sin(u*3.0)*(1-fp), ay2=lerp(SY+40,handY,eInOut(fp));
+        drawArrow(ax1,ay1,ax2,ay2,1);
+        // la ligne de stop, désormais rompue, tremble encore un instant puis le vide reste vivant (prix qui redérive)
+        const rex=520+70*Math.sin(u*1.3)+30*Math.sin(u*2.2);
+        setOp(priceDot,clamp((u-CONTACT-0.8)/0.6,0,1));priceDot.setAttribute('cx',rex.toFixed(1));priceDot.setAttribute('cy',(720+40*Math.sin(u*1.7)).toFixed(1));
+        putCap(capB,"IT'S AN INSTRUCTION",CX,620,INK,clamp((u-CONTACT)/0.5,0,1));
+        putCap(capD,'YOU VOLUNTEERED',300,SY+70,YOU,clamp((u-CONTACT-0.6)/0.6,0,1));
+      }
+      // le narrateur DÉSIGNE le stop au moment du basculement, puis s'efface (la scène vit sans lui)
+      const M=NAR();
+      if(M){ if(lf>0.30&&lf<0.66){ M.enter(u,{t:t,routine:'designe',lookAt:360,rest:{x:820,y:1420,h:210},op:1}); } else { M.hide(); } }
+      flush();
+    }
+
+    // ═══ S4 — LE BALAYAGE : mille stops empilés comme un stock, avalés colonne par colonne en cadence pressée ═══
+    // Verbe visuel : le SWEEP d'un stock (accumulation consommée). Distinct du flip. Pas de narrateur (loi).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); pools(); hideNamed();
+      const SHY=1230, NCOL=13, X0=150, DX=58, BW=44, BH=34, XL=X0-20, XR=980;
+      shelf.setAttribute('x1',120);shelf.setAttribute('y1',SHY);shelf.setAttribute('x2',960);shelf.setAttribute('y2',SHY);setOp(shelf,1);
+      // le fonds, à droite, tire sur le stock : il oscille, il ne se fige jamais
+      const fsway=20*Math.sin(u*1.3)+8*Math.sin(u*1.9);
+      const handY=972+320*0.30+120, sinkX=940;
+      drawFig(FUND,1000+fsway,972+8*Math.sin(u*1.05),320, -220,110, -60,150, 1, null);
+      // LE FRONT DE BALAYAGE — il traverse l'étagère EN BOUCLE (« l'enchère remplit là où ils sont — depuis toujours ») ;
+      // chaque colonne qu'il touche est avalée (grise, aspirée vers le fonds) puis le stock se reforme derrière lui.
+      const fcyc=(u/4.0)%1, frontX=XL+fcyc*(XR-XL);
+      it(frontX-9,SHY-150,18,150,0.9);                       // l'arête qui consomme (encre)
+      for(let c=0;c<NCOL;c++){const bx=X0+c*DX,colX=bx+BW/2;
+        let rel=fcyc-(colX-XL)/(XR-XL); if(rel<0)rel+=1;      // temps écoulé depuis le dernier passage du front
+        const W=0.09;                                         // fenêtre de consommation
+        for(let k=0;k<3;k++){
+          const jy=4*Math.sin(u*2.3-c*0.5-k*0.9)+2*Math.sin(u*3.9-c);
+          const by=SHY-(k+1)*(BH+4)+jy;
+          if(rel<W){ const e=rel/W;                           // consommée : grise et aspirée vers le fonds (position)
+            gt(lerp(bx,sinkX,e),lerp(by,handY-BH/2,e),BW*(1-0.35*e),BH*(1-0.35*e),(1-e)*0.9);
+          } else { const g=clamp((rel-W)/0.10,0,1);           // reformée derrière le front (elle repousse)
+            const hh=BH*(0.25+0.75*g); yt(bx,by+BH-hh,BW,hh,0.95);
+          }
+        }}
+      putCap(capB,'A THOUSAND STOPS — ONE PRICE',CX,660,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capC,'STACKED LIKE INVENTORY',300,760,DEAD,clamp((u-1.4)/0.7,0,1));
+      putCap(capD,'THE AUCTION FILLS WHERE THEY SIT',CX,SHY+90,YOU,clamp((u-2.4)/0.8,0,1));
+      flush();
+    }
+
+    // ═══ S5 — LE DIPTYQUE : offrir sa sortie où tout le monde l'offre (balayé, gris) vs la CHOISIR (seul, au-dessus, teal) ═══
+    // Verbe visuel : la COMPARAISON A/B. Décharge du fusil : la SEULE variable changée = OÙ. Image finale tenue ≥3s, vivante.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); pools(); hideNamed();
+      const swept=clamp((u-1.4)/1.4,0,1);
+      // ── GAUCHE (A) : la foule, un niveau commun — pile de jetons + TOI dedans, balayée et délavée gris ──
+      const AX=270, ALV=1120;
+      for(let c=0;c<5;c++){const bx=AX-120+c*52;
+        for(let k=0;k<3;k++){const jy=3*Math.sin(u*2.0-c*0.6-k*0.8)+1.5*Math.sin(u*3.3-c);
+          const by=ALV-(k+1)*38+jy;
+          if(swept<0.5) yt(bx,by,44,32,0.9);
+          else gt(bx,by,44,32,0.9);}}
+      // TON jeton dans la foule (le même objet — le fusil), délavé teal->gris quand le balayage passe
+      if(swept<0.5) yt(AX-22,ALV-150,44,32,1); else gt(AX-22,ALV-150,44,32,1);
+      // le front de balayage traverse la pile de gauche (position, continu)
+      const fx=lerp(AX-160,AX+180,swept);
+      it(fx-12,ALV-150,24,150,clamp(swept*2,0,1)*(1-swept)*1.6);
+      putCap(capC,'WHERE EVERYONE OFFERS',AX,ALV+80,DEAD,1);
+      putCap(capE,'SWEPT',AX,ALV+130,DEAD,swept);
+      // ── DROITE (B) : TOI, seul, au-dessus — le balayage passe en dessous, tu survives teal (vie continue) ──
+      const BX=800, BLV=1000, breath=18*Math.sin(u*1.5)+8*Math.sin(u*2.6);
+      const surv=clamp((u-2.6)/1.0,0,1);
+      // la ligne de balayage passe BAS, sans t'atteindre
+      shelf.setAttribute('x1',640);shelf.setAttribute('y1',BLV+150);shelf.setAttribute('x2',960);shelf.setAttribute('y2',BLV+150);setOp(shelf,clamp((u-0.6)/0.6,0,1)*0.7);
+      yt(BX-26,BLV-26+breath,52,52,1);                   // toi, choisi, plein teal, tu respires
+      putCap(capD,'WHERE YOU CHOSE',BX,BLV+150+70,INK,clamp((u-1.0)/0.6,0,1));
+      putCap(capF,'SURVIVES',BX,BLV+150+118,YOU,surv);
+      // ── LA LEÇON (save) ──
+      putCap(capB,'SAME GAME — ONE VARIABLE',CX,640,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capA,'KNOW WHAT YOU OFFER — AND WHERE',CX,720,YOU,clamp((u-3.2)/0.9,0,1));
+      // le narrateur CONSTATE, puis s'efface avant la tenue finale (elle vit sans lui : le jeton teal respire)
+      const M=NAR();
+      if(M){ if(lf>0.20&&lf<0.60){ M.enter(u,{t:t,routine:'constate',rest:{x:180,y:1430,h:200},op:1}); } else { M.hide(); } }
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
