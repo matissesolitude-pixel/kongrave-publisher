@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L35 « THE WALL OF WINNERS » — S1 : émotion frame 0 = COLÈRE + RECONNAISSANCE DE SOI — un MUR écrasant de captures de gains
+       (tuiles teal brillantes) remplit le cadre, et devant lui TOI, boule teal minuscule ; derrière le mur un liseré gris DÉPASSE :
+       quelque chose est caché. Le fusil = ce liseré. S2 : diptyque — à gauche ta réalité complète (gains, pertes, jours plats
+       mélangés), à droite la MÊME colonne d'où un filtre RETIRE pertes et jours plats pour ne garder qu'un mur brillant. S3 : une
+       foule de milliers de traders ; le hasard (une pièce) en illumine quelques-uns qui MONTENT former le mur — les autres restent
+       en bas, silencieux, et s'effacent. S4 (NARRATEUR ABSENT) : la pression du mur GONFLE ta taille et FISSURE ton socle de process
+       sain ; il s'effondre, tu te délaves, le mur brille indifférent. S5 : décharge — le mur pâlit en fond gris, tu te retournes vers
+       TES cent derniers trades (une bande honnête, gains ET pertes) qu'un trait de moyenne teal traverse : juge-toi là-dessus.
+       Doctrine : aucun chiffre, aucun compte/personne réel, gris = perte/silence, pas de brun, bas du cadre vide, narrateur en encre. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', WASH='#3A5560';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // pseudo-aléatoire DÉTERMINISTE (jamais Math.random : le rendu doit être reproductible frame à frame)
+    const rnd=i=>{const x=Math.sin(i*12.9898)*43758.5453;return x-Math.floor(x);};
+
+    // ── DÉFS : les poses du NARRATEUR (art vectorisé, encre) — injecté par build_ligne ──
+    /*INCLUDE:narrator*/
+
+
+    // ═══ LE LISERÉ GRIS caché derrière le mur (fusil S1) — dessiné EN PREMIER pour rester DERRIÈRE ═══
+    const greyBand=mk('rect',{fill:DEAD,rx:6,opacity:0});
+
+    // ═══ LES TUILES « CAPTURE DE GAIN » (mur) : cadre teal + petit graphe montant papier ═══
+    const TILES=[];
+    for(let i=0;i<40;i++){const g=mk('g',{opacity:0});
+      const r=mk('rect',{rx:9,fill:YOU},g);
+      const l=mk('polyline',{fill:'none',stroke:PAPER,'stroke-width':4,'stroke-linejoin':'round','stroke-linecap':'round'},g);
+      TILES.push({g,r,l});}
+    let ti=0; function resetTiles(){ti=0;}
+    function tile(x,y,w,h,op){const o=TILES[ti++];if(!o)return;
+      o.r.setAttribute('x',x.toFixed(1));o.r.setAttribute('y',y.toFixed(1));o.r.setAttribute('width',w.toFixed(1));o.r.setAttribute('height',h.toFixed(1));
+      const ix=x+w*0.15,iw=w*0.70,iy=y+h*0.5,ih=h*0.40;
+      o.l.setAttribute('points',[[ix,iy+ih*0.55],[ix+iw*0.34,iy+ih*0.05],[ix+iw*0.58,iy+ih*0.30],[ix+iw,iy-ih*0.55]].map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      setOp(o.g,op);}
+    function flushTiles(){for(let i=ti;i<TILES.length;i++)setOp(TILES[i].g,0);}
+
+    // ═══ LES BLOCS (colonnes S2, socle S4, bande des cent trades S5) ═══
+    const BLK=[]; for(let i=0;i<150;i++)BLK.push(mk('rect',{rx:5,opacity:0}));
+    let bi=0; function resetBlk(){bi=0;}
+    function blk(x,y,w,h,color,op){const e=BLK[bi++];if(!e)return;
+      e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));
+      e.setAttribute('fill',color);setOp(e,op);}
+    function flushBlk(){for(let i=bi;i<BLK.length;i++)setOp(BLK[i],0);}
+
+    // ═══ LA FOULE (S3) : petits ronds ═══
+    const DOT=[]; for(let i=0;i<120;i++)DOT.push(mk('circle',{opacity:0}));
+    let di=0; function resetDot(){di=0;}
+    function dot(x,y,r,color,op){const e=DOT[di++];if(!e)return;
+      e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));e.setAttribute('r',r.toFixed(1));e.setAttribute('fill',color);setOp(e,op);}
+    function flushDot(){for(let i=di;i<DOT.length;i++)setOp(DOT[i],0);}
+
+    // ═══ OBJETS DÉDIÉS (dessinés PAR-DESSUS le mur) ═══
+    const pressL=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // pression, colonne gauche
+    const pressR=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // pression, colonne droite
+    const coin=mk('circle',{fill:'none',stroke:INK,'stroke-width':6,opacity:0});                                  // le hasard (S3)
+    const coinC=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const filter=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'16 12',opacity:0});                   // le filtre (S2)
+    const avg=mk('line',{stroke:YOU,'stroke-width':7,'stroke-dasharray':'18 11','stroke-linecap':'round',opacity:0}); // la moyenne (S5)
+    const ball=mk('circle',{fill:YOU,opacity:0});                                                                  // TOI
+    function hideExtra(){setOp(greyBand,0);setOp(pressL,0);setOp(pressR,0);setOp(coin,0);setOp(coinC,0);setOp(filter,0);setOp(avg,0);setOp(ball,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT ARE YOU','ACTUALLY LOOKING AT'];
+    const FS=88,lineH=112,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle, copié TEL QUEL de l26 ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(40),capD=caption(38),capE=caption(38),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // géométrie du MUR (S1)
+    const WCOL=5, WROW=6, WX0=171, WY0=684, TW=130, TH=74, WGX=22, WGY=13;
+    const WALL_W=WCOL*TW+(WCOL-1)*WGX, WALL_BOT=WY0+WROW*TH+(WROW-1)*WGY;
+
+    // ═══ S1 — LE MUR ÉCRASANT, ET LE LISERÉ GRIS QUI DÉPASSE DERRIÈRE ═══
+    // Verbe visuel : l'écrasement (une masse énorme de gains face à un point minuscule).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetTiles(); resetBlk(); resetDot(); hideExtra();
+      const gf=clamp(1-(lf-0.88)/0.08,0,1);
+      // question : 1re ligne pleine dès t=0, le reste pop
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-4.4)/1.2,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : le MUR est ENTIER dès t=0 (aucun draw-on). Le liseré gris frémit derrière, en bas.
+      const gq=6*Math.sin(u*0.9)+3*Math.sin(u*1.85);
+      greyBand.setAttribute('x',(WX0+6).toFixed(1));greyBand.setAttribute('y',(WALL_BOT-14+gq).toFixed(1));
+      greyBand.setAttribute('width',(WALL_W-12).toFixed(1));greyBand.setAttribute('height',52);setOp(greyBand,0.9);
+      // les tuiles : chacune SCINTILLE en POSITION (deux harmoniques, jamais figée)
+      for(let r=0;r<WROW;r++)for(let c=0;c<WCOL;c++){const k=r*WCOL+c;
+        const dx=3.5*Math.sin(u*1.25+k*0.7)+1.8*Math.sin(u*2.35+k*0.3);
+        const dy=3.0*Math.sin(u*1.05+k*0.9)+1.6*Math.sin(u*2.15+k*0.5);
+        tile(WX0+c*(TW+WGX)+dx, WY0+r*(TH+WGY)+dy, TW, TH, 1);}
+      // TOI : minuscule, terne, devant le mur (respire en position — deux harmoniques)
+      const bb=6*Math.sin(u*1.5)+3*Math.sin(u*2.7);
+      ball.setAttribute('cx',CX);ball.setAttribute('cy',(1318+bb).toFixed(1));ball.setAttribute('r',26);ball.setAttribute('fill',YOU);setOp(ball,1);
+      putCap(capA,'THE WALL OF WINNERS',CX,652,INK,clamp((u-2.4)/0.8,0,1)*gf);
+      putCap(capD,'YOU',CX,1398,YOU,clamp((u-1.6)/0.6,0,1));
+      putCap(capF,"WHAT'S BEHIND IT?",800,1290,DEAD,clamp((u-3.4)/0.8,0,1)*gf);
+      // MR DOLLAR : il entre, PARLE et désigne le mur — puis il s'en va (la scène reste vivante sans lui : le mur scintille)
+      if(u<3.9){ MrD.enter(u,{t:t,routine:'designe',lookAt:CX,rest:{x:196,y:1430,h:224},op:gf}); }
+      else{ const o=clamp((u-3.9)/1.2,0,1); MrD.say('walk',t,lerp(196,-180,eInOut(o)),1430,224,(1-o)*gf,true,0,1,1); }
+      flushTiles(); flushBlk(); flushDot();
+    }
+
+    // ═══ S2 — LE FILTRE : ta réalité complète vs leur sélection ═══
+    // Verbe visuel : le filtrage (un balayage RETIRE pertes et jours plats, le reste se réaligne en mur).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetTiles(); resetBlk(); resetDot(); hideExtra();
+      const LX=250, RX=812, BW=210, N=9, TOP=712, CELL=94;
+      // types déterministes : 0 gain(teal) 1 perte(gris) 2 jour plat(encre terne)
+      const KIND=[0,1,0,2,1,0,2,1,0];
+      const COL=[YOU,DEAD,INK];
+      // ── GAUCHE 'YOURS' : la colonne complète, honnête (chaque bloc frémit en position) ──
+      for(let i=0;i<N;i++){const bx=7*Math.sin(u*1.2+i*0.8)+3.6*Math.sin(u*2.3+i*0.4),by=4*Math.sin(u*1.0+i*0.6)+2*Math.sin(u*2.15+i*0.9);
+        blk(LX-BW/2+bx, TOP+i*CELL+by, BW, CELL-16, COL[KIND[i]], KIND[i]===2?0.62:1);}
+      // ── DROITE 'THEIRS' : la même colonne, puis le filtre passe et ne garde que les gains ──
+      const sweep=clamp((u-2.0)/1.6,0,1);                       // le balayage descend
+      const fy=TOP-24+sweep*(N*CELL+40);
+      let kept=0;
+      for(let i=0;i<N;i++){
+        const removed=(KIND[i]!==0) && (fy > TOP+i*CELL+CELL*0.4);   // au passage du filtre, pertes/plats disparaissent
+        const bx=7*Math.sin(u*1.05+i*0.7)+3.6*Math.sin(u*2.15+i*0.5),by=4*Math.sin(u*0.95+i*0.5)+2*Math.sin(u*2.05+i*0.8);
+        if(!removed){
+          // les gains restants remontent se tasser en mur parfait (réalignement)
+          const packY = (KIND[i]===0) ? lerp(TOP+i*CELL, TOP+kept*(CELL-18), clamp((u-3.4)/1.0,0,1)) : TOP+i*CELL;
+          blk(RX-BW/2+bx, packY+by, BW, CELL-16, COL[KIND[i]], KIND[i]===2?0.62:1);
+          if(KIND[i]===0) kept++;
+        }
+      }
+      // le trait de filtre lui-même
+      filter.setAttribute('x1',RX-BW/2-24);filter.setAttribute('x2',RX+BW/2+24);filter.setAttribute('y1',fy);filter.setAttribute('y2',fy);
+      filter.setAttribute('stroke-dashoffset',(-u*26).toFixed(0));setOp(filter,sweep>0&&sweep<1?1:0);
+      putCap(capD,'YOURS',LX,662,INK,clamp((u-0.5)/0.6,0,1));
+      putCap(capE,'THEIRS',RX,662,INK,clamp((u-0.5)/0.6,0,1));
+      putCap(capB,'THEY ONLY KEEP THE WINS',CX,600,INK,clamp((u-4.2)/0.8,0,1));
+      flushTiles(); flushBlk(); flushDot();
+    }
+
+    // ═══ S3 — LA LOTERIE : le hasard illumine quelques-uns, ils montent former le mur ═══
+    // Verbe visuel : la montée sélective (les gagnants s'élèvent, la masse reste et s'efface).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetTiles(); resetBlk(); resetDot(); hideExtra();
+      const COLS=13, ROWS=7, GX0=118, GY0=742, SPX=(944-118)/(COLS-1), SPY=64;
+      const WINNERS=[7,19,33,48,61,72,85,90];                  // ~8 gagnants sur 91
+      const rise=clamp((u-1.6)/1.4,0,1), fade=clamp((u-1.8)/1.8,0,1);
+      // la pièce du hasard tombe puis rebondit doucement (position, deux harmoniques)
+      const cy=lerp(430,560,eOut(clamp(u/1.4,0,1)))+(u>1.4?7*Math.sin(u*1.6)+3*Math.sin(u*2.9):0);
+      const cop=clamp(1-(u-2.4)/0.8,0,1);
+      coin.setAttribute('cx',CX);coin.setAttribute('cy',cy.toFixed(1));coin.setAttribute('r',26);setOp(coin,cop);
+      coinC.setAttribute('x1',CX-13);coinC.setAttribute('x2',CX+13);coinC.setAttribute('y1',cy);coinC.setAttribute('y2',cy);setOp(coinC,cop);
+      let wi=0;
+      // la foule est ENTIÈRE dès la frame 0 (coupe franche, aucun fade-in) et DÉRIVE en continu
+      for(let i=0;i<COLS*ROWS;i++){
+        const r=Math.floor(i/COLS), c=i%COLS;
+        const win=WINNERS.indexOf(i)>=0;
+        // fréquences distinctes par rond : la masse n'est jamais toute au repos en même temps
+        const dx=6.6*Math.sin(u*1.15+i*0.5)+3.4*Math.sin(u*2.05+i*0.9);
+        const dy=5.4*Math.sin(u*0.9+i*0.7)+2.8*Math.sin(u*1.75+i*0.4);
+        const bx=GX0+c*SPX+dx, by=GY0+r*SPY+dy;
+        if(win){
+          // il monte se ranger dans le mur (rangée serrée en haut) — et continue de vibrer une fois rangé
+          const baseX=lerp(bx, 210+wi*84, rise), baseY=lerp(by, 642, eInOut(rise));
+          const wob=(4.6*Math.sin(u*1.5+wi*0.8)+2.4*Math.sin(u*2.7+wi*0.5))*rise;
+          dot(baseX+wob, baseY+wob*0.6, lerp(13,22,rise), YOU, 1);
+          wi++;
+        }else{
+          // il reste en bas : la masse silencieuse, dominée par le mur — dim mais TOUJOURS vivante (elle dérive)
+          dot(bx, by, 13, DEAD, lerp(0.85,0.30,fade));
+        }
+      }
+      putCap(capB,'ONLY THE WINNERS POST',CX,566,INK,clamp((u-2.2)/0.8,0,1));
+      putCap(capA,'THOUSANDS BOUGHT A TICKET',CX,1330,INK,clamp((u-0.6)/0.7,0,1));
+      putCap(capC,'THE ONES WHO LOST STAY QUIET',CX,1418,DEAD,clamp((u-3.0)/0.9,0,1));
+      // MR DOLLAR : une apparition — il désigne la masse silencieuse en bas, puis ressort
+      const inW=eInOut(clamp((u-2.6)/1.0,0,1)), outW=eInOut(clamp((u-7.2)/1.2,0,1));
+      if(u>2.6 && outW<1){ const nx=lerp(lerp(-150,182,inW),-180,outW)+((inW>0.95&&outW<0.05)?(4*Math.sin(u*1.2)+2*Math.sin(u*2.4)):0);
+        if(inW<0.95) MrD.say('walk',t,nx,1436,214,1-outW,false,0,1,1);
+        else MrD.pointAt('point',t,nx,1436,214,1-outW,CX);          // cible : la masse au centre-bas
+      } else { MrD.hide(); }
+      flushTiles(); flushBlk(); flushDot();
+    }
+
+    // ═══ S4 — LA DISCIPLINE DÉTRUITE : la pression gonfle ta taille et fissure ton socle ═══
+    // Verbe visuel : l'effondrement sous pression (le socle sain se craquèle et tombe). NARRATEUR ABSENT.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetTiles(); resetBlk(); resetDot(); hideExtra(); MrD.hide();
+      // le mur, en haut, indifférent : une rangée de tuiles qui scintille (position)
+      const MX0=200, MW=118, MG=18, MN=6, MY=592;
+      for(let c=0;c<MN;c++){const dx=3*Math.sin(u*1.2+c*0.8)+1.6*Math.sin(u*2.3+c*0.4);const dy=2.6*Math.sin(u*1.0+c*0.6)+1.4*Math.sin(u*2.1+c*0.9);
+        tile(MX0+c*(MW+MG)+dx, MY+dy, MW, 80, 1);}
+      // la pression descend du mur vers toi : deux chevrons gris qui GLISSENT vers le bas (position).
+      // Bande RÉSERVÉE y≈812-892, FLANQUANT la boule (x372/708) — jamais sous une étiquette ni sur la boule.
+      const p0=clamp((u-0.4)/0.6,0,1);
+      for(const [px,el] of [[372,pressL],[708,pressR]]){
+        const yy=812+((u*60)%74);
+        el.setAttribute('points',[[px-26,yy],[px,yy+28],[px+26,yy]].map(q=>q[0]+','+q[1]).join(' '));
+        setOp(el,p0*0.8);
+      }
+      // TOI : ta jauge de taille GONFLE (rayon) sous la pression, tu jitteres, puis tu te délaves
+      const swell=clamp((u-0.6)/2.2,0,1), wash=clamp((u-3.2)/1.2,0,1);
+      const br=30+swell*40, jit=(3+swell*4)*Math.sin(u*1.8)+2*Math.sin(u*3.1);
+      ball.setAttribute('cx',(CX+jit).toFixed(1));ball.setAttribute('cy',(1044+2*Math.sin(u*1.3)).toFixed(1));ball.setAttribute('r',br.toFixed(1));
+      ball.setAttribute('fill', wash>0? WASH : YOU);setOp(ball,lerp(1,0.66,wash));
+      // TON SOCLE DE PROCESS : rangée de segments teal, sain (il frémit) puis fissuré en cascade, puis effondré
+      const SX0=210, SW=82, SG=18, SN=7, SBASE=1210;
+      const crack=clamp((u-1.5)/1.8,0,1);
+      for(let i=0;i<SN;i++){
+        const brk=clamp((crack-i*0.06)/0.5,0,1);                 // cassure en cascade décalée
+        const fall=eIn(brk)*(64+i*13);                           // chute BORNÉE : le débris reste au-dessus de y≈1360
+        const tilt=brk*(i-SN/2)*3;
+        const bx=(crack<0.05)?(2*Math.sin(u*1.4+i*0.9)+1.2*Math.sin(u*2.6+i*0.5)):0;   // vivant tant que sain
+        blk(SX0+i*(SW+SG)+bx+tilt, SBASE+fall, SW, 34, YOU, lerp(1,0.18,brk));
+      }
+      // étiquettes — chacune dans SA bande vide : sous le mur, au-dessus du socle, sous le débris
+      putCap(capA,'YOU SIZE UP TO CATCH UP',CX,722,INK,clamp((u-0.8)/0.7,0,1)*clamp(1-(u-6.0)/1.2,0,1));
+      putCap(capB,'THE PROCESS THAT WORKED',CX,1156,YOU,clamp((u-0.3)/0.6,0,1)*clamp(1-(crack-0.1)/0.4,0,1));
+      putCap(capC,'IT COST YOU YOUR DISCIPLINE',CX,1432,DEAD,clamp((u-3.4)/0.9,0,1));
+      flushTiles(); flushBlk(); flushDot();
+    }
+
+    // ═══ S5 — DÉCHARGE : le mur pâlit, tu te juges sur TES cent derniers trades ═══
+    // Verbe visuel : le dépilement en bande + le tracé de la moyenne (ton vrai résultat, mesurable).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetTiles(); resetBlk(); resetDot(); hideExtra();
+      // le mur s'efface en fond gris pâle, sans importance (il reste un fantôme qui frémit à peine)
+      const pale=clamp(1-(u-0.4)/2.2,0,1);
+      const gq=4*Math.sin(u*0.8)+2*Math.sin(u*1.7);
+      greyBand.setAttribute('x',(240+gq).toFixed(1));greyBand.setAttribute('y',580);greyBand.setAttribute('width',600);greyBand.setAttribute('height',150);
+      greyBand.setAttribute('rx',10);setOp(greyBand,0.10+0.10*pale);
+      // TA BANDE : cent derniers trades autour d'une base — barres teal (gains) / grises (pertes), HONNÊTE
+      const BASE=1170, X0=126, N=44, BW=15, GAP=(832-N*BW)/(N-1), app=clamp((u-1.2)/1.4,0,1);
+      let sum=0,cnt=0;
+      for(let i=0;i<N;i++){
+        const x=X0+i*(BW+GAP);
+        const up = rnd(i*3+1) > 0.44;                            // un peu plus de gains que de pertes
+        const mag = 24+rnd(i*7+2)*84;                            // hauteur BORNÉE : les cimes restent sous l'étiquette
+        const sh = 4.4*Math.sin(u*1.4+i*0.6)+2.3*Math.sin(u*2.7+i*0.3);   // frémit en position (vie continue)
+        const h = mag*clamp((app*1.4)-(i/N)*0.3,0,1)+2;
+        if(up){ blk(x, BASE-h+sh, BW, h, YOU, 1); sum+=mag; }
+        else  { blk(x, BASE+sh, BW, h, DEAD, 0.92); sum-=mag*0.7; }
+        cnt++;
+      }
+      // le trait de MOYENNE teal se trace à travers (dashoffset qui court = progression continue)
+      const ay=BASE-34;
+      avg.setAttribute('x1',X0-16);avg.setAttribute('x2',lerp(X0-16, X0+832+16, clamp((u-2.2)/1.4,0,1)));
+      avg.setAttribute('y1',ay);avg.setAttribute('y2',ay);avg.setAttribute('stroke-dashoffset',(-u*22).toFixed(0));
+      setOp(avg,clamp((u-2.0)/0.7,0,1));
+      putCap(capB,'NOT A CURATED WALL',CX,540,DEAD,clamp((u-0.8)/0.7,0,1));
+      putCap(capA,'YOUR LAST HUNDRED TRADES',CX,1002,INK,clamp((u-1.4)/0.7,0,1));
+      putCap(capC,'JUDGE YOURSELF ON YOUR OWN',CX,1372,YOU,clamp((u-2.8)/0.8,0,1));
+      // MR DOLLAR : il désigne TA bande (la prise actionnable), puis il tire sa révérence — l'image finale reste seule
+      const inW=eInOut(clamp((u-0.7)/0.9,0,1)), outW=eInOut(clamp((u-4.4)/1.3,0,1));
+      if(u>0.7 && outW<1){ const nx=lerp(lerp(-150,196,inW),-180,outW)+((inW>0.95&&outW<0.05)?(3.5*Math.sin(u*1.2)+2*Math.sin(u*2.3)):0);
+        if(inW<0.95) MrD.say('walk',t,nx,1452,208,1-outW,false,0,1,1);
+        else MrD.pointAt('point',t,nx,1452,208,1-outW,CX);          // cible : ta bande de trades au centre
+      } else { MrD.hide(); }
+      flushTiles(); flushBlk(); flushDot();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
