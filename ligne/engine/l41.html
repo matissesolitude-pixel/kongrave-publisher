@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L41 « THREE POSITIONS, ONE BET » — S1 : émotion frame 0 = CURIOSITÉ + TENSION — trois positions teal bien séparées en
+       haut, mais de chacune descend un FIL et les trois CONVERGENT vers une seule ancre encre en bas : la racine commune contredit
+       la séparation dès t=0. Le fusil = cette ancre. S2 : l'ancre se révèle MOTEUR — il pousse d'un cran, les trois fils tirent, les
+       trois positions s'inclinent À L'IDENTIQUE au même instant, puis FUSIONNENT en une seule position TROIS FOIS plus grosse
+       (un pari en trois costumes). S3 : le risque calculé (une position mal tournée = fine tranche grise, supportable, coche teal)
+       vs la réalité (les trois ensemble = entaille triple) — l'écart de dimensionnement se matérialise. S4 (LA scène, narrateur
+       ABSENT) : au calme les fils sont LÂCHES, les positions bougent désynchronisées (la diversification est réelle) ; au CHOC les
+       fils se TENDENT d'un coup et les trois bougent comme UN bloc — le choc a créé la corrélation, la protection s'évapore quand
+       elle devait servir. S5 : décharge — avant d'ajouter une position, la question s'inscrit ; un fil se dessine vers l'ancre
+       commune → tout se REGROUPE en un seul pari, dimensionné comme un. Doctrine : aucun chiffre ; pas de brun ; TOI = positions
+       teal ; gris = perte ; bas du cadre vide ; narrateur toujours en encre, PETIT, absent en S4 ; aucun marché/paire nommé. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art vectorisé, encre) ──
+    /*INCLUDE:narrator*/
+
+    // ── LES POSITIONS (teal) · LES FILS (encre) · L'ANCRE / LE MOTEUR (encre) · LES PERTES (gris) ──
+    const POS=[]; for(let i=0;i<6;i++)POS.push(mk('rect',{rx:16,fill:YOU,stroke:INK,'stroke-width':3,opacity:0}));
+    const GRAY=[]; for(let i=0;i<6;i++)GRAY.push(mk('rect',{rx:12,fill:DEAD,opacity:0}));
+    const THR=[]; for(let i=0;i<3;i++)THR.push(mk('path',{fill:'none',stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    const anchor=mk('rect',{rx:14,fill:INK,opacity:0});
+    const pistL=mk('line',{stroke:PAPER,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const pistR=mk('line',{stroke:PAPER,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const planLine=mk('line',{stroke:YOU,'stroke-width':5,'stroke-dasharray':'16 10','stroke-linecap':'round',opacity:0});
+    const shockBar=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    const check=mk('path',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    let pi=0,gi=0;
+    function resetPools(){pi=0;gi=0;}
+    function pos(x,y,w,h,op){const e=POS[pi++];if(!e)return;e.setAttribute('x',(x-w/2).toFixed(1));e.setAttribute('y',(y-h/2).toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(4,h).toFixed(1));setOp(e,op);}
+    function gray(x,y,w,h,op){const e=GRAY[gi++];if(!e)return;e.setAttribute('x',(x-w/2).toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function thread(i,x1,y1,x2,y2,sag,op){const e=THR[i];if(!e)return;
+      const mx=(x1+x2)/2, my=(y1+y2)/2+sag;
+      e.setAttribute('d',`M${x1.toFixed(1)} ${y1.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`);setOp(e,op);}
+    function flushPools(){for(let i=pi;i<POS.length;i++)setOp(POS[i],0);for(let i=gi;i<GRAY.length;i++)setOp(GRAY[i],0);}
+    function hideAll(){for(const e of THR)setOp(e,0);setOp(anchor,0);setOp(pistL,0);setOp(pistR,0);setOp(planLine,0);setOp(shockBar,0);setOp(check,0);}
+    function putAnchor(cx,cy,w,h,op){anchor.setAttribute('x',(cx-w/2).toFixed(1));anchor.setAttribute('y',(cy-h/2).toFixed(1));
+      anchor.setAttribute('width',w);anchor.setAttribute('height',h);setOp(anchor,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THREE TRADES','OR ONE'];
+    const FS=88,lineH=112,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // géométrie commune S1/S4/S5 : trois positions en haut, une ancre en bas
+    const PX=[250,540,830], PROW=770, PW=150, PH=66;
+    const ANX=540, ANY=1235, ANW=232, ANH=98;
+    const ATOP=[470,540,610];                       // points d'attache des fils sur l'ancre
+
+    // ═══ S1 — TROIS POSITIONS SÉPARÉES, MAIS UNE SEULE RACINE ═══
+    // Verbe visuel : la convergence (trois fils qui plongent vers une ancre unique).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetPools(); hideAll();
+      const gf=clamp(1-(lf-0.86)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-5.0)/1.2,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ÉMOTION FRAME 0 : positions + fils + ancre déjà tous présents et pleins. Rien ne se construit.
+      putAnchor(ANX,ANY+3*Math.sin(u*0.9),ANW,ANH,1);
+      // chaque position respire de son côté (deux harmoniques, phases distinctes) — elles SEMBLENT indépendantes
+      const by=[0,0,0], bx=[0,0,0];
+      for(let i=0;i<3;i++){
+        by[i]=11*Math.sin(u*1.35+i*2.1)+5*Math.sin(u*2.35+i*1.3);
+        bx[i]=6*Math.sin(u*0.95+i*1.7)+3*Math.sin(u*1.9+i*0.6);
+        pos(PX[i]+bx[i], PROW+by[i], PW, PH, 1);
+      }
+      // les fils vibrent À L'UNISSON — ils sont reliés (même terme d'oscillation)
+      const uni=7*Math.sin(u*1.7)+3*Math.sin(u*2.9);
+      for(let i=0;i<3;i++) thread(i, PX[i]+bx[i], PROW+by[i]+PH/2, ATOP[i], ANY-ANH/2, 18+uni, 1);
+      putCap(capA,'THREE POSITIONS',CX,648,YOU,clamp((u-1.9)/0.7,0,1)*gf);
+      putCap(capB,'ONE COMMON ROOT',CX,1378,INK,clamp((u-3.0)/0.8,0,1)*gf);
+      // MR DOLLAR : il entre, il PARLE, il DÉSIGNE l'ancre commune — puis il s'en va (la scène reste vivante).
+      if(u<5.2){
+        MrD.enter(u, {t:t, routine:'designe', lookAt:ANX, rest:{x:196, y:1440, h:224}, op:gf});
+      }else{
+        const o=clamp((u-5.2)/1.2,0,1);
+        MrD.say('walk', t, lerp(196,-180,eInOut(o)), 1440, 224, (1-o)*gf, true, 0,1,1);
+      }
+      flushPools();
+    }
+
+    // ═══ S2 — LE MOTEUR INCLINE LES TROIS À L'IDENTIQUE, PUIS ILS FUSIONNENT ═══
+    // Verbe visuel : la fusion (les trois glissent l'une sur l'autre en une position triple).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      // le moteur pousse d'un cran (u<2), puis entretient une poussée continue (position, deux harmoniques)
+      const drive=(u<2)? lerp(0,52,eInOut(clamp(u/2,0,1))) : 44+16*Math.sin((u-2)*1.5)+7*Math.sin((u-2)*2.7);
+      putAnchor(ANX+drive*0.35, ANY, ANW, ANH, 1);
+      // détail moteur : deux pistons qui battent (mouvement de position interne)
+      const pk=Math.sin(u*3.0)*10;
+      pistL.setAttribute('x1',ANX-64);pistL.setAttribute('x2',ANX-64);pistL.setAttribute('y1',ANY-24);pistL.setAttribute('y2',ANY-24+22+pk);setOp(pistL,1);
+      pistR.setAttribute('x1',ANX+64);pistR.setAttribute('x2',ANX+64);pistR.setAttribute('y1',ANY-24);pistR.setAttribute('y2',ANY-24+22-pk);setOp(pistR,1);
+      const merge=clamp((u-2.0)/1.4,0,1);            // les trois glissent vers le centre et fusionnent
+      if(merge<1){
+        // AVANT fusion : trois positions, inclinées EXACTEMENT pareil par la poussée du moteur
+        for(let i=0;i<3;i++){
+          const px=lerp(PX[i],CX,eInOut(merge))+drive*0.35;
+          const py=PROW+lerp(0,i*0,merge)+9*Math.sin(u*1.5)+4*Math.sin(u*2.6); // même oscillation = synchrones
+          pos(px, py, lerp(PW,PW*1.15,merge), PH, 1);
+          thread(i, px, py+PH/2, ATOP[i]+drive*0.35, ANY-ANH/2, 14, 1-merge*0.6);
+        }
+      }
+      if(merge>0){
+        // la position fusionnée : TROIS FOIS plus grosse, elle pulse au rythme du moteur (position, deux harmoniques)
+        const bw=lerp(PW,210,merge), bh=lerp(PH,180,merge);
+        const bob=12*Math.sin(u*1.5)+5*Math.sin(u*2.6);
+        pos(CX+drive*0.35, PROW+40+bob, bw, bh, 1);
+        thread(0, CX+drive*0.35, PROW+40+bob+bh/2, ANX+drive*0.35, ANY-ANH/2, 12, merge);
+        setOp(THR[1],0);setOp(THR[2],0);
+      }
+      putCap(capC,'THE SAME DRIVER',CX,1372,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capB,'ONE TRADE — THREE COSTUMES',CX,600,INK,clamp((u-2.6)/0.8,0,1)*merge);
+      putCap(capD,'THREE TIMES THE SIZE',CX,690,DEAD,clamp((u-3.4)/0.8,0,1)*merge);
+      // MR DOLLAR : il entre TARD (après la fusion), il CONSTATE — apparition brève, un événement.
+      if(u>4.2 && u<8.6){
+        const o=clamp((u-8.0)/0.6,0,1);
+        MrD.enter(u-4.2, {t:t, routine:'constate', rest:{x:206, y:1440, h:214}, op:(1-o)});
+      }else{ MrD.hide(); }
+      flushPools();
+    }
+
+    // ═══ S3 — LE RISQUE CALCULÉ (UNE) CONTRE LE RISQUE REÇU (LES TROIS) ═══
+    // Verbe visuel : la comparaison d'entailles (fine tranche prévue vs entaille triple réelle).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll(); MrD.hide();
+      const LX=310, RX=790, CW=150, CTOP=800, CBOT=1290, CH=CBOT-CTOP;
+      // deux colonnes de capital (teal), leur sommet respire (position, deux harmoniques)
+      const swayL=5*Math.sin(u*1.2)+2.5*Math.sin(u*2.3), swayR=5*Math.sin(u*1.2+1.1)+2.5*Math.sin(u*2.3+0.7);
+      // GAUCHE — SIZED FOR ONE : une seule position tourne mal, tranche FINE grise, supportable
+      const cut1=clamp((u-0.4)/0.9,0,1)*(CH*0.11);
+      const topL=CTOP+3*Math.sin(u*1.15);
+      pos(LX+swayL, (topL+cut1+CBOT)/2, CW, (CBOT-topL-cut1), 1);
+      gray(LX+swayL, topL, CW, cut1, clamp((u-0.4)/0.5,0,1)*0.92);
+      // coche teal : supportable
+      const ck=clamp((u-1.2)/0.5,0,1);
+      check.setAttribute('d',`M${(LX-34).toFixed(1)} ${(CTOP-70).toFixed(1)} l22 26 l44 -60`);
+      check.setAttribute('transform',`translate(${swayL.toFixed(1)} 0)`);setOp(check,ck);
+      // DROITE — ALL THREE : les trois tournent mal ensemble, entaille TRIPLE
+      const cut3=clamp((u-2.0)/1.1,0,1)*(CH*0.34);
+      const topR=CTOP+3*Math.sin(u*1.15+0.9);
+      pos(RX+swayR, (topR+cut3+CBOT)/2, CW, (CBOT-topR-cut3), 1);
+      gray(RX+swayR, topR, CW, cut3, clamp((u-2.0)/0.5,0,1)*0.92);
+      // le repère du risque PRÉVU sur la colonne réelle : l'écart calculé/réel se voit
+      const pd=topR+(CH*0.11), pap=clamp((u-2.6)/0.6,0,1);
+      planLine.setAttribute('x1',RX-CW/2-24+swayR);planLine.setAttribute('x2',RX+CW/2+24+swayR);
+      planLine.setAttribute('y1',pd);planLine.setAttribute('y2',pd);planLine.setAttribute('stroke-dashoffset',(-u*18).toFixed(0));setOp(planLine,pap);
+      putCap(capC,'SIZED FOR ONE',LX,1372,YOU,clamp((u-0.8)/0.7,0,1));
+      putCap(capE,'SURVIVABLE',LX,1432,DEAD,clamp((u-1.4)/0.6,0,1));
+      putCap(capD,'ALL THREE AT ONCE',RX,1372,INK,clamp((u-2.2)/0.7,0,1));
+      putCap(capF,'WHAT YOU NEVER SIZED',RX,1432,DEAD,clamp((u-3.0)/0.7,0,1));
+      putCap(capB,'THE RISK YOU CALCULATED IS WRONG',CX,660,INK,clamp((u-3.6)/0.8,0,1));
+      flushPools();
+    }
+
+    // ═══ S4 — LES FILS LÂCHES AU CALME, TENDUS D'UN COUP AU CHOC (narrateur ABSENT) ═══
+    // Verbe visuel : la tension qui claque (mou -> câble, désynchronisé -> un seul bloc).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll(); MrD.hide();
+      putAnchor(ANX, ANY, ANW, ANH, 1);
+      const shock=clamp((u-1.5)/0.4,0,1);            // le choc tend les fils d'un coup
+      const jolt=(u>1.5&&u<2.1)? 26*Math.sin((u-1.5)*30)*Math.exp(-(u-1.5)*5) : 0;
+      // barre de choc : une secousse qui traverse
+      const sx=lerp(70,1010,clamp((u-1.5)/0.5,0,1));
+      shockBar.setAttribute('x1',sx);shockBar.setAttribute('x2',sx);shockBar.setAttribute('y1',600);shockBar.setAttribute('y2',1150);
+      setOp(shockBar,(u>1.5&&u<2.1)?0.5*(1-shock*0.3):0);
+      const by=[0,0,0], bx=[0,0,0];
+      // synchro : au calme chaque position a SA phase ; au choc elles partagent EXACTEMENT le même mouvement
+      const syncY=10*Math.sin(u*1.6)+4*Math.sin(u*2.7), syncX=6*Math.sin(u*1.15)+3*Math.sin(u*2.1);
+      for(let i=0;i<3;i++){
+        const calmY=13*Math.sin(u*(1.15+i*0.5)+i*2.0)+6*Math.sin(u*(2.1+i*0.4)+i*1.1);
+        const calmX=8*Math.sin(u*(0.9+i*0.3)+i*1.6)+4*Math.sin(u*(1.8+i*0.2)+i*0.7);
+        by[i]=lerp(calmY,syncY,shock); bx[i]=lerp(calmX,syncX,shock)+jolt;
+        pos(PX[i]+bx[i], PROW+by[i], PW, PH, 1);
+      }
+      // fils : LÂCHES (sag fort) au calme -> TENDUS (sag ~0, vibration de câble) au choc
+      const sag=lerp(150,4+3*Math.sin(u*7.0),shock);
+      for(let i=0;i<3;i++) thread(i, PX[i]+bx[i], PROW+by[i]+PH/2, ATOP[i], ANY-ANH/2, sag, 1);
+      // au choc, les trois se délavent ENSEMBLE
+      const erode=clamp((u-3.0)/1.2,0,1)*shock;
+      for(let i=0;i<3;i++) gray(PX[i]+bx[i], PROW+by[i]-PH/2, PW, PH*erode, erode*0.9);
+      putCap(capA,'CALM — THE LINKS ARE LOOSE',CX,632,DEAD,clamp((u-0.4)/0.7,0,1)*(1-shock));
+      putCap(capB,'A SHOCK SNAPS THEM TOGETHER',CX,632,INK,shock);
+      putCap(capC,'THE SHOCK CREATES THE CORRELATION',CX,1400,INK,clamp((u-3.2)/0.8,0,1));
+      flushPools();
+    }
+
+    // ═══ S5 — DÉCHARGE : la question testée, le regroupement en UN pari dimensionné ═══
+    // Verbe visuel : le regroupement volontaire (une candidate + les tenues -> un seul bloc réduit).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      putAnchor(ANX, ANY+3*Math.sin(u*0.9), ANW, ANH, 1);
+      const group=clamp((u-2.4)/1.5,0,1);            // le test répond oui -> tout se regroupe
+      // la CANDIDATE entre par la droite (position, glisse)
+      const enterX=lerp(1140,830,eInOut(clamp(u/1.6,0,1)));
+      if(group<1){
+        const held=[250,470,690];                    // trois tenues, serrées à gauche
+        for(let i=0;i<3;i++){
+          const px=lerp(held[i],CX,eInOut(group)), py=PROW+9*Math.sin(u*1.4+i*1.7)+4*Math.sin(u*2.5+i*0.9);
+          pos(px, py, lerp(PW*0.9,PW,group), PH, 1);
+        }
+        const cy=PROW+10*Math.sin(u*1.3)+4*Math.sin(u*2.4);
+        pos(lerp(enterX,CX,eInOut(group)), cy, PW*0.9, PH, group<0.05?clamp((u-0.4)/0.5,0,1):(1-group));
+        // le fil-test se dessine de la candidate vers l'ancre commune
+        const draw=clamp((u-1.6)/0.8,0,1);
+        if(draw>0) thread(0, lerp(enterX,CX,eInOut(group)), cy+PH/2, ANX, ANY-ANH/2, 16+6*Math.sin(u*2.0), draw*(1-group*0.4));
+      }
+      if(group>0){
+        // UN SEUL PARI, dimensionné comme un (plus petit que la somme) — il respire, image finale
+        const bw=lerp(4*PW,240,group), bh=lerp(PH,150,group);
+        const bob=11*Math.sin(u*1.35)+5*Math.sin(u*2.45);
+        pos(CX, PROW+30+bob, bw, bh, 1);
+        thread(0, CX, PROW+30+bob+bh/2, ANX, ANY-ANH/2, 12, 1);
+        setOp(THR[1],0);setOp(THR[2],0);
+      }
+      putCap(capB,'WHAT MAKES THEM LOSE TOGETHER',CX,600,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capC,'SIZE IT AS ONE BET',CX,1372,YOU,clamp((u-2.8)/0.8,0,1)*group);
+      putCap(capD,'SAY IT IN ONE SENTENCE — IT IS ONE',CX,1432,DEAD,clamp((u-3.6)/0.9,0,1)*group);
+      // MR DOLLAR revient (l'événement de clôture) : il DÉSIGNE le pari regroupé, puis s'en va — l'image finale reste seule et vivante.
+      if(u>0.6 && u<4.6){
+        MrD.pointAt('point', t, 210+5*Math.sin(u*1.1)+3*Math.sin(u*2.2), 1440, 220, clamp((u-0.6)/0.6,0,1), CX);
+      }else if(u>=4.6 && u<5.8){
+        const o=clamp((u-4.6)/1.2,0,1);
+        MrD.say('walk', t, lerp(210,-180,eInOut(o)), 1440, 220, 1-o, true, 0,1,1);
+      }else{ MrD.hide(); }
+      flushPools();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
