@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L36 « THE SAME SETUP, DIFFERENT HOUR » — S1 : émotion frame 0 = CURIOSITÉ + CHOC — deux motifs graphiques STRICTEMENT
+       identiques en forme, côte à côte ; GAUCHE plein et solide (encre franche), DROITE fait de POUSSIÈRE (points épars, trous).
+       Même dessin, matières opposées : le fusil = ces deux matières. S2 : sous le motif plein, une FOULE DENSE de ronds fil-de-fer ;
+       sous le poussiéreux, une poignée — la densité de foule EXPLIQUE la matière. S3 : le MÊME petit ordre teal frappe les deux ;
+       sur le plein il pousse le prix d'un cran (la foule absorbe), sur le poussiéreux il l'envoie loin, transperce un niveau puis
+       revient (faux mouvement) — le stop teal est touché PAR ACCIDENT d'un côté et pas de l'autre. S4 : tous les résultats tombent
+       dans un même récipient (gains teal des heures pleines + pertes grises des heures fines), fusionnent en UNE moyenne rassurante,
+       puis on SÉPARE par heure : pleines franchement positives, fines franchement négatives — la moyenne mentait. NARRATEUR ABSENT.
+       S5 : décharge — une frise horaire (sans chiffres) se déroule, une FENÊTRE ÉTROITE s'allume en teal (dense, l'edge vit là) et
+       le reste se délave en poussière grise : c'est l'HEURE qui décide de la matière — découpe tes résultats par heure d'abord.
+       Doctrine : aucun chiffre ; foule = ronds fil-de-fer neutres ; gris = perte ; teal = TOI ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) — build_ligne injecte MrD ici ──
+    /*INCLUDE:narrator*/
+
+
+    // ═══ LA FORME CANONIQUE DU "SETUP" ═══ un même dessin, servi en deux matières (plein / poussière)
+    // patY est LA source unique de la forme : le plein et la poussière la partagent → strictement identiques.
+    function patY(f,y,h){return y - h*(0.50*Math.sin(f*6.6+0.4)+0.26*Math.sin(f*12.5)+0.12*Math.sin(f*3.1)) - h*0.18;}
+    function patternPts(x0,y,w,h,n){const p=[];for(let i=0;i<n;i++){const f=i/(n-1);p.push([x0+w*f, patY(f,y,h)]);}return p;}
+    const solidLine=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    function drawSolid(x0,y,w,h,op){solidLine.setAttribute('points',patternPts(x0,y,w,h,34).map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));setOp(solidLine,op);}
+    // POUSSIÈRE : des points épars sur la MÊME forme — ils tremblent (deux harmoniques) et quelques-uns se détachent puis se recollent.
+    const DUST=[]; for(let i=0;i<48;i++)DUST.push(mk('circle',{r:5,fill:INK,opacity:0}));
+    let di=0; function resetDust(){di=0;} function flushDust(){for(let i=di;i<DUST.length;i++)setOp(DUST[i],0);}
+    function drawDust(x0,y,w,h,u,op){
+      const n=46;
+      for(let i=0;i<n;i++){
+        if((i*3+((i*i)%5))%7===0) continue;                       // les TROUS : la forme est ajourée
+        const f=i/(n-1), px=x0+w*f, py=patY(f,y,h);
+        const jx=5*Math.sin(u*1.7+i*0.7)+2.5*Math.sin(u*3.1+i*1.3);
+        const jy=5*Math.sin(u*1.9+i*0.9)+2.5*Math.sin(u*3.3+i*0.5);
+        const det=(i%6===0)? (11+9*Math.sin(u*0.8+i))*Math.max(0,Math.sin(u*0.55+i*0.5)) : 0;   // détachement/recollage (position)
+        const e=DUST[di++]; if(!e)break;
+        e.setAttribute('cx',(px+jx).toFixed(1));e.setAttribute('cy',(py+jy-det).toFixed(1));setOp(e,op);
+      }
+    }
+
+    // ── LA FOULE (S2) : ronds fil-de-fer neutres — dense sous le plein, une poignée sous la poussière ──
+    const CROWD=[]; for(let i=0;i<60;i++)CROWD.push(mk('circle',{r:8,fill:'none',stroke:INK,'stroke-width':3,opacity:0}));
+    let ci=0; function resetCrowd(){ci=0;} function flushCrowd(){for(let i=ci;i<CROWD.length;i++)setOp(CROWD[i],0);}
+    function crowd(x,y,op){const e=CROWD[ci++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));setOp(e,op);}
+
+    // ── BLOCS teal (gains / ton ordre / fenêtre d'edge) et gris (pertes) ──
+    const TEAL=[]; for(let i=0;i<22;i++)TEAL.push(mk('rect',{rx:3,fill:YOU,opacity:0}));
+    const GRAY=[]; for(let i=0;i<22;i++)GRAY.push(mk('rect',{rx:3,fill:DEAD,opacity:0}));
+    let ti=0,gi=0; function resetBlocks(){ti=0;gi=0;}
+    function teal(x,y,w,h,op){const e=TEAL[ti++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function gray(x,y,w,h,op){const e=GRAY[gi++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',w.toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function flushBlocks(){for(let i=ti;i<TEAL.length;i++)setOp(TEAL[i],0);for(let i=gi;i<GRAY.length;i++)setOp(GRAY[i],0);}
+
+    function resetPools(){resetDust();resetCrowd();resetBlocks();}
+    function flushPools(){flushDust();flushCrowd();flushBlocks();}
+
+    // ── éléments dédiés (marqueurs de prix, stops, moyennes, récipient, frise) ──
+    const pxL=mk('circle',{r:15,fill:YOU,opacity:0}), pxR=mk('circle',{r:15,fill:YOU,opacity:0});
+    const stopL=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-dasharray':'14 10','stroke-linecap':'round',opacity:0});
+    const stopR=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-dasharray':'14 10','stroke-linecap':'round',opacity:0});
+    const avg=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'16 10',opacity:0});
+    const zero=mk('line',{stroke:DEAD,'stroke-width':4,opacity:0});
+    const bin=mk('rect',{fill:'none',stroke:INK,'stroke-width':6,rx:8,opacity:0});
+    const SEG=[]; for(let i=0;i<11;i++)SEG.push(mk('rect',{fill:'none',stroke:INK,'stroke-width':4,opacity:0}));
+    function hideSeg(){for(const e of SEG)setOp(e,0);}
+    function hideAll(){setOp(solidLine,0);setOp(pxL,0);setOp(pxR,0);setOp(stopL,0);setOp(stopR,0);setOp(avg,0);setOp(zero,0);setOp(bin,0);hideSeg();}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME SETUP.','WHY BEHAVE DIFFERENTLY?'];
+    const FS=84,lineH=104,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — DEUX MOTIFS IDENTIQUES, DEUX MATIÈRES OPPOSÉES (plein vs poussière) ═══
+    // Verbe visuel : l'énigme des matières (même forme, l'une respire pleine, l'autre se désagrège).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetPools(); hideAll();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-4.4)/1.4,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (CURIOSITÉ + CHOC) : les deux motifs sont ENTIERS dès t=0 — rien ne se construit.
+      //    GAUCHE plein qui respire (deux harmoniques sur le groupe) ; DROITE poussière qui tremble et perd des grains.
+      const bx=13*Math.sin(u*0.9)+6*Math.sin(u*1.8), by=8*Math.sin(u*1.3)+4*Math.sin(u*2.4);
+      drawSolid(100,1120,360,170,1); solidLine.setAttribute('transform',`translate(${bx.toFixed(1)} ${by.toFixed(1)})`);
+      drawDust(600,1120,360,170,u,1);
+      putCap(capC,'SOLID',280,1330,INK,1);
+      putCap(capD,'DUST',780,1330,DEAD,1);
+      putCap(capB,'SAME SHAPE — DIFFERENT MATERIAL',CX,700,INK,clamp((u-1.7)/0.8,0,1)*gf);
+      // MR DOLLAR : il entre par la gauche, DÉSIGNE l'énigme, puis s'en va — la poussière garde la scène vivante sans lui.
+      if(u<3.6){
+        MrD.enter(u, {t:t, routine:'designe', lookAt:CX, rest:{x:150, y:1450, h:210}, op:gf});
+      }else{
+        const o=clamp((u-3.6)/1.2,0,1);
+        MrD.say('walk', t, lerp(150,-180,eInOut(o)), 1450, 210, (1-o)*gf, true, 0,1,1);
+      }
+      flushPools();
+    }
+
+    // ═══ S2 — LA FOULE SOUS LA FORME : dense sous le plein, une poignée sous la poussière ═══
+    // Verbe visuel : la révélation en profondeur (ce qui compose le motif se découvre dessous).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      // les deux motifs, plus haut, gardés (état repris exact — plein à gauche, poussière à droite)
+      const bx=9*Math.sin(u*0.85)+4*Math.sin(u*1.7), by=6*Math.sin(u*1.25)+3*Math.sin(u*2.3);
+      drawSolid(100,980,360,150,0.95); solidLine.setAttribute('transform',`translate(${bx.toFixed(1)} ${by.toFixed(1)})`);
+      drawDust(600,980,360,150,u,0.95);
+      // GAUCHE — FOULE DENSE : le tracé est littéralement fait d'eux (elle bouge en masse : sway global + micro-agitation)
+      const gsx=13*Math.sin(u*0.7)+6*Math.sin(u*1.6), gsy=7*Math.sin(u*1.1)+3.5*Math.sin(u*2.2);
+      for(let r=0;r<6;r++)for(let c=0;c<8;c++){
+        const ap=clamp((u-(0.2+(r+c)*0.035))/0.5,0,1);
+        crowd(126+c*44+gsx+3*Math.sin(u*2.5+c*0.6+r*0.3), 1090+r*42+gsy+3*Math.sin(u*2.8+r*0.7+c*0.2), ap*0.95);
+      }
+      // DROITE — UNE POIGNÉE : le même dessin, tracé par presque personne (elle s'agite plus fort)
+      const hs=[[672,1110],[790,1180],[712,1270],[858,1128],[906,1256],[792,1320]];
+      for(let i=0;i<hs.length;i++){
+        const ap=clamp((u-(2.0+i*0.2))/0.55,0,1);
+        crowd(hs[i][0]+9*Math.sin(u*1.5+i)+4*Math.sin(u*2.9+i), hs[i][1]+8*Math.sin(u*1.8+i)+4*Math.sin(u*3.2+i), ap);
+      }
+      putCap(capB,'A PATTERN IS A PICTURE OF A CROWD',CX,660,INK,clamp((u-0.6)/0.8,0,1));
+      putCap(capC,'MANY HANDS',270,1400,INK,clamp((u-1.2)/0.7,0,1));
+      putCap(capD,'ALMOST NOBODY',800,1400,DEAD,clamp((u-2.6)/0.7,0,1));
+      MrD.hide();                                             // la révélation se porte seule
+      flushPools();
+    }
+
+    // ═══ S3 — LE MÊME ORDRE, DEUX RÉPONSES : absorbé sur le plein, amplifié sur la poussière ═══
+    // Verbe visuel : le test comparatif (un ordre identique, deux conséquences opposées + un stop touché par accident).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      // backdrop : les deux motifs (plein / poussière), qui respirent
+      const bx=8*Math.sin(u*0.9)+4*Math.sin(u*1.8);
+      drawSolid(100,1050,360,150,0.9); solidLine.setAttribute('transform',`translate(${bx.toFixed(1)} 0)`);
+      drawDust(600,1050,360,150,u,0.9);
+      const LVL=1000;
+      // GAUCHE (PLEIN) : le petit ordre arrive, la foule ABSORBE → le prix pousse d'un cran, sous le stop
+      const inL=clamp((u-0.3)/0.6,0,1);
+      const pushL=18*eOut(clamp((u-0.6)/0.9,0,1))+4*Math.sin(u*1.7)+2*Math.sin(u*2.9);
+      teal(300,LVL+70-70*inL, 70,42, inL);                   // ton ordre monte se poser sous le prix
+      pxL.setAttribute('cx',300+35);pxL.setAttribute('cy',(LVL-pushL).toFixed(1));setOp(pxL,inL);
+      stopL.setAttribute('x1',210);stopL.setAttribute('x2',460);stopL.setAttribute('y1',LVL-70);stopL.setAttribute('y2',LVL-70);setOp(stopL,clamp((u-0.4)/0.6,0,1)*0.9);
+      // DROITE (POUSSIÈRE) : le MÊME ordre, personne pour absorber → le prix TRANSPERCE le stop puis revient (faux mouvement)
+      const inR=clamp((u-0.3)/0.6,0,1);
+      const spike=Math.max(0,Math.sin(clamp((u-1.4)/1.0,0,1)*Math.PI));        // le pic : monte et redescend
+      const overshoot=150*spike + 6*Math.sin(u*1.9)+3*Math.sin(u*3.1);
+      teal(800,LVL+70-70*inR, 70,42, inR);
+      const pierced=(u>1.7);
+      pxR.setAttribute('cx',800+35);pxR.setAttribute('cy',(LVL-overshoot).toFixed(1));pxR.setAttribute('fill',pierced?DEAD:YOU);setOp(pxR,inR);
+      stopR.setAttribute('x1',710);stopR.setAttribute('x2',960);stopR.setAttribute('y1',LVL-70);stopR.setAttribute('y2',LVL-70);setOp(stopR,clamp((u-0.4)/0.6,0,1)*0.9);
+      putCap(capA,'THE SAME SMALL ORDER',CX,630,INK,clamp((u-0.5)/0.7,0,1)*clamp(1-(u-3.0)/0.8,0,1));
+      putCap(capB,'STOP HIT BY ACCIDENT',CX,700,YOU,clamp((u-2.2)/0.7,0,1));
+      putCap(capC,'ABSORBED',290,1320,INK,clamp((u-1.0)/0.7,0,1));
+      putCap(capD,'PRICE OVERSHOOTS',790,1320,DEAD,clamp((u-1.6)/0.7,0,1));
+      // MR DOLLAR : bref — il DÉSIGNE le faux mouvement à droite, puis s'efface (les deux tests restent lisibles).
+      if(u>2.5 && u<4.8){
+        MrD.pointAt('point', t, 540+8*Math.sin(u*1.2)+4*Math.sin(u*2.3), 1460, 200, clamp((u-2.6)/0.5,0,1)*clamp(1-(u-4.4)/0.4,0,1), 830);
+      }else{ MrD.hide(); }
+      flushPools();
+    }
+
+    // ═══ S4 — LA MOYENNE QUI MASQUE : tout fusionne en un nombre, puis se sépare par heure ═══
+    // Verbe visuel : fusion puis séparation (deux populations noyées dans une moyenne, puis démasquées).
+    // NARRATEUR ABSENT : la tension doit frapper sans accompagnement.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll(); MrD.hide();
+      const BASE=1160, BW=46, BH=34;
+      const merge=clamp((u-1.4)/1.0,0,1), split=clamp((u-3.0)/1.3,0,1);
+      // OUVERTURE PLEINE : dès u=0 le récipient est là et les blocs sont DÉJÀ en train de tomber dedans (pas d'écran vide).
+      const fall=(k)=>clamp((u+0.7-k*0.085)/0.85,0,1);
+      // le récipient (bin) : plein dès la frame 0, s'efface quand on sépare
+      const binOp=clamp(1-(split-0.1)/0.5,0,1);
+      bin.setAttribute('x',430);bin.setAttribute('y',1000);bin.setAttribute('width',220);bin.setAttribute('height',(BASE-1000+40).toFixed(1));setOp(bin,binOp*0.9);
+      // 8 gains teal (heures pleines) + 8 pertes grises (heures fines)
+      for(let k=0;k<8;k++){
+        // teal — chute dans le bin
+        const fT=fall(k);
+        let x=452+(k%4)*44, y=lerp(560, 1030+Math.floor(k/4)*40, eIn(fT));
+        // fusion : converge sur la ligne de moyenne
+        x=lerp(x, 200+k*44, merge); y=lerp(y, BASE-16, merge);
+        // séparation : colonne GAUCHE, empilée vers le HAUT (franchement positif)
+        const sx=248+(k%2)*52, sy=BASE-6-(Math.floor(k/2)+1)*44;
+        x=lerp(x, sx, split); y=lerp(y, sy, split);
+        const bob=3*Math.sin(u*1.6+k*0.6)+1.5*Math.sin(u*2.7+k*0.3);   // vie continue (position, deux harmoniques)
+        teal(x, y+bob, BW,BH, clamp(fT*1.2,0,1));
+        // gris — chute dans le bin
+        const fG=fall(k+8);
+        let gx=452+(k%4)*44, gy=lerp(560, 1050+Math.floor(k/4)*40, eIn(fG));
+        gx=lerp(gx, 200+(k+8)*40, merge); gy=lerp(gy, BASE+2, merge);
+        // séparation : colonne DROITE, empilée vers le BAS (franchement négatif — elle mangeait le reste)
+        const gsx=786+(k%2)*52, gsy=BASE+6+(Math.floor(k/2)+1)*44;
+        gx=lerp(gx, gsx, split); gy=lerp(gy, gsy, split);
+        const gbob=3*Math.sin(u*1.5+k*0.5)+1.5*Math.sin(u*2.6+k*0.4);   // vie continue (position, deux harmoniques)
+        gray(gx, gy+gbob, BW,BH, clamp(fG*1.2,0,1));
+      }
+      // la ligne ZÉRO et la MOYENNE (légèrement positive, rassurante) — la moyenne est RAPPELÉE dans la tenue
+      zero.setAttribute('x1',150);zero.setAttribute('x2',930);zero.setAttribute('y1',BASE);zero.setAttribute('y2',BASE);setOp(zero,clamp((u-1.2)/0.6,0,1));
+      const ay=BASE-14+2*Math.sin(u*1.1)+1*Math.sin(u*2.2);
+      avg.setAttribute('x1',150);avg.setAttribute('x2',930);avg.setAttribute('y1',ay.toFixed(1));avg.setAttribute('y2',ay.toFixed(1));
+      avg.setAttribute('stroke-dashoffset',(-u*20).toFixed(0));setOp(avg,clamp((u-1.5)/0.6,0,1));
+      putCap(capA,'IT ALL AVERAGES INTO ONE NUMBER',CX,640,INK,clamp((u-1.6)/0.8,0,1)*clamp(1-(split-0.1)/0.5,0,1));
+      putCap(capC,'FULL HOURS',295,932,INK,split);            // au-dessus de la colonne teal (positive)
+      putCap(capD,'THIN HOURS',812,1432,DEAD,split);          // sous la colonne grise (négative)
+      putCap(capB,'THE AVERAGE HID IT',CX,1216,YOU,clamp((split-0.4)/0.4,0,1));   // gouttière centrale, sous les traits
+      flushPools();
+    }
+
+    // ═══ S5 — DÉCHARGE : découpe par heure — l'edge vit dans une fenêtre étroite ═══
+    // Verbe visuel : la frise qui se déroule puis se trie (une fenêtre s'allume, le reste se délave).
+    // FUSIL DÉCHARGÉ : la fenêtre est SOLIDE (dense, teal), le reste est POUSSIÈRE grise — l'heure décide de la matière.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const SX=120, SW=76, N=10, SY=1140, SH=54, GAP=8, WIN=5;    // WIN..WIN+1 = la fenêtre étroite
+      // OUVERTURE PLEINE : la frise entière est là dès u=0, avec ses résultats. Le VERBE = le tri :
+      // la fenêtre s'allume/densifie (teal, solide) et le reste se délave en poussière grise.
+      const light=clamp((u-1.4)/1.3,0,1);
+      for(let k=0;k<N;k++){
+        const x=SX+k*(SW+GAP);
+        const isWin=(k===WIN||k===WIN+1);
+        SEG[k].setAttribute('x',x.toFixed(1));SEG[k].setAttribute('y',SY.toFixed(1));SEG[k].setAttribute('width',SW.toFixed(1));SEG[k].setAttribute('height',SH.toFixed(1));
+        SEG[k].setAttribute('stroke',isWin?YOU:INK);setOp(SEG[k], isWin?1:lerp(0.9,0.32,light));
+        // fenêtre = blocs teal DENSES au-dessus (solide, histogramme VIVANT) ; reste = poussière grise épars qui dérive
+        if(isWin){
+          for(let m=0;m<5;m++){
+            const ph=m*1.1+k;
+            const bh=26+12*Math.sin(u*1.9+ph)+6*Math.sin(u*3.2+ph*1.7);           // hauteurs qui pulsent fort (position)
+            teal(x+6+m*14, SY-16-bh + 5*Math.sin(u*2.1+ph)+3*Math.sin(u*3.6+ph), 13, bh, 1);
+          }
+        }else{
+          for(let m=0;m<2;m++){                                                    // épars = poussière, mais chaque grain DÉRIVE
+            const ph=m*2.3+k*0.7;
+            gray(x+20+m*30 + 6*Math.sin(u*1.5+ph)+3*Math.sin(u*2.7+ph), SY+SH+22 + 8*Math.sin(u*1.9+ph)+4*Math.sin(u*3.0+ph), 10,10, lerp(0.85,0.44,light));
+          }
+        }
+      }
+      putCap(capA,'SPLIT YOUR RESULTS BY HOUR',CX,660,INK,clamp((u-0.3)/0.7,0,1));
+      putCap(capB,'THE REST QUIETLY PAYS FOR IT',CX,732,DEAD,clamp((u-2.2)/0.8,0,1));
+      putCap(capC,'YOUR EDGE LIVES HERE',SX+(WIN+1)*(SW+GAP),1044,YOU,clamp((u-2.4)/0.7,0,1));
+      // MR DOLLAR tire le rideau : il DÉSIGNE la fenêtre étroite, puis se fige à côté (image finale tenue).
+      const winCx=SX+(WIN+1)*(SW+GAP);
+      if(u<3.0){
+        MrD.pointAt('point', t, 300+8*Math.sin(u*1.15)+4*Math.sin(u*2.25), 1470, 200, clamp((u-1.1)/0.6,0,1), winCx);
+      }else{
+        MrD.say('idle', t, 300, 1470, 200, 1, true, 0,1,1);
+      }
+      flushPools();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
