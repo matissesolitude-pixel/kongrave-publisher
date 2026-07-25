@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L39 « THE PRICE YOU ACCEPT » — market order vs limit order, sans jamais les nommer (doctrine : on montre les MÉCANISMES).
+       S1 : émotion frame 0 = CURIOSITÉ — deux mécanismes opposés DÉJÀ pleins : une GUEULE (entonnoir) grand ouverte qui avale
+       tout ce qui tombe, et une PORTE étroite qui ne laisse passer qu'une seule taille (le reste rebondit). Le fusil = laquelle
+       coûte. S2 : une BASCULE — d'un côté la certitude d'EXÉCUTION, de l'autre la certitude de PRIX ; remplir l'une vide l'autre,
+       jamais les deux. S3 : marché CALME — l'onde du prix voulu ondule doucement ; le résultat par la porte se pose dessus, celui
+       par la gueule à un cheveu au-dessus : l'écart est MINUSCULE, invisible, d'où l'oubli. S4 (LA scène, narrateur ABSENT) :
+       marché RAPIDE — la gueule remplit très loin du prix ; deux courbes URGENCE et COÛT montent et culminent au MÊME instant :
+       on paie le plus cher exactement quand on sent qu'on ne peut pas attendre. S5 : décharge — « le prix est-il la raison de ce
+       trade ? » ; NON → gueule + taille RÉDUITE ; OUI → porte + « willing to miss » ; le mélange (un prix précis via la gueule)
+       est BARRÉ. Doctrine : aucun chiffre ; gris = surcoût ; pas de brun ; teal = TOI/ton prix ; narrateur en encre ; bas vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) ──
+    /*INCLUDE:narrator*/
+
+
+    // ── POOLS génériques (comme l26 : on redessine chaque frame) ──
+    const _rc=[],_ln=[],_pl=[],_cr=[];
+    for(let i=0;i<26;i++)_rc.push(mk('rect',{opacity:0}));
+    for(let i=0;i<18;i++)_ln.push(mk('line',{opacity:0}));
+    for(let i=0;i<10;i++)_pl.push(mk('polyline',{fill:'none',opacity:0}));
+    for(let i=0;i<14;i++)_cr.push(mk('circle',{opacity:0}));
+    let _ri=0,_li=0,_pi=0,_ci=0;
+    function reset(){_ri=0;_li=0;_pi=0;_ci=0;}
+    function flush(){for(let i=_ri;i<_rc.length;i++)setOp(_rc[i],0);for(let i=_li;i<_ln.length;i++)setOp(_ln[i],0);
+      for(let i=_pi;i<_pl.length;i++)setOp(_pl[i],0);for(let i=_ci;i<_cr.length;i++)setOp(_cr[i],0);}
+    function rct(x,y,w,h,o){const e=_rc[_ri++];if(!e)return;o=o||{};
+      e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(0.1,w).toFixed(1));e.setAttribute('height',Math.max(0.1,h).toFixed(1));
+      e.setAttribute('rx',(o.rx==null?6:o.rx));
+      if(o.f){e.setAttribute('fill',o.f);}else{e.setAttribute('fill','none');}
+      if(o.s){e.setAttribute('stroke',o.s);e.setAttribute('stroke-width',o.sw||5);}else{e.removeAttribute('stroke');}
+      setOp(e,o.op==null?1:o.op);return e;}
+    function ln(x1,y1,x2,y2,o){const e=_ln[_li++];if(!e)return;o=o||{};
+      e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));
+      e.setAttribute('stroke',o.s||INK);e.setAttribute('stroke-width',o.sw||6);e.setAttribute('stroke-linecap',o.cap||'round');
+      if(o.dash){e.setAttribute('stroke-dasharray',o.dash);if(o.off!=null)e.setAttribute('stroke-dashoffset',o.off);}else{e.removeAttribute('stroke-dasharray');}
+      setOp(e,o.op==null?1:o.op);return e;}
+    function pl(pts,o){const e=_pl[_pi++];if(!e)return;o=o||{};
+      e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',o.s||INK);e.setAttribute('stroke-width',o.sw||6);e.setAttribute('fill',o.fill||'none');
+      e.setAttribute('stroke-linejoin','round');e.setAttribute('stroke-linecap','round');setOp(e,o.op==null?1:o.op);return e;}
+    function cir(cx,cy,r,o){const e=_cr[_ci++];if(!e)return;o=o||{};
+      e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));e.setAttribute('r',r.toFixed(1));
+      if(o.f){e.setAttribute('fill',o.f);}else{e.setAttribute('fill','none');}
+      if(o.s){e.setAttribute('stroke',o.s);e.setAttribute('stroke-width',o.sw||5);}else{e.removeAttribute('stroke');}
+      setOp(e,o.op==null?1:o.op);return e;}
+
+    // ── LES DEUX MÉCANISMES ──────────────────────────────────────────────
+    // GUEULE (entonnoir grand ouvert) : contour + petit conduit. Elle avale tout ce qui tombe.
+    function funnel(cx,rimY,rimHW,throatY,throatHW,op){
+      pl([[cx-rimHW,rimY],[cx-throatHW,throatY],[cx+throatHW,throatY],[cx+rimHW,rimY]],{s:INK,sw:7,op:op});
+      ln(cx-throatHW,throatY,cx-throatHW,throatY+44,{s:INK,sw:7,op:op});
+      ln(cx+throatHW,throatY,cx+throatHW,throatY+44,{s:INK,sw:7,op:op});
+    }
+    // PORTE étroite : deux montants + linteau ; la fente entre les montants = 2*gapHW.
+    function gate(cx,topY,botY,gapHW,op){
+      const postW=32;
+      rct(cx-gapHW-postW, topY, postW, botY-topY, {f:INK,op:op,rx:5});
+      rct(cx+gapHW,        topY, postW, botY-topY, {f:INK,op:op,rx:5});
+      rct(cx-gapHW-postW, topY-30, 2*gapHW+2*postW, 30, {f:INK,op:op,rx:5});
+    }
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHICH ONE ARE YOU','ACTUALLY USING'];
+    const FS=84,lineH=106,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':186,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(44),capB=caption(46),capC=caption(40),capD=caption(40),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    const LFX=300, RGX=782;   // colonne gueule (gauche) · colonne porte (droite)
+
+    // ═══ S1 — DEUX MÉCANISMES OPPOSÉS, DÉJÀ PLEINS ═══
+    // Verbe visuel : l'opposition frontale (l'un avale tout, l'autre trie). Émotion frame 0 = CURIOSITÉ.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); reset();
+      const gf=clamp(1-(lf-0.84)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-4.4)/1.2,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // GUEULE — la lèvre s'ouvre/se referme légèrement (elle attend), tout tombe dedans
+      const fRim=150+11*Math.sin(u*1.35)+5*Math.sin(u*2.55);
+      const fx=LFX+6*Math.sin(u*0.9)+3*Math.sin(u*1.85);
+      funnel(fx,772,fRim,996,26,1);
+      for(let i=0;i<4;i++){const ph=((u*0.5)+i/4)%1, oy=lerp(600,996,ph), ox=fx+(i-1.5)*46*(1-ph*0.72);
+        rct(ox-22,oy-22,44,44,{f:INK,op:clamp(ph/0.10,0,1)*clamp((1-ph)/0.12,0,1)});}
+      // PORTE — vibre sur ses gonds ; un ordre trop large REBONDIT, un ordre à la taille passe (rare)
+      const gx=RGX+7*Math.sin(u*1.05)+3*Math.sin(u*2.2);
+      gate(gx,724,1008,42,1);
+      const bph=(u*0.62)%1, bounce=678-118*Math.sin(clamp(bph*1.5,0,1)*Math.PI);
+      rct(gx-62,bounce-28,124,56,{s:INK,sw:5,op:1});                                 // trop large : ne passe jamais
+      const pph=((u*0.5)+0.35)%1;
+      if(pph<0.82){const py=lerp(636,1052,pph);rct(gx-38,py-24,76,48,{f:YOU,op:clamp(pph/0.09,0,1)*clamp((0.85-pph)/0.12,0,1)});} // à la taille : passe
+      putCap(capA,'ANY PRICE',clamp(fx,120,360),1140,INK,clamp((u-1.9)/0.7,0,1)*gf);
+      putCap(capB,'YOUR PRICE ONLY',clamp(gx,720,960),1140,INK,clamp((u-2.5)/0.7,0,1)*gf);
+      // NARRATEUR : il entre, désigne les deux mécanismes, puis s'en va — la scène reste vivante sans lui.
+      if(u<3.7){ MrD.enter(u,{t:t,routine:'designe',lookAt:CX,rest:{x:150,y:1435,h:222},op:gf}); }
+      else{ const o=clamp((u-3.7)/1.2,0,1); MrD.say('walk',t,lerp(150,-190,eInOut(o)),1435,222,(1-o)*gf,false,0,1,1); }
+      flush();
+    }
+
+    // ═══ S2 — LA BASCULE : exécution d'un côté, prix de l'autre, jamais les deux ═══
+    // Verbe visuel : la bascule (une certitude monte, l'autre descend, mécaniquement liées).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const pivY=1140, HB=286;
+      const th=0.19*Math.sin(u*0.8)+0.07*Math.sin(u*1.75);        // inclinaison, 2 harmoniques
+      pl([[CX-48,pivY+86],[CX,pivY],[CX+48,pivY+86]],{s:INK,sw:7});   // le pied
+      const Lx=CX-HB*Math.cos(th), Ly=pivY+HB*Math.sin(th);
+      const Rx=CX+HB*Math.cos(th), Ry=pivY-HB*Math.sin(th);
+      ln(Lx,Ly,Rx,Ry,{s:INK,sw:10});                                  // le fléau
+      const drop=78;
+      // plateau gauche = EXÉCUTION · plateau droit = PRIX
+      ln(Lx,Ly,Lx-64,Ly+drop,{s:INK,sw:3}); ln(Lx,Ly,Lx+64,Ly+drop,{s:INK,sw:3}); ln(Lx-70,Ly+drop,Lx+70,Ly+drop,{s:INK,sw:6});
+      ln(Rx,Ry,Rx-64,Ry+drop,{s:INK,sw:3}); ln(Rx,Ry,Rx+64,Ry+drop,{s:INK,sw:3}); ln(Rx-70,Ry+drop,Rx+70,Ry+drop,{s:INK,sw:6});
+      // la certitude « pesée » : bloc teal sur chaque plateau, anti-corrélé (somme constante)
+      const cL=clamp(0.5+2.3*th,0,1), cR=1-cL;
+      const hL=26+150*cL, hR=26+150*cR;
+      rct(Lx-52,Ly+drop-hL,104,hL,{f:YOU,op:0.92,rx:5});
+      rct(Rx-52,Ry+drop-hR,104,hR,{f:YOU,op:0.92,rx:5});
+      putCap(capC,'EXECUTION',Lx,Ly+drop+58,INK,clamp((u-0.6)/0.7,0,1));
+      putCap(capD,'PRICE',Rx,Ry+drop+58,INK,clamp((u-0.9)/0.7,0,1));
+      putCap(capB,'ONE CERTAINTY — NEVER BOTH',CX,660,INK,clamp((u-2.2)/0.8,0,1));
+      putCap(capA,'PUSH ONE DOWN, THE OTHER RISES',CX,744,DEAD,clamp((u-3.2)/0.8,0,1));
+      // NARRATEUR : il constate la bascule, puis se retire ; le fléau continue d'osciller sans lui.
+      if(u>0.8&&u<4.2){ MrD.pointAt('point',t,896+9*Math.sin(u*1.1)+4*Math.sin(u*2.2),1430,214,clamp((u-0.8)/0.7,0,1)*(1-clamp((u-3.6)/0.5,0,1)),CX); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    // ═══ S3 — MARCHÉ CALME : l'écart est minuscule, invisible ═══
+    // Verbe visuel : la quasi-superposition (deux résultats presque confondus sur l'onde du prix voulu).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      // l'onde du PRIX VOULU ondule doucement et défile (vie continue sur toute la largeur)
+      const base=1030, wp=[];
+      for(let x=140;x<=940;x+=12){const y=base+22*Math.sin(x*0.0125+u*0.9)+9*Math.sin(x*0.027+u*1.65);wp.push([x,y]);}
+      pl(wp,{s:YOU,sw:7});
+      const sx=CX, wy=base+22*Math.sin(sx*0.0125+u*0.9)+9*Math.sin(sx*0.027+u*1.65);
+      // gueule (petite) à gauche, porte (petite) à droite — l'identité se maintient
+      funnel(300,720,70,798,16,clamp((u-0.3)/0.6,0,1));
+      gate(800,712,808,22,clamp((u-0.3)/0.6,0,1));
+      // résultat PORTE : pile sur l'onde (teal) · résultat GUEULE : un cheveu au-dessus (gris)
+      const gap=13+3*Math.sin(u*1.5)+1.5*Math.sin(u*2.7);
+      ln(300,798,sx-26,wy-gap-13,{s:YOU,sw:3,dash:'3 12',op:0.6});
+      ln(800,808,sx+26,wy,{s:YOU,sw:3,dash:'3 12',op:0.6});
+      cir(sx+26,wy,15,{f:YOU});                       // porte : exact
+      cir(sx-26,wy-gap-13,13,{f:DEAD});               // gueule : à peine au-dessus
+      ln(sx-26,wy-gap-13,sx-26,wy,{s:DEAD,sw:5,op:clamp((u-1.6)/0.6,0,1)});   // le minuscule écart, matérialisé
+      putCap(capB,'IN A CALM MARKET',CX,632,INK,clamp((u-0.8)/0.8,0,1));
+      putCap(capA,'THE GAP IS ALMOST NOTHING',CX,1200,DEAD,clamp((u-2.0)/0.8,0,1));
+      // NARRATEUR : présence brève près de l'écart, puis il laisse l'onde vivre seule.
+      if(u>1.0&&u<4.4){ MrD.say('idle',t,904+7*Math.sin(u*1.0)+3*Math.sin(u*2.1),1430,208,clamp((u-1.0)/0.7,0,1)*(1-clamp((u-3.8)/0.5,0,1)),true,0,1,1); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    // ═══ S4 — MARCHÉ RAPIDE : urgence et coût culminent AU MÊME INSTANT ═══
+    // Verbe visuel : deux courbes superposées à leur pic commun. NARRATEUR ABSENT (la tension frappe seule).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); MrD.hide();
+      // le marché s'emballe : bande basse qui file vite (vie continue, positionnelle)
+      const rby=1402, rp=[];
+      for(let x=120;x<=960;x+=10){const y=rby+20*Math.sin(x*0.03+u*4.4)+9*Math.sin(x*0.075+u*6.3);rp.push([x,y]);}
+      pl(rp,{s:DEAD,sw:5,op:0.85});
+      // le prix VOULU (teal, bas) : la ligne qu'on avait acceptée
+      const baseY=1150;
+      ln(150,baseY,930,baseY,{s:YOU,sw:6,op:clamp((u-0.3)/0.6,0,1)});
+      // deux cloches au MÊME pic (x=CX) : URGENCE (teal) et COÛT (gris)
+      const peakY=690, halfW=372;
+      const grow=eOut(clamp((u-1.4)/1.5,0,1));
+      const bob=1+0.02*Math.sin(u*1.25)+0.012*Math.sin(u*2.45);          // le pic respire (position)
+      function bell(scale){const p=[];for(let x=CX-halfW;x<=CX+halfW;x+=10){const d=(x-CX)/halfW,h=Math.exp(-d*d*3.1);p.push([x,baseY-(baseY-peakY)*scale*h]);}return p;}
+      pl(bell(grow*0.9*bob),{s:DEAD,sw:7});                              // coût
+      pl(bell(grow*1.0*bob),{s:YOU,sw:7});                               // urgence (au-dessus)
+      const pky=baseY-(baseY-peakY)*grow*bob, pulse=clamp((u-2.9)/0.6,0,1);
+      // le surcoût : du prix voulu (baseY) au pic atteint par la gueule — se délave en gris
+      rct(CX-24,pky+8,48,baseY-pky-8,{f:DEAD,op:pulse*0.5,rx:6});
+      cir(CX,pky,17+3*Math.sin(u*2.1),{s:YOU,sw:6,op:pulse});            // le pic COMMUN s'allume
+      cir(CX,baseY,11,{f:YOU,op:clamp((u-0.5)/0.6,0,1)});
+      putCap(capC,'BOTH PEAK AT THE SAME INSTANT',CX,624,INK,clamp((u-0.9)/0.8,0,1));
+      putCap(capA,'URGENCY',300,1232,YOU,clamp((u-2.1)/0.7,0,1));
+      putCap(capB,'THE COST OF IT',790,1232,DEAD,clamp((u-2.1)/0.7,0,1));
+      putCap(capD,"YOU PAY MOST WHEN YOU CAN'T WAIT",CX,1316,INK,pulse);
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : le prix est-il la raison ? la réponse choisit le mécanisme ═══
+    // Verbe visuel : le routage (une question ouvre deux chemins valides, le troisième est barré).
+    // Ouvre sur SES objets DÉJÀ pleins (question, nœud, branches, deux mécanismes). La vie continue
+    // tout du long : des ordres COULENT en boucle sur les deux routes, la taille pulse, l'ordre « miss »
+    // dérive — jamais figée (loi 9). La démonstration = quelle route s'allume + le mélange barré.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const armY=1006, lfx=300, rgx=782, nx=CX, ny=792;
+      // deux branches, PLEINES dès la frame 0
+      ln(nx,ny,lfx,armY-54,{s:INK,sw:6});
+      ln(nx,ny,rgx,armY-54,{s:INK,sw:6});
+      // VIE CONTINUE : deux ordres teal descendent chaque route en boucle (déplacement de position, tout S5)
+      for(let i=0;i<2;i++){const ph=((u*0.6)+i*0.5)%1, e=clamp(ph/0.08,0,1)*clamp((1-ph)/0.12,0,1);
+        cir(lerp(nx,lfx,ph),lerp(ny,armY-54,ph),9,{f:YOU,op:0.9*e});
+        cir(lerp(nx,rgx,ph),lerp(ny,armY-54,ph),9,{f:YOU,op:0.9*e});}
+      cir(nx,ny+7*Math.sin(u*1.3)+3*Math.sin(u*2.55),16,{f:YOU});        // le nœud respire (position)
+      // mécanismes PLEINS
+      funnel(lfx,armY-52,66,armY+46,16,1);
+      gate(rgx,armY-52,armY+68,20,1);
+      // GAUCHE — être dedans compte → la GUEULE, mais la taille teal se RÉDUIT puis pulse en continu
+      const shrunk=eInOut(clamp((u-1.6)/1.4,0,1));
+      const bw=(150-72*shrunk)+9*Math.sin(u*1.5)+4*Math.sin(u*2.7);
+      rct(lfx-bw/2, armY+150-46, bw, 46, {f:YOU,rx:6});
+      putCap(capC,'SIZE SMALLER',clamp(lfx,120,360),armY+250,INK,1);
+      // DROITE — le prix est la raison → la PORTE, l'ordre « willing to miss » dérive vers la sortie (boucle)
+      const gph=(u*0.34)%1, gx2=rgx+lerp(0,160,gph), gop=clamp(gph/0.1,0,1)*clamp((1-gph)/0.16,0,1);
+      rct(gx2-30, armY+150-42+6*Math.sin(u*1.2)+3*Math.sin(u*2.3), 60,42,{s:DEAD,sw:4,op:0.35+0.6*gop,rx:6});
+      putCap(capD,'WILLING TO MISS',clamp(rgx,720,960),armY+250,INK,1);
+      // BARRÉ — le mélange interdit (un prix précis via la gueule) : croix
+      const bx=CX, byv=1352, barred=clamp((u-2.4)/0.8,0,1);
+      ln(bx-150,byv+4*Math.sin(u*1.1),bx+150,byv-4*Math.sin(u*1.1),{s:DEAD,sw:5,dash:'10 12',op:barred*0.8});
+      ln(bx-36,byv-34,bx+36,byv+34,{s:INK,sw:9,op:barred});
+      ln(bx-36,byv+34,bx+36,byv-34,{s:INK,sw:9,op:barred});
+      putCap(capB,'IS THE PRICE THE REASON?',CX,640,INK,1);
+      putCap(capE,"A PRICE THE FUNNEL CAN'T GIVE",CX,1436,DEAD,barred);
+      // NARRATEUR : il pose la question tôt, puis se retire ; la scène vit sans lui (les ordres coulent).
+      if(u>0.4&&u<3.0){ MrD.pointAt('point',t,150+8*Math.sin(u*1.05),1435,214,clamp((u-0.4)/0.6,0,1)*(1-clamp((u-2.5)/0.5,0,1)),CX); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
