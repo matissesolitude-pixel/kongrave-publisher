@@ -292,5 +292,20 @@
     "container_id": "18140376790557833",
     "published_at": "2026-07-24T17:57:54.174337+00:00",
     "logged_at": "2026-07-24T17:57:54.174337+00:00"
+  },
+  {
+    "episode": "L04",
+    "status": "error",
+    "attempt": 3,
+    "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
+    "logged_at": "2026-07-25T03:46:06.675135+00:00"
+  },
+  {
+    "episode": "L27",
+    "status": "success",
+    "media_id": "18109219562321163",
+    "container_id": "18140466175557833",
+    "published_at": "2026-07-25T03:46:06.675135+00:00",
+    "logged_at": "2026-07-25T03:46:06.675135+00:00"
   }
 ]
