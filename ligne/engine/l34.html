@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L34 « THE GAP THAT SKIPS YOUR STOP » — S1 : émotion frame 0 = CHOC — le prix arrive de gauche, S'ARRÊTE NET au bord d'un
+       GOUFFRE, et REPREND très loin en dessous ; le trait du stop PEND EN PLEIN MILIEU du vide, intact, jamais touché. Le fusil = ce
+       trait dans le vide. S2 : le cas NORMAL — le prix MARCHE pas à pas, touche le stop, une sortie NETTE se déclenche à la tranche
+       choisie ; c'est la continuité qui rend le stop fiable. S3 : le marché FERME (une barre CLOSE se rabat, le décor s'assombrit),
+       une PRESSION pousse hors cadre, puis RÉOUVERTURE : le premier prix apparaît très loin en dessous — un SAUT crée le gouffre.
+       S4 (LA scène, sans narrateur) : le saut TRAVERSE le stop sans le TOUCHER (rien ne s'échange dans le vide), l'exécution tombe au
+       premier prix dispo, bien plus bas ; l'écart perte prévue / perte réelle EST le coût du saut. S5 : décharge — deux chemins avant
+       la cloche (réduire la taille · être à plat) valides, et le calcul-du-risque-sur-un-stop-sautable BARRÉ ; le trait de S1 se résout.
+       NARRATEUR : S1 (il désigne l'absurde), S3 (il encaisse le saut), S5 (il tire le rideau) ; ABSENT en S2 et S4.
+       Doctrine : aucun chiffre, gris = perte, pas de rouge, pas de brun, teal = TOI/ton stop, narrateur en encre, bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art vectorisé, encre) — MrD clé en main ──
+    /*INCLUDE:narrator*/
+
+    // ── VEIL (S3 : le décor qui s'assombrit à la fermeture) — derrière tout, sur le papier ──
+    const veil=mk('rect',{x:0,y:520,width:1080,height:1000,fill:INK,opacity:0});
+
+    // ── POOLS génériques (chaque scène ouvre sur SES objets, déjà pleins) ──
+    const POLY=[]; for(let i=0;i<14;i++)POLY.push(mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const RECT=[]; for(let i=0;i<10;i++)RECT.push(mk('rect',{rx:4,fill:DEAD,opacity:0}));
+    const DOT =[]; for(let i=0;i<12;i++)DOT.push(mk('circle',{r:12,fill:INK,opacity:0}));
+    const ARC =[]; for(let i=0;i<8;i++)ARC.push(mk('path',{fill:'none',stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    // LE STOP — le fusil de Tchekhov : le même trait de S1 à S5. Dessiné APRÈS les bandes → toujours lisible.
+    const stopLine=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    let pi=0,ri=0,di=0,ai=0;
+    function reset(){pi=0;ri=0;di=0;ai=0;setOp(stopLine,0);setOp(veil,0);}
+    function poly(pts,color,w,dash,op,doff){const e=POLY[pi++];if(!e)return;
+      e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w);e.setAttribute('stroke-dasharray',dash||'');
+      e.setAttribute('stroke-dashoffset',(doff||0).toFixed(1));setOp(e,op);return e;}
+    function rct(x,y,w,h,color,fop,op){const e=RECT[ri++];if(!e)return;
+      e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('fill',color);e.setAttribute('fill-opacity',(fop==null?1:fop));setOp(e,op);return e;}
+    function dot(x,y,r,color,op){const e=DOT[di++];if(!e)return;
+      e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));e.setAttribute('r',r);e.setAttribute('fill',color);setOp(e,op);return e;}
+    function arc(cx,cy,r,color,op,mirror){const e=ARC[ai++];if(!e)return;
+      const sweep=mirror?0:1;
+      e.setAttribute('d',`M ${cx.toFixed(1)} ${(cy-r).toFixed(1)} A ${r} ${r} 0 0 ${sweep} ${cx.toFixed(1)} ${(cy+r).toFixed(1)}`);
+      e.setAttribute('stroke',color);setOp(e,op);return e;}
+    function flush(){for(let i=pi;i<POLY.length;i++)setOp(POLY[i],0);for(let i=ri;i<RECT.length;i++)setOp(RECT[i],0);
+      for(let i=di;i<DOT.length;i++)setOp(DOT[i],0);for(let i=ai;i<ARC.length;i++)setOp(ARC[i],0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['HOW DOES A STOP','GET SKIPPED'];
+    const FS=88,lineH=112,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL depuis l26/l44) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(40),capD=caption(38),capE=caption(38),capF=caption(42);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LE GOUFFRE, ET LE STOP QUI PEND DANS LE VIDE ═══
+    // Verbe visuel : la suspension absurde (le trait intact au milieu du néant, jamais touché).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); reset();
+      const gf=clamp(1-(lf-0.90)/0.08,0,1);
+      // la question POP ligne par ligne (seul draw-on autorisé, §M15)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-5.0)/1.2,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (CHOC) : gouffre + prix coupé en deux + le stop suspendu, DÉJÀ là dès t=0 ──
+      const yL=1000, yR=1360, xLe=470, xRs=620, yStop=1180;
+      rct(xLe, 958, xRs-xLe, 436, DEAD, 0.09, 0.9);                        // la colonne du gouffre (vide béant)
+      // le prix, versant gauche — sa queue respire (deux harmoniques, POSITION, assez ample pour progresser)
+      const lp=[]; for(let x=110;x<=xLe;x+=15){const p=(x-110)/(xLe-110);
+        lp.push([x, yL -30*Math.sin(x*0.030) -12*Math.sin(x*0.072) + (9*Math.sin(u*2.6)+4*Math.sin(u*4.3))*p]);}
+      poly(lp,INK,7,'',1);
+      // le prix, versant droit — très loin en dessous, sa tête respire
+      const rp=[]; for(let x=xRs;x<=965;x+=15){const p=(x-xRs)/(965-xRs);
+        rp.push([x, yR -22*Math.sin(x*0.028) -10*Math.sin(x*0.065) - (9*Math.sin(u*2.4)+4*Math.sin(u*4.1))*(1-p)]);}
+      poly(rp,INK,7,'',1);
+      // LE STOP — il PEND dans le vide, oscille, et ses tirets MARCHENT (vie continue garantie), jamais touché (le fusil)
+      const sy=yStop+11*Math.sin(u*2.2)+5*Math.sin(u*3.7);
+      stopLine.setAttribute('x1',418);stopLine.setAttribute('x2',668);stopLine.setAttribute('y1',sy);stopLine.setAttribute('y2',sy);
+      stopLine.setAttribute('stroke',YOU);stopLine.setAttribute('stroke-dasharray','18 12');
+      stopLine.setAttribute('stroke-dashoffset',(-u*60).toFixed(1));setOp(stopLine,1);
+      // étiquettes — chacune dans une zone VIDE, jamais sur un dessin
+      putCap(capC,'PRICE',180,928,INK,clamp((u-1.5)/0.7,0,1)*gf);
+      putCap(capA,'YOUR STOP',300,1186,YOU,clamp((u-2.1)/0.7,0,1)*gf);
+      putCap(capD,'ALREADY PAST IT — NEVER TOUCHED',770,1442,DEAD,clamp((u-3.4)/0.9,0,1)*gf);
+      // MR DOLLAR : il entre, DÉSIGNE le stop suspendu (l'absurde), puis il s'en va — la scène reste vivante sans lui
+      if(u>2.4 && u<5.3){ MrD.enter(u-2.4,{t:t,routine:'designe',lookAt:545,rest:{x:205,y:1440,h:226},op:gf}); }
+      else if(u>=5.3){ const o=clamp((u-5.3)/1.2,0,1); MrD.say('walk',t,lerp(205,-180,eInOut(o)),1440,226,(1-o)*gf,true,0,1,1); }
+      else { MrD.hide(); }
+      flush();
+    }
+
+    // ═══ S2 — LE CAS NORMAL : le prix MARCHE, touche, sort net ═══
+    // Verbe visuel : la marche continue (une progression pas-à-pas jusqu'au contact).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const ly=1150, sx=250, sy=780, cx=560;                               // départ haut-gauche → contact sur le stop
+      const T=4.6, cyc=(u%T)/T, prog=clamp(cyc/0.62,0,1);
+      const contact=cyc>=0.62;
+      // le prix descend en marches d'escalier vers le stop (échantillonnage FIN → la ligne bouge à chaque frame)
+      function step(f){ const seg=6, i=Math.floor(f*seg), r=f*seg-i;         // marche : palier plat puis descente
+        const fx=(i+Math.min(1,r*1.6))/seg, fy=(i+Math.max(0,r*1.6-0.6)/1.0)/seg;
+        return [sx+(cx-sx)*clamp(fx,0,1), sy+(ly-sy)*clamp(fy,0,1)]; }
+      // fantôme du chemin complet — ses tirets MARCHENT franchement (la scène ouvre pleine ET vit en continu,
+      // y compris pendant la phase de contact où le prix est posé sur le stop)
+      const ghost=[]; for(let f=0;f<=1.0001;f+=0.02){ghost.push(step(f));}
+      poly(ghost,DEAD,6,'9 13',0.5,-u*64);
+      // le stop (le niveau choisi) — s'allume TEAL au contact
+      stopLine.setAttribute('x1',190);stopLine.setAttribute('x2',900);stopLine.setAttribute('y1',ly);stopLine.setAttribute('y2',ly);
+      stopLine.setAttribute('stroke',contact?YOU:INK);stopLine.setAttribute('stroke-dasharray','');
+      stopLine.setAttribute('stroke-dashoffset',0);stopLine.setAttribute('stroke-width',contact?10:7);setOp(stopLine,1);
+      // le prix MARCHE : le tracé grandit en continu jusqu'à la tête (déplacement franc à chaque frame)
+      const trail=[]; for(let f=0;f<=prog+1e-6;f+=0.02){trail.push(step(f));}
+      if(trail.length>=2) poly(trail,INK,7,'',1);
+      const head=step(prog); dot(head[0], head[1]+(contact?4*Math.sin(u*4.6):0), 13, INK, 1);
+      // au contact : sortie NETTE au niveau choisi, un repère teal qui GLISSE en continu tout le long de la phase
+      if(contact){ const e=clamp((cyc-0.62)/0.36,0,1);
+        dot(cx + e*250 + 6*Math.sin(u*4.2), ly, 15, YOU, 1-0.25*e);
+        putCap(capC,'CLEAN EXIT',800,1236,YOU,clamp((u-1.6)/0.7,0,1));       // court : jamais collé à « YOUR STOP »
+      }
+      putCap(capB,'A STOP ASSUMES PRICE WALKS THROUGH',CX,662,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capA,'YOUR STOP',270,1236,YOU,clamp((u-1.1)/0.7,0,1));
+      MrD.hide();
+      flush();
+    }
+
+    // ═══ S3 — LE MARCHÉ FERME, PUIS SAUTE ═══
+    // Verbe visuel : la rupture (fermeture → pression hors cadre → réouverture qui saute).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const barIn=eInOut(clamp(u/1.4,0,1)), lift=eInOut(clamp((u-3.0)/0.8,0,1));
+      // le dernier prix avant fermeture (versant gauche, présent et vivant dès la 1re frame)
+      const lp=[]; for(let x=150;x<=470;x+=14){lp.push([x, 990 -14*Math.sin(x*0.031) -6*Math.sin(x*0.07) + (5*Math.sin(u*2.5)+2.5*Math.sin(u*4.1))]);}
+      poly(lp,INK,7,'',1);
+      // le décor s'assombrit pendant la fermeture (veil, derrière le prix)
+      setOp(veil, clamp((u-1.2)/0.6,0,1)*(1-lift)*0.12);
+      // la barre CLOSE — VISIBLE dès le départ (à droite), se rabat, tient, puis se relève à la réouverture
+      const bx=lerp(995,505,barIn), bxNow=lerp(bx,1160,lift);
+      rct(bxNow, 700, 78, 700, INK, 0.9, 1);
+      // PRESSION hors cadre pendant la fermeture (des ondes qui poussent depuis les bords — POSITION, marquée)
+      if(u>1.4 && lift<1){ const w=clamp((u-1.4)/0.4,0,1)*(1-lift);
+        const push=0.5+0.5*Math.sin(u*2.6);
+        for(let k=0;k<3;k++){ arc(70 + push*90 + k*22, 1050, 120-k*15, DEAD, w*0.85, false); }
+        for(let k=0;k<3;k++){ arc(1012 - push*90 - k*22, 1050, 120-k*15, DEAD, w*0.85, true); }
+      }
+      // RÉOUVERTURE : le premier prix apparaît TRÈS LOIN en dessous — un SAUT, pas une marche
+      if(u>3.0){ const a=clamp((u-3.0)/0.6,0,1);
+        const rp=[]; for(let x=620;x<=945;x+=14){const p=(x-620)/(945-620);
+          rp.push([x, 1330 -16*Math.sin(x*0.030) -7*Math.sin(x*0.062) - (8*Math.sin(u*2.4)+4*Math.sin(u*4.0))*(1-p)]);}
+        poly(rp,INK,7,'',a);
+        dot(620, 1330 + (8*Math.sin(u*2.5)+4*Math.sin(u*4.2)), 12, INK, a);
+        // le VIDE du saut : un pointillé qui MARCHE entre les deux bords (vie continue de la tenue)
+        poly([[478,986],[620,1330]],DEAD,5,'6 20',a*0.9,-u*52);
+      }
+      putCap(capA,'THE MARKET CLOSES',CX,642,INK,clamp((u-0.4)/0.6,0,1)*clamp(1-(u-2.6)/0.6,0,1));
+      putCap(capB,'PRESSURE BUILDS OUTSIDE',CX,704,DEAD,clamp((u-1.7)/0.7,0,1)*clamp(1-(u-3.1)/0.5,0,1));
+      putCap(capC,'IT REOPENS FAR BELOW',700,1440,DEAD,clamp((u-3.5)/0.8,0,1));
+      // MR DOLLAR : il ENCAISSE le saut (il réagit), puis il ressort ; le vide reste vivant sans lui
+      if(u>3.1 && u<6.1){ MrD.enter(u-3.1,{t:t,routine:'reagit',lookAt:620,rest:{x:210,y:1440,h:224},op:1}); }
+      else if(u>=6.1){ const o=clamp((u-6.1)/1.1,0,1); MrD.say('walk',t,lerp(210,-180,eInOut(o)),1440,224,1-o,true,0,1,1); }
+      else { MrD.hide(); }
+      flush();
+    }
+
+    // ═══ S4 — LA SCÈNE : le saut TRAVERSE le stop sans le TOUCHER, et la perte enfle ═══
+    // Verbe visuel : la traversée sans contact + l'écart qui se creuse (perte prévue vs perte réelle).
+    // NARRATEUR ABSENT : la tension doit frapper seule.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); MrD.hide();
+      const yStop=1060, yEntry=760, colX=740, colW=64, xFill=colX+colW/2, yFill=1350;
+      const sy=yStop+8*Math.sin(u*2.2)+4*Math.sin(u*3.7);
+      const fy=yFill + (9*Math.sin(u*2.6)+4*Math.sin(u*4.3));
+      // OUVRE PLEINE : l'état du gouffre (versant gauche + saut + exécution loin dessous) est là dès la frame 0
+      const cliffOp=clamp(1-(u-3.2)/0.8,0.18,1);
+      const lp=[]; for(let x=160;x<=328;x+=14){lp.push([x, 882 -10*Math.sin(x*0.05) + (4*Math.sin(u*2.6)+2*Math.sin(u*4.4))]);}
+      poly(lp,INK,7,'',cliffOp);
+      // le chemin qui n'a JAMAIS échangé — pointillé versant gauche → exécution, à travers le stop ; ses tirets MARCHENT
+      const connOp=clamp(1-(u-4.0)/1.0,0.3,1);
+      const seg=[]; for(let f=0;f<=1.001;f+=0.08){ seg.push([lerp(328,xFill,f), lerp(900,yFill,f)]); }
+      poly(seg,DEAD,5,'6 22',connOp,-u*54);
+      // l'exécution tombe au premier prix dispo, bien plus bas ; l'écart stop→exécution = le coût du saut (présent d'emblée)
+      rct(colX, sy, colW, fy-sy, DEAD, 0.50, 0.9);                         // la tranche SUPPLÉMENTAIRE (non prévue)
+      dot(xFill, fy, 15, YOU, 1);
+      // PHASE C : perte PRÉVUE (entrée→stop) s'ajoute à la comparaison — perte RÉELLE = toute la colonne
+      const aC=clamp((u-3.0)/0.8,0,1);
+      if(aC>0.01){
+        poly([[colX-46,yEntry],[colX+colW+46,yEntry]],YOU,5,'',aC);        // le niveau d'ENTRÉE
+        rct(colX, yEntry, colW, sy-yEntry, DEAD, 0.24, aC*0.9);            // la part PRÉVUE (claire)
+      }
+      // LE STOP — intact, jamais activé (il ne s'allume pas : rien ne l'a touché) ; tirets qui marchent
+      stopLine.setAttribute('x1',150);stopLine.setAttribute('x2',950);stopLine.setAttribute('y1',sy);stopLine.setAttribute('y2',sy);
+      stopLine.setAttribute('stroke',INK);stopLine.setAttribute('stroke-dasharray','18 12');
+      stopLine.setAttribute('stroke-dashoffset',(-u*50).toFixed(1));stopLine.setAttribute('stroke-width',7);setOp(stopLine,1);
+      const aA=clamp(1-(u-3.0)/0.7,0,1);
+      putCap(capA,'YOUR STOP',250,sy-30,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capB,'NOTHING TRADED HERE',600,978,DEAD,aA);
+      putCap(capC,'FILLED FAR BELOW',815,1440,YOU,clamp((u-1.4)/0.7,0,1));
+      putCap(capD,'EXPECTED LOSS',300,912,DEAD,aC);
+      putCap(capE,'THE JUMP ADDS THIS',300,1236,DEAD,aC);
+      putCap(capF,'A STOP BECOMES AN INTENTION',CX,690,INK,clamp((u-4.4)/0.9,0,1));
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : décider son exposition AVANT la cloche ═══
+    // Verbe visuel : le branchement (deux chemins valides, un troisième barré).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const gf=clamp(1-(lf-0.94)/0.05,0,1);
+      const bob=(k)=> 8*Math.sin(u*2.6+k)+4*Math.sin(u*4.3+k*1.4);          // ample + rapide → progresse à chaque frame
+      // la barre CLOSE approche puis se fige (une fois figée, elle vibre légèrement pour rester vivante)
+      const inB=eInOut(clamp(u/2.0,0,1)), barX=lerp(1120,770,inB)+ (inB>0.99?2.5*Math.sin(u*3.1):0);
+      rct(barX, 720, 68, 700, INK, 0.9, 1);
+      // CHEMIN A — accepter & réduire la taille : le bloc teal RÉTRÉCIT, la tranche reste supportable → ✓
+      const yA=852, shrink=eInOut(clamp((u-1.2)/1.2,0,1));
+      const aw=lerp(280,150,shrink), ax=lerp(300,362,shrink)+bob(0);
+      rct(ax, yA-38, aw, 76, YOU, 0.9, 1);
+      const okA=clamp((u-2.8)/0.7,0,1);
+      poly([[664,yA],[694,yA+24],[744,yA-30]],YOU,10,'',okA);
+      // CHEMIN B — à plat avant la cloche : le bloc teal se FERME avant la barre → ✓
+      const yB=1092, close=eInOut(clamp((u-1.6)/1.4,0,1));
+      const bw=lerp(280,26,close), bx=300+bob(1);
+      rct(bx, yB-38, bw, 76, YOU, 0.9, clamp(1-(close-0.72)/0.28,0,1));      // il se FERME puis disparaît (à plat) — le ✓ reste
+      const okB=clamp((u-3.0)/0.7,0,1);
+      poly([[664,yB],[694,yB+24],[744,yB-30]],YOU,10,'',okB);
+      // CHEMIN INTERDIT — le trait de S1 (le stop suspendu) revient, tirets qui MARCHENT, et il est BARRÉ
+      const yC=1332, sy=yC+8*Math.sin(u*2.2)+4*Math.sin(u*3.6);
+      stopLine.setAttribute('x1',300);stopLine.setAttribute('x2',560);stopLine.setAttribute('y1',sy);stopLine.setAttribute('y2',sy);
+      stopLine.setAttribute('stroke',YOU);stopLine.setAttribute('stroke-dasharray','18 12');
+      stopLine.setAttribute('stroke-dashoffset',(-u*58).toFixed(1));stopLine.setAttribute('stroke-width',7);setOp(stopLine,0.9);
+      const xd=clamp((u-1.4)/0.8,0,1);
+      poly([[362,yC-46],[498,yC+46]],DEAD,10,'',xd);
+      poly([[498,yC-46],[362,yC+46]],DEAD,10,'',xd);
+      putCap(capA,'ACCEPT — SIZE SMALLER',300,yA-72,YOU,clamp((u-0.6)/0.7,0,1));
+      putCap(capB,'FLAT BEFORE THE CLOSE',300,yB-72,YOU,clamp((u-0.9)/0.7,0,1));
+      putCap(capC,'RISK ON A SKIPPABLE STOP',300,yC-82,DEAD,clamp((u-1.6)/0.8,0,1));
+      putCap(capD,'CLOSE',barX+34,700,INK,clamp((u-0.4)/0.5,0,1));
+      // MR DOLLAR : il tire le rideau — il DÉSIGNE l'erreur barrée, puis reste comme celui qui clôt
+      if(u<2.6){ MrD.enter(u,{t:t,routine:'designe',lookAt:430,rest:{x:178,y:1442,h:212},op:1}); }
+      else { MrD.say('idle',t,178+bob(3),1442,212,gf,true,0,1,1); }
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
