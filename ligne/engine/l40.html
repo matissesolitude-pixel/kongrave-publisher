@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L40 « TEN TRADES TELL YOU NOTHING » — variance & taille d'échantillon. S1 : émotion frame 0 = CHOC+CURIOSITÉ — deux séries de dix
+       blocs, l'une gagnante (teal), l'autre perdante (grise), DÉJÀ pleines, reliées à UNE SEULE source (une bascule = l'edge) par deux
+       tuyaux : même origine, résultats opposés. S2 : la source a un edge MINCE mais réel ; elle déverse un long flux teal/gris ; une
+       FENÊTRE de dix glisse dessus et ramasse n'importe quelle majorité selon sa position. S3 : deuxième source PARFAITEMENT plate (aucun
+       edge) ; une fenêtre chanceuse sort huit teal, on la garde, on scale, on empile une routine — bâtie sur du vide. S4 (SANS narrateur) :
+       carrousel de systèmes auditionnés sur dix blocs, triés gardé/jeté par ce qui a CHAUFFÉ, pas par l'edge (des bons finissent au rebut,
+       des vides sont gardés). S5 : décharge — l'échantillon GRANDIT, la mesure part dans tous les sens à dix puis CONVERGE ; zone bruit
+       (grise, petit échantillon) vs zone signal (teal, grand échantillon). Doctrine : AUCUN chiffre (les quantités par la MASSE et la
+       longueur des séries) ; gris = perte/bruit ; teal = gain/signal/toi ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    /*INCLUDE:narrator*/
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── POOLS GÉNÉRIQUES (blocs de résultat teal/gris, cadres, lignes, tracés, marques) ──
+    const BLK=[]; for(let i=0;i<108;i++)BLK.push(mk('rect',{rx:6,opacity:0}));
+    const STRK=[]; for(let i=0;i<8;i++)STRK.push(mk('rect',{fill:'none','stroke-width':6,opacity:0}));
+    const LINE=[]; for(let i=0;i<14;i++)LINE.push(mk('line',{'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+    const POLY=[]; for(let i=0;i<5;i++)POLY.push(mk('polyline',{fill:'none','stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const MARK=[]; for(let i=0;i<10;i++)MARK.push(mk('polyline',{fill:'none','stroke-width':10,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ib=0,is=0,il=0,ip=0,im=0;
+    function poolReset(){ib=0;is=0;il=0;ip=0;im=0;}
+    function blk(x,y,w,h,fill,op){const e=BLK[ib++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));e.setAttribute('fill',fill);setOp(e,op);return e;}
+    function strk(x,y,w,h,stroke,op,sw){const e=STRK[is++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));e.setAttribute('rx',12);e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw||6);setOp(e,op);return e;}
+    function lin(x1,y1,x2,y2,stroke,op,sw,dash){const e=LINE[il++];if(!e)return;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw||6);e.setAttribute('stroke-dasharray',dash||'none');setOp(e,op);return e;}
+    function poly(pts,stroke,op,sw){const e=POLY[ip++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw||7);setOp(e,op);return e;}
+    function mark(pts,stroke,op,sw){const e=MARK[im++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw||10);setOp(e,op);return e;}
+    function flushPools(){for(let i=ib;i<BLK.length;i++)setOp(BLK[i],0);for(let i=is;i<STRK.length;i++)setOp(STRK[i],0);for(let i=il;i<LINE.length;i++)setOp(LINE[i],0);for(let i=ip;i<POLY.length;i++)setOp(POLY[i],0);for(let i=im;i<MARK.length;i++)setOp(MARK[i],0);}
+    // couleurs de flux déterministes (période 20, ne se répète pas sous une fenêtre de 10)
+    const edgeCol=ai=>((((ai*13+7)%20)+20)%20)<11?YOU:DEAD;   // edge mince : ~55% teal
+    const neutCol=ai=>((((ai*13+7)%20)+20)%20)<10?YOU:DEAD;   // aucun edge : 50/50
+    // LA SOURCE = une bascule. tilt encode l'edge (penché teal = edge ; plat = aucun edge).
+    function drawSource(cx,cy,tilt,op){
+      mark([[cx-36,cy+48],[cx,cy-4],[cx+36,cy+48],[cx-36,cy+48]],INK,op,7);   // socle/fulcrum
+      const c=Math.cos(tilt),s=Math.sin(tilt),L=96;
+      lin(cx-L*c,cy-L*s,cx+L*c,cy+L*s,YOU,op,11);                             // la poutre = l'edge
+      blk(cx+L*c-12,cy+L*s-12,24,24,YOU,op);                                  // le poids du bon côté
+    }
+    const check=(cx,cy,sz,color,op)=>mark([[cx-sz*0.42,cy+sz*0.02],[cx-sz*0.12,cy+sz*0.36],[cx+sz*0.48,cy-sz*0.42]],color,op,11);
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['TEN TRADES —','WHAT DID THEY','ACTUALLY PROVE?'];
+    const FS=70,lineH=92,y0=176,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+62,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap COPIÉ TEL QUEL depuis l26 (MESURE getComputedTextLength) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — MÊME SOURCE, DEUX SÉRIES OPPOSÉES ═══
+    // Verbe visuel : le diptyque relié (une source → deux runs contradictoires). Émotion frame 0 : CHOC + CURIOSITÉ.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); poolReset();
+      const gf=clamp(1-(lf-0.9)/0.08,0,1);
+      // question qui pop (seul draw-on autorisé) — l'IMAGE, elle, est pleine dès t=0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.05+k*0.26)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform','translate('+(CX*(1-sc)).toFixed(2)+' '+(qY[k]*(1-sc)).toFixed(2)+') scale('+sc.toFixed(3)+')');}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1)*(1-clamp((u-4.2)/0.9,0,1)),qsc=0.6+0.4*backOut(clamp(qm/0.2,0,1));setOp(qMark,qap*gf);qMark.setAttribute('transform','translate('+(CX*(1-qsc)).toFixed(2)+' '+(QMY*(1-qsc)).toFixed(2)+') scale('+qsc.toFixed(3)+')');
+      // LA SOURCE (bascule) qui respire — deux harmoniques
+      const bob=6*Math.sin(u*1.3)+3*Math.sin(u*2.2), tilt=0.05*Math.sin(u*1.1)+0.025*Math.sin(u*1.9);
+      const sx=CX, sy=650+bob;
+      // deux tuyaux vers les deux séries (tracés avant la source pour z-order)
+      lin(sx-42,sy+48,300,988,INK,1,8); lin(sx+42,sy+48,790,988,INK,1,8);
+      drawSource(sx,sy,tilt,1);
+      putCap(capA,'ONE SOURCE',CX,570,INK,1);
+      // DEUX SÉRIES (5x2) — GAUCHE gagnante (teal), DROITE perdante (grise), pleines dès la frame 0
+      const bw=62,bh=52,gx=12,gy=12,LP=[1,1,1,0,1,1,1,0,1,1],RP=[0,0,1,0,0,0,1,0,0,0];
+      function series(cxg,patt){const startX=cxg-(5*bw+4*gx)/2;
+        for(let i=0;i<10;i++){const col=i%5,row=(i/5)|0;
+          const jx=6*Math.sin(u*1.7+i*0.7)+3*Math.sin(u*2.9+i*1.3), jy=5*Math.cos(u*1.5+i*0.9)+2.5*Math.sin(u*2.5+i*0.5);
+          blk(startX+col*(bw+gx)+jx, 1000+row*(bh+gy)+jy, bw,bh, patt[i]?YOU:DEAD, 1);}}
+      series(300,LP); series(790,RP);
+      putCap(capC,'A WINNING RUN',300,1188,YOU,1);
+      putCap(capD,'A LOSING RUN',790,1188,DEAD,1);
+      // NARRATEUR — événement : il désigne la source (la contradiction vient de LÀ), puis s'écarte
+      if(u>3.4&&u<7.2){ MrD.enter(u,{t:t,routine:'designe',lookAt:CX,rest:{x:186,y:1436,h:206},op:clamp((u-3.4)/0.6,0,1)*(1-clamp((u-6.6)/0.6,0,1))*gf}); }
+      else if(u>=7.2){ const o=clamp((u-7.2)/1.1,0,1); MrD.say('walk',t,lerp(186,-180,eInOut(o)),1436,206,(1-o)*gf,true,0,1,1); }
+      else MrD.hide();
+      flushPools();
+    }
+
+    // ═══ S2 — L'EDGE MINCE + LA FENÊTRE QUI GLISSE ═══
+    // Verbe visuel : la fenêtre courte qui glisse sur un long flux et ramasse n'importe quelle majorité.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); poolReset();
+      // source à edge MINCE (poutre penchée teal), en haut à gauche
+      drawSource(250,640,0.16+0.02*Math.sin(u*1.4),1);
+      lin(250,700,150,1000,INK,1,7);
+      putCap(capA,'A REAL, THIN EDGE',250,568,INK,1);
+      // LE LONG FLUX qui défile (déplacement de POSITION continu)
+      const pitch=50,bw=42,bh=56,fy=1000,off=(u*72)%pitch,shift=Math.floor(u*72/pitch);
+      // la fenêtre qui glisse (deux harmoniques)
+      const wc=540+150*Math.sin(u*0.6)+70*Math.sin(u*1.05), wl=wc-250;
+      let tealIn=0,nIn=0;
+      for(let j=-1;j<22;j++){const x=60+j*pitch-off; if(x<50||x>1030)continue;
+        const ai=j+shift, col=edgeCol(ai), inW=(x+bw/2>wl&&x+bw/2<wl+500);
+        if(inW){tealIn+=(col===YOU?1:0);nIn++;}
+        const lift=inW?12:0, jy=2.5*Math.sin(u*2.6+j*0.6);
+        blk(x, fy-lift+jy, bw, bh, col, inW?1:0.82);}
+      strk(wl,936,500,128,INK,1,6);
+      // pastille-verdict (majorité de la fenêtre) — SANS chiffre, juste la couleur qui bascule
+      const majC=(tealIn>=nIn-tealIn)?YOU:DEAD;
+      blk(wc-46,892,92,26,majC,clamp((u-1.4)/0.6,0,1));
+      putCap(capB,'ANY TEN LOOK LIKE ANYTHING',CX,470,INK,clamp((u-2.0)/0.7,0,1));
+      putCap(capC,'SAME SOURCE — ANY RESULT',CX,1190,DEAD,clamp((u-3.2)/0.7,0,1));
+      // NARRATEUR — il désigne la fenêtre mouvante, puis disparaît (le flux vit sans lui)
+      if(u>1.8&&u<4.6){ MrD.pointAt('point',t,904+8*Math.sin(u*1.1)+4*Math.sin(u*2.2),1436,204,clamp((u-1.8)/0.6,0,1)*(1-clamp((u-4.0)/0.6,0,1)),wc); }
+      else MrD.hide();
+      flushPools();
+    }
+
+    // ═══ S3 — LA SOURCE PLATE QUI BRILLE : huit gains par hasard, on construit dessus ═══
+    // Verbe visuel : la fenêtre chanceuse → on scale → une routine empilée sur du vide.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); poolReset();
+      // source PARFAITEMENT plate (aucun edge)
+      drawSource(CX,596,0.006*Math.sin(u*1.2),1);
+      putCap(capA,'NO EDGE — PERFECTLY FLAT',CX,540,INK,1);
+      lin(392,596,688,596,YOU,clamp((u-3.0)/0.7,0,1),5,'16 12');   // le niveau : plat, révélé
+      // flux de fond neutre qui défile (vie continue)
+      const pitch=46,fy=736,off=(u*60)%pitch,shift=Math.floor(u*60/pitch);
+      for(let j=-1;j<24;j++){const x=70+j*pitch-off; if(x<60||x>1020)continue;
+        const ai=j+shift; blk(x, fy+2*Math.sin(u*2.4+j*0.5), 34,26, neutCol(ai), 0.7);}
+      // LA FENÊTRE CHANCEUSE : 5x2, huit teal — attrapée telle quelle
+      const bw=64,bh=54,gx=12,gy=12,LUCK=[1,1,1,1,0,1,1,1,0,1],startX=CX-(5*bw+4*gx)/2;
+      for(let i=0;i<10;i++){const col=i%5,row=(i/5)|0, jx=3*Math.sin(u*1.9+i*0.6),jy=3*Math.cos(u*1.6+i*0.8);
+        blk(startX+col*(bw+gx)+jx, 862+row*(bh+gy)+jy, bw,bh, LUCK[i]?YOU:DEAD, 1);}
+      strk(startX-10,852,5*bw+4*gx+20,2*bh+gy+20,INK,1,6);
+      check(742,858,60,YOU,clamp((u-1.5)/0.5,0,1));
+      putCap(capB,'EIGHT WINS — PURE CHANCE',CX,806,YOU,clamp((u-1.2)/0.6,0,1));   // au-dessus de l'échantillon (loin du transfert)
+      // flèche de transfert vers la droite (on emporte ce résultat et on scale)
+      const trf=clamp((u-2.0)/0.6,0,1);
+      poly([[720,930],[830,1080],[830,1150]],INK,trf,6);
+      mark([[812,1120],[830,1156],[848,1120]],INK,trf,7);
+      // LE BLOC QU'ON SCALE + LA ROUTINE EMPILÉE au-dessus (sway deux harmoniques)
+      const gsz=lerp(58,150,clamp((u-2.2)/2.2,0,1));
+      const gbx=830, gby=1268-gsz;
+      blk(gbx-gsz/2+3*Math.sin(u*1.7), gby+2*Math.sin(u*2.3), gsz, gsz, YOU, clamp((u-2.0)/0.5,0,1));
+      for(let k=0;k<5;k++){const ap=clamp((u-(2.6+k*0.4))/0.5,0,1); if(ap<=0)continue;
+        const sway=9*Math.sin(u*1.25+k*0.8)+4*Math.sin(u*2.15+k*0.5);
+        blk(gbx-64+sway, gby-24-k*46, 128, 36, INK, ap);}
+      putCap(capC,'BUILT ON NOTHING',300,1160,DEAD,clamp((u-3.0)/0.7,0,1));       // à gauche, à l'écart de la tour
+      // NARRATEUR — il DOUTE (comique) face à l'absurde, en bas à gauche, puis s'efface
+      if(u>4.0&&u<7.0){ MrD.enter(u,{t:t,routine:'doute',rest:{x:180,y:1436,h:202},op:clamp((u-4.0)/0.6,0,1)*(1-clamp((u-6.4)/0.6,0,1))}); }
+      else MrD.hide();
+      flushPools();
+    }
+
+    // ═══ S4 — LE CARROUSEL : trié par ce qui a CHAUFFÉ, pas par l'edge ═══  (SANS NARRATEUR)
+    // Verbe visuel : le tapis d'auditions courtes + les deux tas mal triés.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); poolReset(); MrD.hide();
+      putCap(capB,'SORTED BY WHAT RAN HOT — NOT EDGE',CX,700,INK,clamp((u-1.4)/0.7,0,1));
+      const reveal=clamp((u-3.0)/0.8,0,1);
+      // LE TAPIS central : des systèmes défilent vers la gauche, cadence qui presse
+      const speed=96+Math.min(150,u*11), span=150*7, cy=986, cw=94, ch=118;
+      for(let k=0;k<8;k++){
+        const cxp=838-((u*speed+k*150)%span);
+        if(cxp<292||cxp>788)continue;
+        const typ=k%4;                       // 0 gardé plein · 1 jeté · 2 jeté-mais-edge · 3 gardé-creux
+        const topC=(typ===0||typ===3)?YOU:DEAD;
+        const jy=3*Math.sin(u*2.2+k);
+        if(typ===3){ strk(cxp-cw/2,cy-ch/2+jy,cw,ch,INK,1,6); }        // gardé creux : contour seul
+        else { blk(cxp-cw/2,cy-ch/2+jy,cw,ch,INK,0.9); }
+        blk(cxp-cw/2,cy-ch/2+jy,cw,18,topC,1);                         // le bandeau-verdict
+        if(typ===2){ blk(cxp-cw/2,cy-ch/2+jy,10,ch,YOU,reveal); }      // liseré teal : un vrai edge, jeté
+      }
+      strk(CX-58,cy-ch/2-14,116,ch+28,INK,1,6);                        // la fenêtre d'audition
+      // le stamp de verdict de la carte au centre
+      const nearest=(Math.round((u*speed)/150))%4;
+      if((nearest===0||nearest===3)) check(CX,cy-ch/2-46,60,YOU,clamp((u-0.6)/0.5,0,1));
+      else { mark([[CX-22,cy-ch/2-64],[CX+22,cy-ch/2-20]],DEAD,clamp((u-0.6)/0.5,0,1),10); mark([[CX+22,cy-ch/2-64],[CX-22,cy-ch/2-20]],DEAD,clamp((u-0.6)/0.5,0,1),10); }
+      // LES DEUX TAS (accumulation) — grossissent avec le temps, respirent (deux harmoniques)
+      const nSeen=Math.min(6,3+Math.floor(u*0.5));
+      // THROWN (gauche, gris ; certains portent un edge teal qu'on n'a jamais vu)
+      for(let k=0;k<nSeen;k++){const by=1338-k*58+4*Math.sin(u*1.4+k*0.9)+2*Math.sin(u*2.3+k);
+        blk(120,by,150,50,INK,0.9); blk(120,by,150,14,DEAD,1);
+        if(k%3===1) blk(120,by,10,50,YOU,reveal);}
+      // KEPT (droite, teal ; certains sont creux = source vide gardée)
+      for(let k=0;k<nSeen;k++){const by=1338-k*58+4*Math.sin(u*1.5+k*0.7)+2*Math.sin(u*2.1+k);
+        if(k%3===2){ strk(812,by,150,50,INK,reveal*0.9+0.1,5); blk(812,by,150,14,YOU,1); }
+        else { blk(812,by,150,50,INK,0.9); blk(812,by,150,14,YOU,1); }}
+      putCap(capC,'THROWN',195,782,DEAD,clamp((u-1.0)/0.6,0,1));
+      putCap(capD,'KEPT',895,782,YOU,clamp((u-1.0)/0.6,0,1));
+      flushPools();
+    }
+
+    // ═══ S5 — DÉCHARGE : l'échantillon grandit, la mesure converge ═══
+    // Verbe visuel : la courbe bruyante à gauche qui se calme et se pose sur la vraie valeur à droite.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); poolReset();
+      const gf=clamp(1-(lf-0.92)/0.06,0,1);
+      const AX=1256, x0=150, x1=976, center=1000, ampl=230;
+      // zones : bruit (grise, petit échantillon, à gauche) vs signal (teal, grand échantillon, à droite)
+      blk(x0,816,302,1240-816,DEAD,0.14); blk(612,816,364,1240-816,YOU,0.13);
+      lin(x0,AX,x1,AX,INK,1,6);                                    // l'axe = taille d'échantillon
+      lin(452,center,x1,center,YOU,clamp((u-1.5)/0.7,0,1),5,'16 12'); // la vraie valeur (la courbe converge dessus)
+      // LA COURBE — amplitude qui décroît vers la droite ; bouge à chaque frame (deux harmoniques)
+      const damp=1-0.30*clamp((lf-0.86)/0.14,0,1);                 // se calme un peu pour la tenue finale
+      function pt(x){const d=Math.pow(clamp((x1-x)/(x1-x0),0,1),1.25);
+        const wig=(Math.sin(x*0.05+u*2.3)*0.62+Math.sin(x*0.11+u*1.35)*0.38);
+        return [x, center - ampl*d*wig*damp];}
+      const ptsN=[],ptsS=[];
+      for(let x=x0;x<=566;x+=17)ptsN.push(pt(x));
+      for(let x=566;x<=x1;x+=17)ptsS.push(pt(x));
+      poly(ptsN,DEAD,1,7); poly(ptsS,YOU,1,7);
+      putCap(capA,'HOW MANY TRADES BEFORE IT MEANS ANYTHING?',CX,632,INK,clamp((u-2.6)/0.7,0,1));
+      putCap(capB,'NOISE',262,712,DEAD,clamp((u-0.3)/0.7,0,1));    // mot seul, au-dessus de la zone grise
+      putCap(capC,'SIGNAL',822,712,YOU,clamp((u-1.0)/0.7,0,1));    // mot seul, au-dessus de la zone teal
+      // NARRATEUR — il désigne le signal (la partie qui converge), puis tire sa révérence avant la tenue finale
+      if(u>1.6&&u<4.6){ MrD.enter(u,{t:t,routine:'designe',lookAt:820,rest:{x:182,y:1444,h:184},op:clamp((u-1.6)/0.6,0,1)*(1-clamp((u-4.0)/0.6,0,1))}); }
+      else if(u>=4.6&&u<6.0){ const o=clamp((u-4.6)/1.1,0,1); MrD.say('walk',t,lerp(182,-180,eInOut(o)),1444,184,(1-o),true,0,1,1); }
+      else MrD.hide();
+      flushPools();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
