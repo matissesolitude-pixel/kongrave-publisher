@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L38 « THE DOUBT THAT COSTS » — S1 : émotion frame 0 = TENSION + RECONNAISSANCE DE SOI — TOI (boule teal) FIGÉE à un cheveu
+       d'un setup ÉCLATANT, retenue par une TRAÎNE de blocs gris (la série de pertes) accrochée derrière. Rien ne se construit :
+       le standoff est entier dès t=0. S2 : chaque bloc de la traîne PRÉLÈVE un cran sur la jauge de « certainty » ; puis la
+       CIBLE d'évaluation glisse du SETUP (teal) vers TOI-MÊME (gris) — on s'évalue soi, plus le trade. S3 : la règle mesure le
+       setup à sa VALEUR HABITUELLE (rien n'a baissé), et le marché (bloc encre) laisse les pertes GLISSER sans mémoire ; et
+       pourtant la boule reste retenue — l'écart est absurde. S4 : LA scène — un FANTÔME creux s'ajoute à la traîne (faux poids),
+       la boucle du doute s'emballe, puis le MIROIR : en haut l'excès de confiance GONFLE sur ses pires décisions, en bas le doute
+       SAUTE ses meilleures — même erreur. S5 : décharge — la jauge des ressentis (grise, barrée : PAS un filtre) vs la CHECKLIST
+       de critères (teal) qui se coche ; la traîne se DÉCROCHE, la boule reprend sa taille NORMALE et prend le trade. Doctrine :
+       aucun chiffre ; gris = perte/doute ; pas de brun ; TOI = boule teal ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    /*INCLUDE:narrator*/
+
+    // ═══ LE CASTING (créé une fois — cohérence d'un état repris exact d'une scène à l'autre) ═══
+    // TOI = boule teal ; le setup = bloc teal éclatant ; la traîne = blocs gris ; les fantômes = contours creux.
+    const ball  = mk('circle',{fill:YOU,opacity:0});                                   // TOI
+    const ball2 = mk('circle',{fill:YOU,opacity:0});                                   // TOI (2e miroir en S4)
+    const setup = mk('rect',{rx:20,fill:YOU,opacity:0});                               // le bon setup
+    const glow  = mk('rect',{rx:30,fill:'none',stroke:YOU,'stroke-width':6,opacity:0}); // sa brillance (halo qui pulse)
+    const market= mk('rect',{rx:14,fill:INK,opacity:0});                              // le marché (neutre, sans mémoire)
+    const refln = mk('line',{stroke:YOU,'stroke-width':5,'stroke-dasharray':'16 10','stroke-linecap':'round',opacity:0}); // valeur habituelle
+    const valbar= mk('rect',{rx:6,fill:YOU,opacity:0});                               // la valeur mesurée qui remonte
+    const gFrame= mk('rect',{rx:8,fill:'none','stroke-width':5,opacity:0});           // jauge (contour)
+    const gFill = mk('rect',{rx:6,opacity:0});                                        // jauge (remplissage)
+    const divider=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'2 14','stroke-linecap':'round',opacity:0}); // le miroir
+    const sizebar=mk('rect',{rx:8,fill:INK,opacity:0});                               // la taille qui gonfle (excès de confiance)
+    const clPanel=mk('rect',{rx:18,fill:'none',stroke:YOU,'stroke-width':5,opacity:0}); // la checklist (cadre)
+    const loopArc=mk('path',{fill:'none',stroke:DEAD,'stroke-width':8,'stroke-linecap':'round',opacity:0}); // la boucle du doute
+    const loopDot=mk('circle',{fill:DEAD,opacity:0});                                 // le point qui tourne dans la boucle
+    const crossA =mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}); // barre : PAS un filtre
+    const crossB =mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+
+    // ── POOLS ──
+    const BLK=[]; for(let i=0;i<12;i++)BLK.push(mk('rect',{rx:8,opacity:0}));                                   // blocs pleins
+    const GH =[]; for(let i=0;i<6;i++)GH.push(mk('rect',{rx:8,fill:'none',stroke:DEAD,'stroke-width':5,'stroke-dasharray':'11 8',opacity:0})); // fantômes (creux)
+    const LNK=[]; for(let i=0;i<14;i++)LNK.push(mk('line',{'stroke-linecap':'round',opacity:0}));               // liens / ticks / traits
+    const CLR=[]; for(let i=0;i<4;i++)CLR.push(mk('line',{stroke:DEAD,'stroke-width':11,'stroke-linecap':'round',opacity:0})); // lignes de critères
+    const CLC=[]; for(let i=0;i<4;i++)CLC.push(mk('polyline',{fill:'none',stroke:YOU,'stroke-width':10,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0})); // coches
+    const BRK=[]; for(let i=0;i<4;i++)BRK.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));            // cadre d'évaluation
+
+    function blk(i,x,y,w,h,fill,op){const e=BLK[i];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));e.setAttribute('fill',fill);setOp(e,op);}
+    function gh(i,x,y,w,h,op){const e=GH[i];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function lnk(i,x1,y1,x2,y2,stroke,sw,op,dash){const e=LNK[i];if(!e)return;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw);if(dash)e.setAttribute('stroke-dasharray',dash);else e.removeAttribute('stroke-dasharray');setOp(e,op);}
+    function bracket(cx,cy,hs,color,op){const c=[[-1,-1],[1,-1],[1,1],[-1,1]],L=28;
+      for(let i=0;i<4;i++){const sx=cx+c[i][0]*hs,sy=cy+c[i][1]*hs;
+        const p=[[sx-c[i][0]*L,sy],[sx,sy],[sx,sy-c[i][1]*L]];
+        BRK[i].setAttribute('points',p.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' '));
+        BRK[i].setAttribute('stroke',color);setOp(BRK[i],op);}}
+
+    function hideAll(){
+      for(const e of [ball,ball2,setup,glow,market,refln,valbar,gFrame,gFill,divider,sizebar,clPanel,loopArc,loopDot,crossA,crossB])setOp(e,0);
+      for(const e of BLK)setOp(e,0); for(const e of GH)setOp(e,0); for(const e of LNK)setOp(e,0);
+      for(const e of CLR)setOp(e,0); for(const e of CLC)setOp(e,0); for(const e of BRK)setOp(e,0);
+    }
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DOES A LOSING STREAK','MAKE YOU SKIP','THE GOOD ONES'];
+    const FS=82,lineH=104,y0=205,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+80,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':170,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL depuis l37) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||42),'data-fs':(sz||42),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(40),capD=caption(38),capE=caption(38),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||42;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // helper : dessine le setup éclatant à (cx,cy), demi-côté hs, avec halo qui pulse
+    function drawSetup(cx,cy,hs,u,op){
+      setup.setAttribute('x',cx-hs);setup.setAttribute('y',cy-hs);setup.setAttribute('width',2*hs);setup.setAttribute('height',2*hs);setOp(setup,op);
+      const gp=0.5+0.5*Math.sin(u*2.4),m=8+5*gp;
+      glow.setAttribute('x',cx-hs-m);glow.setAttribute('y',cy-hs-m);glow.setAttribute('width',2*hs+2*m);glow.setAttribute('height',2*hs+2*m);setOp(glow,(0.30+0.35*gp)*op);}
+
+    // ═══ S1 — LE STANDOFF : TOI figé devant le setup, retenu par la traîne ═══
+    // Verbe visuel : la retenue (la tension d'une chaîne tendue — rien n'avance).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.87)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.05+k*0.26)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-5.2)/1.1,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : tout est plein dès t=0 — la boule figée, le setup éclatant, la traîne accrochée. ──
+      const bx=600+3*Math.sin(u*1.7)+1.6*Math.sin(u*2.9);
+      const by=1060+3*Math.sin(u*1.3)+1.6*Math.sin(u*2.35);
+      // le setup éclatant, juste à droite, hors de portée
+      const sx=862, sy=1030+6*Math.sin(u*1.15)+3*Math.sin(u*2.05);
+      drawSetup(sx,sy,76,u,1);
+      // la traîne de pertes, derrière, en bas à gauche — elle pèse et retient (vie : elle oscille, deux harmoniques)
+      let px=bx-40,py=by+18;
+      for(let i=0;i<4;i++){
+        const tx=bx-120-i*95 + 5*Math.sin(u*0.9+i*0.7)+2.5*Math.sin(u*1.8+i*0.5);
+        const ty=by+34+i*42 + 4*Math.sin(u*1.1+i*0.6)+2*Math.sin(u*2.1+i*0.4);
+        lnk(i, px,py, tx+38,ty+29, INK,5,0.7);
+        blk(i, tx,ty, 76,58, DEAD,0.95);
+        px=tx+38;py=ty+29;
+      }
+      // la boule TOI, figée mais tremblante ; un fil teal tendu vers le setup, qui n'atteint pas
+      lnk(6, bx+48,by, sx-84,sy, YOU,5,0.45);
+      ball.setAttribute('cx',bx);ball.setAttribute('cy',by);ball.setAttribute('r',48);setOp(ball,1);
+      putCap(capB,'YOU',600,968,YOU,gf);
+      putCap(capA,'THE SETUP',862,1168,YOU,clamp((u-1.6)/0.7,0,1)*gf);
+      putCap(capC,'YOUR LAST LOSSES',250,1360,DEAD,clamp((u-2.8)/0.8,0,1)*gf);
+      // MR DOLLAR : il entre (bas-droite, sous le setup) et il PARLE — il désigne le standoff à sa gauche
+      MrD.enter(u,{t:t, routine:'designe', lookAt:CX, rest:{x:895,y:1445,h:185}, op:gf});
+    }
+
+    // ═══ S2 — LE PRÉLÈVEMENT + LA SUBSTITUTION : la certitude se vide, la cible d'évaluation glisse vers soi ═══
+    // Verbe visuel : le transfert (le cadre d'évaluation quitte le setup et se pose sur TOI).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.92)/0.07,0,1);
+      const bx=520+4*Math.sin(u*1.6)+2*Math.sin(u*2.7), by=1085+4*Math.sin(u*1.25)+2*Math.sin(u*2.2);
+      // le setup, ignoré mais toujours brillant, en haut (il DÉRIVE en continu — la scène ne fige jamais)
+      const sx=520+6*Math.sin(u*0.9)+3*Math.sin(u*1.7), sy=742+9*Math.sin(u*1.2)+4*Math.sin(u*2.35);
+      drawSetup(sx,sy,70,u,1);
+      // la traîne, à gauche : chaque bloc « s'ajoute » (glisse en place) et prélève un cran
+      const land=[0.2,0.95,1.7];
+      let notch=0;
+      for(let i=0;i<3;i++){
+        const a=clamp((u-land[i])/0.5,0,1), ox=-70*(1-eOut(a));
+        const tx=bx-118-i*90 + 4*Math.sin(u*0.95+i*0.7)+2*Math.sin(u*1.9+i);
+        const ty=by+28+i*40 + 3*Math.sin(u*1.15+i*0.6)+1.5*Math.sin(u*2.1+i*0.5);
+        lnk(i, bx-36,by+16, tx+37,ty+27, INK,5,0.7*a);
+        blk(i, tx+ox,ty, 74,54, DEAD,0.95*a);
+        if(u>land[i]+0.4)notch++;
+      }
+      // la jauge CERTAINTY, à droite : elle se vide par crans (le TOP descend = déplacement)
+      const gx=884,gyT=880,gyB=1250,gw=64;
+      gFrame.setAttribute('x',gx-gw/2);gFrame.setAttribute('y',gyT);gFrame.setAttribute('width',gw);gFrame.setAttribute('height',gyB-gyT);gFrame.setAttribute('stroke',INK);setOp(gFrame,1);
+      const frac=0.9-0.245*notch, fh=(gyB-gyT)*frac, fj=5*Math.sin(u*1.9)+2.5*Math.sin(u*3.1);
+      gFill.setAttribute('x',gx-gw/2+5);gFill.setAttribute('y',gyB-fh+fj);gFill.setAttribute('width',gw-10);gFill.setAttribute('height',Math.max(6,fh));gFill.setAttribute('fill',YOU);setOp(gFill,0.9);
+      // le cadre d'évaluation : d'abord autour du SETUP, puis il glisse sur la BOULE et vire au gris (orbite continue au repos)
+      const move=eInOut(clamp((u-2.4)/1.1,0,1));
+      const ex=lerp(sx,bx,move)+3*Math.sin(u*1.5), ey=lerp(sy,by,move)+3*Math.cos(u*1.8), ecol=(move<0.5?YOU:DEAD);
+      bracket(ex, ey, 96-6*move, ecol, clamp((u-0.7)/0.5,0,1));
+      ball.setAttribute('cx',bx);ball.setAttribute('cy',by);ball.setAttribute('r',48);setOp(ball,1);
+      putCap(capB,'YOU STOP EVALUATING THE SETUP',CX,600,INK,clamp((u-0.6)/0.6,0,1)*gf);
+      putCap(capD,'CERTAINTY',884,842,INK,clamp((u-0.4)/0.5,0,1));
+      putCap(capA,'THE SETUP',520,905,YOU,clamp((u-1.0)/0.5,0,1)*(1-clamp((u-2.3)/0.5,0,1)));
+      putCap(capC,'YOURSELF',520,1250,DEAD,move);
+      // MR DOLLAR : il explique, en bas, et désigne la jauge qui se vide (à sa droite)
+      MrD.enter(u,{t:t, routine:'explique', lookAt:884, rest:{x:660,y:1450,h:172}, op:gf*clamp(1-(u-9.5)/1.0,0,1)});
+    }
+
+    // ═══ S3 — LA MESURE : le setup à sa valeur habituelle, le marché sans mémoire ═══
+    // Verbe visuel : la vérification objective (une règle mesure ; des pertes glissent sans laisser de trace).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.92)/0.07,0,1);
+      // GAUCHE — le setup mesuré : la règle, la valeur habituelle, la barre qui remonte à cette valeur
+      const sx=322, sy=1022;
+      drawSetup(sx,sy,66,u,1);
+      const rx=196;
+      lnk(0, rx,900, rx,1180, INK,5,1);
+      for(let i=0;i<6;i++){const j=3*Math.sin(u*1.6-i*0.5)+1.5*Math.sin(u*2.7-i*0.3); lnk(1+i, rx-16, 900+i*56, rx+16+j, 900+i*56, INK,4,0.9);}
+      refln.setAttribute('x1',150);refln.setAttribute('x2',492);refln.setAttribute('y1',938);refln.setAttribute('y2',938);refln.setAttribute('stroke-dashoffset',(-u*18).toFixed(0));setOp(refln,clamp((u-0.2)/0.5,0,1));
+      const rise=eOut(clamp((u-0.3)/1.4,0,1)), vTop=lerp(1150,938,rise)+3*Math.sin(u*1.5)+1.5*Math.sin(u*2.6);
+      valbar.setAttribute('x',sx-26);valbar.setAttribute('y',vTop);valbar.setAttribute('width',52);valbar.setAttribute('height',Math.max(6,1150-vTop));setOp(valbar,0.92);
+      // DROITE — le marché : les pertes GLISSENT dessus et tombent, sans trace (boucle continue)
+      const mx=792, my=1022;
+      market.setAttribute('x',mx-76);market.setAttribute('y',my-76+3*Math.sin(u*1.3)+1.5*Math.sin(u*2.2));market.setAttribute('width',152);market.setAttribute('height',152);setOp(market,1);
+      for(let i=0;i<3;i++){const ph=((u*0.42)+i/3)%1, yy=910+ph*300, op=Math.sin(ph*Math.PI);
+        blk(i, mx-34+8*Math.sin(u*1.4+i), yy, 68,50, DEAD, 0.85*op);}
+      // BAS — TOI, toujours retenu (la boule + 2 pertes accrochées, en bas)
+      const bx=540+2.5*Math.sin(u*1.5)+1.3*Math.sin(u*2.6), by=1358+2*Math.sin(u*1.2)+1*Math.sin(u*2.25);
+      for(let i=0;i<2;i++){const tx=bx-86-i*70+3*Math.sin(u*1.0+i*0.7)+1.5*Math.sin(u*2.0+i), ty=by+6+i*10;
+        lnk(8+i, bx-38,by, tx+30,ty+22, INK,5,0.85); blk(3+i, tx,ty, 60,44, DEAD,0.9);}
+      ball.setAttribute('cx',bx);ball.setAttribute('cy',by);ball.setAttribute('r',42);setOp(ball,1);
+      putCap(capB,'YOUR EDGE DID NOT CHANGE',CX,616,INK,clamp((u-0.4)/0.6,0,1)*gf);
+      putCap(capA,'SAME VALUE AS BEFORE',300,1234,YOU,clamp((u-1.5)/0.7,0,1));
+      putCap(capC,'NO MEMORY',792,1210,DEAD,clamp((u-2.4)/0.7,0,1));
+      putCap(capE,'STILL HELD',bx,by+70,YOU,clamp((u-3.2)/0.8,0,1)*gf);
+      // MR DOLLAR : petit, il doute — il désigne la valeur inchangée (à gauche), depuis le bas-droite
+      MrD.enter(u,{t:t, routine:'designe', lookAt:300, rest:{x:892,y:1452,h:166}, op:clamp((u-1.6)/0.7,0,1)*gf*clamp(1-(u-10.0)/1.0,0,1)});
+    }
+
+    // ═══ S4 — LA BOUCLE + LE MIROIR (LA scène) ═══
+    // Verbe visuel : la boucle qui s'emballe, puis le diptyque miroir (deux erreurs symétriques).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const mir=eInOut(clamp((u-3.0)/1.3,0,1)), aA=1-mir;
+      // ── PHASE A : la boucle du doute (fond fixe → fantômes qui s'ajoutent, boule qui s'enfonce) ──
+      if(aA>0.02){
+        const sink=clamp((u)/3.0,0,1);
+        const bx=540+2.5*Math.sin(u*1.6), by=1055+40*sink+2.5*Math.sin(u*1.25);
+        // le setup non pris, en haut à droite, qui s'ÉTEINT
+        const sfade=(1-clamp((u-0.3)/1.2,0,1));
+        drawSetup(858,792,64,u,sfade*aA);
+        // la traîne : 2 blocs pleins + des FANTÔMES creux qui s'ajoutent (faux poids)
+        let px=bx-38,py=by+16;
+        for(let i=0;i<2;i++){const tx=bx-118-i*92+4*Math.sin(u*0.9+i*0.7)+2*Math.sin(u*1.8+i), ty=by+30+i*40+3*Math.sin(u*1.1+i*0.6);
+          lnk(i,px,py,tx+37,ty+27,INK,5,0.7*aA); blk(i,tx,ty,74,56,DEAD,0.95*aA); px=tx+37;py=ty+27;}
+        const gt=[0.4,1.4,2.2];
+        for(let i=0;i<3;i++){const a=clamp((u-gt[i])/0.5,0,1)*aA, ox=-60*(1-eOut(clamp((u-gt[i])/0.5,0,1)));
+          const tx=bx-118-(i+2)*92+4*Math.sin(u*0.9+(i+2)*0.7), ty=by+30+(i+2)*40+3*Math.sin(u*1.1+(i+2)*0.6);
+          lnk(6+i,px,py,tx+37+ox,ty+27,DEAD,4,0.55*a,'11 8'); gh(i,tx+ox,ty,74,56,a); if(a>0.4){px=tx+37;py=ty+27;}}
+        // la boucle du doute : un point tourne, de plus en plus vite (déplacement continu)
+        const spd=2.0+1.6*u, ang=u*spd, R=132;
+        const cxL=bx+2, cyL=by-6;
+        loopArc.setAttribute('d',`M ${(cxL+R).toFixed(1)} ${cyL.toFixed(1)} A ${R} ${R} 0 1 1 ${(cxL+R*Math.cos(-0.6)).toFixed(1)} ${(cyL+R*Math.sin(-0.6)).toFixed(1)}`);
+        setOp(loopArc,0.5*aA);
+        loopDot.setAttribute('cx',cxL+R*Math.cos(ang));loopDot.setAttribute('cy',cyL+R*Math.sin(ang));loopDot.setAttribute('r',14);setOp(loopDot,0.9*aA);
+        ball.setAttribute('cx',bx);ball.setAttribute('cy',by);ball.setAttribute('r',46);setOp(ball,aA);
+        putCap(capD,'A FALSE WEIGHT',250,940,DEAD,clamp((u-1.4)/0.7,0,1)*aA);
+        putCap(capF,'DOUBT MORE, SKIP THE NEXT',CX,1520,DEAD,clamp((u-1.8)/0.8,0,1)*aA);
+      }
+      // ── MIROIR : haut = l'excès de confiance ; bas = le doute ; même erreur ──
+      if(mir>0.02){
+        divider.setAttribute('x1',120);divider.setAttribute('x2',960);divider.setAttribute('y1',1035);divider.setAttribute('y2',1035);setOp(divider,mir);
+        // HAUT — l'excès de confiance GONFLE sur ses pires décisions (la boule enfle + la taille monte)
+        const pulse=0.5+0.5*Math.sin(u*2.0);
+        const r2=56+24*pulse; ball2.setAttribute('cx',692+3*Math.sin(u*1.4));ball2.setAttribute('cy',884);ball2.setAttribute('r',r2);setOp(ball2,mir);
+        const sh=112+60*pulse; sizebar.setAttribute('x',828);sizebar.setAttribute('y',984-sh);sizebar.setAttribute('width',72);sizebar.setAttribute('height',sh);setOp(sizebar,mir*0.9);
+        // BAS — le doute SAUTE ses meilleures : un setup brillant à droite, la boule bondit au loin
+        drawSetup(846,1232,58,u,mir);
+        const skip=Math.sin(u*1.7), bxs=470-96*Math.max(0,skip)+2*Math.sin(u*2.4);
+        ball.setAttribute('cx',bxs);ball.setAttribute('cy',1232+8*Math.sin(u*1.2));ball.setAttribute('r',44);setOp(ball,mir);
+        // le regard/saut : un trait teal qui part du setup vers la boule (le lien rompu du doute)
+        lnk(11, 846-58, 1232, bxs+44, 1232, YOU, 5, 0.4*mir, '10 10');
+        putCap(capA,'SIZE UP ON YOUR WORST',300,760,INK,clamp((u-3.4)/0.7,0,1)*mir);
+        putCap(capC,'SKIP YOUR BEST',300,1332,DEAD,clamp((u-3.8)/0.7,0,1)*mir);
+        putCap(capB,'LAST RESULTS PRICE YOUR NEXT TRADE',CX,628,INK,clamp((u-4.2)/0.8,0,1)*mir);
+      }
+      MrD.hide();   // doctrine : le narrateur N'APPARAÎT PAS en S4 — la scène vit seule.
+    }
+
+    // ═══ S5 — DÉCHARGE : les critères décident, l'humeur n'est pas un filtre ═══
+    // Verbe visuel : le tri (la checklist se coche ; la traîne se décroche ; la boule reprend sa taille normale).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.94)/0.055,0,1);
+      // GAUCHE — la jauge des RESSENTIS : grise, au plus bas, tremblante, BARRÉE (pas un filtre)
+      const gx=232,gyT=902,gyB=1236,gw=66;
+      gFrame.setAttribute('x',gx-gw/2);gFrame.setAttribute('y',gyT);gFrame.setAttribute('width',gw);gFrame.setAttribute('height',gyB-gyT);gFrame.setAttribute('stroke',DEAD);setOp(gFrame,1);
+      const frac=0.16+0.04*Math.sin(u*3.1)+0.02*Math.sin(u*4.7), fh=(gyB-gyT)*frac, fj=5*Math.sin(u*2.6)+2.5*Math.sin(u*4.1);
+      gFill.setAttribute('x',gx-gw/2+5);gFill.setAttribute('y',gyB-fh+fj);gFill.setAttribute('width',gw-10);gFill.setAttribute('height',Math.max(6,fh));gFill.setAttribute('fill',DEAD);setOp(gFill,0.9);
+      const cop=clamp((u-0.9)/0.5,0,1);
+      crossA.setAttribute('x1',gx-58);crossA.setAttribute('y1',gyT-14);crossA.setAttribute('x2',gx+58);crossA.setAttribute('y2',gyB+14);setOp(crossA,cop);
+      crossB.setAttribute('x1',gx+58);crossB.setAttribute('y1',gyT-14);crossB.setAttribute('x2',gx-58);crossB.setAttribute('y2',gyB+14);setOp(crossB,cop);
+      // DROITE — la CHECKLIST de critères (teal) : elle se coche un à un
+      const clx=584, clW=356, clyT=902, clH=302;
+      clPanel.setAttribute('x',clx);clPanel.setAttribute('y',clyT);clPanel.setAttribute('width',clW);clPanel.setAttribute('height',clH);setOp(clPanel,clamp((u-0.4)/0.5,0,1));
+      for(let i=0;i<4;i++){const ry=clyT+54+i*66+2*Math.sin(u*1.4+i*0.8)+1*Math.sin(u*2.6+i*0.5);
+        CLR[i].setAttribute('x1',clx+40);CLR[i].setAttribute('y1',ry);CLR[i].setAttribute('x2',clx+clW-90);CLR[i].setAttribute('y2',ry);setOp(CLR[i],clamp((u-0.6)/0.5,0,1)*0.9);
+        const chk=clamp((u-(1.7+i*0.45))/0.35,0,1);
+        const cxk=clx+clW-58, p=[[cxk-18,ry],[cxk-4,ry+16],[cxk+20,ry-18]];
+        CLC[i].setAttribute('points',p.map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' '));setOp(CLC[i],chk);}
+      // TOI, au CENTRE (colonne libre entre la jauge et la checklist), reprend sa TAILLE NORMALE et prend le trade
+      const take=eOut(clamp((u-2.2)/1.5,0,1));
+      const bx=452+2.5*Math.sin(u*1.5)+1.3*Math.sin(u*2.6), by=1148+2*Math.sin(u*1.2)-16*take;
+      drawSetup(bx, 972, 46, u, take);
+      lnk(12, bx, by-48, bx, 1018, YOU, 5, 0.5*take);
+      // la traîne se DÉCROCHE : les blocs gris glissent au loin (bas-gauche) et s'effacent VITE (avant d'atteindre les étiquettes)
+      const det=eIn(clamp((u-1.9)/1.2,0,1)), dfade=Math.pow(1-det,1.5);
+      for(let i=0;i<3;i++){const tx=bx-96-i*72 - 150*det + 3*Math.sin(u*1.0+i), ty=by+24+i*24 + 92*det;
+        if(dfade>0.05)lnk(9+(i<2?i:1), bx-40,by, tx+30,ty+20, INK,5,0.55*dfade);
+        blk(i,tx,ty,58,42,DEAD,0.9*dfade);}
+      ball.setAttribute('cx',bx);ball.setAttribute('cy',by);ball.setAttribute('r',48);setOp(ball,1);
+      putCap(capD,'FEELINGS',232,858,DEAD,clamp((u-0.3)/0.5,0,1));
+      putCap(capE,'NOT A FILTER',210,1306,INK,clamp((u-1.1)/0.6,0,1));
+      putCap(capA,'YOUR CRITERIA',762,858,YOU,clamp((u-0.5)/0.5,0,1));
+      putCap(capB,'CRITERIA DECIDE — NOT YOUR MOOD',CX,632,INK,clamp((u-1.4)/0.7,0,1)*gf);
+      putCap(capC,'NORMAL SIZE',bx,1250,YOU,clamp((u-3.2)/0.7,0,1)*gf);
+      // MR DOLLAR : il ferme le Reel — il désigne la checklist (à sa droite), puis s'immobilise
+      MrD.enter(u,{t:t, routine:'designe', lookAt:762, rest:{x:500,y:1492,h:158}, op:clamp((u-0.8)/0.7,0,1)*gf});
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
