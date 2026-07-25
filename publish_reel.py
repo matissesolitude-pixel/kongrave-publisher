@@ -49,15 +49,19 @@ def _wait_until_finished(container_id: str) -> None:
         time.sleep(POLL_INTERVAL_SECONDS)
 
 
-def publish_episode(mp4_path: Path, caption: str, dry_run: bool = False) -> dict:
+def publish_episode(mp4_path: Path, caption: str, dry_run: bool = False,
+                    trial_params: Optional[dict] = None) -> dict:
     """
     Publie un épisode. Retourne un dict résultat exploitable par le logger.
 
     dry_run=True : crée le conteneur, attend FINISHED, mais N'APPELLE PAS media_publish.
     C'est le mode test sûr — rien n'apparaît sur le compte.
+
+    trial_params : transmis à create_container pour publier en Reel d'ESSAI
+    (visible uniquement des non-abonnés). Absent -> Reel normal.
     """
     mp4_path = Path(mp4_path)
-    container_id = ig_api.create_container(mp4_path, caption)
+    container_id = ig_api.create_container(mp4_path, caption, trial_params=trial_params)
     _wait_until_finished(container_id)
 
     if dry_run:

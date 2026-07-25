@@ -1,0 +1,110 @@
+name: LIGNE Reel d'essai (Trial Reel)
+
+# Publie UN épisode LIGNE en Reel d'ESSAI (visible uniquement des NON-abonnés).
+# Sert à MESURER la rétention d'une variante sans l'exposer à l'audience.
+#
+# Réutilisable : lance-le à la main (workflow_dispatch), donne l'épisode (ex : L22v2).
+# Il FABRIQUE l'épisode avec la vraie voix (comme l'aperçu), transcode en 25 fps,
+# puis crée un conteneur en mode essai (graduation MANUAL par défaut : il ne passe
+# aux abonnés que si TU le gradues dans l'app).
+#
+# Il ne touche NI la file, NI le journal de publication, NI l'état : c'est un canal
+# séparé de la publication normale. Rien n'est committé.
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Épisode à publier en essai (ex : L22v2)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry-run : va jusqu'à FINISHED mais NE PUBLIE PAS"
+        type: boolean
+        default: false
+      graduation:
+        description: "Stratégie de graduation"
+        type: choice
+        options: ["MANUAL", "SS_PERFORMANCE"]
+        default: "MANUAL"
+
+# Un seul essai à la fois (fabrication + upload lourds).
+concurrency:
+  group: ligne-trial
+  cancel-in-progress: false
+
+# Lecture seule : ce canal ne commit rien.
+permissions:
+  contents: read
+
+jobs:
+  trial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API }}
+      INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      GRAPH_VERSION: v20.0
+      EP: ${{ github.event.inputs.episode }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Système (ffmpeg, chromium, polices)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg chromium-browser fontconfig fonts-liberation
+          fc-cache -f >/dev/null 2>&1 || true
+
+      - name: Localiser Chromium
+        run: |
+          for p in /usr/bin/chromium-browser /usr/bin/chromium /snap/bin/chromium \
+                   /usr/lib/chromium-browser/chromium-browser; do
+            if [ -x "$p" ]; then echo "PUPPETEER_EXECUTABLE_PATH=$p" >> "$GITHUB_ENV"; echo "chromium: $p"; exit 0; fi
+          done
+          echo "::error::Chromium introuvable"; exit 1
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Dépendances
+        run: |
+          pip install -r ligne/requirements-ligne.txt
+          pip install -r requirements.txt
+
+      - name: Pré-chauffe hyperframes
+        run: npx --yes hyperframes@0.7.37 --version || true
+
+      - name: Rendre le moteur disponible (y compris .wip)
+        run: |
+          set -e
+          ENG=$(python3 -c "import json;print(json.load(open('ligne/episodes/${EP}.json'))['engine'])")
+          if [ -f "ligne/engine/${ENG}.html" ]; then
+            echo "moteur actif : ${ENG}.html"
+          elif [ -f "ligne/engine/${ENG}.html.wip" ]; then
+            cp "ligne/engine/${ENG}.html.wip" "ligne/engine/${ENG}.html"
+            echo "moteur .wip matérialisé : ${ENG}.html"
+          else
+            echo "::error::Aucun moteur pour ${EP}"; exit 1
+          fi
+
+      - name: Fabriquer avec la vraie voix
+        run: cd ligne && python3 build_ligne.py "${EP}" all
+
+      - name: Publier en Reel d'ESSAI
+        run: |
+          ARGS="${EP} --graduation ${{ github.event.inputs.graduation }}"
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          echo "publish_trial_ligne.py $ARGS"
+          python3 publish_trial_ligne.py $ARGS
+
+      - name: Rappel
+        run: echo "Reel d'essai traité. Aucune mise en file, aucun commit. Visible des non-abonnés uniquement."

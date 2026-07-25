@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L22 v2 « THE SPREAD ISN'T THE COST » — TOI = teal. Fusil = le petit spread affiché (S1), révélé comme la FAÇADE d'une
+       pile de coûts. S1 : émotion frame 0 = un tout petit écart teal rassurant, et DÉJÀ une ombre suspecte derrière (quelque
+       chose est caché). S2 : l'écart pivote — il n'est que la façade d'une pile en profondeur ; le spread est le PLUS PETIT bloc,
+       devant. S3 : le slip — un point de prix vise un repère, mais sur un mouvement rapide (fond qui file) il se pose un cran plus
+       loin ; l'écart visé/obtenu = le slip, un coût à part. S4 (LA scene, narrateur ABSENT) : la fréquence — l'unité (spread+slip)
+       se DUPLIQUE, un COMPTEUR CHIFFRÉ monte ×2 ×10 ×50 ×200 ×400 (le nombre EST le punch — SEUL endroit où un chiffre s'affiche),
+       montagne de coûts vs le spread initial minuscule. S5 : décharge — une balance : spread serré très tradé (petit écart, masse
+       d'unités) PLONGE ; spread large rare reste HAUT. Le vrai coût = (spread + slip) × fréquence. Doctrine : chiffres UNIQUEMENT
+       en S4 ; ailleurs la quantité passe par la MASSE ; pas de brun ; teal = TOI ; narrateur encre, absent en S4 ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) ──
+    /*INCLUDE:narrator*/
+
+    // ═══ OBJETS PERSISTANTS ═══
+    // LE SPREAD : petit écart teal (deux montants + un liseré) = le 'prix en rayon'
+    const spreadL=mk('rect',{fill:YOU,opacity:0}), spreadR=mk('rect',{fill:YOU,opacity:0});
+    // LA PILE de coûts (blocs en profondeur derrière le spread)
+    const PILE=[]; for(let i=0;i<4;i++)PILE.push(mk('rect',{rx:6,opacity:0}));
+    const shadow=mk('rect',{rx:8,fill:DEAD,'fill-opacity':0.18,opacity:0});   // l'ombre suspecte de S1
+    // LE SLIP (S3) : repère du prix visé + point obtenu + écart
+    const aimMark=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const streak=[]; for(let i=0;i<7;i++)streak.push(mk('line',{stroke:DEAD,'stroke-width':4,'stroke-linecap':'round',opacity:0}));  // le fond qui file
+    const priceDot=mk('circle',{r:16,fill:INK,opacity:0});
+    const slipGap=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'3 12','stroke-linecap':'round',opacity:0});
+    // S4 : les UNITÉS de coût dupliquées (montagne) + le spread initial rappelé
+    const UNITS=[]; for(let i=0;i<120;i++)UNITS.push(mk('rect',{rx:2,fill:YOU,opacity:0}));
+    const tinySpread=mk('rect',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'6 8',opacity:0});
+    const counter=mk('text',{x:CX,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});
+    // S5 : la balance (fléau + pivot + deux plateaux + piles)
+    const beam=mk('line',{stroke:INK,'stroke-width':12,'stroke-linecap':'round',opacity:0});
+    const pivot=mk('polygon',{fill:INK,opacity:0});
+    const panL=mk('path',{fill:'none',stroke:INK,'stroke-width':7,opacity:0}), panR=mk('path',{fill:'none',stroke:INK,'stroke-width':7,opacity:0});
+    const hangL=mk('line',{stroke:INK,'stroke-width':4,opacity:0}), hangR=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    const STACKL=[]; for(let i=0;i<40;i++)STACKL.push(mk('rect',{rx:2,fill:YOU,opacity:0}));
+    const STACKR=[]; for(let i=0;i<4;i++)STACKR.push(mk('rect',{rx:3,fill:YOU,opacity:0}));
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE SPREAD WAS TINY.','WHY DID YOU PAY SO MUCH?'];
+    const FS=70,lineH=96,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.60));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap mesure la largeur réelle et clampe la position ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [spreadL,spreadR,shadow,aimMark,priceDot,slipGap,tinySpread,counter,beam,pivot,panL,panR,hangL,hangR])setOp(e,0);
+      for(const e of PILE)setOp(e,0);for(const e of streak)setOp(e,0);for(const e of UNITS)setOp(e,0);
+      for(const e of STACKL)setOp(e,0);for(const e of STACKR)setOp(e,0);hideCaps();}
+
+    // dessine le petit spread (deux montants teal + écart) centré en (cx,cy), demi-écart g, hauteur h
+    function drawSpread(cx,cy,g,h,op,col){
+      col=col||YOU;
+      for(const [el,sx] of [[spreadL,-1],[spreadR,1]]){
+        el.setAttribute('x',(cx+sx*g-7).toFixed(1));el.setAttribute('y',(cy-h/2).toFixed(1));
+        el.setAttribute('width',14);el.setAttribute('height',h.toFixed(1));el.setAttribute('fill',col);setOp(el,op);}
+    }
+
+    // ═══ S1 — LE PETIT SPREAD RASSURANT, ET L'OMBRE DERRIÈRE (émotion frame 0) ═══
+    // Verbe visuel : le contraste (un objet minuscule net + une ombre cachée qui inquiète).
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // le petit spread teal, au centre (DRAW-ON à u~1.6), minuscule
+      const cy=1120, appear=clamp((u-1.6)/0.9,0,1);
+      const g=26+2*Math.sin(u*1.4), h=(120+8*Math.sin(u*1.2)+4*Math.sin(u*2.2))*eOut(appear);
+      drawSpread(CX, cy+4*Math.sin(u*0.8), g, h, appear, YOU);
+      putCap(capA,'THE SPREAD',CX,cy+h/2+56,YOU,appear);
+      // l'ombre suspecte, DERRIÈRE et AU-DESSUS des montants (finit avant l'étiquette 'THE SPREAD') — elle respire
+      const shOp=clamp((u-2.6)/1.0,0,1)*0.9;
+      shadow.setAttribute('x',(CX-40+10*Math.sin(u*0.7)).toFixed(1));shadow.setAttribute('y',(cy-190-6*Math.sin(u*1.1)).toFixed(1));
+      shadow.setAttribute('width',240);shadow.setAttribute('height',200);setOp(shadow,shOp);
+      putCap(capC,'SOMETHING IS STACKED BEHIND IT',CX,760,DEAD,clamp((u-3.0)/0.8,0,1)*gf);
+      // NARRATEUR : il entre, il désigne le petit spread
+      if(u>1.9) MrD.enter(u-1.9,{t:t, routine:'designe', lookAt:CX, rest:{x:185,y:1470,h:192}, op:clamp((u-1.9)/0.6,0,1)*gf});
+      else MrD.hide();
+    }
+
+    // ═══ S2 — LE SPREAD N'EST QUE LA FAÇADE D'UNE PILE ═══
+    // Verbe visuel : la révélation en profondeur (une façade qui pivote, une pile derrière).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const cy=1060;
+      const piv=eInOut(clamp(u/1.6,0,1));
+      const rev=clamp((u-1.4)/1.6,0,1);
+      // LA PILE (à DROITE) : blocs de plus en plus gros vers l'arrière (le spread = le plus petit, devant)
+      const PX=690;
+      for(let i=0;i<4;i++){
+        const w=78+i*52, h=78+i*46;
+        const bx=PX-w/2+i*28 + 6*Math.sin(u*0.8+i), by=cy-h/2+i*24 + 4*Math.sin(u*1.3+i);
+        PILE[i].setAttribute('x',bx.toFixed(1));PILE[i].setAttribute('y',by.toFixed(1));
+        PILE[i].setAttribute('width',w);PILE[i].setAttribute('height',h);
+        PILE[i].setAttribute('fill', i===0?YOU:mix(YOU,DEAD,0.25+0.20*i));
+        PILE[i].setAttribute('stroke',INK);PILE[i].setAttribute('stroke-width',4);
+        setOp(PILE[i], i===0?1:rev*(1-0.12*i));
+      }
+      // LA FAÇADE (à GAUCHE, dégagée) : le petit spread teal + ses étiquettes, sous lui
+      const FX=270;
+      const g=(28)*(0.35+0.65*Math.abs(Math.cos(piv*Math.PI)));  // effet de pivot (l'écart s'aplatit puis revient)
+      drawSpread(FX, cy+4*Math.sin(u*1.0), g, 100, 1, YOU);
+      putCap(capA,'THE SHELF PRICE',FX,cy+96,YOU,clamp(u/0.6,0,1));
+      putCap(capE,'THE SMALLEST ONE',FX,cy+144,DEAD,clamp((u-2.0)/0.7,0,1));
+      putCap(capB,'IT IS ONLY THE FACADE OF A PILE',CX,660,INK,clamp((u-2.6)/0.7,0,1));
+      // NARRATEUR : il désigne la pile révélée (à droite), depuis le bas-gauche
+      if(u>1.2&&u<7.4) MrD.enter(u-1.2,{t:t, routine:'explique', lookAt:PX, rest:{x:200,y:1560,h:180}, op:clamp((u-1.2)/0.5,0,1)*clamp((7.4-u)/0.6,0,1)});
+      else MrD.hide();
+    }
+
+    // ═══ S3 — LE SLIP : PRIX VISÉ vs PRIX OBTENU (quand ça bouge fort) ═══
+    // Verbe visuel : l'écart qui naît sur le mouvement (le fond file, le point se pose plus loin).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const cy=1040, aimY=cy;
+      // le repère du prix VISÉ (le prix cliqué)
+      const aimX=430;
+      aimMark.setAttribute('x1',(aimX-70).toFixed(1));aimMark.setAttribute('x2',(aimX+70).toFixed(1));
+      aimMark.setAttribute('y1',aimY);aimMark.setAttribute('y2',aimY);setOp(aimMark,clamp(u/0.5,0,1));
+      putCap(capC,'THE PRICE YOU CLICKED',aimX,aimY-40,YOU,clamp(u/0.6,0,1));
+      // le FOND qui file (mouvement rapide) — traits horizontaux à VITESSE CONSTANTE
+      const fast=clamp((u-1.3)/0.5,0,1);
+      for(let i=0;i<7;i++){const yy=760+i*120, xoff=((u*260)+(i*90))%1200-100;
+        streak[i].setAttribute('x1',xoff.toFixed(1));streak[i].setAttribute('x2',(xoff+90).toFixed(1));
+        streak[i].setAttribute('y1',yy);streak[i].setAttribute('y2',yy);setOp(streak[i],fast*0.5);}
+      // le point OBTENU : il vise aimX mais se pose un cran PLUS LOIN (moins bon) pile quand ça file
+      const land=eInOut(clamp((u-1.3)/0.9,0,1));
+      const gotX=lerp(aimX, aimX+150, land) + (land>=1? 4*Math.sin(u*2.0):0);
+      const gotY=aimY + 3*Math.sin(u*1.6);
+      priceDot.setAttribute('cx',gotX.toFixed(1));priceDot.setAttribute('cy',gotY.toFixed(1));setOp(priceDot,clamp((u-0.4)/0.4,0,1));
+      // l'écart visé/obtenu = le slip
+      slipGap.setAttribute('x1',aimX);slipGap.setAttribute('y1',aimY);slipGap.setAttribute('x2',gotX.toFixed(1));slipGap.setAttribute('y2',gotY.toFixed(1));setOp(slipGap,land);
+      putCap(capA,'THE SLIP',lerp(aimX,gotX,0.5),aimY+64,INK,clamp((u-1.8)/0.6,0,1));
+      putCap(capB,'A SEPARATE COST — WORSE WHEN IT MOVES MOST',CX,660,INK,clamp((u-3.0)/0.7,0,1));
+      // NARRATEUR : il constate l'écart (à droite, il regarde le slip)
+      if(u>1.0&&u<7.4) MrD.enter(u-1.0,{t:t, routine:'constate', lookAt:gotX, rest:{x:900,y:1300,h:182}, op:clamp((u-1.0)/0.5,0,1)*clamp((7.4-u)/0.6,0,1)});
+      else MrD.hide();
+    }
+
+    // ═══ S4 — LA scene : LA FRÉQUENCE MULTIPLIE (compteur ×400) — narrateur ABSENT ═══
+    // Verbe visuel : la multiplication cadencée (l'unité se duplique en montagne, le nombre monte).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn(); MrD.hide();   // narrateur ABSENT : le schéma a toute la place
+      // COMPTEUR : ×2 ×10 ×50 ×200 ×400 — paliers cadencés (le nombre EST le punch)
+      const STEPS=[[0.0,1],[1.0,2],[1.7,10],[2.3,50],[2.9,200],[3.4,400]];
+      let n=1; for(const [tt,v] of STEPS){ if(u>=tt) n=v; }
+      const grow=clamp((u-1.0)/2.4,0,1);
+      // la MONTAGNE : nb de petites unités visibles ∝ progression (max 120), empilées en triangle.
+      // On PART d'une petite unité déjà visible (jamais d'écran vide au démarrage de la scène).
+      const shown=Math.round(lerp(8,120,eOut(grow)));
+      // montagne décalée à DROITE : la bande gauche reste libre pour le rappel du spread
+      const MX=680, baseY=1440, colW=30, rowH=26, perRow=16, x0=MX-perRow*colW/2;
+      for(let i=0;i<UNITS.length;i++){
+        if(i>=shown){setOp(UNITS[i],0);continue;}
+        const row=Math.floor(i/perRow), col=i%perRow;
+        // triangle : chaque rangée plus haute est plus étroite (montagne)
+        const rowCount=Math.max(1,perRow-row*2), inset=(perRow-rowCount)/2;
+        if(col<inset||col>=inset+rowCount){setOp(UNITS[i],0);continue;}
+        const jx=2*Math.sin(u*2.0+i*0.5), jy=1.5*Math.sin(u*2.6+i*0.7);   // vie continue (déplacement)
+        UNITS[i].setAttribute('x',(x0+col*colW+jx).toFixed(1));UNITS[i].setAttribute('y',(baseY-row*rowH-rowH+jy).toFixed(1));
+        UNITS[i].setAttribute('width',colW-6);UNITS[i].setAttribute('height',rowH-6);
+        setOp(UNITS[i],0.92);
+      }
+      // le compteur, gros, au-dessus de la montagne
+      const pop=1+0.12*Math.sin(u*7)*clamp(1-(u%0.6)/0.6,0,1);
+      counter.textContent='×'+n;
+      counter.setAttribute('y',(760).toFixed(1));
+      counter.setAttribute('transform',`translate(${CX} 760) scale(${(pop).toFixed(3)}) translate(${-CX} -760)`);
+      setOp(counter,clamp((u-0.1)/0.3,0,1));   // ×1 visible dès le début de la scène
+      // au démarrage : on nomme l'unité (le coût d'UN trade) avant que la multiplication ne parte
+      putCap(capC,'ONE TRADE',CX,1500,YOU,clamp((u-0.15)/0.4,0,1)*clamp(1-(u-1.0)/0.4,0,1));
+      // le spread initial rappelé, minuscule et ridicule — dans la bande GAUCHE LIBRE, au-dessus du niveau de la montagne
+      const recall=clamp((u-3.6)/0.8,0,1);
+      tinySpread.setAttribute('x',(214).toFixed(1));tinySpread.setAttribute('y',(1030+4*Math.sin(u*1.2)).toFixed(1));
+      tinySpread.setAttribute('width',26);tinySpread.setAttribute('height',40);setOp(tinySpread,recall);
+      putCap(capE,'THE SPREAD',252,1112,DEAD,recall);
+      putCap(capF,'UNCHANGED',252,1156,DEAD,recall);
+      putCap(capB,'YOU JUST PAID IT FOUR HUNDRED TIMES',CX,600,INK,clamp((u-3.4)/0.7,0,1));
+      putCap(capA,'EVERY  SINGLE  TRADE',CX,690,DEAD,clamp((u-1.2)/0.7,0,1)*clamp(1-(u-3.4)/0.5,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : LA BALANCE — serré très tradé PÈSE plus que large rare ═══
+    // Verbe visuel : la pesée (deux plateaux, la masse fait pencher, contre l'intuition).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const cxp=CX, topY=760;
+      // pivot (triangle) + fléau qui penche à GAUCHE (le serré-très-tradé pèse plus)
+      const tilt=lerp(0, 0.32, eInOut(clamp((u-1.4)/1.4,0,1)));  // rad, plateau gauche descend
+      const sway=0.012*Math.sin(u*1.1)+0.006*Math.sin(u*2.2);    // vie continue jusqu'au bout (jamais figé)
+      const ang=tilt+sway;
+      const beamLen=760, py=topY;
+      const lx=cxp-Math.cos(ang)*beamLen/2, ly=py+Math.sin(ang)*beamLen/2;
+      const rx=cxp+Math.cos(ang)*beamLen/2, ry=py-Math.sin(ang)*beamLen/2;
+      beam.setAttribute('x1',lx.toFixed(1));beam.setAttribute('y1',ly.toFixed(1));beam.setAttribute('x2',rx.toFixed(1));beam.setAttribute('y2',ry.toFixed(1));setOp(beam,clamp(u/0.5,0,1));
+      pivot.setAttribute('points',`${cxp},${py} ${cxp-40},${py+150} ${cxp+40},${py+150}`);setOp(pivot,clamp(u/0.5,0,1));
+      // plateaux (arcs) suspendus sous chaque bout
+      function pan(el,hEl,x,y,op){hEl.setAttribute('x1',x);hEl.setAttribute('y1',y);hEl.setAttribute('x2',x);hEl.setAttribute('y2',(y+120).toFixed(1));setOp(hEl,op);
+        el.setAttribute('d',`M ${x-90} ${y+120} Q ${x} ${y+200} ${x+90} ${y+120}`);setOp(el,op);}
+      pan(panL,hangL,lx,ly,clamp(u/0.5,0,1)); pan(panR,hangR,rx,ry,clamp(u/0.5,0,1));
+      // GAUCHE : petit écart mais une TONNE d'unités (fréquence énorme) → lourd
+      const nL=Math.round(lerp(0,40,clamp((u-0.6)/1.4,0,1)));
+      for(let i=0;i<STACKL.length;i++){ if(i>=nL){setOp(STACKL[i],0);continue;}
+        const row=Math.floor(i/8), col=i%8;
+        STACKL[i].setAttribute('x',(lx-72+col*18+2*Math.sin(u*2+i)).toFixed(1));
+        STACKL[i].setAttribute('y',(ly+118-row*16-16).toFixed(1));
+        STACKL[i].setAttribute('width',14);STACKL[i].setAttribute('height',12);setOp(STACKL[i],0.9);}
+      // DROITE : gros écart mais très PEU d'unités → léger
+      const nR=Math.round(lerp(0,4,clamp((u-0.6)/1.2,0,1)));
+      for(let i=0;i<STACKR.length;i++){ if(i>=nR){setOp(STACKR[i],0);continue;}
+        STACKR[i].setAttribute('x',(rx-42+i*22+2*Math.sin(u*1.7+i)).toFixed(1));
+        STACKR[i].setAttribute('y',(ry+118-30).toFixed(1));
+        STACKR[i].setAttribute('width',34);STACKR[i].setAttribute('height',28);setOp(STACKR[i],0.9);}
+      // étiquettes des plateaux à des Y BAS FIXES (jamais tenues au fléau) : dégagées du pivot et de la poutre
+      putCap(capC,'TIGHT SPREAD — TRADED CONSTANTLY',300,1320,YOU,clamp((u-0.8)/0.7,0,1));
+      putCap(capD,'WIDE SPREAD — TOUCHED RARELY',790,1210,DEAD,clamp((u-1.2)/0.7,0,1));
+      putCap(capB,'THE REAL COST = ( SPREAD + SLIP )  ×  FREQUENCY',CX,560,INK,clamp((u-3.0)/0.8,0,1));
+      // NARRATEUR : il désigne le plateau lourd, puis s'écarte
+      if(u>1.0&&u<7.6) MrD.enter(u-1.0,{t:t, routine:'designe', lookAt:lx, rest:{x:900,y:1560,h:184}, op:clamp((u-1.0)/0.5,0,1)*clamp((7.6-u)/0.6,0,1)});
+      else MrD.hide();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

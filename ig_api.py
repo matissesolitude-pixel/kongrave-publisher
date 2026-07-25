@@ -13,6 +13,7 @@ Le token n'est JAMAIS écrit en clair : il est chargé depuis .env.local (à cô
 fichier) via python-dotenv. Voir .env.example.
 """
 
+import json
 import os
 import time
 from pathlib import Path
@@ -102,10 +103,15 @@ def _raise_for_api_error(resp: requests.Response, context: str) -> dict:
     return payload
 
 
-def create_container(mp4_path: Path, caption: str) -> str:
+def create_container(mp4_path: Path, caption: str, trial_params: Optional[dict] = None) -> str:
     """
     Crée un conteneur Reel puis y téléverse le fichier local (resumable upload).
     Retourne le container_id (creation_id à publier ensuite).
+
+    trial_params : si fourni (ex. {"graduation_strategy": "MANUAL"}), le Reel est
+    créé en mode ESSAI — visible uniquement des NON-abonnés. MANUAL = il ne passe
+    aux abonnés que sur action manuelle dans l'app ; SS_PERFORMANCE = promotion auto
+    s'il performe. Absent -> Reel normal (comportement inchangé).
     """
     mp4_path = Path(mp4_path)
     if not mp4_path.is_file():
@@ -115,15 +121,19 @@ def create_container(mp4_path: Path, caption: str) -> str:
 
     # 1) Réservation du conteneur.
     init_url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
+    init_data = {
+        "media_type": "REELS",
+        "upload_type": "resumable",
+        "caption": caption,
+        "access_token": token,
+    }
+    if trial_params:
+        # objet JSON-encodé attendu par l'API Graph (Trial Reels)
+        init_data["trial_params"] = json.dumps(trial_params)
     init_resp = _request(
         "POST",
         init_url,
-        data={
-            "media_type": "REELS",
-            "upload_type": "resumable",
-            "caption": caption,
-            "access_token": token,
-        },
+        data=init_data,
     )
     payload = _raise_for_api_error(init_resp, "Création du conteneur")
     container_id = payload.get("id")
