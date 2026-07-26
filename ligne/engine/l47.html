@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L47 « THE RULE YOU ONLY FOLLOW WHEN IT'S EASY » — RÈGLES = barres teal · COÛT D'OBÉIR = poids encre · une règle ne se
+       mesure QUE sous charge. S1 : émotion frame 0 = TENSION + CURIOSITÉ — une rangée de règles teal identiques, mais UNE SEULE
+       porte un poids écrasant et PLIE, au bord de céder ; les autres ne portent rien. L'asymétrie interroge (fusil = la barre
+       sous charge). S2 : deux barres identiques À VIDE (règle vs préférence, indiscernables) ; on pose le MÊME poids : l'une TIENT
+       (teal), l'autre CÈDE (gris). Seule la charge les distingue. S3 : une longue série de jours à VIDE défile sous « DISCIPLINED »
+       qui brille ; le premier VRAI poids arrive → une barre cède → l'étiquette vacille et MEURT (rien n'avait été mesuré).
+       S4 (SANS NARRATEUR) : la barre pliée, et à côté un RAISONNEMENT (plaque encre) qui n'apparaît QUE sous charge — test de
+       corrélation : poids on → l'argument glisse et paraît ; poids off → il disparaît ; cadence qui accélère. Verdict : la barre
+       cède quand même. S5 : décharge — un COMPTEUR qui n'avance QUE quand un poids était posé ET que la barre a tenu ; les jours
+       faciles n'y comptent jamais. Doctrine : aucun chiffre ; règle tenue/teal, règle cédée/gris ; poids = encre ; pas de brun ;
+       bas du cadre vide ; narrateur PETIT, en encre, absent en S4. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art vectorisé, encre) — injecté par build_ligne ──
+    /*INCLUDE:narrator*/
+
+    // ═══════════════ POOLS RÉUTILISABLES ═══════════════
+    // BARRES = les règles (colonnes flexibles qui plient sous charge) · POIDS = le coût d'obéir · TICKS = le compteur (S5)
+    const BARS=[]; for(let i=0;i<16;i++)BARS.push(mk('polyline',{fill:'none','stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const WTS=[];  for(let i=0;i<10;i++)WTS.push(mk('rect',{fill:INK,rx:6,opacity:0}));
+    const TICKS=[];for(let i=0;i<18;i++)TICKS.push(mk('rect',{rx:5,'stroke-width':5,opacity:0}));
+    let bi=0,wi=0,ti=0;
+    function reset(){bi=0;wi=0;ti=0;}
+    // une barre : colonne qui monte de la base (base) vers le haut ; lean = décalage latéral du sommet (elle plie) ;
+    // sag = raccourcissement vertical (elle s'affaisse quand elle cède). Renvoie le sommet {tx,ty} pour y poser le poids.
+    function bar(x,base,h,lean,sag,color,wdt,op){
+      const e=BARS[bi++]; if(!e)return {tx:x,ty:base-h};
+      const top=base-h*(1-clamp(sag,0,0.9)), N=7, pts=[];
+      for(let k=0;k<=N;k++){const f=k/N,y=base-(base-top)*f,dx=lean*Math.pow(f,1.5);pts.push([x+dx,y]);}
+      e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',wdt||18);setOp(e,op);
+      return {tx:x+lean,ty:top};
+    }
+    // un poids encre posé sur (cx) avec sa BASE à restY (il s'appuie sur le sommet de la barre)
+    function weight(cx,restY,w,h,op){const e=WTS[wi++];if(!e)return;
+      e.setAttribute('x',(cx-w/2).toFixed(1));e.setAttribute('y',(restY-h).toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',h.toFixed(1));setOp(e,op);}
+    // un cran du compteur (S5) : vide (contour gris) ou gagné (plein teal)
+    function tick(x,y,sz,filled,op){const e=TICKS[ti++];if(!e)return;
+      e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',sz);e.setAttribute('height',sz);
+      e.setAttribute('fill',filled?YOU:'none');e.setAttribute('fill-opacity',filled?0.9:0);
+      e.setAttribute('stroke',filled?YOU:DEAD);setOp(e,op);}
+    function flush(){for(let i=bi;i<BARS.length;i++)setOp(BARS[i],0);for(let i=wi;i<WTS.length;i++)setOp(WTS[i],0);for(let i=ti;i<TICKS.length;i++)setOp(TICKS[i],0);}
+
+    // ── LE RAISONNEMENT (S4) : une plaque encre qui GLISSE et n'existe que sous charge ──
+    const plaque=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:14,opacity:0});
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['HOW MANY OF YOUR RULES','HAVE BEEN TESTED'];
+    const FS=84,lineH=104,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':182,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26/l46) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — UNE SEULE RÈGLE SOUS UN POIDS QUI LA FAIT PLIER ═══
+    // Verbe visuel : LA CHARGE ASYMÉTRIQUE — une barre plie sous un poids, les autres reposent à vide.
+    const BASE1=1360, BH1=300, S1X=[270,420,570,720,870], LOAD1=2;
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); setOp(plaque,0); reset();
+      const qf=clamp(1-(u-4.6)/1.4,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*qf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*qf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ÉMOTION FRAME 0 : la rangée est DÉJÀ pleine, la barre chargée DÉJÀ pliée. Rien ne se construit.
+      let loadedTop=null;
+      for(let i=0;i<S1X.length;i++){
+        if(i===LOAD1){
+          const lean=40+14*Math.sin(u*1.55)+7*Math.sin(u*2.45);        // elle tremble FORT sous la charge (deux harmoniques, ample)
+          const sag=0.08+0.03*Math.sin(u*1.3)+0.02*Math.sin(u*2.1);
+          loadedTop=bar(S1X[i],BASE1,BH1,lean,sag,YOU,20,1);
+        }else{
+          const sway=5*Math.sin(u*1.05+i*1.3)+2.6*Math.sin(u*1.9+i);   // les autres : un balancement lent, elles ne portent rien
+          bar(S1X[i],BASE1,BH1,sway,0.01,YOU,18,1);
+        }
+      }
+      const wob=9*Math.sin(u*1.35)+4*Math.sin(u*2.15);
+      weight(loadedTop.tx, loadedTop.ty+wob, 148, 92, 1);              // le poids écrasant, il vibre nettement
+      putCap(capB,'YOUR RULES',CX,1436,INK,clamp((u-0.4)/0.7,0,1));
+      putCap(capC,'THE ONE UNDER TEST',loadedTop.tx,loadedTop.ty-116+wob,YOU,clamp((u-1.7)/0.7,0,1));
+      // MR DOLLAR : il entre par la gouttière gauche, DÉSIGNE la barre qui plie, puis il s'en va — la barre tremble encore sans lui
+      if(u<3.9){ MrD.enter(u, {t:t, routine:'designe', lookAt:S1X[LOAD1], rest:{x:172, y:1432, h:222}, op:1}); }
+      else{ const o=clamp((u-3.9)/1.2,0,1); MrD.say('walk', t, lerp(172,-190,eInOut(o)), 1432, 222, (1-o), true, 0,1,1); }
+      flush();
+    }
+
+    // ═══ S2 — MÊME POIDS, DEUX FINS : une règle tient, une préférence cède ═══
+    // Verbe visuel : LA RÉVÉLATION A/B — deux barres identiques à vide, séparées seulement par la charge.
+    const BASE2=1350, BH2=300, S2L=360, S2R=720;
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); setOp(plaque,0); reset();
+      const appear=clamp((u-1.5)/0.7,0,1);    // les poids apparaissent au-dessus
+      const drop=clamp((u-2.0)/1.3,0,1);      // ils descendent sur les deux barres
+      const ced=clamp((u-2.9)/1.1,0,1);       // la DROITE cède
+      // GAUCHE — elle TIENT (règle) : droite, teal, elle tremble sous la charge (vie continue nette)
+      const lLean=12*Math.sin(u*1.6)+6*Math.sin(u*2.7)+drop*5*Math.sin(u*3.3);
+      const lTop=bar(S2L,BASE2,BH2,lLean,0.03+0.02*drop,YOU,20,1);
+      // DROITE — elle CÈDE (préférence) une fois chargée : elle plie fort, vire au gris, puis grince (affaissement lent continu)
+      const rLean=10*Math.sin(u*1.5)+4*Math.sin(u*2.6)+ced*98+ced*7*Math.sin(u*0.95);
+      const rT=bar(S2R,BASE2,BH2,rLean,0.02+ced*0.42,ced>0.12?DEAD:YOU,20,1);
+      // les poids : ils descendent depuis le haut ; à droite le poids suit le sommet qui s'affaisse ; le gauche bobe (il pèse)
+      const startY=770;
+      const lwy=lerp(startY,lTop.ty,eIn(drop)) + drop*(9*Math.sin(u*1.25)+4*Math.sin(u*2.05));
+      const rwy=lerp(startY,rT.ty,eIn(drop));
+      weight(S2L,lwy,150,86,appear);
+      weight(rT.tx,rwy,150,86,appear);
+      putCap(capB, u<2.2?'IDENTICAL — UNLOADED':'ONLY THE COST TELLS THEM APART', CX,624,INK,clamp((u-0.3)/0.7,0,1));
+      putCap(capA,'A RULE',S2L,1420,YOU,clamp((ced-0.2)/0.5,0,1));
+      putCap(capD,'A PREFERENCE',S2R,1420,DEAD,clamp((ced-0.2)/0.5,0,1));
+      MrD.hide();                              // S2 : pas de narrateur (les deux barres vivent seules)
+      flush();
+    }
+
+    // ═══ S3 — DES MOIS À VIDE, PUIS LA PREMIÈRE VRAIE CHARGE ═══
+    // Verbe visuel : LA SÉRIE QUI DÉFILE + L'EXTINCTION — « DISCIPLINED » brille, puis meurt à la première charge.
+    const BASE3=1330, BH3=190, S3N=6, S3GAP=118, S3X0=250, HITB=3;
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); setOp(plaque,0); reset();
+      const drift=-u*8;                        // les jours défilent (déplacement de POSITION, vie fiable)
+      const drop=clamp((u-1.7)/1.1,0,1);
+      const ced=clamp((u-2.2)/1.0,0,1);
+      let hitTop=null;
+      for(let i=0;i<S3N;i++){
+        const x=S3X0+i*S3GAP+drift;
+        const sway=2.5*Math.sin(u*1.2+i*1.1)+1.2*Math.sin(u*2.3+i);
+        if(i===HITB){
+          const lean=sway+ced*90, sag=0.02+ced*0.44, col=ced>0.12?DEAD:YOU;
+          hitTop=bar(x,BASE3,BH3,lean,sag,col,16,1);
+        }else{
+          bar(x,BASE3,BH3,sway,0.01,YOU,14,0.96);
+        }
+      }
+      if(hitTop){const wy=lerp(830,hitTop.ty,eIn(drop)); weight(hitTop.tx,wy,150,84,clamp((u-1.4)/0.6,0,1));}
+      // DISCIPLINED : brille jour après jour, puis vacille et MEURT à la première charge
+      const glow=0.72+0.28*Math.sin(u*2.2);
+      const flick=u<2.6?1:(u<3.4?(Math.sin(u*40)>0?1:0.12):0);
+      putCap(capB,'DISCIPLINED',CX,772,YOU,glow*flick);
+      putCap(capA,'MONTHS — NOTHING MEASURED',CX,700,INK,clamp((u-3.4)/0.9,0,1));
+      putCap(capC,'FIRST REAL COST',hitTop?hitTop.tx:534,1428,DEAD,clamp((u-2.6)/0.7,0,1));
+      // MR DOLLAR : il CONSTATE l'étiquette qui meurt, puis s'efface — la série défile encore sans lui
+      if(u>0.8 && u<5.0){ MrD.enter(u-0.8,{t:t,routine:'constate',rest:{x:150,y:1420,h:196},op:clamp((u-0.8)/0.5,0,1)*(1-clamp((u-4.2)/0.7,0,1))}); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    // ═══ S4 — LE RAISONNEMENT QUI N'APPARAÎT QUE SOUS CHARGE (SANS NARRATEUR) ═══
+    // Verbe visuel : LA CORRÉLATION — poids et argument apparaissent/disparaissent EN VERROU, cadence qui accélère.
+    const BASE4=1330, BH4=320, S4X=380;
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); MrD.hide();
+      // cadence qui ACCÉLÈRE (phase = intégrale d'une fréquence croissante)
+      const tt=Math.max(0,u-1.4), ph=0.85*tt+0.09*tt*tt, sN=Math.sin(ph*2*Math.PI);
+      const load=clamp(0.5+0.75*sN,0,1);
+      const caved=clamp((u-4.4)/1.1,0,1);      // après le verdict, elle cède POUR DE BON (à GAUCHE, loin du raisonnement)
+      const tremor=8*Math.sin(u*1.6)+4*Math.sin(u*2.7);
+      const lean=tremor + 34*load*(1-caved) + caved*84;
+      const sag=0.03 + 0.05*load*(1-caved) + caved*0.42;
+      const bTop=bar(S4X,BASE4,BH4,lean,sag,caved>0.2?DEAD:YOU,20,1);
+      // le poids : DESCEND quand load↑, se LÈVE quand load↓ (déplacement de POSITION, jamais une simple opacité) + bob permanent ample
+      const lift=300, wy=bTop.ty - lift*(1-load) + 12*Math.sin(u*1.05)+6*Math.sin(u*1.9);
+      weight(bTop.tx, wy, 150, 88, 1);
+      // LE RAISONNEMENT (à DROITE, jamais sur la barre) : la phrase TOMBE en place quand le poids arrive, et disparaît sans lui.
+      // opacité verrouillée sur la charge (>0,2) → il n'apparaît QUE sous charge (corrélation parfaite = le point de la scène).
+      const rop=clamp((load-0.2)/0.55,0,1)*clamp(u/0.6,0,1);
+      const qx=800, qy=1064+18*(1-load);       // il tombe (déplacement de POSITION léger, en plus du gros mouvement du poids)
+      putCap(capC,'“IT’S DIFFERENT”',qx,qy,INK,rop);
+      const hw=(capC.__hw||150), cxq=clamp(qx,70+hw,1010-hw);   // le trait de l'argument, à la largeur MESURÉE du texte
+      plaque.setAttribute('x',(cxq-hw).toFixed(1));plaque.setAttribute('y',(qy+20).toFixed(1));
+      plaque.setAttribute('width',(hw*2).toFixed(1));plaque.setAttribute('height',6);plaque.setAttribute('rx',3);
+      plaque.setAttribute('fill',INK);plaque.setAttribute('stroke','none');setOp(plaque,rop);
+      putCap(capB,'THE EXCUSE ONLY COMES UNDER LOAD',CX,600,INK,clamp((u-2.8)/0.9,0,1));
+      putCap(capA,'IT CAVED ANYWAY',bTop.tx,1424,DEAD,clamp((caved-0.2)/0.5,0,1));
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : le compteur qui n'avance QUE sous charge tenue ═══
+    // Verbe visuel : L'INCRÉMENT MÉRITÉ — les jours faciles défilent sans compter, un poids tenu gagne un cran.
+    const BASE5=1330, BH5=180, CN=12, CSZ=42, CGAP=46, CX0=250, CY=676, S5N=6, S5GAP=120, S5X0=170, HITA=2, HITC=4;
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); setOp(plaque,0); reset();
+      const cap=clamp((u-0.3)/0.8,0,1);
+      const earned=(u>2.9?1:0)+(u>4.0?1:0);
+      for(let i=0;i<CN;i++){ tick(CX0+i*CGAP,CY,CSZ,i<earned,cap); }
+      // la série des jours faciles : barres teal À VIDE qui défilent, ne comptent jamais
+      const drift=-u*7;
+      for(let i=0;i<S5N;i++){
+        const x=S5X0+i*S5GAP+drift;
+        const sway=2.5*Math.sin(u*1.15+i*1.2)+1.2*Math.sin(u*2.2+i);
+        if(i===HITA || i===HITC){
+          const on=(i===HITA)?clamp((u-2.2)/0.7,0,1):clamp((u-3.3)/0.7,0,1);
+          const held=bar(x,BASE5,BH5,sway+on*6*Math.sin(u*3.1),0.02+0.02*on,YOU,16,1);   // elle TIENT sous charge
+          const wy=lerp(880,held.ty,eIn(on))+(on>0.99?3*Math.sin(u*1.7):0);
+          weight(held.tx,wy,140,80,on>0.02?1:0);
+        }else{
+          bar(x,BASE5,BH5,sway,0.01,YOU,14,0.95);
+        }
+      }
+      const counterCX=CX0+(CN-1)*CGAP/2;
+      putCap(capB,'YOUR REAL DISCIPLINE',CX,624,INK,clamp((u-0.3)/0.7,0,1));
+      putCap(capC,'ONLY LOAD YOU HELD COUNTS',counterCX,760,YOU,clamp((u-1.2)/0.7,0,1));
+      putCap(capA,'EASY DAYS NEVER COUNTED',CX,1420,DEAD,clamp((u-2.0)/0.8,0,1));
+      // MR DOLLAR : il DÉSIGNE le compteur, puis s'en va — l'image finale (le compteur, ses rares crans) reste seule
+      if(u>0.7 && u<4.6){ MrD.pointAt('point', t, 190+6*Math.sin(u*1.1), 1432, 214, clamp((u-0.7)/0.6,0,1)*(1-clamp((u-3.8)/0.7,0,1)), counterCX); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
