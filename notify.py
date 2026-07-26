@@ -90,13 +90,10 @@ def block_button(episode: str) -> dict:
 
 
 def send_photo(caption: str, path) -> bool:
-    """Envoie une image (sendPhoto) avec légende."""
-    try:
-        with open(path, "rb") as f:
-            return _post("sendPhoto", {"caption": caption[:1024]}, {"photo": f})
-    except OSError as exc:
-        print(f"[notify] sendPhoto lecture impossible : {exc}", file=sys.stderr)
-        return False
+    """DÉSACTIVÉ (Matisse, 26/07) : plus d'images sur Telegram, ça ne sert à rien.
+    On garde la fonction pour ne casser aucun appelant, mais elle n'envoie plus rien."""
+    print(f"[notify] sendPhoto désactivé — image NON envoyée : {path}", file=sys.stderr)
+    return True
 
 
 if __name__ == "__main__":

@@ -117,13 +117,12 @@ def notify_video(msg: str, path: Path):
 
 
 def notify_frames(msg: str, frames: list[Path]):
-    print(f"[TELEGRAM+FRAMES] {msg} -> {[f.name for f in frames]}")
+    # Matisse (26/07) : PLUS D'IMAGES sur Telegram, ça ne sert à rien. Texte seulement.
+    # On garde la signature (les frames restent sur le runner) mais on ne les envoie plus.
+    print(f"[TELEGRAM] {msg} (frames non envoyées : {[f.name for f in frames]})")
     if notify:
         try:
             notify.send(msg)
-            for f in frames:
-                if hasattr(notify, "send_photo"):
-                    notify.send_photo(f.name, f)
         except Exception as exc:
             print(f"[notify] {exc}", file=sys.stderr)
 
