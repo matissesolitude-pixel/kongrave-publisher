@@ -31,6 +31,8 @@ def main(argv=None) -> int:
     ap.add_argument("episode", help="Identifiant de l'épisode (ex : L22v2)")
     ap.add_argument("media_id", help="media_id du Reel déjà publié")
     ap.add_argument("--message", default=None, help="Texte du commentaire (défaut : pinned_comment du JSON)")
+    ap.add_argument("--replace", default=None, metavar="COMMENT_ID",
+                    help="Supprime d'abord ce commentaire (pour corriger un CTA déjà posté)")
     args = ap.parse_args(argv)
 
     message = args.message
@@ -43,6 +45,14 @@ def main(argv=None) -> int:
     if not message:
         print(f"[ERREUR] aucun commentaire à poster pour {args.episode}")
         return 1
+
+    if args.replace:
+        try:
+            ig_api.delete_comment(args.replace)
+            print(f"[OK] ancien commentaire supprimé : {args.replace}")
+        except ig_api.IgApiError as exc:
+            print(f"[ERREUR] suppression ancien commentaire : {exc}")
+            return 1
 
     try:
         cid = ig_api.post_comment(args.media_id, message)

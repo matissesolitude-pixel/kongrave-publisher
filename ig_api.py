@@ -201,3 +201,11 @@ def post_comment(media_id: str, message: str) -> str:
     if not comment_id:
         raise IgApiError(f"Réponse sans id de commentaire : {payload}")
     return comment_id
+
+
+def delete_comment(comment_id: str) -> bool:
+    """Supprime un commentaire (pour corriger/remplacer). Requiert instagram_manage_comments."""
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{comment_id}"
+    resp = _request("DELETE", url, params={"access_token": _access_token()})
+    _raise_for_api_error(resp, "Suppression du commentaire")
+    return True
