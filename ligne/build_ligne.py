@@ -322,6 +322,61 @@ def build_audio(tl, work):
     return out
 
 
+# ── SFX « PAR TOUCHE » ───────────────────────────────────────────────────────
+# Effets sonores MINIMAUX, synthétisés (aucune banque externe, déterministe).
+# Des ACCENTS sur les temps-clés, sous la voix — jamais un tapis. Déclarés dans le
+# JSON de l'épisode : "sfx": [{"sc": 4, "t": 1.0, "s": "tick"}, ...]
+#   sc = numéro de scène (1-based), t = décalage EN SECONDES depuis le début de la
+#   scène (donc robuste aux variations de durée de la voix), s = nom du son.
+# Absence de "sfx" -> rien ne change (audio = voix seule).
+SFX_DEFS = {
+    # nom      durée  source lavfi                    mise en forme                                              vol
+    "tick":    (0.06, "sine=f=1800:d=0.06",           "afade=t=out:st=0.015:d=0.045",                            0.13),
+    "tickhi":  (0.06, "sine=f=2300:d=0.06",           "afade=t=out:st=0.015:d=0.045",                            0.13),
+    "pop":     (0.10, "sine=f=640:d=0.10",            "afade=t=out:st=0.02:d=0.08",                              0.15),
+    "thunk":   (0.22, "sine=f=92:d=0.22",             "afade=t=out:st=0.03:d=0.19",                              0.24),
+    "whoosh":  (0.30, "anoisesrc=d=0.30:c=pink",      "highpass=f=500,afade=t=in:d=0.12,afade=t=out:st=0.16:d=0.14", 0.11),
+    "riser":   (0.50, "anoisesrc=d=0.50:c=pink",      "highpass=f=700,afade=t=in:d=0.45,volume=1.4",             0.10),
+    "resolve": (0.80, "sine=f=294:d=0.80",            "afade=t=in:d=0.05,afade=t=out:st=0.25:d=0.55",            0.16),
+}
+
+
+def mix_sfx(audio, ep, tl, work):
+    cues = ep.get("sfx") or []
+    if not cues:
+        return audio
+    inp = ["-i", str(audio)]
+    filters = ["[0:a]aformat=channel_layouts=mono[v0]"]
+    mix = ["[v0]"]
+    k = 1
+    for c in cues:
+        name = c.get("s")
+        if name not in SFX_DEFS:
+            continue
+        sc = c.get("sc")
+        off = float(c.get("t", 0))
+        if sc is not None and 1 <= int(sc) <= len(tl["sc"]):
+            t = tl["sc"][int(sc) - 1]["s"] + off      # relatif à la scène
+        else:
+            t = off                                    # temps absolu
+        if t < 0 or t > tl["total"]:
+            continue
+        d, src, post, vol = SFX_DEFS[name]
+        inp += ["-f", "lavfi", "-t", f"{d:.3f}", "-i", src]
+        ms = int(round(t * 1000))
+        filters.append(f"[{k}:a]{post},volume={vol},aformat=channel_layouts=mono,adelay={ms}[s{k}]")
+        mix.append(f"[s{k}]")
+        k += 1
+    if len(mix) == 1:
+        return audio
+    filters.append("".join(mix) + f"amix=inputs={len(mix)}:normalize=0:dropout_transition=0[out]")
+    out = work / "audio_sfx.mp3"
+    run([FF, "-y", "-v", "error", *inp, "-filter_complex", ";".join(filters),
+         "-map", "[out]", "-c:a", "libmp3lame", "-q:a", "2", str(out)], "sfx")
+    print(f"[sfx] {len(mix) - 1} touches mixées sous la voix")
+    return out
+
+
 def assemble(eid, tl, anim, audio):
     OUTDIR.mkdir(parents=True, exist_ok=True)
     out = OUTDIR / f"{eid}.mp4"
@@ -349,7 +404,8 @@ def main():
         anim = build_anim(ep, tl, work, rend)
         scan_progression(anim, tl, rend)   # fail-loud : trou >0,8s sans progression -> build échoue
     if stage in ("build", "all"):
-        assemble(eid, tl, rend / "anim.mp4", build_audio(tl, work))
+        audio = mix_sfx(build_audio(tl, work), ep, tl, work)
+        assemble(eid, tl, rend / "anim.mp4", audio)
     print("[done]")
 
 
