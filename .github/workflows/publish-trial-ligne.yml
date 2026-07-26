@@ -45,7 +45,7 @@ jobs:
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API }}
       INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
       META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
-      GRAPH_VERSION: v20.0
+      GRAPH_VERSION: v21.0          # Trial Reels (trial_params) supporté à partir de v21.0
       EP: ${{ github.event.inputs.episode }}
     steps:
       - name: Checkout
