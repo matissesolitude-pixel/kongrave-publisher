@@ -297,6 +297,27 @@ def _try_publish(mp4: Path, caption: str, dry_run: bool):
     return None, last_exc
 
 
+def _post_cta_comment(name: str, media_id: str) -> None:
+    """Poste le CTA (pinned_comment du JSON) en commentaire sous le Reel publié.
+    Best-effort : toute erreur est loggée mais n'interrompt PAS la publication."""
+    try:
+        jp = EPISODES_DIR / f"{name}.json"
+        if not jp.is_file():
+            # nom de dossier possiblement paddé (L28) vs JSON (L28.json) — tente sans zéro
+            alt = EPISODES_DIR / f"L{int(''.join(c for c in name if c.isdigit()))}.json"
+            jp = alt if alt.is_file() else jp
+        if not jp.is_file():
+            return
+        cta = (json.loads(jp.read_text(encoding="utf-8")).get("pinned_comment") or "").strip()
+        if not cta:
+            return
+        cid = ig_api.post_comment(media_id, cta)
+        print(f"[ligne] CTA posté en commentaire : id={cid}")
+    except Exception as exc:
+        print(f"[ligne] CTA NON posté ({exc}) — publication OK, commentaire à coller à la main.",
+              file=sys.stderr)
+
+
 def _episode_files(folder: Path):
     """Un dossier d'épisode = exactement un .mp4 + un caption.txt (optionnel)."""
     mp4s = sorted(folder.glob("*.mp4"))
@@ -411,6 +432,8 @@ def run(dry_run: bool = False, force: bool = False) -> int:
                 "media_id": pub["media_id"], "container_id": pub["container_id"],
                 "published_at": _iso(now), "logged_at": _iso(now),
             })
+            # CTA EN COMMENTAIRE (best-effort : n'échoue jamais la publication).
+            _post_cta_comment(name, pub["media_id"])
             notify.send(f"✅ LIGNE {name} publié sur @kongrave_.\nmedia_id : {pub['media_id']}")
             print(f"[ligne] {name} publié et déplacé en published/.")
             return 0
