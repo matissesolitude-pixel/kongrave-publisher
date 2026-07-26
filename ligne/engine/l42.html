@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L42 « THE STORY YOU TELL AFTER » — fusil = LE COUVERCLE-HISTOIRE. S1 : émotion frame 0 = RECONNAISSANCE + CURIOSITÉ —
+       une perte grise au centre, DÉJÀ recouverte aux trois quarts par une forme ornée (l'histoire) saisie en plein glissement.
+       S2 : le couvercle se soulève — dessous, une croyance teal fragile ('bon trader, mauvaise chance') ; elle glisse au grand
+       air, protégée, pendant que le couvercle se repose sur la PERTE, désormais scellée (une main teal bute dessus). S3 : deux
+       affirmations — 'THIS HAPPENED' (fait solide, encre, coché VRAI) vs 'THIS IS WHY I LOST' (un lien POINTILLÉ, jamais coché) :
+       le lien n'a jamais été testé. S4 (SANS narrateur) : sous les couvercles, les vraies causes intactes, jamais nommées ; la
+       pile de couvercles monte, cadence qui presse — chaque perte une histoire, aucune une leçon. S5 : décharge — on retire le
+       couvercle et on le met à l'épreuve ('si ça avait été un GAIN — même histoire ?') ; côté gain, le couvercle reste plat,
+       inerte : c'est un BOUCLIER, pas une raison. Retiré, il révèle la vraie cause, qui reçoit une marque teal — nommée, donc
+       corrigeable. Doctrine : aucun chiffre, aucun événement réel nommé ; gris = perte ; teal = TOI ; pas de brun ; narrateur en
+       encre, absent en S4 ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    function setRect(el,x,y,w,h,op){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));el.setAttribute('width',Math.max(1,w).toFixed(1));el.setAttribute('height',Math.max(1,h).toFixed(1));setOp(el,op);}
+
+    // ── DÉFS : les poses du NARRATEUR (art vectorisé, encre) ──
+    /*INCLUDE:narrator*/
+
+
+    // ═══ LES OBJETS (créés dans l'ordre de PROFONDEUR : ce qui est recouvert d'abord, les couvercles au-dessus) ═══
+    const lossRect=mk('rect',{rx:5,fill:DEAD,opacity:0});                 // la perte (grise)
+    const factRect=mk('rect',{rx:5,fill:INK,'fill-opacity':0.9,opacity:0}); // S3 : le FAIT (solide)
+    const winRect =mk('rect',{rx:5,fill:YOU,opacity:0});                  // S5 : le GAIN (teal)
+    const belief  =mk('rect',{rx:16,fill:PAPER,stroke:YOU,'stroke-width':7,opacity:0}); // S2 : la croyance fragile (teal)
+    const beliefI =mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0}); // fissure = fragilité
+    const causeS5 =mk('rect',{rx:5,fill:INK,'fill-opacity':0.92,opacity:0}); // S5 : la vraie cause révélée
+    const CAUSES=[]; for(let i=0;i<3;i++)CAUSES.push(mk('rect',{rx:5,fill:INK,'fill-opacity':0.92,opacity:0})); // S4 : les vraies causes intactes
+    const linkLine=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-dasharray':'4 20','stroke-linecap':'round',opacity:0}); // S3 : le lien jamais testé
+
+    // ── LE COUVERCLE-HISTOIRE : forme ornée, opaque (papier), qui RECOUVRE ce qui est dessous ──
+    function makeLid(){
+      const body=mk('rect',{rx:16,fill:PAPER,stroke:INK,'stroke-width':6,opacity:0});
+      const ridge=mk('rect',{rx:7,fill:PAPER,stroke:INK,'stroke-width':5,opacity:0});
+      const knob=mk('rect',{rx:6,fill:INK,opacity:0});
+      const orn1=mk('line',{stroke:INK,'stroke-width':3,'stroke-linecap':'round',opacity:0});
+      const orn2=mk('line',{stroke:INK,'stroke-width':3,'stroke-linecap':'round',opacity:0});
+      const o={body,ridge,knob,orn1,orn2};
+      o.set=(x,y,w,h,op)=>{
+        setRect(body,x,y,w,h,op);
+        const hw=w*0.30,hx=x+(w-hw)/2,hy=y-20;
+        setRect(ridge,hx,hy,hw,20,op);
+        setRect(knob,x+w/2-14,hy-15,28,17,op*0.95);
+        const oy1=y+h*0.34,oy2=y+h*0.70;
+        linePos(orn1,x+18,oy1,x+w-18,oy1,op*0.5);
+        linePos(orn2,x+18,oy2,x+w-18,oy2,op*0.5);
+      };
+      o.hide=()=>{setOp(body,0);setOp(ridge,0);setOp(knob,0);setOp(orn1,0);setOp(orn2,0);};
+      return o;
+    }
+    function linePos(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));setOp(el,op);}
+    const lidMain=makeLid();                         // S1 · S2 · S5 : le couvercle principal
+    const LIDS=[]; for(let i=0;i<6;i++)LIDS.push(makeLid());   // S4 : la pile
+    const lidFlat=makeLid();                         // S5 : le couvercle inerte, côté gain
+
+    // ── la main teal de l'EXAMEN (S2) : elle bute sur le couvercle ──
+    const probeLine=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const probeDot =mk('circle',{r:14,fill:'none',stroke:YOU,'stroke-width':7,opacity:0});
+    // ── les marques teal (nommer = corrigeable) ──
+    const check3=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':11,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const check5=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':11,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const ring5 =mk('rect',{rx:8,fill:'none',stroke:YOU,'stroke-width':5,opacity:0});
+    // couture qui FILE (motif à vitesse constante) : garantit la progression pendant les longues tenues (S1, S5)
+    const seam  =mk('line',{fill:'none','stroke-width':5,'stroke-dasharray':'6 16','stroke-linecap':'round',opacity:0});
+    function setCheck(el,cx,cy,s,op){el.setAttribute('points',
+      [[cx-16*s,cy+2*s],[cx-5*s,cy+15*s],[cx+19*s,cy-15*s]].map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));setOp(el,op);}
+
+    function hideObjects(){
+      setOp(lossRect,0);setOp(factRect,0);setOp(winRect,0);setOp(belief,0);setOp(beliefI,0);setOp(causeS5,0);
+      for(const c of CAUSES)setOp(c,0);setOp(linkLine,0);
+      lidMain.hide();for(const l of LIDS)l.hide();lidFlat.hide();
+      setOp(probeLine,0);setOp(probeDot,0);setOp(check3,0);setOp(check5,0);setOp(ring5,0);setOp(seam,0);
+    }
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHERE DOES THE','EXPLANATION COME FROM'];
+    const FS=88,lineH=112,y0Q=200,qY=QLINES.map((s,li)=>y0Q+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0Q+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26/l44) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(46),capC=caption(40),capD=caption(38),capE=caption(38),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LA PERTE DÉJÀ EN TRAIN D'ÊTRE RECOUVERTE ═══
+    // Verbe visuel : le glissement de recouvrement (le couvercle mange la perte).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideObjects();
+      const gf=clamp(1-(lf-0.86)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*clamp(1-(u-5.2)/1.3,0,1));qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ÉMOTION FRAME 0 : la perte est là ET le couvercle est DÉJÀ aux trois quarts. Rien ne se construit.
+      const lossX0=370,lossY0=1120,lossW=340,lossH=170;
+      setRect(lossRect,lossX0,lossY0,lossW,lossH,1);
+      // le couvercle n'a JAMAIS fini de sceller : il glisse et re-glisse, un liseré de perte grise affleure puis se dérobe.
+      // Le bord gris/papier balaie sans cesse → vie continue FRANCHE (des pixels pleins changent, pas juste un contour fin).
+      const Lc=lerp(430,398,clamp(u/14,0,1));                    // le bord gauche se referme lentement (la perte disparaît dessous)
+      const lidX0=Lc+26*Math.sin(u*0.82)+12*Math.sin(u*1.73), lidY0=1095+5*Math.sin(u*1.25)+2*Math.sin(u*2.35);
+      lidMain.set(lidX0,lidY0,420,210,1);
+      // couture qui file sur le couvercle (motif à vitesse constante) — plancher de progression pour la longue tenue
+      linePos(seam,lidX0+24,lidY0+150,lidX0+396,lidY0+150,0.45);
+      seam.setAttribute('stroke',INK);seam.setAttribute('stroke-dashoffset',(-u*46).toFixed(0));
+      putCap(capA,'THE LOSS',290,1360,DEAD,clamp((u-1.6)/0.6,0,1)*gf);
+      putCap(capB,'AN EXPLANATION',540,1018,INK,clamp((u-3.6)/0.7,0,1)*gf);
+      // MR DOLLAR : il entre, il PARLE, désigne l'objet — puis il s'en va (la démonstration continue à glisser seule)
+      if(u<4.4){
+        MrD.enter(u, {t:t, routine:'designe', lookAt:540, rest:{x:210, y:1430, h:232}, op:gf});
+      }else{
+        const o=clamp((u-4.4)/1.2,0,1);
+        MrD.say('walk', t, lerp(210,-180,eInOut(o)), 1430, 232, (1-o)*gf, true, 0,1,1);
+      }
+    }
+
+    // ═══ S2 — LE COUVERCLE SE SOULÈVE : il est là pour la CROYANCE, pas pour la perte ═══
+    // Verbe visuel : le soulèvement-révélation (ce qu'il protège sort au grand air, la perte est rescellée).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjects();
+      const lossX0=300,lossY0=1150,lossW=220,lossH=160;
+      setRect(lossRect,lossX0,lossY0,lossW,lossH,1);
+      // le couvercle se lève (0→1.7), révèle, puis se repose sur la PERTE (2→3.3) ; houle résiduelle ensuite
+      const up=eInOut(clamp(u/1.7,0,1)), down=eInOut(clamp((u-2.0)/1.3,0,1));
+      const lift=210*up*(1-down);
+      const lidBaseY=1120, lidH=210;
+      const lsx=4*Math.sin(u*1.05)+2*Math.sin(u*2.3), lsy=4*Math.sin(u*1.15)+2*Math.sin(u*2.5);
+      const lidY=lidBaseY-lift+lsy;
+      lidMain.set(270+lsx,lidY,290,lidH,1);
+      // la croyance teal, tuchée dessous, GLISSE au grand air à droite (protégée, exposée, confortable) ; elle tremble (fragile)
+      const slide=eInOut(clamp((u-2.0)/1.4,0,1));
+      const bx=lerp(410,700,slide)+2.5*Math.sin(u*1.7)+1.5*Math.sin(u*3.1);
+      const by=1200+3*Math.sin(u*1.3)+1.5*Math.sin(u*2.7);
+      setRect(belief,bx,by,86,110,clamp((u-0.2)/0.4,0,1));
+      linePos(beliefI,bx+43,by+18,bx+43,by+92,clamp((u-0.2)/0.4,0,1));
+      // la main teal de l'examen : elle monte vers la perte scellée et BUTE sur le dessous du couvercle
+      const pop=clamp((u-2.4)/0.6,0,1), lidBot=lidY+lidH;
+      const tipY=lidBot+120-100*(0.5+0.5*Math.sin(u*1.9))-6*Math.sin(u*3.7);
+      probeDot.setAttribute('cx',(410+lsx).toFixed(1));probeDot.setAttribute('cy',tipY.toFixed(1));setOp(probeDot,pop);
+      linePos(probeLine,410+lsx,tipY+14,410+lsx,tipY+82,pop);
+      putCap(capB,'THE STORY PROTECTS A BELIEF',540,650,INK,clamp((u-3.0)/0.8,0,1));
+      putCap(capC,'GOOD TRADER, BAD LUCK',770,1400,YOU,clamp((u-2.4)/0.7,0,1)*slide);
+      putCap(capD,'THE LOSS, SEALED AGAIN',280,1400,DEAD,clamp((u-3.4)/0.7,0,1));
+      // BEAT : il entre, désigne la croyance protégée, puis il sort ; la scène continue de vivre sans lui
+      if(u<4.6){
+        MrD.enter(u, {t:t, routine:'designe', lookAt:bx, rest:{x:165, y:1430, h:214}, op:1});
+      }else{
+        const o=clamp((u-4.6)/1.2,0,1);
+        MrD.say('walk', t, lerp(165,-180,eInOut(o)), 1430, 214, (1-o), true, 0,1,1);
+      }
+    }
+
+    // ═══ S3 — DEUX AFFIRMATIONS : un fait coché VRAI, un lien pointillé jamais testé ═══
+    // Verbe visuel : le lien pointillé qui se trace mais ne reçoit jamais de coche.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjects();
+      const fx=6*Math.sin(u*0.9)+3*Math.sin(u*1.8), lxs=6*Math.sin(u*1.0)+3*Math.sin(u*2.1);
+      // GAUCHE — LE FAIT (solide) : il reçoit une coche teal. VRAI.
+      const fX0=130+fx, fY0=1060, fW=300, fH=150;
+      setRect(factRect,fX0,fY0,fW,fH,0.9);
+      const ck=clamp((u-1.0)/0.6,0,1); setCheck(check3,fX0+fW-52,fY0+52,1.7,ck);
+      // DROITE — LA PERTE (grise)
+      const gX0=650+lxs, gY0=1060, gW=300, gH=150;
+      setRect(lossRect,gX0,gY0,gW,gH,1);
+      // LE LIEN : du fait à la perte, il se trace en POINTILLÉ — aucune coche ne vient jamais
+      const linkP=clamp((u-2.0)/1.3,0,1);
+      const lx1=fX0+fW, ly=1135, lx2=lerp(fX0+fW, gX0, linkP);
+      linePos(linkLine,lx1,ly,lx2,ly,clamp(linkP,0,1)*0.95);
+      linkLine.setAttribute('stroke-dashoffset',(-u*22).toFixed(0));
+      putCap(capA,'TRUE',280,1010,YOU,ck);
+      putCap(capC,'THIS HAPPENED',280,1290,INK,clamp((u-0.6)/0.6,0,1));
+      putCap(capD,'THIS IS WHY I LOST',800,1290,DEAD,clamp((u-1.8)/0.7,0,1));
+      putCap(capE,'THIS LINK — NEVER TESTED',540,975,DEAD,clamp((u-2.6)/0.7,0,1)*linkP);
+      putCap(capB,'THE FACT IS TRUE — THE LINK IS NOT',540,650,INK,clamp((u-3.4)/0.8,0,1));
+      // BEAT : il désigne le lien pointillé (ce qu'on n'a jamais vérifié), puis il s'efface
+      if(u<4.4){
+        MrD.pointAt('point', t, 165+4*Math.sin(u*1.2)+2*Math.sin(u*2.3), 1430, 214, clamp((u-1.6)/0.6,0,1), 540);
+      }else{
+        const o=clamp((u-4.4)/1.1,0,1);
+        MrD.say('walk', t, lerp(165,-180,eInOut(o)), 1430, 214, (1-o), true, 0,1,1);
+      }
+    }
+
+    // ═══ S4 — LA PILE MONTE, LES CAUSES INTACTES EN DESSOUS (SANS NARRATEUR) ═══
+    // Verbe visuel : l'empilement cadencé (chaque perte ajoute un couvercle ; les causes ne bougent jamais).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjects(); MrD.hide();
+      // LES VRAIES CAUSES : trois blocs encre, alignés, JAMAIS marqués — ils frémissent (vie continue, sans narrateur)
+      for(let i=0;i<3;i++){
+        const bx=210+i*250+3*Math.sin(u*1.2+i*1.3)+1.5*Math.sin(u*2.3+i*0.7);
+        const by=1340+2*Math.sin(u*1.5+i)+1*Math.sin(u*2.9+i);
+        setRect(CAUSES[i],bx,by,180,58,0.92);
+      }
+      // LA PILE : les couvercles arrivent de la droite et s'empilent, cadence qui presse ; puis tous ondulent (2 harmoniques)
+      const ARR=[-0.6,-0.1,0.6,1.2,1.7,2.1];
+      for(let i=0;i<LIDS.length;i++){
+        const ap=clamp((u-ARR[i])/0.5,0,1);
+        if(ap<=0.01){LIDS[i].hide();continue;}
+        const sy=4*Math.sin(u*0.9+i*0.8)+2*Math.sin(u*1.9+i*0.5);
+        const sx=3*Math.sin(u*1.1+i*0.6)+1.5*Math.sin(u*2.2+i);
+        const xoff=(1-ap)*320;
+        LIDS[i].set(390+xoff+sx, (1290-i*70)+sy, 300, 64, ap);
+      }
+      putCap(capB,'EVERY LOSS GETS A STORY',540,620,INK,clamp((u-0.4)/0.7,0,1));
+      putCap(capC,'NO LOSS GETS A LESSON',540,692,DEAD,clamp((u-2.4)/0.8,0,1));
+      putCap(capD,'THE SAME CAUSES — UNTOUCHED',540,1445,DEAD,clamp((u-3.4)/0.8,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : on retire le couvercle et on le met à l'épreuve du GAIN ═══
+    // Verbe visuel : le test qui démasque (côté gain, l'histoire ne s'active pas → c'est un bouclier ; la cause est nommée).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjects();
+      // LA VRAIE CAUSE (encre pleine), révélée quand le couvercle est retiré — elle dérive nettement (bloc plein = pixels qui changent)
+      const cx0=290+8*Math.sin(u*1.0)+4*Math.sin(u*2.15), cy0=1180+5*Math.sin(u*1.35)+2.5*Math.sin(u*2.7);
+      setRect(causeS5,cx0,cy0,200,100,clamp((u-1.2)/0.7,0,1));
+      // couture teal qui file sous la cause nommée (vitesse constante) — plancher de progression pour la tenue finale
+      linePos(seam,cx0-6,cy0+118,cx0+206,cy0+118,clamp((u-1.4)/0.7,0,1)*0.7);
+      seam.setAttribute('stroke',YOU);seam.setAttribute('stroke-dashoffset',(-u*44).toFixed(0));
+      // LE COUVERCLE-HISTOIRE : retiré, il monte et s'efface (le test l'enlève)
+      const out=eInOut(clamp((u-0.3)/1.7,0,1));
+      const lidOp=clamp(1-(out-0.62)/0.32,0,1);
+      if(lidOp>0.01) lidMain.set(250+40*out+4*Math.sin(u*1.1), 1140-440*out, 280, 180, lidOp);
+      else lidMain.hide();
+      // marque teal : la cause enfin NOMMÉE → corrigeable
+      const nm=clamp((u-2.6)/0.7,0,1);
+      setRect(ring5,cx0-9,cy0-9,218,118,nm);
+      setCheck(check5,cx0+200+18,cy0-6+8*Math.sin(u*1.6),1.7,clamp((u-3.0)/0.6,0,1));
+      // CÔTÉ GAIN : le même événement, mais gagnant (teal) — et le couvercle reste PLAT, inerte (personne n'invoque l'histoire quand ça gagne)
+      const rp=clamp((u-2.0)/0.8,0,1);
+      setRect(winRect,700+6*Math.sin(u*1.15)+3*Math.sin(u*2.25),1180+4*Math.sin(u*1.6)+2*Math.sin(u*2.9),150,110,rp);
+      lidFlat.set(690+2*Math.sin(u*1.4),1338,180,40,rp*0.9);   // couvercle à plat : jamais soulevé
+      putCap(capB,'IF THIS HAD BEEN A WIN',540,636,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capA,'WOULD YOU TELL THE SAME STORY',540,708,INK,clamp((u-1.4)/0.8,0,1));
+      putCap(capC,'THE REAL CAUSE',350,1360,YOU,nm);                              // sous la cause (gauche) — la marque teal dit « nommée »
+      putCap(capD,'A WIN — NO STORY',778,1120,DEAD,clamp((u-2.4)/0.7,0,1));       // AU-DESSUS du gain (droite) — jamais sur la même ligne que capC
+      putCap(capE,'A REASON THAT HIDES WHEN YOU WIN IS A SHIELD',540,1450,INK,clamp((u-3.4)/0.9,0,1));
+      // il désigne le test, puis il s'efface : l'image finale reste pure (et vivante sans lui)
+      if(u<3.2){
+        MrD.pointAt('point', t, 160+4*Math.sin(u*1.2)+2*Math.sin(u*2.3), 1430, 210, clamp((u-1.0)/0.6,0,1), 400);
+      }else{ MrD.hide(); }
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
