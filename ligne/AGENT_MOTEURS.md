@@ -177,6 +177,31 @@ Si Chromium n'est pas disponible : relire le moteur scène par scène en se dema
 pour chaque tenue longue, *quel objet se déplace réellement à chaque frame*. S'il n'y
 en a aucun, la scène est morte — ajouter un mouvement de position à deux harmoniques.
 
+## LES SFX « PAR TOUCHE » (à ajouter dans le JSON de chaque nouvel épisode)
+
+Les Reels portent des **effets sonores minimaux** : des ACCENTS sur les temps-clés,
+mixés SOUS la voix. **Jamais un tapis sonore.** Retenue absolue : une poignée de touches
+par épisode, sur les vrais beats. La voix reste toujours maître.
+
+**Comment les poser :** un tableau `sfx` dans le JSON de l'épisode :
+```json
+"sfx": [ {"sc": 4, "t": 1.0, "s": "tick"}, {"sc": 5, "t": 4.0, "s": "resolve"} ]
+```
+- `sc` = numéro de scène (1-based) · `t` = décalage EN SECONDES depuis le début de la scène
+  (relatif = robuste aux variations de durée de la voix) · `s` = nom du son.
+- `build_ligne` synthétise chaque son (aucune banque externe) et le mixe sous la voix.
+
+**Palette et quand l'utiliser :**
+- `pop` → un élément se dessine / apparaît.
+- `whoosh` → une révélation, un balayage, un rideau, un pivot.
+- `thunk` → un impact bas : quelque chose se pose, s'effondre, pèse, plonge.
+- `tick` / `tickhi` → un beat, un pas, un compteur qui monte (`tickhi` pour le climax aigu).
+- `riser` → une courte montée de tension avant un payoff.
+- `resolve` → note calme UNIQUE sur l'image finale tenue.
+
+**Règle :** chaque touche doit correspondre à un ÉVÉNEMENT visible à l'écran (même logique
+que le narrateur : le son souligne une cause visible, il n'invente rien). ~6 à 12 touches max.
+
 ## LE GESTE QUI COMPTE
 
 Écrire `ligne/engine/lNN.html`, committer, **pousser sur `main`**. C'est le push qui
