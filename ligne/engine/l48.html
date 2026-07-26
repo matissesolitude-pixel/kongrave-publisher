@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L48 « THE DOOR THAT OPENS ONE WAY » — fusil : LA PORTE vue EN COUPE, entrée LARGE et vide à gauche, sortie ÉTROITE et
+       bondée à droite. S1 (levier CHOC+CURIOSITÉ) : dès la frame 0 le contraste des deux faces d'un même passage — ta position teal
+       glisse sans effort dans la grande bouche, une foule fil-de-fer bloque le goulot étroit. S2 : diptyque de deux états du monde —
+       à gauche le CALME (une horloge lente, tu ENTRES quand tu choisis) ; à droite l'URGENCE (la foule s'agite, tu SORS quand tu
+       dois) ; toi tu traverses de l'un vers l'autre. S3 : les preneurs RECULENT et se raréfient, le couloir de sortie s'ALLONGE, ta
+       position marche plus loin et chaque pas consomme une tranche grise. S4 : LA scène — une GROSSE position passe la grande bouche
+       d'un bloc, mais doit être DÉCOUPÉE en morceaux pour franchir le goulot, chaque morceau marche plus loin en perdant une tranche.
+       S5 : décharge — AVANT d'entrer on TESTE la sortie en conditions difficiles (une sonde mesure la longueur du couloir), puis la
+       position RÉTRÉCIT jusqu'à sortir d'un bloc par la face étroite. Doctrine : aucun chiffre ; foule = fil-de-fer neutre (ni brun,
+       ni adversaire) ; gris = coût de sortie ; teal = TOI ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // deux harmoniques : jamais de vitesse nulle aux extrêmes (vie continue)
+    const sw=(u,a,w1,b,w2,ph)=>a*Math.sin(w1*u+(ph||0))+b*Math.sin(w2*u+(ph||0)*1.4);
+
+    // ── LA PORTE (vue en coupe) : face ENTRÉE large (gauche), face SORTIE étroite (droite) ──
+    const DL=420, DR=560, WT=715, WB=1305;
+    const ETOP=805, EBOT=1195, XTOP=968, XBOT=1032, PCY=1000;
+    const wallU=mk('polygon',{fill:INK,opacity:0});
+    const wallL=mk('polygon',{fill:INK,opacity:0});
+    function drawDoor(op){
+      wallU.setAttribute('points',`${DL},${WT} ${DR},${WT} ${DR},${XTOP} ${DL},${ETOP}`);
+      wallL.setAttribute('points',`${DL},${WB} ${DR},${WB} ${DR},${XBOT} ${DL},${EBOT}`);
+      setOp(wallU,op);setOp(wallL,op);
+    }
+
+    // ── LA FOULE (fil-de-fer : tête + corps + deux bras) ──
+    const NFIG=14;
+    const FH=[],FB=[],FAL=[],FAR=[];
+    for(let i=0;i<NFIG;i++){
+      FH.push(mk('circle',{fill:INK,opacity:0}));
+      FB.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+      FAL.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+      FAR.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    }
+    let fk=0; function figReset(){fk=0;}
+    function figure(cx,foot,h,op){ if(fk>=NFIG)return; const i=fk++;
+      const r=h*0.15, hy=foot-h+r, neck=hy+r, sh=neck+h*0.10, ax=h*0.20, ay=h*0.20;
+      const H=FH[i],B=FB[i],AL=FAL[i],AR=FAR[i];
+      H.setAttribute('cx',cx.toFixed(1));H.setAttribute('cy',hy.toFixed(1));H.setAttribute('r',r.toFixed(1));setOp(H,op);
+      B.setAttribute('x1',cx.toFixed(1));B.setAttribute('y1',neck.toFixed(1));B.setAttribute('x2',cx.toFixed(1));B.setAttribute('y2',foot.toFixed(1));setOp(B,op);
+      AL.setAttribute('x1',cx.toFixed(1));AL.setAttribute('y1',sh.toFixed(1));AL.setAttribute('x2',(cx-ax).toFixed(1));AL.setAttribute('y2',(sh+ay).toFixed(1));setOp(AL,op);
+      AR.setAttribute('x1',cx.toFixed(1));AR.setAttribute('y1',sh.toFixed(1));AR.setAttribute('x2',(cx+ax).toFixed(1));AR.setAttribute('y2',(sh+ay).toFixed(1));setOp(AR,op);
+    }
+    function figFlush(){for(let i=fk;i<NFIG;i++){setOp(FH[i],0);setOp(FB[i],0);setOp(FAL[i],0);setOp(FAR[i],0);}}
+
+    // ── TA POSITION (teal) + ses MORCEAUX découpés + les TRANCHES consommées (gris) ──
+    const posEl=mk('rect',{rx:10,fill:YOU,opacity:0});
+    const probe=mk('rect',{rx:6,fill:YOU,opacity:0});
+    const NP=8, PIECES=[]; for(let i=0;i<NP;i++)PIECES.push(mk('rect',{rx:8,fill:YOU,opacity:0}));
+    const NG=12, GRY=[]; for(let i=0;i<NG;i++)GRY.push(mk('rect',{rx:6,fill:DEAD,opacity:0}));
+    const guide=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'16 12','stroke-linecap':'round',opacity:0});
+    const clockRing=mk('circle',{fill:'none',stroke:INK,'stroke-width':6,opacity:0});
+    const clockHand=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const clockHub=mk('circle',{fill:INK,opacity:0});
+    let pk=0, gk=0; function poolReset(){pk=0;gk=0;}
+    function piece(x,y,w,h,op){const e=PIECES[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function slice(x,y,w,h,op){const e=GRY[gk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));setOp(e,op);}
+    function poolFlush(){for(let i=pk;i<NP;i++)setOp(PIECES[i],0);for(let i=gk;i<NG;i++)setOp(GRY[i],0);}
+    function setRect(el,x,y,w,h,op){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));
+      el.setAttribute('width',Math.max(2,w).toFixed(1));el.setAttribute('height',Math.max(2,h).toFixed(1));setOp(el,op);}
+    function hideExtras(){setOp(posEl,0);setOp(probe,0);setOp(guide,0);setOp(clockRing,0);setOp(clockHand,0);setOp(clockHub,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME DOOR.','WHY IS LEAVING HARDER?'];
+    const FS=68,lineH=94,y0=205,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+70,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':130,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LES DEUX FACES D'UNE MÊME PORTE (émotion frame 0 : CHOC + CURIOSITÉ) ═══
+    // Verbe visuel : le CONTRASTE — grande bouche vide vs goulot bondé, dès t=0.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); figReset(); poolReset(); hideExtras();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      // question pop ligne par ligne (seul draw-on autorisé : le texte)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── FRAME 0 À TENSION MAX : la porte entière est là, la foule bloque déjà le goulot ──
+      drawDoor(1);
+      // face SORTIE (droite) : foule dense, compactée, qui pousse (vie continue)
+      for(let i=0;i<NFIG;i++){const bx=598+i*26, cx=bx+sw(u,7,1.6,4,2.7,i*0.9), foot=1088+sw(u,7,1.4,3,2.3,i*0.7);
+        figure(cx,foot,150,0.92);}
+      // face ENTRÉE (gauche) : ta position glisse dans la grande bouche, sans effort
+      const px=250+sw(u,34,0.85,16,1.7), py=PCY-46+sw(u,10,1.3,5,2.2);
+      setRect(posEl,px,py,140,92,1);
+      putCap(capC,'YOU',px+70,py-24,YOU,clamp((u-0.6)/0.5,0,1)*gf);
+      // deux étiquettes courtes, chacune STRICTEMENT dans sa moitié, à l'écart de la porte (x420-560)
+      putCap(capA,'EASY IN',225,770,YOU,clamp((u-1.6)/0.7,0,1)*gf);
+      putCap(capB,'JAMMED OUT',795,770,INK,clamp((u-2.2)/0.7,0,1)*gf);
+      figFlush(); poolFlush();
+    }
+
+    // ═══ S2 — DEUX ÉTATS DU MÊME MONDE : tu ENTRES quand tu choisis, tu SORS quand tu dois ═══
+    // Verbe visuel : le diptyque calme/urgence — toi tu glisses de l'un vers l'autre.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); figReset(); poolReset(); hideExtras();
+      drawDoor(1);
+      // GAUCHE — le calme : une horloge lente (l'aiguille tourne = mouvement continu)
+      const clx=245, cly=855, cr=72, ang=u*0.7;
+      clockRing.setAttribute('cx',clx);clockRing.setAttribute('cy',cly);clockRing.setAttribute('r',cr);setOp(clockRing,1);
+      clockHand.setAttribute('x1',clx);clockHand.setAttribute('y1',cly);
+      clockHand.setAttribute('x2',(clx+Math.sin(ang)*cr*0.72).toFixed(1));clockHand.setAttribute('y2',(cly-Math.cos(ang)*cr*0.72).toFixed(1));setOp(clockHand,1);
+      clockHub.setAttribute('cx',clx);clockHub.setAttribute('cy',cly);clockHub.setAttribute('r',8);setOp(clockHub,1);
+      // DROITE — l'urgence : la foule s'agite (sway plus ample et plus rapide)
+      for(let i=0;i<NFIG;i++){const bx=598+i*26, cx=bx+sw(u,14,2.6,7,4.1,i*0.9), foot=1088+sw(u,11,2.4,5,3.6,i*0.7);
+        figure(cx,foot,150,0.9);}
+      // TOI : tu traverses lentement du côté calme vers le côté urgent (mais tu restes à l'écart de la porte)
+      const cr2=eInOut(clamp((u-1.0)/4.5,0,1)); const px=lerp(200,283,cr2)+sw(u,9,1.5,5,2.6), py=PCY-45+sw(u,8,1.3,4,2.2);
+      setRect(posEl,px,py,128,90,1);
+      putCap(capC,'YOU',px+64,py-22,YOU,clamp((u-0.5)/0.5,0,1));
+      putCap(capB,'YOU CHOOSE',225,770,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capA,'FORCED OUT',795,770,INK,clamp((u-2.0)/0.7,0,1));
+      figFlush(); poolFlush();
+    }
+
+    // ═══ S3 — LES PRENEURS RECULENT, LE COULOIR S'ALLONGE, CHAQUE PAS COÛTE ═══
+    // Verbe visuel : le retrait + l'allongement (la foule s'éloigne, la sortie marche plus loin).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); figReset(); poolReset(); hideExtras();
+      drawDoor(1);
+      // les preneurs proches se RETIRENT (fade + dérive à droite), quelques-uns restent, plus LOIN (dans le cadre)
+      const retreat=clamp(u/2.0,0,1);
+      const FARX=[895,925,955,982];                        // positions finales des rares restants (jamais hors cadre)
+      for(let i=0;i<NFIG;i++){
+        const far=i>=NFIG-4;
+        const bx=(far? lerp(598+i*26, FARX[i-(NFIG-4)], retreat) : 598+i*26+60*retreat) + sw(u,6,1.5,3,2.4,i);
+        const foot=1088+sw(u,7,1.4,3,2.3,i*0.7);
+        const op=far?0.92:0.92*(1-clamp((u-(0.2+i*0.10))/0.6,0,1));
+        if(op>0.02)figure(bx,foot,150,op);
+      }
+      // ta position marche le long du couloir qui s'allonge pour trouver preneur (s'arrête avant les preneurs)
+      const walk=eInOut(clamp((u-1.4)/2.6,0,1)); const px=lerp(590,748,walk)+sw(u,7,1.6,4,2.7), py=PCY-42+sw(u,7,1.3,4,2.2);
+      setRect(posEl,px,py,120,84,1);
+      // le couloir tracé, qui s'allonge (dashoffset animé = vie continue)
+      guide.setAttribute('x1',DR+8);guide.setAttribute('y1',PCY);guide.setAttribute('x2',(px).toFixed(1));guide.setAttribute('y2',PCY);
+      guide.setAttribute('stroke-dashoffset',(-u*22).toFixed(0));setOp(guide,clamp((u-1.0)/0.6,0,1)*0.9);
+      // chaque pas consomme une tranche grise, déposée derrière
+      for(let kx=0;kx<8;kx++){const sx=592+kx*52; if(px>sx+40){ slice(sx,PCY+40+sw(u,4,1.7,2,2.9,kx),40,26,0.85); }}
+      putCap(capB,'YOUR EXIT WALKS FURTHER',CX,635,INK,clamp((u-2.4)/0.7,0,1));
+      putCap(capA,'TAKERS STEP BACK',800,760,INK,clamp((u-0.6)/0.6,0,1));
+      putCap(capC,'EACH STEP COSTS',760,1225,DEAD,clamp((u-2.0)/0.7,0,1));
+      figFlush(); poolFlush();
+    }
+
+    // ═══ S4 — LA GROSSE POSITION : d'un bloc à l'entrée, EN MORCEAUX à la sortie ═══
+    // Verbe visuel : la fragmentation (le bloc doit être découpé pour franchir le goulot).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); figReset(); poolReset(); hideExtras();
+      drawDoor(1);
+      // contexte : quelques preneurs clairsemés au goulot (vie continue), en retrait derrière les morceaux
+      for(let i=0;i<4;i++){const bx=905+i*30+sw(u,6,1.5,3,2.4,i), foot=1092+sw(u,6,1.4,3,2.3,i*0.7); figure(bx,foot,142,0.8);}
+      // 0-1.5 : la GROSSE position franchit la grande bouche d'un bloc, sans frottement (reste à l'écart de la porte)
+      const inN=eInOut(clamp(u/1.5,0,1)); const bx=lerp(85,195,inN)+sw(u,7,1.3,4,2.2), by=PCY-75+sw(u,7,1.2,4,2.0);
+      const whole=clamp(1-(u-1.4)/0.4,0,1);            // le bloc entier s'estompe quand la découpe commence
+      setRect(posEl,bx,by,210,150,whole);
+      putCap(capC,'YOU',bx+105,by-22,YOU,whole*clamp((u-0.3)/0.5,0,1));
+      // 1.5-3 : au goulot étroit il DOIT être découpé — les morceaux sortent un à un, plus loin chacun
+      for(let m=0;m<5;m++){
+        const out=eInOut(clamp((u-(1.6+m*0.34))/0.7,0,1));
+        if(out<=0.01)continue;
+        const mx=lerp(470, 600+m*66, out); const my=PCY-34+sw(u,6,1.6,3,2.7,m);
+        piece(mx,my,54,68,out);
+        // chaque morceau qui marche plus loin laisse une tranche grise
+        if(out>0.6)slice(600+m*66-4,PCY+44+sw(u,3,1.7,2,2.9,m),40,24,clamp((out-0.6)/0.3,0,1)*0.85);
+      }
+      putCap(capA,'GOES IN WHOLE',230,770,YOU,clamp((u-0.5)/0.6,0,1));
+      putCap(capB,'OUT IN PIECES',795,770,INK,clamp((u-1.8)/0.7,0,1));
+      putCap(capD,'SIZE WAS DECIDED AT ENTRY',CX,1365,DEAD,clamp((u-3.0)/0.8,0,1));
+      figFlush(); poolFlush();
+    }
+
+    // ═══ S5 — DÉCHARGE : teste la sortie AVANT d'entrer, puis dimensionne par la face étroite ═══
+    // Verbe visuel : la sonde qui mesure le couloir + la position qui rétrécit pour tenir.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); figReset(); poolReset(); hideExtras();
+      drawDoor(1);
+      // conditions difficiles : la foule dense au goulot (micro-sway continu, même sur l'image tenue)
+      for(let i=0;i<NFIG;i++){const bx=598+i*26+sw(u,7,1.5,4,2.5,i), foot=1088+sw(u,7,1.4,3,2.3,i*0.7); figure(bx,foot,150,0.9);}
+      // 0-2 : une SONDE teal parcourt le couloir de sortie pour en MESURER la longueur
+      const scan=eInOut(clamp(u/2.0,0,1)); const sx=lerp(DR+20,900,scan);
+      setRect(probe,sx-16,PCY-16,32,32,clamp(u/0.4,0,1)*clamp(1-(u-2.6)/0.6,0,1));
+      // la ligne de mesure s'étend avec la sonde (dashoffset animé en continu = vie même à la tenue)
+      const mend=lerp(DR+20,900,Math.min(scan,clamp(u/2.0,0,1)));
+      guide.setAttribute('x1',DR+8);guide.setAttribute('y1',PCY);guide.setAttribute('x2',mend.toFixed(1));guide.setAttribute('y2',PCY);
+      guide.setAttribute('stroke-dashoffset',(-u*20).toFixed(0));setOp(guide,clamp(u/0.5,0,1)*0.9);
+      // 2-3.5 : couloir LONG → la position RÉTRÉCIT jusqu'à passer d'un bloc par la face étroite (à l'écart de l'encre)
+      const shrink=eInOut(clamp((u-2.0)/1.5,0,1));
+      const w=lerp(206,118,shrink), h=lerp(148,72,shrink);
+      const px=lerp(190,285,eInOut(clamp((u-2.2)/1.6,0,1)))+sw(u,6,1.4,3,2.3), py=PCY-h/2+sw(u,6,1.3,3,2.1);
+      setRect(posEl,px,py,w,h,1);
+      putCap(capC,'YOU',px+w/2,py-22,YOU,1);
+      putCap(capE,'TEST THE EXIT FIRST',770,1225,DEAD,clamp((u-0.7)/0.6,0,1)*clamp(1-(u-4.0)/0.8,0,1));
+      putCap(capB,'HOW DOES IT EXIT ON A BAD DAY?',CX,600,INK,clamp((u-0.4)/0.7,0,1));
+      putCap(capA,'SIZE FOR THE NARROW FACE',CX,672,DEAD,clamp((u-2.6)/0.8,0,1));
+      figFlush(); poolFlush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
