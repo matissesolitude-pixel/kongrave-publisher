@@ -185,3 +185,19 @@ def publish(container_id: str) -> str:
     if not media_id:
         raise IgApiError(f"Réponse sans media_id : {payload}")
     return media_id
+
+
+def post_comment(media_id: str, message: str) -> str:
+    """Poste un commentaire sur un média publié. Retourne l'id du commentaire.
+    Requiert la permission instagram_manage_comments sur le token."""
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{media_id}/comments"
+    resp = _request(
+        "POST",
+        url,
+        data={"message": message, "access_token": _access_token()},
+    )
+    payload = _raise_for_api_error(resp, "Commentaire")
+    comment_id = payload.get("id")
+    if not comment_id:
+        raise IgApiError(f"Réponse sans id de commentaire : {payload}")
+    return comment_id

@@ -93,13 +93,19 @@ def main(argv=None) -> int:
     if res.get("dry_run"):
         print(f"[DRY-RUN OK] conteneur essai prêt (FINISHED) : {res['container_id']} — RIEN publié")
     else:
-        print(f"[OK] Reel d'ESSAI publié : media_id={res['media_id']} "
+        media_id = res["media_id"]
+        print(f"[OK] Reel d'ESSAI publié : media_id={media_id} "
               f"(container={res['container_id']})")
         print("     → visible des non-abonnés uniquement ; graduation manuelle dans l'app.")
-        if brief.get("pinned_comment"):
-            print("     ⚠ commentaire épinglé NON posté (permission instagram_manage_comments) — "
-                  "à coller à la main :")
-            print(f'       {brief["pinned_comment"]}')
+        # CTA en commentaire (best-effort : n'échoue pas la publication si Meta refuse)
+        cta = (brief.get("pinned_comment") or "").strip()
+        if cta:
+            try:
+                cid = ig_api.post_comment(media_id, cta)
+                print(f"     [OK] CTA posté en commentaire : id={cid}")
+            except ig_api.IgApiError as exc:
+                print(f"     ⚠ CTA NON posté ({exc}). À coller à la main :")
+                print(f"       {cta}")
     return 0
 
 

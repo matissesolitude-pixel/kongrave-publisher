@@ -1,0 +1,46 @@
+name: LIGNE commentaire CTA
+
+# Poste le CTA (pinned_comment d'un épisode) en commentaire sur un Reel déjà publié.
+# Requiert instagram_manage_comments sur le token — si absent, l'erreur Meta est claire.
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Épisode (pour lire son pinned_comment) — ex : L22v2"
+        required: true
+        type: string
+      media_id:
+        description: "media_id du Reel déjà publié"
+        required: true
+        type: string
+
+concurrency:
+  group: ligne-comment
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      GRAPH_VERSION: v21.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Dépendances
+        run: pip install -r requirements.txt
+
+      - name: Poster le commentaire CTA
+        run: python3 post_comment_ligne.py "${{ github.event.inputs.episode }}" "${{ github.event.inputs.media_id }}"
