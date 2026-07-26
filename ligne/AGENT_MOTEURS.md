@@ -56,7 +56,13 @@ coupées · L27/L28 étiquettes collées et texte sur dessin · L04/L24/L29 narr
 **Vérifie sur des frames RENDUES, jamais sur du raisonnement.**
 
 
-## LE NARRATEUR MR DOLLAR (obligatoire dans tout nouveau moteur)
+## LE NARRATEUR MR DOLLAR
+
+> ### ⛔⛔ EN PAUSE — décision du 26/07/2026 — NE PAS AJOUTER LE NARRATEUR
+> Matisse a mis Mr Dollar en pause : « on arrête Mr Dollar pour le moment parce qu'on n'arrive
+> pas à bien l'animer ». **N'ajoute AUCUN narrateur dans les nouveaux moteurs** : pas de
+> `/*INCLUDE:narrator*/`, pas de `MrD.enter`, rien. L'épisode repose sur la mécanique
+> « émotion par objets » SEULE. Le reste de cette section ne s'applique QUE si la pause est levée.
 
 Mr Dollar est **la voix** du Reel. Il **apparaît pour parler**, puis il s'efface. C'est tout.
 
