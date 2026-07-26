@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L43 « THE MARGIN ISN'T A COST » — S1 : émotion frame 0 = TENSION — le compte (barre teal) et une PORTION déjà derrière des
+       BARREAUX encre : la marge immobilisée, teal (pas gris : elle est toujours à toi) mais EMPRISONNÉE, et la cage avance déjà d'un
+       cran. Le fusil = la cage. S2 : la portion en cage reste teal (« still yours ») ; une main teal (ton pouvoir d'agir) tente de la
+       prendre → bute sur les barreaux et rebondit : retenue, pas dépensée. S3 : à chaque pas CONTRE toi, un morceau du LIBRE migre
+       dans la cage (flash) — mais le TOTAL de la barre (le solde) ne bouge pas : deux lectures opposées, le solde a l'air sain pendant
+       que la capacité fond. S4 (NARRATEUR ABSENT) : le dernier morceau libre est happé, un déclic ferme la position TOUTE SEULE, la
+       main teal est écartée du levier — ton avis a cessé de compter. S5 : décharge — deux jauges, BALANCE (stable, trompeuse) et FREE
+       (qui fond, la vraie) ; le regard bascule vers FREE, relue « décisions restantes », découpée en crans. Doctrine : aucun chiffre ;
+       la marge en cage reste TEAL (jamais gris) ; pas de brun ; jamais « plus que le dépôt » ; bas du cadre vide ; aucun broker nommé. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) — UNE ligne, tout le reste est injecté ──
+    /*INCLUDE:narrator*/
+    function noNarrator(){MrD.hide();}
+
+    // ═══ LE COMPTE ET SA CAGE ═══ la barre = le compte (teal). une portion à gauche est prise dans des barreaux encre
+    //     (la marge immobilisée) ; la partie libre est la teal ouverte à droite. le front de la cage AVANCE.
+    const BX=150, BW=800, BR=BX+BW, BY=1080, BH=160, TOP=BY-BH/2, BOT=BY+BH/2;   // barre 150→950, y 1000→1160
+    const accBar=mk('rect',{x:BX,y:TOP,width:BW,height:BH,rx:12,fill:YOU,opacity:0});   // TOUT le compte, teal
+    const railTop=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // haut de cage
+    const railBot=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});   // bas de cage
+    const frontBar=mk('rect',{fill:INK,rx:3,opacity:0});                                          // le front qui avance
+    const BARS=[]; for(let i=0;i<40;i++)BARS.push(mk('rect',{fill:INK,rx:2,opacity:0}));          // les barreaux
+    const CHUNKS=[]; for(let i=0;i<6;i++)CHUNKS.push(mk('rect',{fill:INK,rx:4,opacity:0}));        // le flash « ce morceau vient d'être mis en cage »
+    let bk=0,ck=0; function resetPools(){bk=0;ck=0;}
+    function bar(x,y,w,h,op){const e=BARS[bk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',w.toFixed(1));e.setAttribute('height',h.toFixed(1));setOp(e,op);}
+    function chunk(x1,x2,op){const e=CHUNKS[ck++];if(!e)return;e.setAttribute('x',x1.toFixed(1));e.setAttribute('y',(TOP+4).toFixed(1));e.setAttribute('width',Math.max(2,x2-x1).toFixed(1));e.setAttribute('height',(BH-8).toFixed(1));setOp(e,op);}
+    function flushPools(){for(let i=bk;i<BARS.length;i++)setOp(BARS[i],0);for(let i=ck;i<CHUNKS.length;i++)setOp(CHUNKS[i],0);}
+    // dessine la cage de x0 à lockX : rails + barreaux (qui VIBRENT réellement, phases décalées) + le front.
+    // vie continue robuste : chaque barreau tremble en x ET respire en hauteur, à deux harmoniques et phase propre —
+    // à toute frame plusieurs sont en plein mouvement (le scan compare des pixels : il faut du déplacement, pas de l'opacité).
+    function drawCage(x0,lockX,u,op,sway){
+      sway=sway||0;
+      railTop.setAttribute('x1',(x0+sway).toFixed(1));railTop.setAttribute('x2',(lockX+sway).toFixed(1));railTop.setAttribute('y1',TOP-4);railTop.setAttribute('y2',TOP-4);setOp(railTop,op);
+      railBot.setAttribute('x1',(x0+sway).toFixed(1));railBot.setAttribute('x2',(lockX+sway).toFixed(1));railBot.setAttribute('y1',BOT+4);railBot.setAttribute('y2',BOT+4);setOp(railBot,op);
+      let i=0;
+      for(let x=x0+46;x<lockX-8;x+=48){
+        const jx=sway+5.0*Math.sin(u*2.7+i*0.9)+2.6*Math.sin(u*4.3+i*0.5);        // tremblement horizontal ~7px
+        const gy=11*Math.sin(u*2.1+i*1.1)+5*Math.sin(u*3.3+i*0.7);                 // respiration verticale ~16px
+        bar(x-4+jx,TOP-9-gy,8,BH+18+2*Math.abs(gy),op); i++;
+      }
+      const fj=6*Math.sin(u*1.9)+3*Math.sin(u*3.1);
+      frontBar.setAttribute('x',(lockX-7+sway+fj).toFixed(1));frontBar.setAttribute('y',(TOP-16).toFixed(1));frontBar.setAttribute('width',14);frontBar.setAttribute('height',(BH+32).toFixed(1));setOp(frontBar,op);
+    }
+
+    // ── LA MAIN TEAL = TON POUVOIR D'AGIR (jamais une figure ; c'est toi) ──
+    const hand=mk('circle',{r:37,fill:YOU,opacity:0});
+    const reach=mk('line',{stroke:YOU,'stroke-width':11,'stroke-linecap':'round',opacity:0});
+
+    // ── LE LEVIER DE DÉCISION (S4) + le déclic de fermeture ──
+    const lever=mk('line',{stroke:INK,'stroke-width':13,'stroke-linecap':'round',opacity:0});
+    const leverKnob=mk('circle',{r:20,fill:INK,opacity:0});
+    const latch=mk('path',{fill:'none',stroke:INK,'stroke-width':16,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+
+    // ── LES CROCHETS DE LECTURE (S3) : le solde (tout) vs le libre (qui fond) ──
+    const balLine=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const freeLine=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const pArrow=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+
+    // ── LES DEUX JAUGES (S5) ──
+    const gLout=mk('rect',{fill:'none',stroke:INK,'stroke-width':6,rx:8,opacity:0});
+    const gLfill=mk('rect',{fill:YOU,rx:5,opacity:0});
+    const gRout=mk('rect',{fill:'none',stroke:INK,'stroke-width':6,rx:8,opacity:0});
+    const gRfill=mk('rect',{fill:YOU,rx:5,opacity:0});
+    const gaze=mk('circle',{r:31,fill:'none',stroke:INK,'stroke-width':7,opacity:0});   // le regard : anneau ENCRE (visible sur le teal)…
+    const gazeDot=mk('circle',{r:11,fill:YOU,opacity:0});                                //  … avec un point teal au centre = TOI
+    const NOTCH=[]; for(let i=0;i<8;i++)NOTCH.push(mk('line',{stroke:PAPER,'stroke-width':7,'stroke-linecap':'round',opacity:0}));
+
+    function hideAll(){[accBar,railTop,railBot,frontBar,hand,reach,lever,leverKnob,latch,balLine,freeLine,pArrow,gLout,gLfill,gRout,gRfill,gaze,gazeDot].forEach(e=>setOp(e,0));for(const e of NOTCH)setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT IS YOUR MARGIN','ACTUALLY DOING'];
+    const FS=80,lineH=104,y0=205,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26/l44) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(40),capD=caption(38),capE=caption(36),capF=caption(38);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LE COMPTE, ET UNE PART DÉJÀ DERRIÈRE DES BARREAUX (la cage avance déjà) ═══
+    // Verbe visuel : l'enfermement en cours (le front de la cage mange le libre).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetPools(); hideAll();
+      const gf=clamp(1-(lf-0.86)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ÉMOTION FRAME 0 (TENSION) : le compte teal, et une PORTION déjà en cage — teal (toujours à toi) mais EMPRISONNÉE.
+      //   la cage avance déjà d'un cran, mangeant un peu du libre. rien ne se construit : la tension est entière à t=0.
+      const frac=clamp(0.42 + 0.11*eOut(clamp(u/8,0,1)) + (6*Math.sin(u*1.15)+3*Math.sin(u*2.35))/BW, 0.12, 0.88);
+      const lockX=BX+BW*frac;
+      setOp(accBar,1);
+      drawCage(BX,lockX,u,1,0);
+      // étiquettes : gouttières seulement — jamais sur la barre (y 1000→1160) ni sur les barreaux
+      putCap(capA,'HELD — BEHIND BARS',(BX+lockX)/2,TOP-52,INK,clamp((u-1.4)/0.7,0,1)*gf);
+      putCap(capC,'FREE — USABLE',(lockX+BR)/2,BOT+92,YOU,clamp((u-2.0)/0.7,0,1)*gf);
+      putCap(capB,'STILL YOURS — JUST LOCKED',CX,880,INK,clamp((u-3.0)/0.8,0,1)*gf);
+      // MR DOLLAR : il entre, PARLE et DÉSIGNE la cage — puis il s'en va, la démonstration reste vivante sans lui
+      if(u<3.6){ MrD.enter(u,{t:t,routine:'designe',lookAt:lockX,rest:{x:212,y:1440,h:232},op:gf}); }
+      else{ const o=clamp((u-3.6)/1.2,0,1); MrD.say('walk',t,lerp(212,-180,eInOut(o)),1440,232,(1-o)*gf,true,0,1,1); }
+      flushPools();
+    }
+
+    // ═══ S2 — TEAL, DONC À TOI — MAIS INACCESSIBLE : la main bute sur les barreaux ═══
+    // Verbe visuel : le rebond (la main tente, tape les barreaux, recule — retenue, pas dépensée).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const frac=clamp(0.50 + (5*Math.sin(u*0.9)+2.5*Math.sin(u*1.9))/BW, 0.12, 0.9);
+      const lockX=BX+BW*frac;
+      setOp(accBar,1);
+      drawCage(BX,lockX,u,1,0);
+      // la main teal (TOI) descend d'en HAUT vers un barreau, tape, remonte — elle réessaie
+      const targetX=BX+(lockX-BX)*0.52;
+      const p=(u*0.52)%1;
+      const app=eIn(clamp(p/0.40,0,1));
+      const back=(p>0.44)?eOut(clamp((p-0.44)/0.30,0,1)):0;
+      const restY=770, hitY=TOP-42;
+      let hy=lerp(restY,hitY,app); if(p>0.44) hy=lerp(hitY,restY,back);
+      const jx=6*Math.sin(u*1.3)+3*Math.sin(u*2.55);
+      const hx=targetX+jx;
+      hand.setAttribute('cx',hx.toFixed(1));hand.setAttribute('cy',hy.toFixed(1));setOp(hand,1);
+      const armEnd=lerp(hy+34, TOP-8, app*(p<0.5?1:0));
+      reach.setAttribute('x1',hx);reach.setAttribute('y1',(hy+34).toFixed(1));reach.setAttribute('x2',hx);reach.setAttribute('y2',armEnd.toFixed(1));setOp(reach,app*(p<0.5?1:0));
+      // étiquettes en gouttière basse (jamais sur la barre) — gauche/droite chacune dans sa moitié
+      putCap(capA,'STILL YOURS',300,BOT+92,YOU,clamp((u-0.5)/0.7,0,1));
+      putCap(capC,"CAN'T USE IT",760,BOT+92,YOU,clamp((u-1.2)/0.7,0,1));
+      putCap(capB,'NOT SPENT — HELD',CX,BOT+178,INK,clamp((u-2.4)/0.8,0,1));
+      // MR DOLLAR : il constate, désigne la main qui bute — coin bas droit, puis il s'efface
+      const inW=eInOut(clamp((u-2.2)/1.0,0,1)), outW=eInOut(clamp((u-8.0)/1.2,0,1));
+      if(u>2.2 && outW<1){ MrD.pointAt('point',t,890,1440,224,1-outW,targetX); }
+      else{ MrD.hide(); }
+      flushPools();
+    }
+
+    // ═══ S3 — À CHAQUE PAS CONTRE TOI, UN MORCEAU DU LIBRE MIGRE — MAIS LE SOLDE NE BOUGE PAS ═══
+    // Verbe visuel : la migration cadencée (le libre passe dans la cage, pas après pas).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const STEPS=[0.5,1.7,2.9,4.1,5.4,6.9];
+      let base=0.30; for(const st of STEPS){ base += 0.085*clamp((u-st)/0.5,0,1); }
+      const frac=clamp(base + (5*Math.sin(u*1.05)+2.5*Math.sin(u*2.1))/BW, 0.12, 0.92);
+      const lockX=BX+BW*frac;
+      setOp(accBar,1);
+      drawCage(BX,lockX,u,1,0);
+      // flash sur le morceau qui vient d'être mis en cage à chaque pas
+      for(let k=0;k<STEPS.length;k++){
+        const fl=1-clamp((u-STEPS[k])/0.55,0,1);
+        if(u>=STEPS[k]&&fl>0.02){ const fa=0.30+0.085*k, fb=0.30+0.085*(k+1); chunk(BX+BW*fa,BX+BW*fb,fl*0.55); }
+      }
+      // le pas défavorable : une flèche encre qui pousse vers la gauche, elle jaillit à chaque pas
+      let stepFlash=0, sax=lockX;
+      for(let k=0;k<STEPS.length;k++){ const fl=1-clamp((u-STEPS[k])/0.5,0,1); if(u>=STEPS[k]&&fl>stepFlash){stepFlash=fl;} }
+      pArrow.setAttribute('points',`${sax+52},${TOP-70} ${sax+8},${TOP-70} ${sax+26},${TOP-88} ${sax+8},${TOP-70} ${sax+26},${TOP-52}`);setOp(pArrow,stepFlash);
+      // LE SOLDE : crochet sur TOUTE la barre (inchangé) — au-dessus.  LE LIBRE : crochet sous la partie libre (qui fond) — en dessous.
+      balLine.setAttribute('x1',BX);balLine.setAttribute('x2',BR);balLine.setAttribute('y1',TOP-30);balLine.setAttribute('y2',TOP-30);setOp(balLine,clamp((u-0.6)/0.7,0,1));
+      freeLine.setAttribute('x1',(lockX+10).toFixed(1));freeLine.setAttribute('x2',BR);freeLine.setAttribute('y1',BOT+34);freeLine.setAttribute('y2',BOT+34);setOp(freeLine,clamp((u-1.0)/0.7,0,1));
+      putCap(capB,'BALANCE — LOOKS FINE',CX,TOP-56,INK,clamp((u-0.8)/0.7,0,1));
+      putCap(capC,'FREE — SHRINKING',clamp((lockX+BR)/2,720,940),BOT+96,YOU,clamp((u-1.4)/0.7,0,1));
+      putCap(capA,'SAME BAR — TWO READINGS',CX,700,INK,clamp((u-3.4)/0.8,0,1));
+      // MR DOLLAR : il doute, désigne le libre qui fond — bas droit, une apparition brève
+      const outW=eInOut(clamp((u-7.6)/1.2,0,1));
+      if(u>2.6 && outW<1){ MrD.pointAt('point',t,905,1440,222,1-outW,(lockX+BR)/2); }
+      else{ MrD.hide(); }
+      flushPools();
+    }
+
+    // ═══ S4 — LE DERNIER MORCEAU HAPPÉ, LA POSITION SE FERME TOUTE SEULE ═══
+    // Verbe visuel : le déclic (le levier se jette seul, la main est écartée).  NARRATEUR ABSENT.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll(); noNarrator();
+      const fillP=eIn(clamp(u/2.0,0,1));                       // cadence qui accélère
+      const frac=clamp(lerp(0.55,0.985,fillP) + (u<2?(4*Math.sin(u*1.2)+2*Math.sin(u*2.4))/BW:(5*Math.sin(u*1.05)+2.5*Math.sin(u*2.15))/BW), 0.12, 0.992);
+      const lockX=BX+BW*frac;
+      const closed=clamp((u-1.7)/0.3,0,1);                     // le déclic ~1.7→2.0s
+      const squash=(u>=1.7&&u<1.92)?(1-0.07*Math.sin((u-1.7)/0.22*Math.PI)):1;
+      accBar.setAttribute('height',(BH*squash).toFixed(1));accBar.setAttribute('y',(BY-BH*squash/2).toFixed(1));setOp(accBar,1);
+      drawCage(BX,lockX,u,1,0);
+      // LE LEVIER : vertical, le bouton passe du HAUT au BAS quand le libre est épuisé — il se jette SEUL
+      const ky=lerp(BY-108,BY+108,closed)+(u>2?2.4*Math.sin(u*2.0):0);
+      lever.setAttribute('x1',970);lever.setAttribute('y1',BY);lever.setAttribute('x2',970);lever.setAttribute('y2',ky.toFixed(1));setOp(lever,clamp((u-0.2)/0.5,0,1));
+      leverKnob.setAttribute('cx',970);leverKnob.setAttribute('cy',ky.toFixed(1));setOp(leverKnob,clamp((u-0.2)/0.5,0,1));
+      // LE COUVERCLE se referme sur toute la barre au déclic (la fermeture automatique)
+      latch.setAttribute('d',`M${BX-8} ${TOP-2} L${BX-8} ${TOP-34} L${BR+8} ${TOP-34} L${BR+8} ${TOP-2}`);setOp(latch,closed);
+      // LA MAIN TEAL (TOI) : au levier, puis ÉCARTÉE loin vers la gauche-bas — elle ne DISPARAÎT jamais
+      const hx=lerp(905, 175, closed), hy=1360+(12*Math.sin(u*1.2)+6*Math.sin(u*2.4));
+      hand.setAttribute('cx',hx.toFixed(1));hand.setAttribute('cy',hy.toFixed(1));setOp(hand,1);
+      reach.setAttribute('x1',hx.toFixed(1));reach.setAttribute('y1',(hy-32).toFixed(1));reach.setAttribute('x2',970);reach.setAttribute('y2',(BY-108).toFixed(1));setOp(reach,(1-closed)*clamp((u-0.4)/0.5,0,1));
+      putCap(capC,'THE FREE PART RUNS OUT',CX,700,INK,clamp((u-0.4)/0.7,0,1)*clamp(1-(u-4.2)/1.0,0,1));
+      putCap(capD,'ONE LOCKED PIECE AT A TIME',CX,768,DEAD,clamp((u-3.0)/0.9,0,1));
+      putCap(capB,'CLOSED — WITHOUT ASKING YOU',CX,BOT+92,INK,closed);
+      putCap(capA,'PUSHED OUT',clamp(hx,150,300),1442,YOU,closed);
+      flushPools();
+    }
+
+    // ═══ S5 — DÉCHARGE : lis la FREE, pas la BALANCE — c'est ton compteur de décisions ═══
+    // Verbe visuel : le regard qui bascule (de la balance trompeuse vers la free, relue « décisions restantes »).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const GB=1300, GH=380, GW=120, GT=GB-GH, LXc=310, RXc=760, LXx=LXc-GW/2, RXx=RXc-GW/2;
+      // JAUGE BALANCE (gauche) : pleine, stable, rassurante
+      const balBob=3*Math.sin(u*1.0)+1.5*Math.sin(u*2.1);
+      setOp(gLout,1);gLout.setAttribute('x',LXx);gLout.setAttribute('y',GT);gLout.setAttribute('width',GW);gLout.setAttribute('height',GH);
+      setOp(gLfill,1);gLfill.setAttribute('x',LXx+7);gLfill.setAttribute('y',(GT+7+balBob).toFixed(1));gLfill.setAttribute('width',GW-14);gLfill.setAttribute('height',(GH-14-balBob).toFixed(1));
+      // JAUGE FREE (droite) : basse, elle respire nettement (vie continue), c'est la vraie
+      const ff=0.40+ (0.045*Math.sin(u*1.35)+0.022*Math.sin(u*2.5));
+      const fh=(GH-14)*ff, fy=GB-7-fh;
+      setOp(gRout,1);gRout.setAttribute('x',RXx);gRout.setAttribute('y',GT);gRout.setAttribute('width',GW);gRout.setAttribute('height',GH);
+      setOp(gRfill,1);gRfill.setAttribute('x',RXx+7);gRfill.setAttribute('y',fy.toFixed(1));gRfill.setAttribute('width',GW-14);gRfill.setAttribute('height',fh.toFixed(1));
+      // les CRANS-DÉCISIONS découpent la free (après que le regard soit arrivé)
+      const seg=clamp((u-2.8)/0.9,0,1);
+      const nseg=4; for(let i=1;i<nseg;i++){const ny=fy+fh*i/nseg;const e=NOTCH[i-1];e.setAttribute('x1',RXx+9);e.setAttribute('x2',RXx+GW-9);e.setAttribute('y1',ny.toFixed(1));e.setAttribute('y2',ny.toFixed(1));setOp(e,seg);}
+      // LE REGARD : posé sur la balance, il BASCULE vers la free, puis orbite doucement autour d'elle (vie continue)
+      const gp=eInOut(clamp((u-1.0)/1.4,0,1));
+      const orbit=(u>2.6)?1:0;
+      const gx=lerp(LXc,RXc,gp)+orbit*(28*Math.sin(u*1.15)+13*Math.sin(u*2.2));
+      const gy=lerp(GT+GH*0.4, fy+fh*0.5, gp)+orbit*(20*Math.cos(u*1.3)+8*Math.cos(u*2.1));
+      const gop=clamp((u-0.6)/0.6,0,1);
+      gaze.setAttribute('cx',gx.toFixed(1));gaze.setAttribute('cy',gy.toFixed(1));setOp(gaze,gop);
+      gazeDot.setAttribute('cx',gx.toFixed(1));gazeDot.setAttribute('cy',gy.toFixed(1));setOp(gazeDot,gop);
+      // étiquettes : sous chaque jauge (jamais sur le dessin)
+      putCap(capC,'BALANCE',LXc,GB+52,INK,clamp((u-0.4)/0.7,0,1));
+      putCap(capE,'WHAT YOU OWN',LXc,GB+102,DEAD,clamp((u-2.0)/0.8,0,1));
+      putCap(capD,'FREE',RXc,GB+52,YOU,clamp((u-0.4)/0.7,0,1));
+      putCap(capF,'DECISIONS LEFT',RXc,GB+102,YOU,clamp((u-2.8)/0.9,0,1));
+      putCap(capB,'WATCH THE FREE PART',CX,660,INK,clamp((u-0.8)/0.7,0,1));
+      putCap(capA,'NOT THE BALANCE',CX,732,DEAD,clamp((u-1.6)/0.8,0,1));
+      // MR DOLLAR : il entre à DROITE de la jauge FREE, la DÉSIGNE (« celle-ci »), puis s'efface —
+      //   l'image finale reste au schéma seul (la free relue « décisions restantes »), vivante par le bob + le regard.
+      if(u<3.5){ MrD.enter(u,{t:t,routine:'designe',lookAt:RXc,rest:{x:945,y:1440,h:222},op:clamp(1-(u-2.6)/0.9,0,1)}); }
+      else{ MrD.hide(); }
+      flushPools();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
