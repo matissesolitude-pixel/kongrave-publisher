@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L46 « THE RETEST YOU'RE OWED » — S1 : émotion frame 0 = TENSION + RECONNAISSANCE DE SOI — un niveau cassé, une place
+       d'entrée teal PRÉPARÉE et VIDE posée dessus, et le prix DÉJÀ très loin au-dessus, en fuite. Le rendez-vous manqué se lit
+       d'un coup. Le fusil = cette place jamais occupée. S2 : deux suites après la cassure — HAUT, des figures restent au niveau,
+       le prix REVIENT (retest), la place se remplit ; BAS, plus personne, le prix continue, la place reste vide. « sometimes,
+       not always ». S3 : corrélation — un mouvement FORT file sans retour (place vide), un FAIBLE hésite (retest, place pleine) ;
+       deux jauges CONFORT (teal) et FAIBLESSE (gris) montent ENSEMBLE : le confort attendu est une info sur le mouvement.
+       S4 (SANS NARRATEUR) : les forts défilent, tous SAUTÉS (place vide, ils courent) ; les faibles, tous PRIS (place pleine,
+       ils s'éteignent) — le critère a INVERSÉ la sélection. S5 : décharge — deux chemins assumés (LE CONFORT : rate les forts /
+       LE MOUVEMENT : stop plus large, taille réduite) et un troisième BARRÉ : attendre de se sentir en sécurité en appelant ça
+       un plan. Doctrine : aucun chiffre ; participants = fil-de-fer neutres (pas de brun) ; gris = échec ; teal = TOI ; bas du
+       cadre vide ; narrateur toujours en encre, PETIT, absent en S4. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) ──
+    /*INCLUDE:narrator*/
+
+    // ═══════════════ POOLS RÉUTILISABLES ═══════════════
+    const PATHS=[]; for(let i=0;i<18;i++)PATHS.push(mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const LINES=[]; for(let i=0;i<6;i++)LINES.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-dasharray':'22 16','stroke-linecap':'round',opacity:0}));
+    const SPOTS=[]; for(let i=0;i<14;i++)SPOTS.push(mk('rect',{rx:6,fill:'none',stroke:YOU,'stroke-width':7,opacity:0}));
+    const BALLS=[]; for(let i=0;i<14;i++)BALLS.push(mk('circle',{r:15,fill:YOU,opacity:0}));
+    // figures fil-de-fer (rond + corps + bras + jambes) — les participants au niveau
+    const FIGS=[]; for(let i=0;i<6;i++){const g=mk('g',{opacity:0});
+      FIGS.push({g,
+        head:mk('circle',{fill:'none',stroke:INK,'stroke-width':6},g),
+        body:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round'},g),
+        armL:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round'},g),
+        armR:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round'},g),
+        legL:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round'},g),
+        legR:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round'},g)});}
+    let pi=0,si=0,bi=0,fi=0,li=0;
+    function reset(){pi=0;si=0;bi=0;fi=0;li=0;}
+    function path(pts,color,w,op){const e=PATHS[pi++];if(!e)return null;e.setAttribute('transform','');
+      e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color||INK);e.setAttribute('stroke-width',w||6);setOp(e,op);return e;}
+    function level(x1,x2,y,op,color,off){const e=LINES[li++];if(!e)return;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));
+      e.setAttribute('y1',y.toFixed(1));e.setAttribute('y2',y.toFixed(1));e.setAttribute('stroke',color||INK);
+      e.setAttribute('stroke-dashoffset',(off||0).toFixed(1));setOp(e,op);}    // off animé = les tirets rampent (vie continue fiable)
+    function spot(cx,cy,w,h,filled,op){const e=SPOTS[si++];if(!e)return;e.setAttribute('x',(cx-w/2).toFixed(1));e.setAttribute('y',(cy-h/2).toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',h.toFixed(1));e.setAttribute('fill',filled?YOU:'none');
+      e.setAttribute('fill-opacity',filled?0.9:0);setOp(e,op);}
+    function ball(cx,cy,r,op,color){const e=BALLS[bi++];if(!e)return;e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));
+      e.setAttribute('r',(r||15).toFixed(1));e.setAttribute('fill',color||YOU);setOp(e,op);}
+    function figure(cx,feetY,h,raise,op){const f=FIGS[fi++];if(!f)return;
+      const hr=h*0.13, hy=feetY-h+hr;
+      f.head.setAttribute('cx',cx.toFixed(1));f.head.setAttribute('cy',hy.toFixed(1));f.head.setAttribute('r',hr.toFixed(1));
+      const top=hy+hr, hip=feetY-h*0.34;
+      f.body.setAttribute('x1',cx);f.body.setAttribute('y1',top.toFixed(1));f.body.setAttribute('x2',cx);f.body.setAttribute('y2',hip.toFixed(1));
+      const sh=top+h*0.10, ar=h*0.30;
+      f.armL.setAttribute('x1',cx);f.armL.setAttribute('y1',sh.toFixed(1));f.armL.setAttribute('x2',(cx-ar).toFixed(1));f.armL.setAttribute('y2',(sh-raise*ar).toFixed(1));
+      f.armR.setAttribute('x1',cx);f.armR.setAttribute('y1',sh.toFixed(1));f.armR.setAttribute('x2',(cx+ar).toFixed(1));f.armR.setAttribute('y2',(sh-raise*ar).toFixed(1));
+      const lr=h*0.22;
+      f.legL.setAttribute('x1',cx);f.legL.setAttribute('y1',hip.toFixed(1));f.legL.setAttribute('x2',(cx-lr).toFixed(1));f.legL.setAttribute('y2',feetY.toFixed(1));
+      f.legR.setAttribute('x1',cx);f.legR.setAttribute('y1',hip.toFixed(1));f.legR.setAttribute('x2',(cx+lr).toFixed(1));f.legR.setAttribute('y2',feetY.toFixed(1));
+      setOp(f.g,op);}
+    function flush(){for(let i=pi;i<PATHS.length;i++)setOp(PATHS[i],0);for(let i=li;i<LINES.length;i++)setOp(LINES[i],0);
+      for(let i=si;i<SPOTS.length;i++)setOp(SPOTS[i],0);for(let i=bi;i<BALLS.length;i++)setOp(BALLS[i],0);
+      for(let i=fi;i<FIGS.length;i++)setOp(FIGS[i].g,0);}
+
+    // ── jauges (S3) ──
+    const gBoxA=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:8,opacity:0}),gFillA=mk('rect',{fill:YOU,rx:6,opacity:0});
+    const gBoxB=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:8,opacity:0}),gFillB=mk('rect',{fill:DEAD,rx:6,opacity:0});
+    const gLink=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'12 9','stroke-linecap':'round',opacity:0});
+    // ── barre du faux plan (S5) ──
+    const xA=mk('line',{stroke:DEAD,'stroke-width':13,'stroke-linecap':'round',opacity:0}),xB=mk('line',{stroke:DEAD,'stroke-width':13,'stroke-linecap':'round',opacity:0});
+    function hideStatics(){for(const e of [gBoxA,gFillA,gBoxB,gFillB,gLink,xA,xB])setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE RETEST','NEVER CAME'];
+    const FS=94,lineH=118,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+94,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':190,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26/l44) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36),capG=caption(36),capH=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH])setOp(e,0);}
+
+    function hideAll(){reset();hideStatics();}
+
+    // ── générateurs de trajectoires de prix ──
+    // fuite : approche par en dessous, casse le niveau, accélère vers le haut sans retour
+    function pRunaway(x0,x1,lvlY,bx,up){const p=[];for(let x=x0;x<=x1;x+=9){let y;
+      if(x<bx){const q=(x-x0)/(bx-x0);y=lvlY+130-150*eInOut(q)-10*Math.sin(x*0.05);}
+      else{const q=(x-bx)/(x1-bx);y=lvlY-(up||250)*eOut(q)-10*Math.sin(x*0.06);}
+      p.push([x,y]);}return p;}
+    // retest : casse, monte un peu, REVIENT toucher le niveau (retest), puis repart
+    function pRetest(x0,x1,lvlY,bx){const p=[];const xr=bx+(x1-bx)*0.46;
+      for(let x=x0;x<=x1;x+=9){let y;
+        if(x<bx){const q=(x-x0)/(bx-x0);y=lvlY+130-150*eInOut(q);}
+        else if(x<xr){const q=(x-bx)/(xr-bx);y=lvlY-135*Math.sin(q*Math.PI);}   // bosse : touche le niveau à xr
+        else{const q=(x-xr)/(x1-xr);y=lvlY-95*eOut(q);}
+        p.push([x,y]);}return {pts:p,xr};}
+
+    // ═══ S1 — LA PLACE PRÉPARÉE ET VIDE, LE PRIX DÉJÀ LOIN ═══
+    // Verbe visuel : LA FUITE — le prix s'éloigne, la place reste vide.
+    const LVL1=1150, BX1=430;
+    const S1PATH=pRunaway(150,880,LVL1,BX1,440);
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll();
+      const qf=clamp(1-(u-4.6)/1.2,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*qf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*qf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ÉMOTION FRAME 0 : le niveau, la place teal vide, le prix DÉJÀ en haut. Rien ne se construit.
+      level(140,970,LVL1,1,INK,-u*34);
+      // le prix continue de fuir : la trajectoire dérive vers le haut-droite (position, deux harmoniques + creep)
+      const creep=26*eOut(clamp(u/8,0,1));
+      const dx=creep*0.7+11*Math.sin(u*0.9)+5*Math.sin(u*1.9), dy=-creep+8*Math.sin(u*1.2)+4*Math.sin(u*2.3);
+      const pr=path(S1PATH,INK,7,1); if(pr)pr.setAttribute('transform',`translate(${dx.toFixed(1)} ${dy.toFixed(1)})`);
+      const head=S1PATH[S1PATH.length-1];
+      ball(head[0]+dx,head[1]+dy,13,1,INK);
+      // la flèche « il s'éloigne encore » au-delà du prix (tirets qui rampent)
+      const ax=head[0]+dx, ay=head[1]+dy;
+      const esc=path([[ax+18,ay-6],[ax+78,ay-40]],DEAD,5,clamp((u-1.4)/0.8,0,1)); if(esc){esc.setAttribute('stroke-dasharray','6 18');esc.setAttribute('stroke-dashoffset',(-u*40).toFixed(1));}
+      // la place d'entrée préparée SUR le niveau, VIDE, qui attend (respire en largeur : les bords bougent)
+      const bw=118+10*Math.sin(u*1.5)+5*Math.sin(u*2.7), by=LVL1-34+7*Math.sin(u*1.25)+3*Math.sin(u*2.35);
+      spot(BX1,by,bw,60,false,1);
+      putCap(capC,'THE ENTRY YOU WANTED',300,1006,YOU,clamp((u-1.7)/0.7,0,1));
+      putCap(capA,'PRICE — ALREADY GONE',780,head[1]+dy-58,DEAD,clamp((u-2.4)/0.7,0,1));
+      putCap(capB,'THE BROKEN LEVEL',730,1244,INK,clamp((u-3.0)/0.7,0,1));
+      // MR DOLLAR : il entre par le bas, DÉSIGNE la place vide, puis il s'en va — la scène reste vivante sans lui
+      if(u<3.9){ MrD.enter(u, {t:t, routine:'designe', lookAt:BX1, rest:{x:196, y:1432, h:228}, op:qf}); }
+      else{ const o=clamp((u-3.9)/1.2,0,1); MrD.say('walk', t, lerp(196,-180,eInOut(o)), 1432, 228, (1-o)*qf, true, 0,1,1); }
+      flush();
+    }
+
+    // ═══ S2 — DEUX SUITES CÔTE À CÔTE : avec participants (retest) / sans (rien) ═══
+    // Verbe visuel : LE BRANCHEMENT — deux futurs, l'un peuplé, l'autre désert.
+    const LVL2=1050, BX2A=250, BX2B=650;
+    const RET2=pRetest(110,505,LVL2,BX2A);          // GAUCHE : retest
+    const RUN2=pRunaway(560,980,LVL2,BX2B,250);     // DROITE : fuite
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      putCap(capB,'SOMETIMES — NOT ALWAYS',CX,632,INK,clamp((u-0.3)/0.7,0,1));
+      // ── GAUCHE : SUITE A — il reste du monde, le prix REVIENT (retest), la place se remplit ──
+      level(90,520,LVL2,1,INK,-u*30);
+      path(RET2.pts,INK,6,1);
+      const fill=clamp((u-1.4)/1.0,0,1);
+      // 2 participants au niveau, à GAUCHE du retest — bras qui frémissent (vie)
+      const fx=[150,215];
+      for(let k=0;k<2;k++){const raise=0.44+0.14*Math.sin(u*1.7+k*1.2)+0.06*Math.sin(u*2.8+k);
+        figure(fx[k], LVL2, 122+3*Math.sin(u*1.3+k), raise, clamp((u-0.2-k*0.2)/0.5,0,1));}
+      spot(RET2.xr,LVL2-2,98,56,fill>0.5,1);
+      const ha=RET2.pts[RET2.pts.length-1];
+      ball(ha[0]+7*Math.sin(u*1.2)+3*Math.sin(u*2.3), ha[1]+9*Math.sin(u*0.95)+3*Math.sin(u*1.9), 12,1,INK);
+      putCap(capC,'STILL BUYERS HERE',270,1236,YOU,clamp((u-0.9)/0.7,0,1));
+      // ── DROITE : SUITE B — plus personne, le prix continue, la place reste VIDE ──
+      level(560,990,LVL2,1,INK,u*30);
+      const creep=22*eOut(clamp(u/8,0,1));
+      const dx=creep*0.7+9*Math.sin(u*0.85)+4*Math.sin(u*1.8), dy=-creep+7*Math.sin(u*1.1)+3*Math.sin(u*2.1);
+      const pb=path(RUN2,INK,6,1); if(pb)pb.setAttribute('transform',`translate(${dx.toFixed(1)} ${dy.toFixed(1)})`);
+      const hb=RUN2[RUN2.length-1]; ball(hb[0]+dx,hb[1]+dy,12,1,INK);
+      const bw=94+9*Math.sin(u*1.5)+4*Math.sin(u*2.6);
+      spot(BX2B,LVL2-2,bw,56,false,1);
+      putCap(capD,'NOBODY LEFT HERE',800,1236,DEAD,clamp((u-1.8)/0.7,0,1));
+      MrD.hide();                                    // S2 : pas de narrateur (les deux panneaux vivent seuls)
+      flush();
+    }
+
+    // ═══ S3 — CONFORT = FAIBLESSE : le fort file, le faible offre le retest ═══
+    // Verbe visuel : LA CORRÉLATION — deux jauges liées montent ENSEMBLE.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      putCap(capB,'COMFORT MEANS WEAKNESS',CX,648,INK,clamp((u-0.4)/0.8,0,1));
+      const yG=900;
+      // GAUCHE — mouvement FORT : il traverse le niveau et FILE, la place reste VIDE
+      const lx=270, lift=24*eOut(clamp(u/6,0,1));
+      level(150,400,yG,0.9,INK,-u*26);
+      path([[lx-70,yG+40],[lx-30,yG],[lx+14,yG-116],[lx+52,yG-170-lift]],INK,6,1);
+      spot(lx-30,yG,80,50,false,1);
+      ball(lx+52+6*Math.sin(u*0.95)+3*Math.sin(u*1.9), yG-170-lift+4*Math.sin(u*1.2), 12,1,INK);
+      putCap(capC,'STRONG · NO RETEST',270,1010,INK,clamp((u-0.5)/0.7,0,1));
+      // DROITE — mouvement FAIBLE : il hésite, le retest touche, la place se REMPLIT
+      const rx=800;
+      level(680,930,yG,0.9,INK,u*26);
+      path([[rx-80,yG-16],[rx-44,yG-104],[rx-6,yG],[rx+30,yG-56],[rx+72,yG-96]],INK,6,1);
+      const fill=clamp((u-1.0)/1.0,0,1);
+      spot(rx-6,yG,80,50,fill>0.5,1);
+      ball(rx+72+6*Math.sin(u*1.0)+3*Math.sin(u*2.1), yG-96+6*Math.sin(u*0.95), 12,1,INK);
+      putCap(capD,'WEAK · RETEST',800,1010,YOU,clamp((u-0.9)/0.7,0,1));
+      // ── DEUX JAUGES LIÉES : CONFORT (teal) & FAIBLESSE (gris) montent ENSEMBLE ──
+      const gap=clamp((u-1.8)/0.9,0,1);
+      const baseY=1430, maxH=300, gx1=300, gx2=650, gw=130;
+      const rise=(0.26+0.60*eOut(clamp((u-2.0)/2.6,0,1)))*(1+0.05*Math.sin(u*1.5));   // montée + vie continue (bord haut bouge)
+      const h1=maxH*rise, h2=maxH*rise;
+      setOp(gBoxA,gap);gBoxA.setAttribute('x',gx1);gBoxA.setAttribute('y',baseY-maxH);gBoxA.setAttribute('width',gw);gBoxA.setAttribute('height',maxH);
+      setOp(gFillA,gap*0.92);gFillA.setAttribute('x',gx1+6);gFillA.setAttribute('width',gw-12);gFillA.setAttribute('y',(baseY-h1).toFixed(1));gFillA.setAttribute('height',h1.toFixed(1));
+      setOp(gBoxB,gap);gBoxB.setAttribute('x',gx2);gBoxB.setAttribute('y',baseY-maxH);gBoxB.setAttribute('width',gw);gBoxB.setAttribute('height',maxH);
+      setOp(gFillB,gap*0.92);gFillB.setAttribute('x',gx2+6);gFillB.setAttribute('width',gw-12);gFillB.setAttribute('y',(baseY-h2).toFixed(1));gFillB.setAttribute('height',h2.toFixed(1));
+      // le lien : un trait (tirets qui rampent) qui relie les deux têtes de jauge — elles bougent ensemble
+      setOp(gLink,gap*0.9);gLink.setAttribute('x1',gx1+gw);gLink.setAttribute('x2',gx2);gLink.setAttribute('y1',(baseY-h1).toFixed(1));gLink.setAttribute('y2',(baseY-h2).toFixed(1));
+      gLink.setAttribute('stroke-dashoffset',(-u*22).toFixed(1));
+      putCap(capE,'COMFORT',gx1+gw/2,baseY-maxH-24,YOU,gap);
+      putCap(capF,'WEAKNESS',gx2+gw/2,baseY-maxH-24,DEAD,gap);
+      // MR DOLLAR : à gauche des jauges, il CONSTATE le lien, puis s'efface — les jauges vivent sans lui
+      if(u>2.4 && u<6.2){ MrD.enter(u-2.4, {t:t, routine:'constate', rest:{x:165, y:1408, h:196}, op:clamp((u-2.4)/0.5,0,1)*(1-clamp((u-5.4)/0.8,0,1))}); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    // ═══ S4 — LA SÉLECTION INVERSÉE (SANS NARRATEUR) ═══
+    // Verbe visuel : LE TRI — les forts sautés (ils courent), les faibles pris (ils s'éteignent).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll(); MrD.hide();
+      putCap(capA,'YOUR RULE KEPT THE WRONG ONES',CX,624,INK,clamp((u-3.4)/0.9,0,1));
+      // ── EN HAUT : les mouvements FORTS, tous SAUTÉS (flèches qui montent, elles courent) ──
+      // COUPE FRANCHE : la scène ouvre sur SES objets déjà pleins (op uniforme), le VERBE est le mouvement de position
+      const ap=clamp((u+0.2)/0.35,0,1);
+      const sx=[180,350,520,690,860];
+      for(let k=0;k<5;k++){
+        const run=eOut(clamp((u+0.2)/2.6,0,1));                              // ils COURENT : la flèche s'allonge et grimpe
+        const yb=940, len=210+52*run;
+        const wob=6*Math.sin(u*1.05+k*0.9)+3*Math.sin(u*2.1+k*0.5)-16*run;
+        const xw=sx[k]+4*Math.sin(u*0.95+k);
+        const yt=yb-len+wob;
+        path([[xw,yb],[xw,yt],[xw-15,yt+26],[xw,yt],[xw+15,yt+26]],INK,7,ap);}
+      putCap(capC,'STRONG MOVES — ALL SKIPPED',CX,1000,DEAD,clamp((u-0.6)/0.7,0,1));
+      // ── EN BAS : les mouvements FAIBLES, tous PRIS (stubs gris + boule teal qui s'éteint) ──
+      const wx=[210,370,530,690,850];
+      for(let k=0;k<5;k++){
+        const y=1180+5*Math.sin(u*0.8+k*0.7);
+        path([[wx[k]-46,y+6*Math.sin(u*1.3+k)],[wx[k],y],[wx[k]+46,y+5*Math.sin(u*1.1+k+1)]],DEAD,7,ap);
+        ball(wx[k], y-24+7*Math.sin(u*1.5+k*0.8)+3*Math.sin(u*2.6+k), 13, ap, YOU);}
+      putCap(capB,'WEAK MOVES — ALL TAKEN',CX,1300,INK,clamp((u-1.4)/0.7,0,1));
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : deux chemins assumés, un troisième barré ═══
+    // Verbe visuel : LE CHOIX — deux voies valides, le faux plan rayé.
+    const LMOVE=pRunaway(600,940,1000,660,200);
+    const LRET=pRetest(120,480,1000,190);
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      putCap(capA,'DECIDE BEFORE, NOT DURING',CX,624,INK,clamp((u-0.5)/0.8,0,1));
+      // ── GAUCHE : LE CONFORT — tu attends le retest, tu rates les forts ──
+      level(110,500,1000,0.9,INK,-u*26);
+      path(LRET.pts,INK,6,1);
+      spot(LRET.xr,1000,92,52,true,1);
+      const ha=LRET.pts[LRET.pts.length-1]; ball(ha[0]+6*Math.sin(u*1.0)+3*Math.sin(u*2.1),ha[1]+7*Math.sin(u*0.9),12,1,INK);
+      putCap(capC,'THE COMFORT',300,772,YOU,clamp((u-0.9)/0.7,0,1));
+      putCap(capE,'MISS THE STRONG',290,1150,DEAD,clamp((u-1.5)/0.7,0,1));
+      // ── DROITE : LE MOUVEMENT — tu entres sans confort, stop plus large, taille réduite ──
+      level(590,970,1000,0.9,INK,u*26);
+      const pm=path(LMOVE,INK,6,1);
+      ball(628,996+5*Math.sin(u*1.2)+2*Math.sin(u*2.3),11,1,YOU);                 // boule PLUS PETITE : taille réduite
+      // le stop plus large : une bande grise (tirets qui rampent) sous l'entrée
+      const stop=path([[600,1052],[940,1052]],DEAD,4,clamp((u-1.2)/0.7,0,1)); if(stop){stop.setAttribute('stroke-dasharray','10 10');stop.setAttribute('stroke-dashoffset',(-u*24).toFixed(1));}
+      putCap(capD,'THE MOVE',780,772,INK,clamp((u-1.1)/0.7,0,1));
+      putCap(capF,'WIDER STOP · SMALLER',780,1150,DEAD,clamp((u-1.8)/0.7,0,1));
+      // ── BAS CENTRE : LE FAUX PLAN, BARRÉ — attendre de se sentir en sécurité ──
+      const barY=1250, bap=clamp((u-2.4)/0.8,0,1);
+      level(430,650,barY,bap*0.8,DEAD,-u*20);                                      // un niveau désert (tirets qui rampent)
+      spot(540,barY-30,86,50,false,bap);                                          // une place qu'on n'occupera pas
+      const xw=clamp((u-2.8)/0.5,0,1)*bap;
+      setOp(xA,xw);xA.setAttribute('x1',476);xA.setAttribute('y1',barY-58);xA.setAttribute('x2',604);xA.setAttribute('y2',barY+2);
+      setOp(xB,xw);xB.setAttribute('x1',604);xB.setAttribute('y1',barY-58);xB.setAttribute('x2',476);xB.setAttribute('y2',barY+2);
+      putCap(capB,'THIS ISN’T A PLAN',CX,barY+108,DEAD,clamp((u-3.2)/0.8,0,1));
+      // MR DOLLAR : il entre, DÉSIGNE le faux plan barré, puis s'en va — l'image finale reste seule
+      if(u>0.6 && u<4.4){ MrD.pointAt('point', t, 200+6*Math.sin(u*1.1), 1432, 214, clamp((u-0.6)/0.6,0,1)*(1-clamp((u-3.6)/0.7,0,1)), CX); }
+      else{ MrD.hide(); }
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
