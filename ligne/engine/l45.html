@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L45 « THE TRADE YOU WATCH » — S1 : émotion frame 0 = RECONNAISSANCE DE SOI + TENSION — une position teal qui monte, sa
+       zone cible au-dessus, MAIS le haut du potentiel DÉJÀ raboté (tranches découpées qui flottent à droite) et TOI (boule teal)
+       collé à la position, le regard rivé. Le fusil = les tranches rabotées. S2 : on sépare l'IDÉE (trait teal immobile) du PRIX
+       (qui frémit) ; chaque secousse envoie une impulsion à la boule, qui vibre de plus en plus. S3 : le gain montré comme une
+       CONSTRUCTION devient, sous le doute, un OBJET FRAGILE en équilibre ; la boule l'attrape trop tôt (sortie précoce) et une
+       tranche du haut est abandonnée. S4 : LA scène — la distribution ; tous les gagnants rabotés au même niveau bas, les pertes
+       intactes ; la pile de tranches jamais encaissées. NARRATEUR ABSENT. S5 : décharge — 'LOOK FREQUENCY' s'ajoute au plan
+       (comme STOP et TARGET), la boule SE DÉTOURNE et la colonne monte LIBREMENT, entière, encaissée.
+       Doctrine : aucun chiffre, pas de brun, teal = TOI/gain, gris = perte, narrateur toujours en encre, bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : les poses du NARRATEUR (art Gemini vectorisé, encre) — injection build_ligne ──
+    /*INCLUDE:narrator*/
+
+
+    // ═══ POOLS RÉUTILISABLES ═══ (barres, tranches rabotées, traits) — jamais un objet créé par frame
+    const BARS=[];   for(let i=0;i<32;i++)BARS.push(mk('rect',{rx:3,opacity:0}));
+    const SLICES=[]; for(let i=0;i<20;i++)SLICES.push(mk('rect',{rx:4,fill:'none',stroke:YOU,'stroke-width':4,opacity:0})); // les tranches DÉCOUPÉES (ton profit non réclamé)
+    const GLINES=[]; for(let i=0;i<12;i++)GLINES.push(mk('line',{'stroke-linecap':'round',opacity:0}));
+    // singletons
+    const priceLine=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const ideaLine=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const gapOutline=mk('rect',{fill:'none',stroke:YOU,'stroke-width':3,'stroke-dasharray':'10 12',opacity:0});
+    const colRect=mk('rect',{rx:4,fill:YOU,opacity:0});   // colonne S3 (rotative)
+    const fulcrum=mk('polygon',{fill:INK,opacity:0});
+    const ball=mk('circle',{r:38,fill:YOU,opacity:0});    // TOI — jamais un visage, jamais dessiné en figure
+
+    let bi=0,si=0,gi=0;
+    function resetPools(){bi=0;si=0;gi=0;}
+    function bar(x,y,w,h,c,op){const e=BARS[bi++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));e.setAttribute('fill',c);setOp(e,op);}
+    function slice(x,y,w,h,op,rot){const e=SLICES[si++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));e.setAttribute('transform',rot?`rotate(${rot.toFixed(2)} ${(x+w/2).toFixed(1)} ${(y+h/2).toFixed(1)})`:'');setOp(e,op);}
+    function gline(x1,y1,x2,y2,c,w,op,dash){const e=GLINES[gi++];if(!e)return;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',c);e.setAttribute('stroke-width',w);e.setAttribute('stroke-dasharray',dash||'');setOp(e,op);}
+    function flushPools(){for(let i=bi;i<BARS.length;i++)setOp(BARS[i],0);for(let i=si;i<SLICES.length;i++)setOp(SLICES[i],0);for(let i=gi;i<GLINES.length;i++)setOp(GLINES[i],0);}
+    function hideSingles(){setOp(priceLine,0);setOp(ideaLine,0);setOp(gapOutline,0);setOp(colRect,0);setOp(fulcrum,0);setOp(ball,0);}
+    function setBall(x,y,r,op){ball.setAttribute('cx',x.toFixed(1));ball.setAttribute('cy',y.toFixed(1));ball.setAttribute('r',(r||38).toFixed(1));setOp(ball,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DO YOU KEEP','EXITING EARLY'];
+    const FS=88,lineH=112,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':200,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26/l44) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(34),capB=caption(34),capC=caption(34),capD=caption(42),capE=caption(40),capF=caption(42);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LA POSITION QUI MONTE, ET LE POTENTIEL DÉJÀ RABOTÉ PAR LE HAUT ═══
+    // Verbe visuel : le rabotage (une tranche du haut se détache et rejoint la pile).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetPools(); hideSingles();
+      const gf=clamp(1-(lf-0.87)/0.09,0,1);
+      const qfade=clamp(1-(u-7.0)/1.3,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf*qfade);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf*qfade);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : la position est là, pleine ; les tranches sont DÉJÀ découpées ; la boule est DÉJÀ collée. ──
+      const baseY=1400, colX=440, colW=160, colCX=520, targetY=632;
+      const capY=898 - 9*Math.sin(u*0.85) - 4*Math.sin(u*1.75);           // sommet capturé : monte/respire (deux harmoniques)
+      bar(colX, capY, colW, baseY-capY, YOU, 1);                          // la position teal, pleine
+      gapOutline.setAttribute('x',colX);gapOutline.setAttribute('y',targetY.toFixed(1));gapOutline.setAttribute('width',colW);gapOutline.setAttribute('height',(capY-targetY).toFixed(1));setOp(gapOutline,0.7); // le potentiel restant
+      gline(colX-24,targetY,colX+colW+24,targetY,YOU,6,1,'16 10');        // la zone cible (bracket)
+      // les tranches DÉJÀ rabotées, flottant à droite (3), chacune dérive (deux harmoniques)
+      const slBaseX=712;
+      for(let j=0;j<3;j++){const dx=10*Math.sin(u*0.9+j*1.1)+5*Math.sin(u*1.8+j*0.6);const dy=9*Math.sin(u*1.15+j*0.8)+4*Math.sin(u*2.2+j*1.3);
+        slice(slBaseX+dx, 702+j*60+dy, 180, 44, 0.62, 4*Math.sin(u*0.7+j));}
+      // une NOUVELLE tranche se détache (~u4.3) et vole rejoindre la pile
+      const det=clamp((u-4.3)/1.5,0,1);
+      if(det>0){const fx=lerp(colCX-58, slBaseX+6, eInOut(det)), fy=lerp(capY-34, 882, eInOut(det));
+        slice(fx, fy, 180*(0.55+0.45*det), 44, 0.62, lerp(-14,3,det));}
+      // TOI : boule teal collée à la position, le regard rivé (bob deux harmoniques)
+      const by=capY + 7*Math.sin(u*1.6) + 3*Math.sin(u*3.0);
+      setBall(colX-72, by, 38, 1);
+      gline(colX-42, by, colX+8, capY+6, YOU, 3, 0.7, '6 10');            // le regard rivé
+      // étiquettes — zones vides uniquement
+      putCap(capA,'YOU',250,by+13,YOU,1);                                 // gauche (cx<=380)
+      putCap(capB,'FULL TARGET',colCX,targetY-32,INK,clamp((u-1.6)/0.7,0,1)*gf); // au-dessus du bracket
+      putCap(capC,'ALREADY CUT',812,662,YOU,clamp((u-2.4)/0.7,0,1)*gf);   // droite (cx>=700), au-dessus des tranches
+      // NARRATEUR : il entre, DÉSIGNE les tranches déjà coupées (à droite), puis il s'efface. La scène vit sans lui.
+      if(u<3.6){ MrD.enter(u,{t:t,routine:'designe',lookAt:812,rest:{x:236,y:1442,h:224},op:gf}); }
+      else{ const o=clamp((u-3.6)/1.2,0,1); MrD.say('walk',t,lerp(236,-180,eInOut(o)),1442,224,(1-o)*gf,true,0,1,1); }
+      flushPools();
+    }
+
+    // ═══ S2 — REGARDER = EXPOSITION AU BRUIT : l'idée immobile, le prix qui frémit, les impulsions qui te font vibrer ═══
+    // Verbe visuel : les impulsions qui rayonnent (chaque secousse du prix frappe la boule).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideSingles();
+      const ideaY=812;
+      ideaLine.setAttribute('x1',176);ideaLine.setAttribute('y1',ideaY);ideaLine.setAttribute('x2',712);ideaLine.setAttribute('y2',ideaY);setOp(ideaLine,1); // L'IDÉE : parfaitement immobile
+      // LE PRIX : frémit en permanence (position recalculée chaque frame — vraie progression, jamais de l'opacité)
+      let pts=[];for(let x=176;x<=712;x+=20){const y=1060 + 30*Math.sin(x*0.045+u*3.1) + 15*Math.sin(x*0.10 - u*4.4) + 9*Math.sin(u*7.0 + x*0.19);pts.push(x.toFixed(1)+','+y.toFixed(1));}
+      priceLine.setAttribute('points',pts.join(' '));setOp(priceLine,1);
+      // TOI : la boule vibre de plus en plus (amplitude croissante, deux harmoniques)
+      const amp=6 + clamp(u-1,0,7)*2.4;
+      const bx=856 + amp*Math.sin(u*12.5) + amp*0.5*Math.sin(u*20.3);
+      const by=1150 + amp*Math.sin(u*10.8+1.3) + amp*0.5*Math.sin(u*17.7);
+      setBall(bx,by,40,1);
+      // les impulsions prix -> boule (4 décalées, cadence pressée)
+      for(let j=0;j<4;j++){const ph=((u*1.35 + j*0.25)%1);const x1=lerp(690,bx-42,ph),y1=lerp(1058,by,ph);const op=Math.sin(ph*Math.PI)*clamp((u-1.2)/0.6,0,1);gline(x1,y1,x1+34,y1+8,DEAD,5,op*0.9,'');}
+      // étiquettes
+      putCap(capA,'THE IDEA — UNCHANGED',444,ideaY-42,YOU,clamp((u-0.5)/0.7,0,1));
+      putCap(capB,'THE PRICE — ONLY NOISE',360,1252,DEAD,clamp((u-1.6)/0.7,0,1));
+      putCap(capC,'YOU',895,1034,YOU,clamp((u-2.2)/0.6,0,1));
+      // NARRATEUR : présence simple (il attend, à droite, il regarde la boule trembler) — pas de désignation. Il repart.
+      if(u>2.0 && u<6.2){ MrD.enter(u-2.0,{t:t,routine:'attend',rest:{x:900,y:1444,h:206},op:1}); }
+      else if(u>=6.2){ const o=clamp((u-6.2)/1.1,0,1); MrD.say('walk',t,lerp(900,1200,eInOut(o)),1444,206,1-o,false,0,1,1); }
+      else MrD.hide();
+      flushPools();
+    }
+
+    // ═══ S3 — LE GAIN : de CONSTRUCTION à OBJET FRAGILE — la boule l'attrape trop tôt ═══
+    // Verbe visuel : la re-lecture (une colonne solide devient un objet en équilibre qu'on saisit dans la panique).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideSingles();
+      const baseY=1360, colX=462, colW=156, colCX=540;
+      const build=clamp(u/1.8,0,1);
+      const fragile=clamp((u-2.0)/1.0,0,1);
+      const grab=clamp((u-2.7)/1.0,0,1);
+      const topFull=lerp(1140, 880, build);        // ouvre DÉJÀ pleine (jamais height 0) puis se bâtit
+      const cut=70;
+      const topNow=topFull + grab*cut;             // après la saisie : le haut abandonné, le sommet redescend
+      const ang=fragile*(3.2*Math.sin(u*2.1)+1.6*Math.sin(u*3.6)) + fragile*0.0; // tangue quand fragile (deux harmoniques)
+      // la colonne (rotative)
+      colRect.setAttribute('x',colX);colRect.setAttribute('y',topNow.toFixed(1));colRect.setAttribute('width',colW);colRect.setAttribute('height',(baseY-topNow).toFixed(1));
+      colRect.setAttribute('transform',`rotate(${ang.toFixed(2)} ${colCX} ${baseY})`);setOp(colRect,1);
+      // le fléau/pivot apparaît quand elle devient fragile
+      fulcrum.setAttribute('points',`${colCX-34},${baseY} ${colCX+34},${baseY} ${colCX},${baseY+46}`);setOp(fulcrum,fragile);
+      // seams de « construction » (disparaissent une fois fragile)
+      for(let k=1;k<=4;k++){const sy=lerp(baseY, topFull, k/5); gline(colX+8, sy, colX+colW-8, sy, PAPER, 3, 0.5*build*(1-fragile), '');}
+      // la tranche saisie/abandonnée s'envole vers le bas-gauche (zone VIDE, loin des autres étiquettes)
+      if(grab>0){const gx=lerp(colX+2, 232, eInOut(grab)), gy=lerp(topFull-12, 852, eInOut(grab));
+        slice(gx, gy, colW*0.9, 46, 0.62, lerp(-6,-16,grab));}
+      // TOI : la boule vient de la droite ATTRAPER le sommet (sortie précoce)
+      const brx=lerp(842, colX+colW+8, grab), bry=lerp(1150, topNow-4, grab) + (grab>0.9?(5*Math.sin(u*1.4)+2*Math.sin(u*2.6)):0);
+      setBall(brx,bry,38,clamp((u-2.4)/0.5,0,1));
+      // étiquettes — zones vides distinctes (haut / bas-gauche / droite), jamais l'une sur l'autre
+      putCap(capA, fragile<0.5?'SOMETHING YOU BUILD':'SOMETHING YOU COULD LOSE', colCX, 596, INK, clamp((u-0.5)/0.6,0,1));
+      putCap(capC,'GRABBED EARLY', 842, 1046, YOU, clamp((u-3.0)/0.6,0,1));
+      putCap(capD,'LEFT ON TOP', 232, 808, YOU, clamp(grab,0,1));
+      // NARRATEUR : il RÉAGIT à la panique (doute/facepalm), bas-gauche, puis s'en va. La scène tangue sans lui.
+      if(u>2.6 && u<7.2){ MrD.enter(u-2.6,{t:t,routine:'doute',rest:{x:228,y:1446,h:220},op:1}); }
+      else if(u>=7.2){ const o=clamp((u-7.2)/1.1,0,1); MrD.say('walk',t,lerp(228,-180,eInOut(o)),1446,220,1-o,true,0,1,1); }
+      else MrD.hide();
+      flushPools();
+    }
+
+    // ═══ S4 — LA DISTRIBUTION : tous les gagnants rabotés au même niveau bas, les pertes intactes ═══
+    // Verbe visuel : le nivellement (une lame balaie et coupe tous les gagnants à la même hauteur).
+    // NARRATEUR ABSENT : la tension frappe seule.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideSingles(); MrD.hide();
+      const baseY=1360, cutY=1088;
+      const cutProg=clamp((u-1.5)/1.4,0,1);
+      const bladeY=lerp(716, cutY, eInOut(cutProg));
+      // PERTES (gauche, gris) — tailles contrôlées, JAMAIS touchées (respirent : position, deux harmoniques)
+      const lossH=[250,300,220,282,240];
+      for(let k=0;k<5;k++){const x=118+k*72;const br=4*Math.sin(u*0.9+k*0.7)+2*Math.sin(u*1.8+k*1.1);
+        bar(x, baseY-lossH[k]+br, 56, lossH[k]-br, DEAD, 1);}
+      // GAGNANTS (droite, teal) — variés, certains très hauts ; TOUS rabotés au même niveau
+      const winTop=[812,900,760,980,700,940];   // sommets d'origine (petit y = plus haut)
+      const wx0=566, wW=52, wGap=12, nWin=6;
+      for(let k=0;k<nWin;k++){const x=wx0+k*(wW+wGap);
+        const br=4*Math.sin(u*1.05+k*0.6)+2*Math.sin(u*2.0+k*1.2);
+        const orig=winTop[k]+br;
+        const top=lerp(orig, Math.max(orig,cutY), cutProg);
+        bar(x, top, wW, baseY-top, YOU, 1);
+        // la portion coupée s'envole vers la pile (les plus hauts perdent le plus)
+        if(cutProg>0 && orig<cutY){const rise=eInOut(cutProg);
+          const px=lerp(x, 604+k*50, rise), py=lerp(orig, 700+(k%2)*54, rise) + (cutProg>=1?(6*Math.sin(u*0.8+k)+3*Math.sin(u*1.7+k)):0);
+          slice(px, py, wW*0.92, Math.min(46, cutY-orig), 0.6, 3*Math.sin(u*0.6+k));}
+      }
+      // la lame qui balaie (le verbe) — disparaît une fois la coupe faite
+      gline(wx0-10, bladeY, wx0+nWin*(wW+wGap)-wGap, bladeY, INK, 6, cutProg<1?1:clamp(1-(u-3.2)/0.6,0,1), '20 12');
+      // étiquettes
+      putCap(capA,'WINNERS',760,1430,YOU,1);
+      putCap(capD,'LOSSES',290,1430,DEAD,1);
+      putCap(capB,'SAME STRATEGY — LOSSES STAY FULL',CX,586,INK,clamp((u-2.6)/0.8,0,1));
+      putCap(capC,'NEVER CASHED',770,662,YOU,clamp((u-3.2)/0.8,0,1));
+      flushPools();
+    }
+
+    // ═══ S5 — DÉCHARGE : 'LOOK FREQUENCY' entre au plan, la boule se détourne, la colonne monte LIBRE et entière ═══
+    // Verbe visuel : la montée libre (la colonne, plus surveillée, se complète — aucune tranche coupée).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideSingles();
+      // LE PLAN (gauche) : trois règles, la 3e s'ajoute au même statut
+      const planX=132, rowW=392, rY=[792,932,1072], rowLbl=['STOP','TARGET','LOOK FREQUENCY'];
+      const thirdIn=clamp((u-1.0)/1.2,0,1);
+      const rowCap=[capA,capB,capC];
+      for(let r=0;r<3;r++){const on=(r<2)?1:thirdIn; if(on<=0.001){setOp(rowCap[r],0);continue;}
+        const off=(r<2)?0:lerp(64,0,eInOut(thirdIn));
+        const col=(r===2)?YOU:INK;
+        gline(planX, rY[r]-30, planX, rY[r]+30, col, 6, on, '');          // montant
+        gline(planX, rY[r]+30, planX+rowW, rY[r]+30, col, 4, on, '');     // base
+        bar(planX+18, rY[r]-16, 30, 30, col, on);                         // la case (statut)
+        putCap(rowCap[r], rowLbl[r], planX+238, rY[r]+2+off, col, on);    // centré bien APRÈS la case (jamais dessus), tient dans la rangée
+      }
+      // LA COLONNE (droite) : monte librement jusqu'à la cible, aucune tranche coupée (respire : deux harmoniques)
+      const baseY=1400, cX=628, cW=168, cCX=712, targetY=740;
+      const rise=clamp(u/2.2,0,1);
+      const topFree=lerp(baseY, targetY, eInOut(rise)) - 6*Math.sin(u*0.8) - 3*Math.sin(u*1.7);
+      bar(cX, topFree, cW, baseY-topFree, YOU, 1);
+      gline(cX-24,targetY,cX+cW+24,targetY,YOU,6,1,'16 10');               // la cible ATTEINTE
+      // TOI : la boule SE DÉTOURNE (descend vers le bas-gauche, plus de regard rivé), puis bobe doucement
+      const away=clamp((u-0.5)/1.6,0,1);
+      const bx=lerp(cX-78, 300, eInOut(away));
+      const by=lerp(1000, 1300, eInOut(away)) + (away>0.9?(6*Math.sin(u*1.5)+3*Math.sin(u*2.9)):0);
+      setBall(bx,by,38,1);
+      // étiquettes — le caption actionnable en haut (au-dessus de tout), 'FULLY CASHED' au-dessus de la colonne
+      putCap(capF,'DECIDE HOW OFTEN YOU LOOK',CX,566,INK,clamp((u-2.4)/0.8,0,1));
+      putCap(capD,'FULLY CASHED',cCX,700,YOU,clamp((u-1.4)/0.7,0,1));
+      putCap(capE,'A RULE — NOT A WHIM',300,1176,YOU,clamp((u-2.0)/0.7,0,1));
+      // NARRATEUR : il présente la nouvelle règle (désigne le plan, à gauche), puis tire le rideau et laisse l'image finale.
+      if(u<4.2){ MrD.enter(u,{t:t,routine:'designe',lookAt:300,rest:{x:548,y:1446,h:214},op:1}); }
+      else{ const o=clamp((u-4.2)/1.3,0,1); MrD.say('walk',t,lerp(548,1200,eInOut(o)),1446,214,1-o,false,0,1,1); }
+      flushPools();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
