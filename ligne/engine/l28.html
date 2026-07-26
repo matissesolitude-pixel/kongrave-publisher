@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L28 « THE MARKET THAT PAYS TO WAIT » (REPRODUCTION — le master refusé par Meta utilisait des jauges A/B verticales avec
+       un flux de jetons ET des étiquettes POSÉES DANS la colonne des ticks : « A RECEIVES », « THE DRIFT TURNS ANYWAY » traversées
+       par les jetons. Ici tout est REFAIT : deux BARRES-position jumelles en haut, la DÉRIVE (funding) vit dans une VOIE BASSE
+       séparée (jetons sous la ligne de base), et AUCUNE étiquette ne partage la bande verticale d'un objet qui bouge — elles
+       tiennent au-dessus des barres ou dans les gouttières libres. Rendu matériellement DIFFÉRENT du refusé.)
+       S1 : émotion frame 0 = RECONNAISSANCE + CURIOSITÉ — deux positions teal PARFAITEMENT identiques, et sous chacune une micro-flèche
+       opposée à peine visible (l'une reçoit, l'autre paie). Le fusil = ces deux jumelles à dérive cachée opposée. S2 : la dérive se
+       révèle — sous A des jetons teal MONTENT dans la position (reçoit), sous B des jetons gris TOMBENT (paie) ; ça s'inverse selon
+       le côté. S3 : l'angle mort — le regard est braqué sur le PRIX (plat, en haut) pendant que la dérive tourne, ignorée, en bas.
+       S4 (LA scène, NARRATEUR ABSENT) : sur des semaines, la dérive COMPOSE — sous A un socle teal s'accumule (vent arrière), sous B
+       une dette grise s'accumule et le seuil de rentabilité RECULE plus haut. S5 : décharge — avant de tenir, on DESCEND vérifier le
+       sens du funding (pas juste le prix), on choisit le côté qui PAIE. Doctrine : aucun chiffre ; teal = TOI / reçu / vent arrière,
+       gris = payé / dette ; pas de brun, pas de rouge ; narrateur toujours en encre, petit, absent en S4 ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DÉFS : le NARRATEUR MR DOLLAR (poses vectorisées, encre) injectées par build_ligne ──
+    /*INCLUDE:narrator*/
+
+
+    // ═══ GÉOMÉTRIE PARTAGÉE ═══ deux barres-position jumelles ; la DÉRIVE vit dans une voie basse séparée
+    const ax=300, bx=780, sx=540;          // A gauche · B droite · position unique (S5) au centre
+    const WB=120, BASE=1120, HB=262;        // barres : bord haut = BASE-HB = 858 (FIXE dans toutes les scènes → voies d'étiquettes stables)
+    const LBLTOP=820;                       // voie d'étiquette AU-DESSUS des barres (jamais un objet mobile ici : les barres n'oscillent qu'en X)
+    // vie continue (POSITION, deux harmoniques) — les jumelles respirent, décalées pour être VIVANTES sans se figer
+    const swA=u=>10*Math.sin(u*1.70)+4.5*Math.sin(u*3.10);
+    const swB=u=>10*Math.sin(u*1.55+0.7)+4.5*Math.sin(u*2.90+0.4);
+
+    const barA=mk('rect',{rx:16,fill:YOU,opacity:0});
+    const barB=mk('rect',{rx:16,fill:YOU,opacity:0});
+    function bar(el,cx,dx,op){el.setAttribute('x',(cx-WB/2).toFixed(1));el.setAttribute('y',(BASE-HB).toFixed(1));
+      el.setAttribute('width',WB);el.setAttribute('height',HB);el.setAttribute('transform',`translate(${dx.toFixed(1)} 0)`);setOp(el,op);}
+
+    // les micro-flèches de dérive (S1 = hint · S2/S3 = confirmées) ; A monte (reçoit) teal, B descend (paie) gris
+    const arrUpA=mk('path',{fill:'none','stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const arrDnB=mk('path',{fill:'none','stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    function arrow(el,x,ytail,yhead,color,op,sw){const dir=Math.sign(yhead-ytail)||-1,hs=(sw||16);
+      el.setAttribute('d',`M ${x} ${ytail} L ${x} ${yhead} M ${(x-hs).toFixed(1)} ${(yhead-dir*hs).toFixed(1)} L ${x} ${yhead} L ${(x+hs).toFixed(1)} ${(yhead-dir*hs).toFixed(1)}`);
+      el.setAttribute('stroke',color);setOp(el,op);}
+
+    // ── LE FLUX FUNDING (jetons) — reçoit MONTE dans A · paie TOMBE de B. Position mobile à chaque frame (vie continue).
+    //    IMPORTANT : les jetons vivent dans la COLONNE des barres MAIS uniquement AU-DESSOUS de LBLTOP — aucune étiquette n'y descend. ──
+    const NF=6;
+    const RECV=[]; for(let i=0;i<NF;i++)RECV.push(mk('rect',{rx:4,width:28,height:20,fill:YOU,opacity:0}));
+    const PAY=[];  for(let i=0;i<NF;i++)PAY.push(mk('rect',{rx:4,width:28,height:20,fill:DEAD,opacity:0}));
+    function fluxUp(x,op,u,spd){for(let i=0;i<NF;i++){const ph=((u*spd+i/NF)%1),y=BASE+72-ph*116,a=op*Math.sin(ph*Math.PI);
+      const e=RECV[i];e.setAttribute('x',(x-14).toFixed(1));e.setAttribute('y',y.toFixed(1));setOp(e,a*0.95);}}
+    function fluxDn(x,op,u,spd){for(let i=0;i<NF;i++){const ph=((u*spd+i/NF)%1),y=BASE-46+ph*188,a=op*Math.sin(ph*Math.PI);
+      const e=PAY[i];e.setAttribute('x',(x-14).toFixed(1));e.setAttribute('y',y.toFixed(1));setOp(e,a*0.9);}}
+    function hideFlux(){for(const e of RECV)setOp(e,0);for(const e of PAY)setOp(e,0);}
+
+    // ── S4 : ACCUMULATION (socle teal sous A · dette grise sous B · seuil de rentabilité qui recule) ──
+    const pedestal=mk('rect',{rx:10,fill:YOU,opacity:0});                       // vent arrière accumulé (A)
+    const debt=mk('rect',{rx:10,fill:DEAD,opacity:0});                          // dette accumulée (B)
+    const beLine=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-dasharray':'18 12','stroke-linecap':'round',opacity:0}); // break-even qui recule
+    const gapArrow=mk('path',{fill:'none',stroke:DEAD,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0}); // « il faut monter de PLUS »
+
+    // ── S3 / S5 : LE PRIX (en haut, plat) + le regard ──
+    const priceLine=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const priceArrow=mk('path',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const gazeRing=mk('circle',{r:34,fill:'none',stroke:YOU,'stroke-width':7,opacity:0});
+    const xMark=mk('path',{fill:'none',stroke:DEAD,'stroke-width':9,'stroke-linecap':'round',opacity:0}); // le côté chargé, barré (S5)
+
+    function hideAll(){for(const e of [barA,barB,arrUpA,arrDnB,pedestal,debt,beLine,gapArrow,priceLine,priceArrow,gazeRing,xMark])setOp(e,0);hideFlux();}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME TRADE.','WHY IS ONE PAID','TO HOLD'];
+    const FS=78,lineH=98,y0=205,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+QLINES.length*lineH+64,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':170,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (getComputedTextLength) et borne le centre : un texte ne peut PLUS être coupé ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(42),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — DEUX JUMELLES PARFAITES, ET UNE DÉRIVE OPPOSÉE QUI SE DEVINE DESSOUS ═══
+    // Verbe visuel : l'énigme des jumelles (identiques, mais un signe opposé pointe sous chacune).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.87)/0.09,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.26)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.15,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : les deux positions teal sont DÉJÀ là, pleines, identiques — rien ne se construit. L'œil compare, cherche la différence.
+      const dA=swA(u), dB=swB(u);
+      bar(barA,ax,dA,1); bar(barB,bx,dB,1);
+      putCap(capA,'POSITION A',ax,LBLTOP,YOU,gf);
+      putCap(capB,'POSITION B',bx,LBLTOP,YOU,gf);
+      // les micro-flèches OPPOSÉES sous chacune (à peine visibles, elles se dévoileront) — vie continue : un léger bob de position
+      const bob=3*Math.sin(u*1.6)+1.5*Math.sin(u*2.7), hint=(0.18+0.14*(0.5+0.5*Math.sin(u*1.4)));
+      arrow(arrUpA, ax+dA, BASE+120+bob, BASE+58+bob, YOU, hint*gf, 13);
+      arrow(arrDnB, bx+dB, BASE+58-bob, BASE+120-bob, DEAD, hint*gf, 13);
+      // dérive naissante : un filet discret ticke déjà DANS LA GOUTTIÈRE (sous les barres, sur le papier → visible & vie continue robuste)
+      fluxUp(ax+dA, 0.24*gf, u, 0.4); fluxDn(bx+dB, 0.24*gf, u, 0.4);
+      putCap(capC,'SAME SIZE — SAME DIRECTION',CX,1400,INK,clamp((u-2.0)/0.8,0,1)*gf);
+      // MR DOLLAR : il entre depuis la gouttière gauche, il PARLE et DÉSIGNE les jumelles, puis il s'en va (la scène reste vivante sans lui).
+      if(u<4.2){
+        MrD.enter(u, {t:t, routine:'designe', lookAt:CX, rest:{x:165, y:1445, h:230}, op:gf});
+      }else{
+        const o=clamp((u-4.2)/1.1,0,1);
+        MrD.say('walk', t, lerp(165,-190,eInOut(o)), 1445, 230, (1-o)*gf, true, 0,1,1);
+      }
+    }
+
+    // ═══ S2 — LA DÉRIVE SE RÉVÈLE : sous A ça MONTE (reçoit), sous B ça TOMBE (paie) ═══
+    // Verbe visuel : le flux qui s'inverse (deux courants opposés révélés sous des jumelles identiques).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const dA=swA(u), dB=swB(u);
+      bar(barA,ax,dA,1); bar(barB,bx,dB,1);
+      putCap(capA,'A RECEIVES',ax,LBLTOP,YOU,clamp((u-1.6)/0.7,0,1));
+      putCap(capB,'B PAYS',bx,LBLTOP,DEAD,clamp((u-1.6)/0.7,0,1));
+      // le flux se révèle (fade court) puis TICKE en continu, en POSITION, DANS la voie basse (jamais sous une étiquette)
+      const rev=clamp((u-0.5)/1.1,0,1);
+      fluxUp(ax+dA, rev, u, 0.5);
+      fluxDn(bx+dB, rev, u, 0.5);
+      // les flèches de S1 se CONFIRMENT (grandes, nettes) sous chaque colonne
+      const cf=clamp((u-0.3)/0.7,0,1);
+      arrow(arrUpA, ax+dA, BASE+150, BASE+96, YOU, cf, 17);
+      arrow(arrDnB, bx+dB, BASE+96, BASE+150, DEAD, cf, 17);
+      // explication centrale, dans la gouttière haute LIBRE (aucun objet mobile ici)
+      putCap(capE,'HOLDING IS BORROWING',CX,632,INK,clamp((u-2.6)/0.8,0,1));
+      putCap(capC,'YOUR SIDE DECIDES WHO PAYS',CX,706,INK,clamp((u-3.4)/0.8,0,1));
+    }
+
+    // ═══ S3 — L'ANGLE MORT : le regard sur le PRIX (plat) pendant que la dérive tourne, ignorée ═══
+    // Verbe visuel : la division de l'attention (tout en haut sur le prix figé, tout en bas la dérive qui court, ignorée).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const dA=swA(u), dB=swB(u);
+      bar(barA,ax,dA,0.9); bar(barB,bx,dB,0.9);
+      // LE PRIX, en haut, PLAT (il ne bouge pas — c'est le point) ; le regard teal braqué dessus, pulsant
+      const py=742;
+      priceLine.setAttribute('x1',300);priceLine.setAttribute('x2',780);priceLine.setAttribute('y1',py);priceLine.setAttribute('y2',py);setOp(priceLine,1);
+      // une petite flèche prix qui hésite up/down (attention) — clignote sans DÉPLACER la ligne (le prix reste plat)
+      const flip=Math.sin(u*2.2)>0?-1:1;
+      arrow(priceArrow, CX, py+ (flip<0? -6: 6), py + flip*36, INK, 0.9, 14);
+      gazeRing.setAttribute('cx',CX);gazeRing.setAttribute('cy',py);gazeRing.setAttribute('r',(28+5*Math.sin(u*3.0)).toFixed(1));setOp(gazeRing,clamp((u-0.6)/0.6,0,1)*0.8);
+      putCap(capA,'EYES ON PRICE',CX,636,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capC,'PRICE — FLAT',CX,826,DEAD,clamp((u-1.4)/0.7,0,1));
+      // DESSOUS : la dérive tourne quand même — les jetons tickent, dans l'angle mort (position, voie basse)
+      const dr=clamp((u-1.8)/0.8,0,1);
+      fluxUp(ax+dA, dr, u, 0.5);
+      fluxDn(bx+dB, dr, u, 0.5);
+      arrow(arrUpA, ax+dA, BASE+150, BASE+96, YOU, dr*0.9, 17);
+      arrow(arrDnB, bx+dB, BASE+96, BASE+150, DEAD, dr*0.9, 17);
+      putCap(capE,'THE DRIFT TURNS ANYWAY',CX,1408,DEAD,clamp((u-2.6)/0.9,0,1));
+      // MR DOLLAR : il RÉAGIT depuis la gouttière droite (bras croisés, il constate l'angle mort), puis il s'efface.
+      if(u>1.0 && u<6.0){
+        MrD.enter(u-1.0, {t:t, routine:'reagit', rest:{x:918, y:1445, h:212}, op:clamp((u-1.0)/0.6,0,1)*clamp(1-(u-5.2)/0.8,0,1)});
+      }else{ MrD.hide(); }
+    }
+
+    // ═══ S4 — LA DÉRIVE COMPOSE : socle teal sous A (vent arrière), dette grise sous B (seuil qui recule) ═══
+    // Verbe visuel : l'accumulation opposée (l'un pousse par le bas, l'autre traîne un poids et voit sa cible s'éloigner). NARRATEUR ABSENT.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll(); MrD.hide();
+      const dA=swA(u), dB=swB(u);
+      bar(barA,ax,dA,1); bar(barB,bx,dB,1);
+      // cadence qui presse : le flux ticke de plus en plus vite (cycles jour/nuit qui défilent)
+      const spd=0.6+0.9*clamp(u/5,0,1);
+      fluxUp(ax+dA, 0.9, u, spd);
+      fluxDn(bx+dB, 0.9, u, spd);
+      // A : un SOCLE teal s'accumule sous la barre (vent arrière) — croissance continue (position). Borné à 196 → le bas du cadre reste libre.
+      const grow=clamp(u/4.5,0,1);
+      const pedH=lerp(6,196,eOut(grow))*(1+0.02*Math.sin(u*2.4));
+      pedestal.setAttribute('x',(ax-WB/2+8+dA).toFixed(1));pedestal.setAttribute('y',BASE.toFixed(1));
+      pedestal.setAttribute('width',WB-16);pedestal.setAttribute('height',Math.max(4,pedH).toFixed(1));setOp(pedestal,clamp((u-0.6)/0.6,0,1));
+      // B : une DETTE grise s'accumule sous la barre — et le SEUIL DE RENTABILITÉ recule PLUS HAUT (au-dessus de B, sans jamais croiser une étiquette)
+      const debtH=lerp(6,196,eOut(grow))*(1+0.02*Math.sin(u*2.1+0.5));
+      debt.setAttribute('x',(bx-WB/2+8+dB).toFixed(1));debt.setAttribute('y',BASE.toFixed(1));
+      debt.setAttribute('width',WB-16);debt.setAttribute('height',Math.max(4,debtH).toFixed(1));setOp(debt,clamp((u-0.6)/0.6,0,1));
+      const beY=lerp(772,656,eOut(grow));   // recule vers le haut, DANS la bande vide 656→772 : sous le titre (580) et au-dessus de CHARGED (820)
+      beLine.setAttribute('x1',(bx-WB/2-14+dB).toFixed(1));beLine.setAttribute('x2',(bx+WB/2+14+dB).toFixed(1));
+      beLine.setAttribute('y1',beY.toFixed(1));beLine.setAttribute('y2',beY.toFixed(1));beLine.setAttribute('stroke-dashoffset',(-u*22).toFixed(0));setOp(beLine,clamp((u-1.2)/0.7,0,1));
+      // étiquettes : identités AU-DESSUS des barres, titre en HAUT (y580, au-dessus de tout objet), constat EN BAS (y1400, sous les colonnes qui s'arrêtent à ~1316)
+      putCap(capA,'PAID TO WAIT',ax,LBLTOP,YOU,clamp((u-0.8)/0.7,0,1));
+      putCap(capB,'CHARGED TO WAIT',bx,LBLTOP,DEAD,clamp((u-0.8)/0.7,0,1));
+      putCap(capE,'SAME START — OPPOSITE DRIFT',CX,580,INK,clamp((u-2.4)/0.8,0,1));
+      putCap(capC,'IT COMPOUNDS EVERY DAY',CX,1400,INK,clamp((u-3.2)/0.9,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : avant de tenir, VÉRIFIE le sens du funding — pas juste le prix ═══
+    // Verbe visuel : le regard qui DESCEND vérifier (du prix, en haut, jusqu'à la dérive, en bas) puis CHOISIT le côté qui paie.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const dS=swA(u)*0.6;
+      bar(barA,sx,dS,1);   // la position unique, au centre
+      // TITRE : vérifier le FUNDING, pas seulement le prix — deux lignes espacées dans la gouttière haute (aucun objet ici)
+      putCap(capA,'CHECK THE FUNDING',CX,596,INK,clamp((u-0.4)/0.7,0,1));
+      putCap(capD,'NOT JUST PRICE',CX,664,DEAD,clamp((u-0.7)/0.7,0,1));
+      const py=742;   // le prix, court, au centre (là où va le prix) — sous les deux lignes de titre, dégagé
+      priceLine.setAttribute('x1',400);priceLine.setAttribute('x2',680);priceLine.setAttribute('y1',py);priceLine.setAttribute('y2',py);setOp(priceLine,0.7);
+      // LE REGARD DESCEND : de la ligne prix jusque SOUS la position, pour vérifier la dérive (puis il s'efface)
+      const gy=lerp(py+20, BASE+96, eInOut(clamp((u-0.6)/1.7,0,1)));
+      gazeRing.setAttribute('cx',(sx+dS).toFixed(1));gazeRing.setAttribute('cy',gy.toFixed(1));gazeRing.setAttribute('r',(28+5*Math.sin(u*3)).toFixed(1));setOp(gazeRing,clamp((u-0.4)/0.5,0,1)*clamp(1-(u-4.4)/0.8,0,1));
+      // LE FUNDING QUI PAIE : un filet teal MONTE en continu sur le côté PAYÉ (x356, sur le PAPIER à gauche de la position → visible,
+      // et « pays you to wait » ticke tout du long → vie continue jusqu'au bout, jamais figée)
+      fluxUp(356, clamp((u-0.5)/0.8,0,1), u, 0.55);
+      // le côté payé récompensé : un socle teal pousse sous la position choisie
+      const chosen=clamp((u-2.4)/1.1,0,1), pedH=lerp(4,150,eOut(chosen))*(1+0.02*Math.sin(u*2.2));
+      pedestal.setAttribute('x',(sx-WB/2+8+dS).toFixed(1));pedestal.setAttribute('y',BASE.toFixed(1));
+      pedestal.setAttribute('width',WB-16);pedestal.setAttribute('height',Math.max(4,pedH).toFixed(1));setOp(pedestal,chosen);
+      // LE CHOIX : deux options flanquant la position — à gauche le côté PAYÉ (teal), à droite le côté CHARGÉ (gris, barré). Loin du centre.
+      const opt=clamp((u-2.2)/0.9,0,1);
+      arrow(arrUpA, 356, BASE+150, BASE+92, YOU, opt, 17);
+      arrow(arrDnB, 724, BASE+92, BASE+150, DEAD, opt*0.9, 17);
+      xMark.setAttribute('d',`M 706 ${BASE+96} L 742 ${BASE+146} M 742 ${BASE+96} L 706 ${BASE+146}`);setOp(xMark,clamp((u-2.8)/0.6,0,1));
+      putCap(capC,'PAYS YOU TO WAIT',330,1340,YOU,opt);
+      putCap(capE,'BLEEDS YOU',760,1340,DEAD,clamp((u-2.8)/0.7,0,1));
+      // la PRISE actionnable (save) : le contraste qui clôt, en bas, dégagé (les colonnes s'arrêtent à ~1270)
+      putCap(capB,'THE BEST TRADES PAY YOUR PATIENCE',CX,1424,INK,clamp((u-3.6)/0.9,0,1));
+      // MR DOLLAR : il DÉSIGNE la dérive à vérifier (sous la position), puis il s'écarte pour l'image finale (le schéma prime).
+      if(u<3.4){
+        MrD.enter(u, {t:t, routine:'designe', lookAt:CX, rest:{x:168, y:1300, h:214}, op:clamp((u-0.2)/0.5,0,1)});
+      }else{
+        const o=clamp((u-3.4)/1.0,0,1);
+        MrD.say('walk', t, lerp(168,-190,eInOut(o)), 1300, 214, (1-o), true, 0,1,1);
+      }
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
