@@ -36,7 +36,8 @@ import ig_api  # noqa: E402
 from autoprod_ligne import transcode_25  # noqa: E402
 
 EPISODES = BASE_DIR / "ligne" / "episodes"
-PILOTES = BASE_DIR / "output" / "pilotes"
+TRIAL_DIR = BASE_DIR / "ligne" / "trial"          # masters validés committés (source du cloud)
+PILOTES = BASE_DIR / "output" / "pilotes"          # sortie d'un build local
 
 
 def _load_episode(ep: str) -> dict:
@@ -47,13 +48,16 @@ def _load_episode(ep: str) -> dict:
 
 
 def _master(ep: str) -> Path:
-    mp4 = PILOTES / f"{ep}.mp4"
-    if not mp4.is_file():
-        raise SystemExit(
-            f"[ERREUR] master introuvable : {mp4}\n"
-            f"          Fabrique-le d'abord : cd ligne && python3 build_ligne.py {ep} all"
-        )
-    return mp4
+    # priorité au master VALIDÉ committé (ligne/trial/) : déterministe, pas de rebuild cloud ;
+    # sinon la sortie d'un build local (output/pilotes/).
+    for mp4 in (TRIAL_DIR / f"{ep}.mp4", PILOTES / f"{ep}.mp4"):
+        if mp4.is_file():
+            return mp4
+    raise SystemExit(
+        f"[ERREUR] master introuvable pour {ep} (ni {TRIAL_DIR}/ ni {PILOTES}/)\n"
+        f"          Fabrique-le : cd ligne && python3 build_ligne.py {ep} all, "
+        f"puis copie-le dans ligne/trial/{ep}.mp4"
+    )
 
 
 def main(argv=None) -> int:

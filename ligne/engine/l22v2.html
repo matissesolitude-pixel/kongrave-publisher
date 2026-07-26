@@ -124,7 +124,7 @@
       const PX=690;
       for(let i=0;i<4;i++){
         const w=78+i*52, h=78+i*46;
-        const bx=PX-w/2+i*28 + 6*Math.sin(u*0.8+i), by=cy-h/2+i*24 + 4*Math.sin(u*1.3+i);
+        const bx=PX-w/2+i*28 + 11*Math.sin(u*1.0+i)+5*Math.sin(u*1.9+i), by=cy-h/2+i*24 + 8*Math.sin(u*1.4+i)+4*Math.sin(u*2.3+i);
         PILE[i].setAttribute('x',bx.toFixed(1));PILE[i].setAttribute('y',by.toFixed(1));
         PILE[i].setAttribute('width',w);PILE[i].setAttribute('height',h);
         PILE[i].setAttribute('fill', i===0?YOU:mix(YOU,DEAD,0.25+0.20*i));
@@ -134,7 +134,7 @@
       // LA FAÇADE (à GAUCHE, dégagée) : le petit spread teal + ses étiquettes, sous lui
       const FX=270;
       const g=(28)*(0.35+0.65*Math.abs(Math.cos(piv*Math.PI)));  // effet de pivot (l'écart s'aplatit puis revient)
-      drawSpread(FX, cy+4*Math.sin(u*1.0), g, 100, 1, YOU);
+      drawSpread(FX+4*Math.sin(u*1.3), cy+9*Math.sin(u*1.0)+4*Math.sin(u*2.0), g, 100, 1, YOU);
       putCap(capA,'THE SHELF PRICE',FX,cy+96,YOU,clamp(u/0.6,0,1));
       putCap(capE,'THE SMALLEST ONE',FX,cy+144,DEAD,clamp((u-2.0)/0.7,0,1));
       putCap(capB,'IT IS ONLY THE FACADE OF A PILE',CX,660,INK,clamp((u-2.6)/0.7,0,1));
@@ -192,7 +192,7 @@
         // triangle : chaque rangée plus haute est plus étroite (montagne)
         const rowCount=Math.max(1,perRow-row*2), inset=(perRow-rowCount)/2;
         if(col<inset||col>=inset+rowCount){setOp(UNITS[i],0);continue;}
-        const jx=2*Math.sin(u*2.0+i*0.5), jy=1.5*Math.sin(u*2.6+i*0.7);   // vie continue (déplacement)
+        const jx=5*Math.sin(u*2.2+i*0.5)+2*Math.sin(u*3.5+i), jy=3.5*Math.sin(u*2.6+i*0.7)+1.5*Math.sin(u*4.1+i);   // vie continue franche
         UNITS[i].setAttribute('x',(x0+col*colW+jx).toFixed(1));UNITS[i].setAttribute('y',(baseY-row*rowH-rowH+jy).toFixed(1));
         UNITS[i].setAttribute('width',colW-6);UNITS[i].setAttribute('height',rowH-6);
         setOp(UNITS[i],0.92);
@@ -222,7 +222,7 @@
       const cxp=CX, topY=760;
       // pivot (triangle) + fléau qui penche à GAUCHE (le serré-très-tradé pèse plus)
       const tilt=lerp(0, 0.32, eInOut(clamp((u-1.4)/1.4,0,1)));  // rad, plateau gauche descend
-      const sway=0.012*Math.sin(u*1.1)+0.006*Math.sin(u*2.2);    // vie continue jusqu'au bout (jamais figé)
+      const sway=0.028*Math.sin(u*1.1)+0.013*Math.sin(u*2.2);    // vie continue FRANCHE jusqu'au bout (les bouts du fléau bougent nettement)
       const ang=tilt+sway;
       const beamLen=760, py=topY;
       const lx=cxp-Math.cos(ang)*beamLen/2, ly=py+Math.sin(ang)*beamLen/2;
@@ -237,7 +237,7 @@
       const nL=Math.round(lerp(0,40,clamp((u-0.6)/1.4,0,1)));
       for(let i=0;i<STACKL.length;i++){ if(i>=nL){setOp(STACKL[i],0);continue;}
         const row=Math.floor(i/8), col=i%8;
-        STACKL[i].setAttribute('x',(lx-72+col*18+2*Math.sin(u*2+i)).toFixed(1));
+        STACKL[i].setAttribute('x',(lx-72+col*18+5*Math.sin(u*2.2+i)+2*Math.sin(u*3.4+i)).toFixed(1));
         STACKL[i].setAttribute('y',(ly+118-row*16-16).toFixed(1));
         STACKL[i].setAttribute('width',14);STACKL[i].setAttribute('height',12);setOp(STACKL[i],0.9);}
       // DROITE : gros écart mais très PEU d'unités → léger
