@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L52 « MOST OF WHAT YOU SEE IS NOISE » — S1 : émotion frame 0 = levier CHOC — un tracé de prix dont l'ESSENTIEL est désagrégé en
+       poussière (gris) et dont seuls quelques COURTS fragments restent en encre pleine ; la proportion happe (presque tout = bruit).
+       S2 : deux SOURCES fil-de-fer — un déséquilibre qui pousse en chœur (tracé solide) vs un brassage qui va-et-vient (tracé poussière) ;
+       à l'écran les deux tracés deviennent INDISCERNABLES (la poussière se condense sur la même courbe). S3 : un mouvement de poussière
+       arrive, une EXPLICATION (cadre encre) vient s'y COLLER, et l'ensemble est RANGÉ dans un casier 'PATTERN' avec un sceau perso
+       ('I saw it') — la coïncidence reçoit une autorité. S4 : une ÉTAGÈRE de règles se remplit, chacune scellée ; SOUS l'étagère la
+       fondation est de la POUSSIÈRE pour la plupart, quelques piliers solides seulement ; les briques scellées sont les plus dures à
+       retirer. S5 : décharge — un TEST s'installe ('DOES IT REPEAT, BEYOND CHANCE?') ; les briques de poussière se désagrègent, celles
+       bâties sur du solide restent et passent en TEAL ; l'étagère se vide : peu de règles, mais vraies. Doctrine : aucun chiffre (la
+       proportion par la MASSE) ; figures = fil-de-fer neutres ; gris #474D50 = absence d'information ; teal = signal validé (décharge) ;
+       pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LES POOLS (créés une fois, repositionnés chaque frame — jamais de mk() en boucle de rendu) ──
+    const DUST=[]; for(let i=0;i<160;i++)DUST.push(mk('circle',{r:6,fill:DEAD,opacity:0}));            // le BRUIT (gris)
+    const SEG=[];  for(let i=0;i<64;i++)SEG.push(mk('line',{stroke:INK,'stroke-width':10,'stroke-linecap':'round',opacity:0})); // fragments solides / tracés / plaques
+    const BRICK=[];for(let i=0;i<24;i++)BRICK.push(mk('rect',{rx:5,fill:INK,opacity:0}));               // briques-règles / piliers
+    const SEALS=[];for(let i=0;i<20;i++)SEALS.push(mk('circle',{r:12,fill:'none',stroke:INK,'stroke-width':4,opacity:0})); // sceaux « je l'ai vu »
+    const BOXES=[];for(let i=0;i<6;i++)BOXES.push(mk('rect',{fill:'none',stroke:INK,'stroke-width':6,rx:14,opacity:0}));     // cadres / casier
+    const FIGS=[]; for(let i=0;i<10;i++){const g=mk('g',{opacity:0});
+      const head=mk('circle',{r:14,fill:'none',stroke:INK,'stroke-width':5},g);
+      const body=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round'},g);
+      const armL=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round'},g);
+      const armR=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round'},g);
+      FIGS.push({g,head,body,armL,armR});}
+
+    let dk=0,sk=0,bk=0,elk=0,bxk=0;
+    function resetAll(){dk=0;sk=0;bk=0;elk=0;bxk=0;}
+    function dust(x,y,op,r){const e=DUST[dk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));e.setAttribute('r',(r||6));setOp(e,op);}
+    function seg(x1,y1,x2,y2,color,w,op){const e=SEG[sk++];if(!e)return;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||10);setOp(e,op);}
+    function brick(x,y,w,h,color,op){const e=BRICK[bk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(2,w).toFixed(1));e.setAttribute('height',Math.max(2,h).toFixed(1));e.setAttribute('fill',color);setOp(e,op);}
+    function seal(cx,cy,op){const e=SEALS[elk++];if(!e)return;e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));setOp(e,op);
+      seg(cx-5,cy,cx-1,cy+5,INK,4,op);seg(cx-1,cy+5,cx+6,cy-6,INK,4,op);}
+    function box(x,y,w,h,color,sw,op){const e=BOXES[bxk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',w.toFixed(1));e.setAttribute('height',h.toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',sw||6);setOp(e,op);}
+    function flushAll(){for(let i=dk;i<DUST.length;i++)setOp(DUST[i],0);for(let i=sk;i<SEG.length;i++)setOp(SEG[i],0);
+      for(let i=bk;i<BRICK.length;i++)setOp(BRICK[i],0);for(let i=elk;i<SEALS.length;i++)setOp(SEALS[i],0);for(let i=bxk;i<BOXES.length;i++)setOp(BOXES[i],0);}
+    function figure(idx,footX,footY,h,tilt,reachX,reachY,op){const f=FIGS[idx];if(!f)return;
+      const topX=footX+tilt,topY=footY-h,shX=footX+tilt*0.72,shY=footY-h*0.70;
+      f.head.setAttribute('cx',topX.toFixed(1));f.head.setAttribute('cy',(topY-2).toFixed(1));
+      f.body.setAttribute('x1',footX.toFixed(1));f.body.setAttribute('y1',footY.toFixed(1));f.body.setAttribute('x2',shX.toFixed(1));f.body.setAttribute('y2',shY.toFixed(1));
+      f.armL.setAttribute('x1',shX.toFixed(1));f.armL.setAttribute('y1',shY.toFixed(1));f.armL.setAttribute('x2',(shX+reachX).toFixed(1));f.armL.setAttribute('y2',(shY+reachY).toFixed(1));
+      f.armR.setAttribute('x1',shX.toFixed(1));f.armR.setAttribute('y1',shY.toFixed(1));f.armR.setAttribute('x2',(shX+reachX*0.62).toFixed(1));f.armR.setAttribute('y2',(shY-reachY+20).toFixed(1));
+      setOp(f.g,op);}
+    function hideFigs(from){for(let i=(from||0);i<FIGS.length;i++)setOp(FIGS[i].g,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['HOW MUCH OF THIS','MEANS ANYTHING'];
+    const FS=72,lineH=98,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap COPIÉ TEL QUEL depuis l26.html (MESURE getComputedTextLength) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ── géométrie partagée S4/S5 (l'étagère de règles) ──
+    const SHELF_Y=980, BW=104, BH=50, BX0=168, PERROW=7;
+    function brickXY(i){const row=Math.floor(i/PERROW),col=i%PERROW;return {x:BX0+col*110, y:SHELF_Y-6-(row+1)*BH-row*8};}
+    const S4APP=[]; (function(){let a=-0.7,g=0.22;for(let i=0;i<14;i++){S4APP.push(a);a+=g;g=Math.max(0.06,g-0.012);}})();
+    // ── géométrie du tracé de prix (S1) ──
+    const PX0=120,PX1=960,PYB=1040,PAMP=150;
+    function pathY(x){const p=(x-PX0)/(PX1-PX0);return PYB-PAMP*Math.sin(p*7.5)-PAMP*0.5*Math.sin(p*17+1.3);}
+    const SOLID1=[[0.10,0.19],[0.44,0.52],[0.74,0.80]];
+    // ── tracés jumeaux (S2) ──
+    function traceOff(p){return -100*Math.sin(p*6.0+0.4)-50*Math.sin(p*12.5+1.1);}
+    function wob(p,u){return 6*Math.sin(u*1.5+p*8.0)+3*Math.sin(u*2.7+p*15.0);}
+    function drawTraceSeg(x0,pw,tb,u,color,op){let px=x0,py=tb+traceOff(0)+wob(0,u);
+      for(let j=1;j<=15;j++){const p=j/15,x=x0+p*pw,y=tb+traceOff(p)+wob(p,u);seg(px,py,x,y,color,8,op);px=x;py=y;}}
+    function dustTraceSeg(x0,pw,tb,u,drift,op){for(let j=0;j<=24;j++){const p=j/24,x=x0+p*pw,y=tb+traceOff(p);
+      const dx=drift*Math.sin(u*1.4+j*0.9)+drift*0.5*Math.sin(u*2.6+j*1.7);
+      const dy=drift*Math.sin(u*1.1+j*1.3)+drift*0.5*Math.sin(u*2.9+j*0.4);
+      dust(x+dx,y+dy,op,5);}}
+
+    // ═══ S1 — CHOC : un tracé de prix presque tout en poussière, quelques fragments solides ═══
+    // Verbe visuel : la désagrégation (le rapport bruit/signal happe dès la frame 0).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetAll(); hideFigs(0);
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.15+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);
+        setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);
+      setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : le tracé est DÉJÀ majoritairement poussière ; rien ne se construit. ──
+      const N=112;
+      for(let i=0;i<=N;i++){const p=i/N,x=PX0+p*(PX1-PX0),yb=pathY(x);
+        if(SOLID1.some(r=>p>=r[0]&&p<=r[1]))continue;
+        const dx=7*Math.sin(u*1.3+i*0.7)+3*Math.sin(u*2.3+i*1.9);
+        const dy=6*Math.sin(u*1.1+i*1.3)+3*Math.sin(u*2.6+i*0.5);
+        dust(x+dx,yb+dy,0.88,(i%4===0?6:5));}
+      for(const r of SOLID1){for(let j=0;j<9;j++){const p1=r[0]+(r[1]-r[0])*j/9,p2=r[0]+(r[1]-r[0])*(j+1)/9;
+        const x1=PX0+p1*(PX1-PX0),x2=PX0+p2*(PX1-PX0);seg(x1,pathY(x1),x2,pathY(x2),INK,12,1);}}
+      putCap(capA,'MOSTLY NOISE',270,712,DEAD,clamp((u-1.7)/0.7,0,1)*gf);
+      putCap(capB,'A FEW REAL MOVES',815,712,INK,clamp((u-2.3)/0.7,0,1)*gf);
+      flushAll();
+    }
+
+    // ═══ S2 — DEUX SOURCES, UN MÊME TRACÉ : le déséquilibre et le brassage sont indiscernables à l'écran ═══
+    // Verbe visuel : la comparaison A/B (la poussière se condense sur la même courbe que le signal).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetAll();
+      const TB=855, LXA=150, PW=360, RXA=570;
+      const settle=clamp((u-2.0)/1.3,0,1);
+      // GAUCHE — vrai déséquilibre : tracé SOLIDE (encre), toujours
+      drawTraceSeg(LXA,PW,TB,u,INK,1);
+      // DROITE — brassage : poussière qui, à l'écran, se condense en un tracé IDENTIQUE
+      const drift=lerp(30,3,eOut(settle));
+      dustTraceSeg(RXA,PW,TB,u,drift,0.9);
+      drawTraceSeg(RXA,PW,TB,u,INK,settle);
+      // SOURCES (fil-de-fer) sous les tracés
+      const fy=1338, fh=120;
+      for(let i=0;i<3;i++){const fx=250+i*95,sway=6*Math.sin(u*1.6+i*0.5)+3*Math.sin(u*2.7+i*1.1);
+        figure(i,fx+sway,fy,fh,26,40,6,1);}                                   // penchent/poussent en chœur → un sens
+      for(let i=0;i<5;i++){const base=610+i*70;
+        const wobx=26*Math.sin(u*1.3+i*1.7)+12*Math.sin(u*2.5+i*0.9);
+        const tilt=18*Math.sin(u*0.9+i*2.1), reach=30*Math.sin(u*1.7+i*3.0);
+        const op=0.55+0.45*Math.sin(u*1.1+i*1.9);                              // arrivent et repartent
+        figure(3+i,base+wobx,fy,fh,tilt,reach,-reach*0.4,clamp(op,0.25,1));}
+      hideFigs(8);
+      putCap(capB,'ON SCREEN THEY LOOK THE SAME',CX,616,INK,clamp((u-2.0)/0.8,0,1));
+      putCap(capC,'REAL IMBALANCE',300,1416,INK,clamp((u-0.6)/0.6,0,1));
+      putCap(capD,'JUST CHURN',770,1416,DEAD,clamp((u-0.9)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S3 — L'EXPLICATION COLLE, PUIS ON RANGE : une coïncidence reçoit une autorité ═══
+    // Verbe visuel : le collage puis le classement (un cadre encre saisit la poussière, un casier l'avale, un sceau la verrouille).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetAll(); hideFigs(0);
+      const fileP=clamp((u-2.1)/1.3,0,1), fe=eInOut(fileP);
+      const homeX=470+70*clamp(u/1.1,0,1), homeY=900, drawerX=540, drawerY=1235;
+      const ux=lerp(homeX,drawerX,fe), uy=lerp(homeY,drawerY-92,fe);
+      // le casier 'PATTERN' (apparaît tôt)
+      const dop=clamp((u-1.6)/0.7,0,1);
+      box(drawerX-175,drawerY-70,350,150,INK,7,dop);
+      putCap(capC,'FILED AS PATTERN',CX,drawerY+130,INK,dop);
+      // le mouvement de POUSSIÈRE (aléatoire) — churne, et voyage avec l'unité quand on la range
+      for(let i=0;i<54;i++){const a=i*2.399, rr=30+(i%7)*13;
+        const cx=ux+Math.cos(a)*rr+10*Math.sin(u*1.5+i*0.7)+5*Math.sin(u*2.6+i*1.3);
+        const cy=uy+Math.sin(a)*rr*0.8+8*Math.sin(u*1.2+i*1.1)+4*Math.sin(u*2.9+i*0.5);
+        dust(cx,cy,0.9,8);}
+      // l'EXPLICATION vient s'y coller (glisse de la droite)
+      const clP=clamp((u-1.0)/0.7,0,1), boxX=lerp(940,ux-130,eOut(clP)), eop=clP*(1-0.15*fileP);
+      box(boxX,uy-115,260,215,INK,6,eop);
+      putCap(capB,'EXPLANATION',ux,uy-140,INK,eop*(1-fileP));
+      // le SCEAU perso quand c'est rangé
+      if(fileP>0.35){const so=clamp((fileP-0.35)/0.4,0,1);
+        seal(ux+120,uy-95,so);
+        putCap(capD,'SEALED — I SAW IT',790,uy-150,DEAD,so);}
+      putCap(capA,'A RANDOM MOVE',300,700,DEAD,clamp((u-0.2)/0.6,0,1)*(1-clamp((u-2.2)/0.6,0,1)));
+      flushAll();
+    }
+
+    // ═══ S4 — L'ÉTAGÈRE DE RÈGLES sur une fondation de POUSSIÈRE ═══
+    // Verbe visuel : l'accumulation scellée (la pile monte, cadence qui presse ; dessous, presque tout est poussière).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetAll(); hideFigs(0);
+      seg(150,SHELF_Y,930,SHELF_Y,INK,12,1);                                   // la planche
+      // la fondation (piliers) sous la planche — révélée
+      const found=clamp((u-1.5)/1.0,0,1);
+      const PX=[210,320,430,540,650,760,868], SOLIDP=new Set([2,5]);
+      for(let c=0;c<PX.length;c++){const x=PX[c];
+        if(SOLIDP.has(c)){ brick(x-16,1000,32,320,INK,found); }
+        else{ for(let r=0;r<9;r++){const yy=1010+r*35;
+          const dx=10*Math.sin(u*1.3+c*1.1+r*0.6)+5*Math.sin(u*2.6+r*0.9);
+          const dyy=6*Math.sin(u*1.0+c*0.7+r*1.2);
+          dust(x+dx,yy+dyy,found*0.85,7);} }
+      }
+      // les briques-règles s'accumulent (départ à moitié pleine — jamais un écran vide)
+      for(let i=0;i<14;i++){const bp=brickXY(i);
+        const prog=clamp((u-S4APP[i])/0.3,0,1); if(prog<=0)continue;
+        const jit=2.4*Math.sin(u*2.0+i)+1.2*Math.sin(u*3.3+i*0.7), drop=-34*(1-eOut(prog));
+        brick(bp.x+jit,bp.y+drop,BW,BH,INK,prog);
+        const so=(prog>0.8)?(0.7+0.3*Math.sin(u*3+i)):prog*0.7;
+        seal(bp.x+BW-16,bp.y+16+drop,so);
+      }
+      putCap(capA,'RULES YOU BUILT',CX,612,INK,clamp((u-0.2)/0.7,0,1));
+      putCap(capC,'SEALED — HARDEST TO REMOVE',CX,690,DEAD,clamp((u-3.0)/0.8,0,1));
+      putCap(capB,'MOSTLY BUILT ON DUST',CX,1405,INK,found);
+      flushAll();
+    }
+
+    // ═══ S5 — DÉCHARGE : le TEST désagrège le bruit, ne laisse que le signal (teal) ═══
+    // Verbe visuel : le crible (chaque brique passe ; la poussière s'effrite au-dessus, le solide descend et vire teal).
+    // Bandes SÉPARÉES : le bruit reste AU-DESSUS de la barre, les survivants + étiquettes ont des bandes VIDES.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetAll(); hideFigs(0);
+      const gy=1000, gx0=lerp(-40,150,eOut(clamp(u/1.6,0,1)));
+      seg(gx0,gy,gx0+780,gy,YOU,14,clamp(u/0.8,0,1));                          // la barre du TEST
+      const SOLID=new Set([3,8,11]); let surv=0; const surX=[350,540,730], clY=1150;
+      for(let i=0;i<14;i++){const bp=brickXY(i);
+        const jit=2*Math.sin(u*2.0+i)+1.2*Math.sin(u*3.3+i*0.7);
+        const prog=clamp((u-(2.0+i*0.095))/0.5,0,1);
+        if(SOLID.has(i)){                                                      // survit → passe la barre, descend en teal
+          const px=lerp(bp.x,surX[surv]-BW/2,eInOut(prog)), py=lerp(bp.y,clY,eInOut(prog));
+          const sway=4*Math.sin(u*1.6+surv*0.9)+2*Math.sin(u*2.7+surv*1.3);
+          brick(px+sway*prog,py,BW,BH,prog>0.5?YOU:INK,1); surv++;
+        } else {                                                              // poussière → s'effrite SUR PLACE (au-dessus de la barre) et se dissipe
+          brick(bp.x+jit,bp.y,BW,BH,INK,(1-prog));
+          if(prog>0){const puff=1-clamp((prog-0.4)/0.6,0,1);                   // les motes montent/s'écartent puis FADENT (jamais vers le bas)
+            for(let k=0;k<5;k++){const a=k*1.9;
+              const fx=bp.x+BW/2+Math.cos(a)*(24+prog*40)+7*Math.sin(u*1.5+k);
+              const fy=bp.y+BH/2+Math.sin(a)*(18+prog*26)-prog*30+5*Math.sin(u*1.8+k*1.3);
+              dust(fx,fy,puff*0.8,6);}}
+        }
+      }
+      // le BRUIT résiduel qui tourne encore là où étaient les règles — AU-DESSUS de la barre, bande dédiée (vie continue)
+      const rop=clamp((u-2.6)/1.2,0,1);
+      for(let i=0;i<22;i++){const bx=200+(i*151)%700, by=810+((i*67)%150);
+        const dx=13*Math.sin(u*1.2+i*0.8)+6*Math.sin(u*2.5+i*1.7);
+        const dy=8*Math.sin(u*1.0+i*1.4)+4*Math.sin(u*2.8+i*0.5);
+        dust(bx+dx,by+dy,rop*0.55,6);}
+      seg(300,clY+BH+16,780,clY+BH+16,YOU,8,clamp((u-2.4)/0.8,0,1));           // l'étagère propre (teal)
+      putCap(capB,'DOES IT REPEAT, BEYOND CHANCE?',CX,636,INK,clamp((u-0.4)/0.7,0,1));
+      putCap(capA,'FEW RULES — BUT TRUE',CX,1320,YOU,clamp((u-3.2)/0.8,0,1));
+      putCap(capC,'A MOVE MUST REPEAT BEYOND CHANCE',CX,1405,INK,clamp((u-4.2)/0.9,0,1));
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
