@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L54 « THE FLOOR THAT BECAME A CEILING » — S1 : émotion frame 0 = CURIOSITÉ + CHOC. UNE seule ligne horizontale traverse le cadre :
+       à GAUCHE des figures fil-de-fer se tiennent DEBOUT DESSUS (elles la soutiennent) ; à DROITE, sur la MÊME ligne, des figures poussent
+       DEPUIS LE DESSOUS et sont BLOQUÉES. Même trait, deux fonctions opposées, dès t=0. S2 : on remonte le temps — le prix est AU-DESSUS,
+       des positions s'ANCRENT pile sur le trait (teal = en gain), et quand le prix redescend elles le DÉFENDENT (rebond). S3 : le prix CASSE
+       sous la ligne — les positions, sans bouger en x, se DÉLAVENT en gris (sous l'eau) et se RETOURNENT vers la ligne comme vers une sortie.
+       S4 : LA scène — la boule teal (toi) suit la cassure, puis le prix REMONTE au niveau ; tu lis « cassure ratée » et te fais secouer dehors —
+       mais ce retour, c'est la file grise qui SORT à son prix d'entrée : le mécanisme se confirme, le prix repart en bas SANS toi. S5 : décharge —
+       effacer la ligne est BARRÉ ; à la place l'étiquette PIVOTE FLOOR→CEILING, le trait reste et REPOUSSE le prix depuis l'autre face.
+       Doctrine : aucun chiffre ; foule = fil-de-fer NEUTRE (encre, pas de brun) ; teal = en gain / toi ; gris = sous l'eau ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // deux harmoniques — toute vie continue bouge en POSITION (jamais en opacité) ; vitesse jamais nulle
+    const h2=(u,a,w1,b,w2,ph)=>a*Math.sin(w1*u+(ph||0))+b*Math.sin(w2*u+(ph||0)*1.7);
+
+    // ── LE NIVEAU : une SEULE ligne horizontale, le fusil de tout l'épisode ──
+    const LY=1040, LX1=110, LX2=970;
+    const level=mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    function putLevel(op){level.setAttribute('x1',LX1);level.setAttribute('x2',LX2);level.setAttribute('y1',LY);level.setAttribute('y2',LY);setOp(level,op);}
+
+    // ── LES POSITIONS ANCRÉES SUR LE NIVEAU (S2→S4) : petites pastilles, teal=en gain / gris=sous l'eau ──
+    const POS=[]; for(let i=0;i<8;i++)POS.push(mk('rect',{rx:5,fill:YOU,opacity:0}));
+    const LEAN=[]; for(let i=0;i<8;i++)LEAN.push(mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0})); // petites flèches « sortir »
+    function hidePos(){for(const e of POS)setOp(e,0);for(const e of LEAN)setOp(e,0);}
+
+    // ── LES FIGURES FIL-DE-FER (S1) : rond (tête) + corps + deux bras. Neutres, encre. ──
+    const FIGS=[]; for(let i=0;i<8;i++)FIGS.push({
+      head:mk('circle',{fill:'none','stroke-width':6,opacity:0}),
+      body:mk('line',{'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      armL:mk('line',{'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      armR:mk('line',{'stroke-width':6,'stroke-linecap':'round',opacity:0})});
+    // up=+1 : DEBOUT sur la ligne (pieds au trait, tête au-dessus, bras arc-boutés vers le bas).
+    // up=-1 : SOUS la ligne (tête sous le trait, bras qui POUSSENT vers le haut contre elle).
+    function drawFig(f,ax,ay,up,color,op,ph,eff){
+      const sx=h2(ph,4,1.3,2,2.1,0), sy=up>0?-Math.abs(h2(ph,4,1.7,2,2.9,0.6))*(0.4+eff) : Math.abs(h2(ph,4,1.7,2,2.9,0.6))*(0.4+eff);
+      ax+=sx; ay+=sy;
+      const R=15, H=64;
+      f.head.setAttribute('stroke',color);f.body.setAttribute('stroke',color);f.armL.setAttribute('stroke',color);f.armR.setAttribute('stroke',color);
+      f.head.setAttribute('r',R);
+      if(up>0){
+        const feet=ay, top=ay-H, hy=top-R-2, sh=top+20;
+        f.head.setAttribute('cx',ax);f.head.setAttribute('cy',hy);
+        f.body.setAttribute('x1',ax);f.body.setAttribute('y1',top);f.body.setAttribute('x2',ax);f.body.setAttribute('y2',feet);
+        f.armL.setAttribute('x1',ax);f.armL.setAttribute('y1',sh);f.armL.setAttribute('x2',ax-23);f.armL.setAttribute('y2',feet-4);
+        f.armR.setAttribute('x1',ax);f.armR.setAttribute('y1',sh);f.armR.setAttribute('x2',ax+23);f.armR.setAttribute('y2',feet-4);
+      } else {
+        const hy=ay+R+2, top=ay+2*R, bot=top+H, sh=top+14;
+        f.head.setAttribute('cx',ax);f.head.setAttribute('cy',hy);
+        f.body.setAttribute('x1',ax);f.body.setAttribute('y1',top);f.body.setAttribute('x2',ax);f.body.setAttribute('y2',bot);
+        f.armL.setAttribute('x1',ax);f.armL.setAttribute('y1',sh);f.armL.setAttribute('x2',ax-23);f.armL.setAttribute('y2',ay+3);
+        f.armR.setAttribute('x1',ax);f.armR.setAttribute('y1',sh);f.armR.setAttribute('x2',ax+23);f.armR.setAttribute('y2',ay+3);
+      }
+      setOp(f.head,op);setOp(f.body,op);setOp(f.armL,op);setOp(f.armR,op);
+    }
+    function hideFigs(){for(const f of FIGS){setOp(f.head,0);setOp(f.body,0);setOp(f.armL,0);setOp(f.armR,0);}}
+
+    // ── LE PRIX (le marché) : encre. TOI = la boule teal (S4). ──
+    const price=mk('circle',{r:17,fill:INK,opacity:0});
+    const ball=mk('circle',{r:26,fill:YOU,opacity:0});
+    const track=mk('polyline',{fill:'none',stroke:INK,'stroke-width':4,'stroke-dasharray':'2 12','stroke-linecap':'round',opacity:0});
+    function hideMkt(){setOp(price,0);setOp(ball,0);setOp(track,0);}
+
+    // ── S5 : l'effacement BARRÉ + l'étiquette qui pivote FLOOR→CEILING + le repel ──
+    const eraser=mk('rect',{fill:PAPER,stroke:INK,'stroke-width':4,rx:6,opacity:0});
+    const barC=mk('circle',{fill:'none',stroke:DEAD,'stroke-width':9,opacity:0});
+    const barS=mk('line',{stroke:DEAD,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    const flipLab=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':46,'letter-spacing':'2',fill:INK,opacity:0});
+    const repel=mk('polygon',{fill:INK,opacity:0});
+    function hideS5(){setOp(eraser,0);setOp(barC,0);setOp(barS,0);setOp(flipLab,0);setOp(repel,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME LINE.','WHY THE OPPOSITE JOB'];
+    const FS=68,lineH=94,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (COPIÉ TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function clearAll(){hidePos();hideFigs();hideMkt();hideS5();hideCaps();setOp(level,0);}
+
+    // positions ancrées : x fixes centrés (la « zone de décisions »), top au trait
+    const PN=7, PX0=356, PDX=52, PW=30, PH=34;
+    function posX(i){return PX0+i*PDX;}
+
+    // ═══ S1 — LA MÊME LIGNE, DEUX RÔLES OPPOSÉS (frame 0 à tension max) ═══
+    // Verbe visuel : le paradoxe simultané (debout dessus / bloqué dessous, un seul trait).
+    function s1(lf,t,s){
+      const u=t-s; clearAll();
+      const gf=clamp(1-(lf-0.84)/0.10,0,1);
+      // le ? et la question pop APRÈS l'accroche visuelle (frame 0 = déjà les figures + la ligne)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : la ligne et les deux foules sont DÉJÀ pleines, elles ne se construisent pas ──
+      putLevel(1);
+      const SUP=[220,315,410], RES=[660,760,860];
+      SUP.forEach((x,i)=>drawFig(FIGS[i],x,LY-2,+1,INK,1,u+i*1.3,1));      // debout DESSUS (support)
+      RES.forEach((x,i)=>drawFig(FIGS[3+i],x,LY+2,-1,INK,1,u+i*1.1+0.5,1)); // bloqués DESSOUS (résistance)
+      putCap(capC,'SUPPORT',300,1320,INK,clamp((u-1.6)/0.6,0,1)*gf);        // gauche cx≤380
+      putCap(capD,'RESISTANCE',780,1320,INK,clamp((u-1.9)/0.6,0,1)*gf);     // droite cx≥700
+    }
+
+    // ═══ S2 — UN NIVEAU EST UN LIEU DE DÉCISIONS : on achète là, en gain, on le défend ═══
+    // Verbe visuel : l'ancrage + la défense (le prix redescend, la ligne tient, rebond).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); clearAll();
+      putLevel(1);
+      // les positions ANCRÉES sur le trait, en gain (teal), qui frémissent (vie continue)
+      for(let i=0;i<PN;i++){const e=POS[i];const dx=h2(u,3,1.6,2,2.7,i*0.8),dy=h2(u,4,1.9,2,3.1,i*0.6);
+        e.setAttribute('fill',YOU);e.setAttribute('x',(posX(i)-PW/2+dx).toFixed(1));e.setAttribute('y',(LY-PH+dy).toFixed(1));
+        e.setAttribute('width',PW);e.setAttribute('height',PH);setOp(e,clamp((u-i*0.12)/0.4,0,1));}
+      // le PRIX est AU-DESSUS et redescend DÉFENDRE la ligne puis rebondit (cycle) — position, deux harmoniques
+      const cyc=(u*0.62)%1, dip=Math.sin(cyc*Math.PI), py=LY-190+dip*150, pxo=h2(u,26,0.7,12,1.5,0);
+      price.setAttribute('cx',(CX+pxo).toFixed(1));price.setAttribute('cy',py.toFixed(1));setOp(price,1);
+      putCap(capB,'A LEVEL IS WHERE DECISIONS WERE MADE',CX,662,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capC,'BOUGHT HERE — IN PROFIT',CX,1372,YOU,clamp((u-2.4)/0.7,0,1));
+      putCap(capE,'PRICE',210,900,DEAD,clamp((u-1.5)/0.6,0,1));            // gutter gauche, hors colonne du prix
+    }
+
+    // ═══ S3 — LE PRIX CASSE : les mêmes positions passent SOUS L'EAU et se retournent vers la sortie ═══
+    // Verbe visuel : l'inversion d'état (teal→gris + les positions se tournent vers le trait).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); clearAll();
+      putLevel(1);
+      const brk=clamp((u-0.2)/1.4,0,1);       // le prix casse et descend
+      const under=clamp((u-0.4)/1.4,0,1);      // délavage teal→gris
+      // les positions : MÊME x, elles se délavent en gris et penchent vers la ligne (sortie)
+      for(let i=0;i<PN;i++){const e=POS[i];const dx=h2(u,3,1.6,2,2.7,i*0.8),dy=h2(u,4,2.0,2,3.2,i*0.6);
+        e.setAttribute('fill',under>0.5?DEAD:YOU);
+        e.setAttribute('x',(posX(i)-PW/2+dx).toFixed(1));e.setAttribute('y',(LY+8+dy).toFixed(1));  // massées SOUS le trait
+        e.setAttribute('width',PW);e.setAttribute('height',PH);setOp(e,1);
+        // petite flèche « je veux sortir » qui pointe vers le haut, vers la ligne (vie continue par le ballant)
+        const lx=posX(i)+dx, ly=LY+8+dy-4, la=8*Math.sin(u*2.2+i*0.7);
+        const L=LEAN[i];L.setAttribute('x1',lx.toFixed(1));L.setAttribute('y1',ly.toFixed(1));
+        L.setAttribute('x2',(lx+la).toFixed(1));L.setAttribute('y2',(LY-2).toFixed(1));setOp(L,under);}
+      // le prix, désormais sous la ligne, oscille (deux harmoniques)
+      const py=LY+70+ (1-brk)* -70 + h2(u,0,1,10,1.8,0), pxo=h2(u,24,0.7,10,1.6,0.4);
+      price.setAttribute('fill',DEAD);price.setAttribute('cx',(CX+pxo).toFixed(1));price.setAttribute('cy',(LY+ brk*80 + h2(u,0,1,9,1.9,0)).toFixed(1));setOp(price,1);
+      putCap(capB,'NOW THEY ARE UNDERWATER',CX,662,DEAD,clamp((u-1.4)/0.7,0,1));
+      putCap(capC,'THEY WANT OUT AT THEIR ENTRY',CX,1372,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE RETOUR AU NIVEAU, LU COMME UN ÉCHEC — c'est le mécanisme (LA scène) ═══
+    // Verbe visuel : le transfert trompeur (toi secoué dehors PENDANT que la file grise sort).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); clearAll();
+      putLevel(1);
+      // phases : 0-1.5 la boule suit la cassure vers le bas ; 1.5-3 le prix REMONTE au niveau (la file sort),
+      //          la boule est secouée dehors ; 3-4.5 file écoulée, le prix repart en bas SANS la boule.
+      const drop=clamp((u-0.1)/1.4,0,1), ret=clamp((u-1.5)/1.5,0,1), drain=clamp((u-2.0)/2.4,0,1), gone=clamp((u-3.2)/1.3,0,1);
+      // la file grise SOUS la ligne s'écoule vers le trait (sortie à l'entrée), pastille après pastille — TOUTES finissent parties
+      for(let i=0;i<PN;i++){const e=POS[i];const gp=clamp((drain*1.9-i*0.12)/0.45,0,1); // chacune remonte au trait puis disparaît
+        const dx=h2(u,3,1.7,2,2.8,i*0.8);
+        const baseY=LY+10 - gp*10, dy=h2(u,3,2.0,2,3.2,i*0.6)*(1-gp);
+        e.setAttribute('fill',DEAD);e.setAttribute('x',(posX(i)-PW/2+dx).toFixed(1));e.setAttribute('y',(baseY+dy).toFixed(1));
+        e.setAttribute('width',PW);e.setAttribute('height',(PH*(1-gp)+2).toFixed(1));setOp(e,(1-gp));}
+      // LE PRIX (marché) : plonge, puis remonte PILE au niveau (poussé par les sorties), puis repart en bas et CONTINUE d'errer (vie continue 2 harmoniques)
+      const baseY = LY + drop*150 - ret*150 + gone*220;
+      const py = baseY + gone*(8*Math.sin(u*0.5)+5*Math.sin(u*0.9+0.4));
+      price.setAttribute('fill',INK);price.setAttribute('cx',(CX+h2(u,16,0.9,8,1.7,0)).toFixed(1));price.setAttribute('cy',py.toFixed(1));setOp(price,1);
+      // TOI (boule teal) : suit la cassure, arrive au niveau, se fait SECOUER DEHORS sur le côté — mais SURVIT (jamais elle ne disparaît)
+      const bx = CX + ret* (-360) + h2(u,10,1.2,6,2.3,0)*(0.3+ret);
+      const by = LY + drop*150 - ret*150 + h2(u,0,1,7,2.1,0);
+      ball.setAttribute('cx',clamp(bx,150,930).toFixed(1));ball.setAttribute('cy',by.toFixed(1));
+      ball.setAttribute('r',(26 - ret*3 + 2*Math.sin(u*3)).toFixed(1));setOp(ball,1);
+      putCap(capA,'YOU',clamp(bx,150,930),by+ (drop>0.5?0:0) + 118,YOU, clamp((ret-0.2)/0.4,0,1)); // sous la boule une fois posée
+      putCap(capB,'THE RETEST YOU READ AS FAILURE',CX,662,INK,clamp((u-1.6)/0.7,0,1));
+      putCap(capD,'THEIR EXIT IS THE RALLY',720,1372,DEAD,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : n'efface pas le niveau, RETOURNE-LE (FLOOR → CEILING) ═══
+    // Verbe visuel : le pivot (l'effacement barré, l'étiquette qui bascule, le repel depuis l'autre face).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); clearAll();
+      putLevel(1);
+      // 0-1.0 : tentative d'EFFACER la ligne → BARRÉ (un « non »)
+      const erap=clamp(u/0.6,0,1)*clamp((1.2-u)/0.4,0,1);
+      const ex=lerp(200,880,eIn(clamp(u/0.9,0,1)));
+      eraser.setAttribute('x',(ex-60).toFixed(1));eraser.setAttribute('y',(LY-28).toFixed(1));eraser.setAttribute('width',120);eraser.setAttribute('height',56);setOp(eraser,erap);
+      const bap=clamp((u-0.5)/0.4,0,1)*clamp((1.6-u)/0.4,0,1);
+      barC.setAttribute('cx',CX);barC.setAttribute('cy',LY-150);barC.setAttribute('r',60);setOp(barC,bap);
+      barS.setAttribute('x1',CX-42);barS.setAttribute('y1',LY-192);barS.setAttribute('x2',CX+42);barS.setAttribute('y2',LY-108);setOp(barS,bap);
+      // 0.9-1.4 : l'étiquette PIVOTE FLOOR → CEILING (scaleX 1→0→1), le trait reste identique
+      const flp=clamp((u-0.9)/0.5,0,1), sxv=Math.abs(Math.cos(flp*Math.PI));
+      flipLab.textContent = (flp<0.5?'FLOOR':'CEILING');
+      const fx=CX, fy=LY-42, dyw=h2(u,0,1,5,1.7,0);
+      flipLab.setAttribute('x',fx);flipLab.setAttribute('y',(fy+dyw).toFixed(1));
+      flipLab.setAttribute('transform',`translate(${(fx*(1-sxv)).toFixed(2)} 0) scale(${sxv.toFixed(3)} 1)`);
+      setOp(flipLab, clamp((u-0.9)/0.3,0,1));
+      // 1.4→ : le niveau RETOURNÉ est EN SERVICE — le prix remonte du dessous et se fait REPOUSSER (cycle, position)
+      const cyc=clamp((u-1.6)/2.4,0,1), rp=(u*0.5)%1, appro=Math.sin(clamp(rp,0,0.5)*2*Math.PI); // monte puis redescend
+      const py=LY+150 - Math.max(0,appro)*140, pxo=h2(u,22,0.7,10,1.6,0);
+      price.setAttribute('fill',INK);price.setAttribute('cx',(CX+pxo).toFixed(1));price.setAttribute('cy',py.toFixed(1));setOp(price,clamp((u-1.4)/0.5,0,1));
+      // la flèche de repel apparaît à l'instant du rejet (le prix touche presque le trait)
+      const near=clamp((appro-0.82)/0.18,0,1), ry=LY+30;
+      repel.setAttribute('points',`${CX-22},${ry} ${CX+22},${ry} ${CX},${ry+34}`);setOp(repel,near*clamp((u-1.6)/0.4,0,1));
+      putCap(capB,'DO NOT DELETE IT — FLIP IT',CX,662,INK,clamp((u-0.3)/0.7,0,1));
+      putCap(capC,'THE LINE STAYS — WHO NEEDS IT CHANGED',CX,1372,DEAD,clamp((u-2.4)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
