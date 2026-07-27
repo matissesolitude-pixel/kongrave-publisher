@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L51 « THE ORDER THAT ONLY HALF FILLED » — S1 : émotion frame 0 = CHOC+CURIOSITÉ — un emplacement d'ordre MOITIÉ
+       rempli (teal plein à gauche, contour vide à droite) et PAR-DESSUS un plan (équerre risque/cible) déjà tracé sur la
+       TOTALITÉ, y compris la moitié creuse. Le décalage saute aux yeux dès t=0. S2 : la DEMANDE (bloc teal pleine taille)
+       descend vers l'autre côté visiblement plus petit ; l'appariement remplit une part (plein), le reste attend en contour
+       puis s'efface — « tu as demandé une taille, tu as reçu une réponse ». S3 : trois calculs (YOUR READ / TARGET / RISK)
+       empilés sur l'emplacement, alignés sur la TOTALITÉ ; la moitié creuse se surligne → la tour bascule, faussée du même
+       montant. S4 : les DEUX sens — ENTRÉE : le gain ne s'encaisse qu'à moitié (le gagnant paie moitié) ; SORTIE : la sortie
+       ne remplit qu'à moitié, la position résiduelle reste, le regard s'en va, une tranche GRISE (perte) l'entame. S5 :
+       décharge — THE CLICK (demande, pointillé) vs THE FILL (réalité, plein), une vérification descend sur le fill, le plan
+       est RETRACÉ sur la taille réellement possédée. Doctrine : aucun chiffre ; teal = à toi ; gris = perte (S4) ; pas de
+       brun ; contour ink = l'autre côté / le vide ; bas du cadre libre ; aucun broker nommé. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── POOLS GÉNÉRIQUES (rects / lines / polylines) — z-order = ordre de création = ordre d'appel dans la scène ──
+    const RPOOL=[]; for(let i=0;i<40;i++)RPOOL.push(mk('rect',{opacity:0}));
+    const LPOOL=[]; for(let i=0;i<24;i++)LPOOL.push(mk('line',{opacity:0}));
+    const PPOOL=[]; for(let i=0;i<12;i++)PPOOL.push(mk('polyline',{fill:'none',opacity:0}));
+    let ri=0, li=0, pi=0;
+    function reset(){ri=0;li=0;pi=0;}
+    function R(x,y,w,h,o){o=o||{};const e=RPOOL[ri++];if(!e)return;
+      e.setAttribute('x',(+x).toFixed(1));e.setAttribute('y',(+y).toFixed(1));
+      e.setAttribute('width',Math.max(0,w).toFixed(1));e.setAttribute('height',Math.max(0,h).toFixed(1));
+      e.setAttribute('rx',(o.rx!=null?o.rx:6));
+      e.setAttribute('fill',o.fill||'none');e.setAttribute('fill-opacity',(o.fillOpacity!=null?o.fillOpacity:1));
+      e.setAttribute('stroke',o.stroke||'none');e.setAttribute('stroke-width',o.sw||0);
+      e.setAttribute('stroke-dasharray',o.dash||'');e.setAttribute('transform',o.tf||'');
+      setOp(e,o.op!=null?o.op:1);return e;}
+    function L(x1,y1,x2,y2,o){o=o||{};const e=LPOOL[li++];if(!e)return;
+      e.setAttribute('x1',(+x1).toFixed(1));e.setAttribute('y1',(+y1).toFixed(1));
+      e.setAttribute('x2',(+x2).toFixed(1));e.setAttribute('y2',(+y2).toFixed(1));
+      e.setAttribute('stroke',o.stroke||INK);e.setAttribute('stroke-width',o.sw||6);
+      e.setAttribute('stroke-linecap',o.cap||'round');
+      e.setAttribute('stroke-dasharray',o.dash||'');e.setAttribute('stroke-dashoffset',o.dashoff||0);
+      e.setAttribute('transform',o.tf||'');setOp(e,o.op!=null?o.op:1);return e;}
+    function P(pts,o){o=o||{};const e=PPOOL[pi++];if(!e)return;
+      e.setAttribute('points',pts.map(p=>p.map(v=>(+v).toFixed(1)).join(',')).join(' '));
+      e.setAttribute('fill',o.fill||'none');e.setAttribute('fill-opacity',(o.fillOpacity!=null?o.fillOpacity:1));
+      e.setAttribute('stroke',o.stroke||INK);e.setAttribute('stroke-width',o.sw||6);
+      e.setAttribute('stroke-linejoin',o.join||'round');e.setAttribute('stroke-linecap',o.cap||'round');
+      e.setAttribute('stroke-dasharray',o.dash||'');e.setAttribute('transform',o.tf||'');
+      setOp(e,o.op!=null?o.op:1);return e;}
+    function flush(){for(let i=ri;i<RPOOL.length;i++)setOp(RPOOL[i],0);for(let i=li;i<LPOOL.length;i++)setOp(LPOOL[i],0);for(let i=pi;i<PPOOL.length;i++)setOp(PPOOL[i],0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT DID YOU','ACTUALLY GET?'];
+    const FS=76,lineH=100,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34),capG=caption(36),capH=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH])setOp(e,0);}
+
+    // géométrie de l'emplacement d'ordre (S1 / S3 — état repris exact)
+    const SX=200, SW_=680, SPL=0.5;      // moitié gauche pleine, moitié droite creuse
+
+    // ═══ S1 — L'EMPLACEMENT MOITIÉ PLEIN SOUS UN PLAN TRACÉ SUR LA TOTALITÉ ═══
+    // Verbe visuel : le décalage statique (ce qu'on possède vs ce sur quoi on calcule), entier dès t=0.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); reset();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      // QUESTION (première ligne pleine dès t=0)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.15+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.05,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : l'emplacement (moitié plein / moitié creux) ET le plan sur la totalité sont là dès t=0. ──
+      const SY=1120, SH=92, mid=SX+SW_*SPL;
+      const bob=7*Math.sin(u*1.5)+3*Math.sin(u*2.7);          // l'emplacement respire (deux harmoniques)
+      const pv =5*Math.sin(u*1.15)+3*Math.sin(u*2.05);        // le plan vibre (deux harmoniques)
+      R(SX, SY+bob, SW_*SPL, SH, {fill:YOU, rx:6});            // moitié PLEINE (teal) — ce que tu possèdes
+      R(mid, SY+bob, SW_*(1-SPL), SH, {stroke:INK, sw:5, rx:6});// moitié CREUSE (contour) — jamais remplie
+      // le PLAN (équerre risque/cible) tracé sur la TOTALITÉ, y compris la moitié creuse
+      const py=SY-170+pv;
+      P([[SX,py+42],[SX,py],[SX+SW_,py],[SX+SW_,py+42]], {stroke:INK, sw:6});             // bracket sur toute la largeur
+      L(SX+SW_/2, py, SX+SW_/2, py-72, {stroke:INK, sw:6});                               // bras CIBLE vers le haut
+      P([[SX+SW_/2-15,py-56],[SX+SW_/2,py-74],[SX+SW_/2+15,py-56]], {stroke:INK, sw:6});  // pointe cible
+      L(SX+SW_/2, SY+SH+bob, SX+SW_/2, SY+SH+72+bob, {stroke:INK, sw:6});                 // bras RISQUE vers le bas
+      P([[SX+SW_/2-15,SY+SH+56+bob],[SX+SW_/2,SY+SH+74+bob],[SX+SW_/2+15,SY+SH+56+bob]], {stroke:INK, sw:6});
+      // ÉTIQUETTES — zones vides ; deux étiquettes gauche/droite chacune dans sa moitié
+      putCap(capA,'YOUR PLAN — ON THE WHOLE SIZE',CX,py-105,INK,clamp((u-1.7)/0.6,0,1)*gf);
+      putCap(capB,'FILLED',360,SY+SH+140+bob,YOU,clamp((u-2.2)/0.6,0,1)*gf);
+      putCap(capC,'NOT FILLED',720,SY+SH+140+bob,INK,clamp((u-2.2)/0.6,0,1)*gf);
+      flush();
+    }
+
+    // ═══ S2 — LA DEMANDE RENCONTRE CE QUI EST DISPONIBLE : une part remplit, le reste n'arrive jamais ═══
+    // Verbe visuel : le transfert-appariement (un bloc descend vers l'autre côté et n'entre qu'à moitié).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const Xl=260, Wd=560, Wa=300, H=104, askY=890, gotY=1180;
+      const bobA=15*Math.sin(u*1.5)+7*Math.sin(u*2.55);      // vie continue AMPLE (le downscale du scan divise le mouvement)
+      const bobB=13*Math.sin(u*1.2)+6*Math.sin(u*2.05);
+      const bobC=11*Math.sin(u*1.75)+5*Math.sin(u*2.9);
+      if(u<2.0){
+        // ── la DEMANDE (taille voulue, pleine) descend vers l'autre côté (plus PETIT) ──
+        const p=eInOut(clamp(u/1.7,0,1));
+        const dy=lerp(870, gotY-140, p)+bobA*(1-p);
+        R(Xl, gotY+bobB, Wa, H, {stroke:INK, sw:5, rx:8});                         // ce qui trouvera preneur
+        R(Xl+Wa, gotY+bobB, Wd-Wa, H, {stroke:INK, sw:2, dash:'8 12', op:0.5});    // le manque en face
+        R(Xl, dy, Wd, H, {fill:YOU, rx:8});                                        // la demande, en transit
+        putCap(capB,'A REQUEST MEETS WHAT IS AVAILABLE',CX,700,INK,clamp((u-0.2)/0.5,0,1));
+        putCap(capD,'THE OTHER SIDE IS SMALLER',730,gotY-46+bobB,INK,clamp((u-0.9)/0.5,0,1));
+      } else {
+        // ── tenue : ce que tu as DEMANDÉ (pointillé, pleine taille) vs ce que tu as REÇU (plein, moitié) ──
+        const mp=clamp((u-2.0)/0.8,0,1);
+        R(Xl, askY+bobA, Wd, H, {stroke:YOU, sw:6, dash:'16 10', rx:8});           // YOU ASKED — ghost pleine taille
+        R(Xl, gotY+bobB, Wa, H, {fill:YOU, rx:8});                                 // YOU GOT — la réponse (déjà arrivée) : plein d'emblée
+        const shOp=clamp((u-2.6)/0.8,0,1);
+        R(Xl+Wa, gotY+bobC, Wd-Wa, H, {stroke:YOU, sw:4, dash:'14 12', rx:8, op:shOp}); // le reste — jamais rempli
+        putCap(capB,'YOU ASKED FOR A SIZE — YOU RECEIVED AN ANSWER',CX,700,INK,mp);
+        putCap(capD,'YOU ASKED',CX,askY-42+bobA,YOU,mp);
+        putCap(capC,'YOU GOT',360,gotY+H+62+bobB,YOU,clamp((u-2.4)/0.6,0,1));
+        putCap(capE,'NEVER FILLED',735,gotY+H+62+bobC,INK,clamp((u-3.2)/0.6,0,1));
+      }
+      flush();
+    }
+
+    // ═══ S3 — TROIS CALCULS EMPILÉS SUR LA TOTALITÉ : la moitié creuse les fait tous basculer ═══
+    // Verbe visuel : la tour instable (trois strates alignées sur une taille dont la moitié n'existe pas).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const X0=280, W=520, mid=X0+W*SPL;             // emplacement resserré (place aux gouttières d'étiquettes)
+      const SY=1200, SH=84;
+      const reveal=clamp((u-2.0)/0.6,0,1);           // la moitié creuse se révèle
+      const sway=(reveal>0? (4+3.2*reveal)*Math.sin(u*1.7)+2.0*Math.sin(u*2.9) : 1.4*Math.sin(u*1.5)+0.8*Math.sin(u*2.7));
+      const towerBob=5*Math.sin(u*1.2)+2.5*Math.sin(u*2.3);
+      const ang=(reveal*5.0)*(0.62+0.38*Math.sin(u*1.7));   // bascule (max ~5°) — pivot au bord du soutien
+      const tf=`rotate(${ang.toFixed(2)} ${mid} ${SY})`;
+      // surlignage de la colonne creuse (derrière la tour — appelé en premier = index bas = z arrière)
+      R(mid, 860, W*(1-SPL), SY+SH-860, {fill:INK, fillOpacity:0.13, rx:6, op:reveal});
+      // les trois strates (YOUR READ / TARGET / RISK), alignées sur la TOTALITÉ, elles basculent
+      const rows=[880, 990, 1100];                   // hauts de strate (top→bottom)
+      for(let i=0;i<3;i++){const y=rows[i]+towerBob+sway*(2-i)*0.5;
+        R(X0, y, W, 66, {stroke:YOU, sw:5, rx:10, tf});}
+      // l'emplacement en dessous : moitié pleine / moitié creuse
+      R(X0, SY, W*SPL, SH, {fill:YOU, rx:6});
+      R(mid, SY, W*(1-SPL), SH, {stroke:INK, sw:5, rx:6});
+      // ÉTIQUETTES des strates — gouttière GAUCHE (zone vide, jamais sur un dessin)
+      const lo=clamp((u-0.3)/0.6,0,1);
+      putCap(capA,'READ',158,rows[0]+44+towerBob,YOU,lo);
+      putCap(capB,'TARGET',158,rows[1]+44+towerBob,YOU,clamp((u-0.7)/0.6,0,1));
+      putCap(capC,'RISK',158,rows[2]+44+towerBob,YOU,clamp((u-1.1)/0.6,0,1));
+      putCap(capD, u<2.4?'ALL BUILT ON THE FULL SIZE':'BUILT ON THE HALF YOU NEVER GOT', CX,700,INK,clamp((u-0.6)/0.6,0,1));
+      putCap(capF,'THE SIZE YOU ACTUALLY HAVE',CX,SY+SH+66,DEAD,clamp((u-1.4)/0.6,0,1));
+      flush();
+    }
+
+    // ═══ S4 — LES DEUX SENS DU REMPLISSAGE PARTIEL (ENTRÉE : gain à moitié · SORTIE : perte non surveillée) ═══
+    // Verbe visuel : le diptyque à conséquences opposées (haut = ce qu'on encaisse ; bas = ce qui nous entame).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      // ── HAUT — ENTRÉE : le gain plafonne, mais seule la moitié est encaissée ──
+      const GX=380, GW=140, base=980, top=640;                 // colonne de gain (contour = potentiel plein dès t=0)
+      const gbob=8*Math.sin(u*1.45)+4*Math.sin(u*2.5);
+      R(GX, top+gbob, GW, base-top, {stroke:YOU, sw:5, rx:8});  // POTENTIEL (contour plein) présent d'entrée
+      const bh=(base-top)/2*eOut(clamp(u/1.2,0,1));             // la moitié basse s'encaisse (croît)
+      R(GX, base-bh+gbob, GW, bh, {fill:YOU, rx:8});            // ENCAISSÉ (plein) — moitié seulement
+      // ── BAS — SORTIE : la sortie ne remplit qu'à moitié, la position résiduelle reste, non surveillée ──
+      const PX=440, PW=280, PY=1180, PH=104, mid=PX+PW*SPL;
+      const pbob=8*Math.sin(u*1.3)+4*Math.sin(u*2.2);
+      const exit=clamp((u-1.4)/0.9,0,1);                        // la gauche « sort », la droite résiste
+      R(PX, PY+pbob, PW*SPL*exit, PH, {stroke:INK, sw:3, dash:'10 12', rx:8, op:exit*0.55});   // là où la moitié est sortie
+      R(mid-(PW*SPL)*(1-exit), PY+pbob, PW*SPL+(PW*SPL)*(1-exit), PH, {fill:YOU, rx:8});        // POSITION résiduelle
+      // le REGARD (crochets teal) se détourne : il glisse à droite et s'efface (absent en tenue)
+      const look=clamp((u-1.7)/0.9,0,1), lx=look*260, lo2=(1-look);
+      P([[mid-96+lx, PY-14+pbob],[mid-114+lx, PY-14+pbob],[mid-114+lx, PY+PH+14+pbob],[mid-96+lx, PY+PH+14+pbob]], {stroke:YOU, sw:6, op:lo2});
+      P([[PX+PW+30+lx, PY-14+pbob],[PX+PW+48+lx, PY-14+pbob],[PX+PW+48+lx, PY+PH+14+pbob],[PX+PW+30+lx, PY+PH+14+pbob]], {stroke:YOU, sw:6, op:lo2});
+      // le MARCHÉ bouge : une tranche GRISE descend sur la position résiduelle non surveillée (perte qui t'appartient)
+      const mk2=clamp((u-2.8)/1.1,0,1);
+      const gy=lerp(1020, PY+8, eOut(mk2));
+      const gpress=mk2>0.85? 9*Math.sin(u*1.8)+4*Math.sin(u*2.9):0;
+      R(mid, gy+gpress, PW*SPL, PH*0.66, {fill:DEAD, rx:6, op:mk2});   // tranche grise = PERTE, sur la résiduelle
+      // ÉTIQUETTES — chacune dans une zone VIDE (gouttière / au-dessus / en dessous), jamais sur un dessin
+      putCap(capG,'IT CUTS BOTH WAYS',CX,582,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capA,'WINNER PAYS HALF',790,812,YOU,clamp((u-0.8)/0.6,0,1));       // droite de la colonne (gouttière)
+      putCap(capC,'STILL HOLDING',mid,1128,YOU,clamp((u-2.6)/0.6,0,1));         // au-dessus de la résiduelle
+      putCap(capD,'UNWATCHED',225,1245,INK,clamp((u-2.6)/0.6,0,1));            // gouttière gauche
+      putCap(capB,'THIS LOSS IS YOURS',mid,1372,DEAD,clamp((u-3.6)/0.6,0,1));   // sous la tranche grise
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : THE CLICK vs THE FILL — vérifier, puis retracer le plan sur ce qu'on possède vraiment ═══
+    // Verbe visuel : la séparation + le retrace (deux objets distincts, une vérification, le plan re-dimensionné).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const H=104, y=1080;
+      const cbob=6*Math.sin(u*1.35)+3*Math.sin(u*2.4);
+      const fbob=5*Math.sin(u*1.15)+3*Math.sin(u*2.05);
+      // THE CLICK — la demande (pleine taille, pointillé teal) à gauche
+      const CXl=150, CWd=320;
+      R(CXl, y+cbob, CWd, H, {stroke:YOU, sw:5, dash:'16 10', rx:8});
+      putCap(capC,'THE CLICK',CXl+CWd/2, y+H+130+cbob, YOU, clamp((u-0.3)/0.5,0,1));
+      putCap(capE,'WHAT YOU ASKED',CXl+CWd/2, y-36+cbob, INK, clamp((u-0.7)/0.6,0,1));
+      // THE FILL — la réalité (moitié, plein) à droite
+      const FXl=620, FWd=200;
+      R(FXl, y+fbob, FWd, H, {fill:YOU, rx:8});
+      putCap(capD,'THE FILL',FXl+FWd/2, y+H+130+fbob, YOU, clamp((u-0.3)/0.5,0,1));   // sous le bras RISQUE, pas dessus
+      // la VÉRIFICATION descend sur le fill AVANT toute gestion (un coche teal)
+      const vp=clamp((u-1.9)/0.9,0,1), vy=lerp(y-140, y-46, eOut(vp));
+      P([[FXl+FWd/2-34, vy+fbob],[FXl+FWd/2-8, vy+26+fbob],[FXl+FWd/2+40, vy-30+fbob]], {stroke:YOU, sw:9, op:vp});
+      // le PLAN RETRACÉ — cette fois sur la TAILLE RÉELLEMENT POSSÉDÉE (le fill), stable
+      const rp=clamp((u-2.9)/0.8,0,1), py=y-190+fbob;
+      P([[FXl,py+40],[FXl,py],[FXl+FWd,py],[FXl+FWd,py+40]], {stroke:INK, sw:6, op:rp});
+      L(FXl+FWd/2, py, FXl+FWd/2, py-58, {stroke:INK, sw:6, op:rp});
+      P([[FXl+FWd/2-13,py-44],[FXl+FWd/2,py-60],[FXl+FWd/2+13,py-44]], {stroke:INK, sw:6, op:rp});
+      L(FXl+FWd/2, y+H+fbob, FXl+FWd/2, y+H+58+fbob, {stroke:INK, sw:6, op:rp});
+      P([[FXl+FWd/2-13,y+H+44+fbob],[FXl+FWd/2,y+H+60+fbob],[FXl+FWd/2+13,y+H+44+fbob]], {stroke:INK, sw:6, op:rp});
+      // ÉTIQUETTES
+      putCap(capB,'CONFIRM THE FILL, NOT THE CLICK',CX,620,INK,clamp((u-0.5)/0.7,0,1));
+      putCap(capA,'LOOK AT WHAT YOU ACTUALLY OWN',CX,700,DEAD,clamp((u-3.4)/0.7,0,1));
+      putCap(capF,'PLAN ON WHAT YOU OWN',FXl+FWd/2, py-90, INK, clamp((u-3.4)/0.7,0,1));
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
