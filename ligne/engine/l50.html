@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L50 « THE ACCOUNT YOU USED TO HAVE » — ancrage au plus-haut (high-water mark), psycho MÉCANIQUE, émotion par objets.
+       S1 : émotion frame 0 = TENSION + RECONNAISSANCE — un compte teal manifestement AU-DESSUS de sa ligne de départ (il a monté),
+       mais tout en haut un trait de PLUS-HAUT, et une grande équerre GRISE qui mesure DEPUIS ce sommet VERS LE BAS jusqu'au niveau
+       actuel : la même barre lue comme un déficit. Les deux lectures cohabitent dès t=0. S2 : DEUX équerres sur la MÊME barre —
+       depuis le DÉPART (teal, un vrai gain), depuis le SOMMET (grise, un manque) ; un projecteur n'éclaire que la grise, l'autre reste
+       sous l'ombre. S3 : le sommet se DÉCOMPOSE — base teal (l'edge qui reste) + couche grise (la bonne série, la variance) qui se
+       retire ; le niveau retombe à sa base, mais le trait de référence reste marqué trop haut. S4 (LA scene) : la course au sommet —
+       l'écart devient un objectif, la taille GONFLE, des setups ternes sont pris, et la barre DESCEND : plus on court, plus l'écart
+       grandit ; le trait de sommet est indifférent, le marché n'en a aucune mémoire. S5 : décharge — le projecteur BASCULE sur
+       l'équerre du départ (le process marche), celle du sommet est barrée « variance only ». Doctrine : aucun chiffre (tout par la
+       HAUTEUR) ; gris = variance/manque ; teal = TOI/l'edge ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LES OBJETS (créés une fois, replacés/masqués par scène — coupe franche, jamais de décor permanent) ──
+    const bar=mk('rect',{rx:2,fill:YOU,opacity:0});                                             // le compte (TOI, teal)
+    const peakLine=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round','stroke-dasharray':'20 13',opacity:0}); // le trait de plus-haut (fusil)
+    const startLine=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round','stroke-dasharray':'16 12',opacity:0}); // la ligne de départ
+    const edgeBlk=mk('rect',{rx:3,fill:YOU,opacity:0});                                         // S3 : l'edge (teal, reste)
+    const varBlk=mk('rect',{rx:3,fill:DEAD,opacity:0});                                         // S3 : la variance (gris, se retire)
+    const gapBand=mk('rect',{rx:5,fill:DEAD,opacity:0});                                        // S4 : l'écart à combler
+    const sizeBar=mk('rect',{rx:6,fill:YOU,opacity:0});                                         // S4 : la jauge de taille qui gonfle
+    const brG=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':'15 10',opacity:0}); // équerre SOMMET (gris)
+    const brT=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':'15 10',opacity:0});  // équerre DÉPART (teal)
+    const veil=mk('rect',{rx:10,fill:DEAD,opacity:0});                                          // l'ombre (le côté qu'on n'éclaire pas)
+    const strike=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0});  // S5 : l'équerre sommet barrée
+    const bulb=mk('circle',{r:15,fill:INK,opacity:0});                                          // le projecteur
+    const beam1=mk('line',{stroke:INK,'stroke-width':3,opacity:0});
+    const beam2=mk('line',{stroke:INK,'stroke-width':3,opacity:0});
+    const MOTES=[]; for(let i=0;i<6;i++)MOTES.push(mk('circle',{r:9,fill:DEAD,opacity:0}));      // S3 : la variance rendue, qui dérive
+    const SETUPS=[]; for(let i=0;i<5;i++)SETUPS.push(mk('rect',{rx:2,fill:DEAD,opacity:0}));     // S4 : les setups ternes qu'on prend quand même
+
+    // niveaux de référence (par la HAUTEUR — aucun chiffre)
+    const BARX=250, BARW=180, BFLOOR=1380;      // le compte : colonne teal, plancher fixe
+    const PY=760, NY=1080, SY=1300;             // plus-haut / niveau actuel / départ
+    const AXX=560, TW=26;                       // dorsale des équerres, largeur des embouts
+
+    function setLine(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));setOp(el,op);}
+    function setRect(el,x,y,w,h,op){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));el.setAttribute('width',Math.max(1,w).toFixed(1));el.setAttribute('height',Math.max(1,h).toFixed(1));setOp(el,op);}
+    // équerre : embout haut, dorsale verticale, embout bas (embouts vers la DROITE, vers les étiquettes). Frémit EN POSITION
+    // (jamais en opacité) et ses tirets DÉFILENT (progression garantie le long d'une longue dorsale, cf. avg lines de l26).
+    function bracket(el,x,ytop,ybot,op,u){const w=TW+4*Math.sin(u*1.9),jt=3*Math.sin(u*1.6),jb=3*Math.sin(u*2.2+1);
+      el.setAttribute('points',`${(x+w).toFixed(1)},${(ytop+jt).toFixed(1)} ${x.toFixed(1)},${(ytop+jt).toFixed(1)} ${x.toFixed(1)},${(ybot+jb).toFixed(1)} ${(x+w).toFixed(1)},${(ybot+jb).toFixed(1)}`);
+      el.setAttribute('stroke-dashoffset',(-u*34).toFixed(1));setOp(el,op);}
+    // les traits de référence : tirets qui DÉFILENT en continu (mesure vivante, hante) → progression même en tenue longue
+    function march(){peakLine.setAttribute('stroke-dashoffset',(-clock.t*42).toFixed(1));startLine.setAttribute('stroke-dashoffset',(clock.t*36).toFixed(1));}
+    function spotlight(bx,by,ytop,ybot,op){setOp(bulb,op);bulb.setAttribute('cx',bx.toFixed(1));bulb.setAttribute('cy',by.toFixed(1));
+      setLine(beam1,bx,by,AXX-2,ytop,op*0.4);setLine(beam2,bx,by,AXX+TW+2,ybot,op*0.4);}
+    function mote(i,x,y,op){const e=MOTES[i];e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));setOp(e,op);}
+    function setup(i,x,y,op){const e=SETUPS[i];e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',48);e.setAttribute('height',14);setOp(e,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DOES A NUMBER','YOU NO LONGER HAVE','RUN YOUR MOOD'];
+    const FS=68,lineH=94,y0=180,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+70,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideAll(){[bar,peakLine,startLine,edgeBlk,varBlk,gapBand,sizeBar,brG,brT,veil,strike,bulb,beam1,beam2].forEach(e=>setOp(e,0));
+      MOTES.forEach(e=>setOp(e,0));SETUPS.forEach(e=>setOp(e,0));hideCaps();}
+
+    // ═══ S1 — LE COMPTE EN HAUSSE, LU COMME UN DÉFICIT DEPUIS LE SOMMET ═══
+    // Verbe visuel : la double lecture (une même barre montée, mesurée par le haut comme un manque).
+    function s1(lf,t,s){
+      const u=t-s; hideAll();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.15,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : la barre grimpée + l'équerre grise du sommet sont là dès t=0, entières. Rien ne se construit.
+      setLine(peakLine,180,PY,720,PY,1);                                     // le plus-haut, dominant (fusil)
+      setLine(startLine,180,SY,860,SY,1);                                    // la ligne de départ
+      const bt=NY+(9*Math.sin(u*1.9)+5*Math.sin(u*3.0));                     // le compte respire (deux harmoniques)
+      setRect(bar,BARX,bt,BARW,BFLOOR-bt,1);
+      bracket(brG,AXX,PY,bt,1,u);                                            // équerre grise : du sommet JUSQU'AU niveau actuel = « déficit »
+      putCap(capA,'THE PEAK YOU HIT',CX,PY-52,INK,gf);
+      putCap(capB,'YOUR ACCOUNT',BARX+BARW/2,BFLOOR+42,YOU,gf);
+      putCap(capC,'SEEN AS A LOSS',790,(PY+NY)/2,DEAD,clamp((u-1.6)/0.7,0,1)*gf);
+      putCap(capD,'WHERE YOU STARTED',740,SY+46,DEAD,clamp((u-2.4)/0.7,0,1)*gf);
+    }
+
+    // ═══ S2 — DEUX ÉQUERRES SUR LA MÊME BARRE : on n'en éclaire qu'une ═══
+    // Verbe visuel : la sélection par le projecteur (l'une éclairée, l'autre sous l'ombre).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      setLine(peakLine,180,PY,720,PY,1);
+      setLine(startLine,180,SY,860,SY,1);
+      const bt=NY+(9*Math.sin(u*1.9)+5*Math.sin(u*3.0));
+      setRect(bar,BARX,bt,BARW,BFLOOR-bt,1);
+      bracket(brG,AXX,PY,NY,1,u);                                           // depuis le SOMMET (gris) — éclairée
+      bracket(brT,AXX,NY,SY,0.32,u);                                        // depuis le DÉPART (teal) — ignorée (estompée)
+      const bx=AXX-40+18*Math.sin(u*0.9)+7*Math.sin(u*1.7);                 // le projecteur balaie (deux harmoniques)
+      spotlight(bx,700,PY,NY,1);
+      putCap(capA,'FROM THE PEAK',800,(PY+NY)/2-8,DEAD,clamp((u-0.6)/0.6,0,1));
+      putCap(capB,'FROM THE START',800,(NY+SY)/2,YOU,0.4*clamp((u-1.0)/0.6,0,1));
+      putCap(capC,'YOU ONLY WATCH ONE OF THEM',CX,636,INK,clamp((u-2.4)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE SOMMET SE DÉCOMPOSE : de l'edge + de la variance qui se rend ═══
+    // Verbe visuel : la décomposition (la couche grise se retire, le niveau retombe, la référence reste trop haut).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      const BX3=440, BW3=160, base=1180, edgeTop=1000, varTopFull=830;
+      setLine(peakLine,200,varTopFull,760,varTopFull,1);                    // la référence reste marquée en haut
+      const et=edgeTop+(5*Math.sin(u*1.6)+3*Math.sin(u*2.7));               // l'edge respire
+      setRect(edgeBlk,BX3,et,BW3,base-et,1);
+      const rp=clamp((u-2.0)/1.5,0,1);                                      // la variance se retire (2s → 3.5s)
+      const vTop=varTopFull-90*eIn(rp);
+      const vBot=lerp(edgeTop,varTopFull-60,eOut(rp));
+      setRect(varBlk,BX3,vTop,BW3,Math.max(0,vBot-vTop),(1-rp)*0.9);
+      for(let i=0;i<6;i++){const ap=clamp(rp-0.15-i*0.05,0,1);              // la part rendue dérive (feuille morte, irrégulier)
+        const mx=BX3+22+i*22+34*Math.sin(u*0.8+i)+11*Math.sin(u*1.9+i*1.4);
+        const my=varTopFull-24-70*rp-i*13+20*Math.sin(u*1.1+i*1.3)+7*Math.sin(u*2.4+i);
+        mote(i,mx,my,ap*0.8);}
+      bracket(brG,660,varTopFull,edgeTop,clamp((u-3.1)/0.7,0,1),u);          // l'écart : ancré trop haut
+      putCap(capA,'A PEAK IS PART LUCK',CX,636,INK,clamp(u/0.8,0,1));
+      putCap(capE,'A GOOD RUN',770,915,DEAD,clamp((u-0.6)/0.7,0,1)*clamp((2.9-u)/0.7,0,1)); // à DROITE du bloc gris ; s'éteint AVANT que l'écart n'apparaisse (jamais par-dessus un dessin)
+      putCap(capC,'YOUR EDGE — IT STAYS',BX3+BW3/2,base+44,YOU,clamp((u-0.9)/0.7,0,1));
+      putCap(capD,'ANCHORED TOO HIGH',CX,varTopFull-46,DEAD,clamp((u-3.1)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA COURSE AU SOMMET QUI CREUSE ═══  (LA scene)
+    // Verbe visuel : la poursuite qui se retourne (on grossit, on force, et la barre DESCEND — l'écart grandit).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      setLine(peakLine,180,PY,720,PY,1);                                     // le sommet, indifférent
+      // le compte : bref élan vers le haut (0-1.6), puis DRAWDOWN qui creuse (2.6→4.8)
+      let bt=(u<1.6)?(NY-30*eOut(clamp(u/1.6,0,1))):((NY-30)+150*eInOut(clamp((u-2.6)/2.2,0,1)));
+      bt+=5*Math.sin(u*1.7)+3*Math.sin(u*2.9);
+      setRect(bar,BARX,bt,BARW,BFLOOR-bt,1);
+      setRect(gapBand,BARX+12,PY,BARW-24,bt-PY,0.30);                        // l'écart au sommet — grandit avec le drawdown
+      const sw=60+220*eOut(clamp((u-1.5)/2.0,0,1))+10*Math.sin(u*2.2);       // la taille GONFLE
+      setRect(sizeBar,700,1150,sw,46,1);
+      for(let i=0;i<5;i++){const ap=clamp((u-(1.7+i*0.32))/0.4,0,1);         // les setups ternes qu'on prend quand même
+        const sx=470+i*7+6*Math.sin(u*2.0+i), sy=1188-i*42-18*Math.sin(u*1.5+i)-9*Math.sin(u*2.6+i);
+        setup(i,sx,sy,ap*0.85);}
+      putCap(capA,'CHASING A NUMBER',CX,632,INK,clamp(u/0.8,0,1));
+      putCap(capB,'THE GAP ONLY GROWS',740,900,DEAD,clamp((u-3.0)/0.7,0,1));
+      putCap(capC,'SIZE UP, FORCE SETUPS',800,1112,YOU,clamp((u-1.8)/0.6,0,1));
+      putCap(capD,'THE MARKET IGNORES IT',740,PY-40,INK,clamp((u-0.8)/0.6,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : le projecteur bascule sur la mesure depuis le DÉPART ═══
+    // Verbe visuel : le pivot de la mesure (le projecteur quitte le sommet, l'équerre sommet est barrée).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      setLine(peakLine,180,PY,720,PY,1);
+      setLine(startLine,180,SY,860,SY,1);
+      const bt=NY+(9*Math.sin(u*1.9)+5*Math.sin(u*3.0));
+      setRect(bar,BARX,bt,BARW,BFLOOR-bt,1);
+      const sw=clamp((u-0.4)/1.6,0,1);                                       // le basculement (0.4s → 2s)
+      bracket(brG,AXX,PY,NY,1-0.55*sw,u);                                    // le sommet s'efface
+      bracket(brT,AXX,NY,SY,0.4+0.6*sw,u);                                   // le départ s'allume
+      const tTop=lerp(PY,NY,eInOut(sw)), tBot=lerp(NY,SY,eInOut(sw));        // le projecteur re-vise le départ
+      const bx=AXX-40+16*Math.sin(u*0.9)+6*Math.sin(u*1.7);
+      spotlight(bx,700,tTop,tBot,1);
+      const st=clamp((u-2.0)/0.8,0,1);                                       // l'équerre sommet est BARRÉE
+      setLine(strike,AXX-8,(PY+NY)/2,AXX-8+(TW+46)*st,(PY+NY)/2,st);
+      putCap(capA,'VARIANCE ONLY',810,(PY+NY)/2-8,DEAD,clamp((u-2.0)/0.7,0,1));
+      const pw=clamp((u-1.2)/0.7,0,1);                                       // la seule question utile — deux lignes, à DROITE de la dorsale
+      putCap(capE,'DOES THE PROCESS',808,(NY+SY)/2-24,YOU,pw);
+      putCap(capF,'WORK?',808,(NY+SY)/2+34,YOU,pw);
+      putCap(capC,'MEASURE FROM WHERE YOU STARTED',CX,636,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);march();}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
