@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L53 « TWO FEARS, ONE ACCOUNT » — S1 : émotion frame 0 = TENSION + RECONNAISSANCE DE SOI — TOI (boule teal) déjà
+       ÉCARTELÉ et déformé entre deux forces grises qui tirent en sens EXACTEMENT opposés (perdre te tire dehors à gauche,
+       rater te tire dedans à droite). La traction se ressent dès t=0. S2 : les deux forces ne se relaient pas ; chacune
+       s'ALLUME selon SA condition — prix qui file + toi dehors → rater (entrées) ; toi dedans + ça va contre → perdre
+       (sorties) ; jamais ensemble. S3 : le mouvement de prix complet ; l'entrée se déclenche TARD, la sortie TÔT — seule
+       une petite tranche médiane est capturée, le début et la fin abandonnés. S4 : la boucle — l'entrée porte l'étiquette
+       flatteuse « SEIZING THE OPPORTUNITY », la sortie « PROTECTING MYSELF » ; aucune n'est vue comme une erreur, alors le
+       motif tourne, cadence qui presse, année après année. S5 : décharge — deux tests NOMMENT chaque force ; nommées, elles
+       se détachent de la boule ; le PLAN (teal, écrit quand aucune n'était là) reprend l'autorité, la boule redevient ronde.
+       Doctrine : aucun chiffre ; les peurs = gris ABSTRAIT (jamais un visage) ; TOI + le plan = teal ; pas de brun ; bas du
+       cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LES ACTEURS ──
+    // TOI = boule teal (ellipse, pour l'écartèlement). Le PLAN = tablette teal. Les deux PEURS = flèches grises (tête + tendon).
+    const you=mk('ellipse',{fill:YOU,opacity:0});
+    const planRect=mk('rect',{rx:20,fill:PAPER,stroke:YOU,'stroke-width':7,opacity:0});
+    const planL=[0,1,2].map(()=>mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+    const fLtether=mk('line',{stroke:DEAD,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const fLhead=mk('polygon',{fill:DEAD,opacity:0});
+    const fRtether=mk('line',{stroke:DEAD,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const fRhead=mk('polygon',{fill:DEAD,opacity:0});
+    const ring=mk('circle',{fill:'none',stroke:INK,'stroke-width':6,opacity:0});
+    const path=mk('polyline',{fill:'none',stroke:INK,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const slice=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':15,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    // pools génériques
+    const dots=[]; for(let i=0;i<6;i++)dots.push(mk('circle',{opacity:0}));
+    const lns=[];  for(let i=0;i<10;i++)lns.push(mk('line',{'stroke-linecap':'round',opacity:0}));
+    const plys=[]; for(let i=0;i<5;i++)plys.push(mk('polyline',{fill:'none','stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+
+    // flèche-peur : tête (triangle) qui pointe VERS L'EXTÉRIEUR (elle tire) + tendon jusqu'au bord de la boule
+    function forceL(exX,ey,hx,hy,op){ // tire vers la gauche, apex en hx
+      fLtether.setAttribute('x1',exX.toFixed(1));fLtether.setAttribute('y1',ey.toFixed(1));
+      fLtether.setAttribute('x2',(hx+46).toFixed(1));fLtether.setAttribute('y2',hy.toFixed(1));setOp(fLtether,op);
+      fLhead.setAttribute('points',`${hx.toFixed(1)},${hy.toFixed(1)} ${(hx+48).toFixed(1)},${(hy-32).toFixed(1)} ${(hx+48).toFixed(1)},${(hy+32).toFixed(1)}`);setOp(fLhead,op);}
+    function forceR(exX,ey,hx,hy,op){ // tire vers la droite, apex en hx
+      fRtether.setAttribute('x1',exX.toFixed(1));fRtether.setAttribute('y1',ey.toFixed(1));
+      fRtether.setAttribute('x2',(hx-46).toFixed(1));fRtether.setAttribute('y2',hy.toFixed(1));setOp(fRtether,op);
+      fRhead.setAttribute('points',`${hx.toFixed(1)},${hy.toFixed(1)} ${(hx-48).toFixed(1)},${(hy-32).toFixed(1)} ${(hx-48).toFixed(1)},${(hy+32).toFixed(1)}`);setOp(fRhead,op);}
+
+    function hideAll(){
+      for(const e of [you,planRect,fLtether,fLhead,fRtether,fRhead,ring,path,slice])setOp(e,0);
+      for(const e of planL)setOp(e,0);
+      for(const e of dots)setOp(e,0);
+      for(const e of lns)setOp(e,0);
+      for(const e of plys)setOp(e,0);
+    }
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHICH FEAR IS','RUNNING YOUR TRADE'];
+    const FS=72,lineH=94,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(34),capF=caption(34),capG=caption(36),capH=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH])setOp(e,0);}
+
+    // ═══ S1 — L'ÉCARTÈLEMENT : toi, tiré en sens opposés par deux peurs ═══
+    // Verbe visuel : la TRACTION (une boule étirée et déformée entre deux forces contraires, dès la frame 0).
+    function s1(lf,t,s){
+      const u=t-s; hideAll(); hideCaps();
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      // question — 1re ligne pleine dès t=0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : la boule est DÉJÀ écartelée à t=0 (rx large / ry écrasé), les deux tendons tendus. Rien ne se construit.
+      const cy=982+9*Math.sin(u*1.25)+4*Math.sin(u*2.3);
+      const bal=0.56*Math.sin(u*1.15)+0.44*Math.sin(u*2.05);        // qui gagne l'instant (deux harmoniques)
+      const cx=CX+bal*70;
+      const rx=176+16*Math.sin(u*1.6)+9*Math.sin(u*2.85);           // respiration de l'étirement
+      const ry=Math.max(46,80-(rx-176)*0.34);
+      you.setAttribute('cx',cx.toFixed(1));you.setAttribute('cy',cy.toFixed(1));you.setAttribute('rx',rx.toFixed(1));you.setAttribute('ry',ry.toFixed(1));setOp(you,1);
+      const hlx=152+9*Math.sin(u*1.1)+4*Math.sin(u*2.2), hrx=928-9*Math.sin(u*1.2)-4*Math.sin(u*2.4);
+      forceL(cx-rx, cy, hlx, cy, 1);
+      forceR(cx+rx, cy, hrx, cy, 1);
+      putCap(capA,'YOU',CX,842,YOU,clamp((u-0.5)/0.5,0,1)*gf);
+      const fap=clamp((u-1.5)/0.7,0,1);
+      putCap(capC,'FEAR OF LOSING',250,1210,DEAD,fap);
+      putCap(capE,'PULLS YOU OUT',250,1262,DEAD,fap*0.92);
+      putCap(capD,'FEAR OF MISSING OUT',840,1210,DEAD,fap);
+      putCap(capF,'PULLS YOU IN',840,1262,DEAD,fap*0.92);
+    }
+
+    // ═══ S2 — CHACUNE SON MOMENT : la peur qui s'allume selon la condition ═══
+    // Verbe visuel : l'ALLUMAGE ALTERNÉ (deux conditions, jamais les deux forces ensemble ; l'une aux entrées, l'autre aux sorties).
+    function s2(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      const sel=Math.sin(u*0.72);
+      const aAct=clamp((sel+0.12)*3.2,0,1);     // MISSING OUT (droite) : prix qui file + toi dehors
+      const bAct=clamp((-sel+0.12)*3.2,0,1);    // LOSING (gauche) : toi dedans + ça va contre
+      putCap(capB,'ONE RUNS ENTRIES  ·  THE OTHER RUNS EXITS',CX,650,INK,clamp((u-0.3)/0.6,0,1));
+      // ── GAUCHE : LOSING → EXITS. Toi (teal) DEDANS un cadre gris ; un coup contraire pousse. La force gauche s'allume en condition B.
+      const LC=300, ly=970;
+      // cadre (tu es dedans)
+      lns[0].setAttribute('x1',LC-70);lns[0].setAttribute('y1',ly-64);lns[0].setAttribute('x2',LC-70);lns[0].setAttribute('y2',ly+64);lns[0].setAttribute('stroke',DEAD);lns[0].setAttribute('stroke-width',6);setOp(lns[0],0.85);
+      lns[1].setAttribute('x1',LC+70);lns[1].setAttribute('y1',ly-64);lns[1].setAttribute('x2',LC+70);lns[1].setAttribute('y2',ly+64);lns[1].setAttribute('stroke',DEAD);lns[1].setAttribute('stroke-width',6);setOp(lns[1],0.85);
+      const bnud=bAct*26*(0.5+0.5*Math.sin(u*3.4));
+      dots[0].setAttribute('cx',(LC-bnud).toFixed(1));dots[0].setAttribute('cy',(ly+5*Math.sin(u*2.1)+3*Math.sin(u*3.3)).toFixed(1));dots[0].setAttribute('r',36);dots[0].setAttribute('fill',YOU);setOp(dots[0],1);
+      // coup contraire (jab) : une flèche grise pousse la boule vers la sortie
+      const jx=LC+118-bnud*1.4;
+      lns[2].setAttribute('x1',(jx+64).toFixed(1));lns[2].setAttribute('y1',(ly-30).toFixed(1));lns[2].setAttribute('x2',jx.toFixed(1));lns[2].setAttribute('y2',ly.toFixed(1));lns[2].setAttribute('stroke',DEAD);lns[2].setAttribute('stroke-width',7);setOp(lns[2],0.5+0.5*bAct);
+      plys[0].setAttribute('points',`${jx.toFixed(1)},${ly.toFixed(1)} ${(jx+30).toFixed(1)},${(ly-20).toFixed(1)} ${(jx+30).toFixed(1)},${(ly+2).toFixed(1)}`);plys[0].setAttribute('stroke',DEAD);plys[0].setAttribute('stroke-width',7);plys[0].setAttribute('fill',DEAD);setOp(plys[0],0.5+0.5*bAct);
+      // la flèche-peur GAUCHE s'allume en condition B (elle te tire vers la sortie)
+      fLtether.setAttribute('x1',(LC-70).toFixed(1));fLtether.setAttribute('y1',ly.toFixed(1));fLtether.setAttribute('x2',(168).toFixed(1));fLtether.setAttribute('y2',ly.toFixed(1));setOp(fLtether,0.3+0.6*bAct);
+      fLhead.setAttribute('points',`${(120-6*bAct).toFixed(1)},${ly.toFixed(1)} ${168},${(ly-30).toFixed(1)} ${168},${(ly+30).toFixed(1)}`);setOp(fLhead,0.3+0.6*bAct);
+      putCap(capC,'LOSING',LC,1200,DEAD,0.5+0.5*bAct);
+      putCap(capE,'RUNS YOUR EXITS',LC,1254,INK,clamp((u-1.6)/0.7,0,1));
+      // ── DROITE : MISSING OUT → ENTRIES. Le prix FILE (zigzag gris qui monte, vivant) ; toi DEHORS, en bas. Force droite s'allume en condition A.
+      const RC=780, ry2=980;
+      const px=[690,742,794,846,898];
+      const pts=px.map((x,i)=>{const rise=(0.55+0.45*aAct)*(i*30);const bob=10*Math.sin(u*3.0-i*0.9)+5*Math.sin(u*4.6-i);return `${x},${(ry2+40-rise+bob).toFixed(1)}`;}).join(' ');
+      plys[1].setAttribute('points',pts);plys[1].setAttribute('stroke',DEAD);plys[1].setAttribute('stroke-width',7);setOp(plys[1],0.55+0.45*aAct);
+      // toi DEHORS (petite boule teal, sous le prix qui file, qui le lorgne)
+      const oy=ry2+70-aAct*16*(0.5+0.5*Math.sin(u*3.2));
+      dots[1].setAttribute('cx',(660+5*Math.sin(u*2.0)).toFixed(1));dots[1].setAttribute('cy',oy.toFixed(1));dots[1].setAttribute('r',30);dots[1].setAttribute('fill',YOU);setOp(dots[1],1);
+      // la flèche-peur DROITE s'allume en condition A (elle te tire vers le prix)
+      fRtether.setAttribute('x1',(RC+120).toFixed(1));fRtether.setAttribute('y1',ry2.toFixed(1));fRtether.setAttribute('x2',(912).toFixed(1));fRtether.setAttribute('y2',ry2.toFixed(1));setOp(fRtether,0.3+0.6*aAct);
+      fRhead.setAttribute('points',`${(958+6*aAct).toFixed(1)},${ry2.toFixed(1)} ${910},${(ry2-30).toFixed(1)} ${910},${(ry2+30).toFixed(1)}`);setOp(fRhead,0.3+0.6*aAct);
+      putCap(capD,'MISSING OUT',RC,1200,DEAD,0.5+0.5*aAct);
+      putCap(capF,'RUNS YOUR ENTRIES',RC,1254,INK,clamp((u-2.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — TARD DEDANS, TÔT DEHORS : la tranche capturée est minuscule ═══
+    // Verbe visuel : la BOUCLE TRACÉE d'un mouvement de prix, avec l'entrée tardive et la sortie précoce qui n'en gardent qu'un tiers médian.
+    function s3(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      function pt(f){const x=150+780*f;const y=1055-270*eInOut(f)+30*Math.sin(f*7.5)+7*Math.sin(u*1.6+f*9);return [x,y];}
+      const N=40, all=[]; for(let i=0;i<=N;i++)all.push(pt(i/N));
+      path.setAttribute('points',all.map(p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '));setOp(path,0.9);
+      // entrée TARD (fe) / sortie TÔT après (fx) — révélées dans le temps
+      const fe=0.52, fx=0.66;
+      const eShow=clamp((u-0.8)/0.5,0,1), xShow=clamp((u-2.0)/0.5,0,1);
+      // tranche capturée (teal épais) : n'apparaît qu'après la sortie
+      const capShow=clamp((u-2.4)/0.6,0,1);
+      const seg=all.filter((p,i)=>{const f=i/N;return f>=fe-1e-6&&f<=fx+1e-6;});
+      slice.setAttribute('points',seg.map(p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '));setOp(slice,capShow);
+      const pe=pt(fe), pfx=pt(fx);
+      dots[1].setAttribute('cx',pe[0].toFixed(1));dots[1].setAttribute('cy',pe[1].toFixed(1));dots[1].setAttribute('r',(17+2*Math.sin(u*3)).toFixed(1));dots[1].setAttribute('fill',YOU);setOp(dots[1],eShow);
+      dots[2].setAttribute('cx',pfx[0].toFixed(1));dots[2].setAttribute('cy',pfx[1].toFixed(1));dots[2].setAttribute('r',(17+2*Math.sin(u*3+1)).toFixed(1));dots[2].setAttribute('fill',DEAD);setOp(dots[2],xShow);
+      // le prix qui court sur TOUT le mouvement (dot voyageuse) — montre ce qui passe avant l'entrée et après la sortie
+      const dof=(u*0.15)%1, dp=pt(dof);
+      dots[0].setAttribute('cx',dp[0].toFixed(1));dots[0].setAttribute('cy',dp[1].toFixed(1));dots[0].setAttribute('r',12);dots[0].setAttribute('fill',INK);setOp(dots[0],0.9);
+      putCap(capB,'LATE IN,  EARLY OUT',CX,640,INK,clamp((u-3.0)/0.7,0,1));
+      putCap(capC,'ENTERS LATE',300,720,DEAD,eShow);
+      putCap(capD,'EXITS EARLY',770,720,DEAD,xShow);
+      putCap(capE,'ALL YOU KEPT',CX,1330,YOU,capShow);
+    }
+
+    // ═══ S4 — LA BOUCLE : deux erreurs déguisées en responsabilité, répétées ═══
+    // Verbe visuel : la BOUCLE qui tourne (cadence qui presse), les deux étiquettes flatteuses, la tranche capturée qui reste minuscule.
+    function s4(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      const cyR=1010, R=200+5*Math.sin(u*1.4)+3*Math.sin(u*2.6);
+      ring.setAttribute('cx',CX);ring.setAttribute('cy',cyR);ring.setAttribute('r',R.toFixed(1));setOp(ring,0.9);
+      const P=a=>[CX+R*Math.cos(a), cyR+R*Math.sin(a)];
+      // entrée & sortie proches, en haut : la tranche capturée est un tout petit arc
+      const aE=-1.92, aX=-1.30;
+      const eShow=clamp((u-0.6)/0.5,0,1), xShow=clamp((u-1.6)/0.5,0,1);
+      const pe=P(aE), px=P(aX);
+      // le petit arc capturé (teal)
+      const arc=[];for(let k=0;k<=8;k++){const a=aE+(aX-aE)*k/8;const p=P(a);arc.push(`${p[0].toFixed(1)},${p[1].toFixed(1)}`);}
+      slice.setAttribute('points',arc.join(' '));setOp(slice,clamp((u-1.8)/0.6,0,1));
+      dots[1].setAttribute('cx',pe[0].toFixed(1));dots[1].setAttribute('cy',pe[1].toFixed(1));dots[1].setAttribute('r',16);dots[1].setAttribute('fill',YOU);setOp(dots[1],eShow);
+      dots[2].setAttribute('cx',px[0].toFixed(1));dots[2].setAttribute('cy',px[1].toFixed(1));dots[2].setAttribute('r',16);dots[2].setAttribute('fill',DEAD);setOp(dots[2],xShow);
+      // le motif TOURNE — la dot fait le tour, cadence qui presse
+      const ang=-Math.PI/2 + u*1.15 + 0.03*u*u;
+      const dp=P(ang);
+      dots[0].setAttribute('cx',dp[0].toFixed(1));dots[0].setAttribute('cy',dp[1].toFixed(1));dots[0].setAttribute('r',14);dots[0].setAttribute('fill',INK);setOp(dots[0],0.9);
+      // étiquettes flatteuses (encre nette), sur DEUX lignes chacune, dans les gouttières, reliées par un fil au bon point
+      const seizeShow=clamp((u-0.9)/0.5,0,1), protShow=clamp((u-1.9)/0.5,0,1);
+      lns[0].setAttribute('x1',(pe[0]-6).toFixed(1));lns[0].setAttribute('y1',pe[1].toFixed(1));lns[0].setAttribute('x2',330);lns[0].setAttribute('y2',800);lns[0].setAttribute('stroke',INK);lns[0].setAttribute('stroke-width',3);setOp(lns[0],seizeShow*0.55);
+      lns[1].setAttribute('x1',(px[0]+6).toFixed(1));lns[1].setAttribute('y1',px[1].toFixed(1));lns[1].setAttribute('x2',750);lns[1].setAttribute('y2',800);lns[1].setAttribute('stroke',INK);lns[1].setAttribute('stroke-width',3);setOp(lns[1],protShow*0.55);
+      putCap(capC,'SEIZING THE',250,748,INK,seizeShow);
+      putCap(capG,'OPPORTUNITY',250,794,INK,seizeShow);
+      putCap(capD,'PROTECTING',830,748,INK,protShow);
+      putCap(capH,'MYSELF',830,794,INK,protShow);
+      putCap(capE,'NEVER A MISTAKE',CX,cyR+8,DEAD,clamp((u-2.6)/0.7,0,1));
+      putCap(capB,'SO IT REPEATS  —  YEAR AFTER YEAR',CX,1320,DEAD,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : nomme la force, elle lâche prise — le plan reprend l'autorité ═══
+    // Verbe visuel : le PIVOT-RÉVÉLATION (deux questions nomment les forces ; nommées, elles se détachent ; le plan teal prend le centre).
+    function s5(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      const nameA=clamp((u-0.5)/0.8,0,1);   // « am I entering because it's already moving? » nomme MISSING OUT (droite)
+      const nameB=clamp((u-1.6)/0.8,0,1);   // « am I exiting though nothing changed? » nomme LOSING (gauche)
+      const release=clamp((u-2.6)/1.0,0,1); // les forces lâchent, la boule redevient ronde, le plan monte
+      // la boule : d'abord étirée, puis ronde
+      const cy=884+7*Math.sin(u*1.2)+3*Math.sin(u*2.2);
+      const rxStretch=150*(1-release);
+      const rx=100+rxStretch*0.55, ry=100-rxStretch*0.30;
+      const cx=CX+ (1-release)*36*(0.55*Math.sin(u*1.2)+0.45*Math.sin(u*2.1));
+      you.setAttribute('cx',cx.toFixed(1));you.setAttribute('cy',cy.toFixed(1));you.setAttribute('rx',rx.toFixed(1));you.setAttribute('ry',ry.toFixed(1));setOp(you,1);
+      // les deux forces : tirent encore, puis se détachent et dérivent vers les bords (grises, éteintes)
+      const lgrip=(1-release), hlx=lerp(152,96,release)+6*Math.sin(u*1.1);
+      const hrx=lerp(928,984,release)-6*Math.sin(u*1.2);
+      const ley=cy+lerp(0,150,release), rey=cy+lerp(0,150,release);
+      forceL(cx-rx, cy, hlx, lgrip>0.02?cy:ley, 0.35+0.55*lgrip);
+      forceR(cx+rx, cy, hrx, lgrip>0.02?cy:rey, 0.35+0.55*lgrip);
+      // quand détachées, on les repose plus bas, éteintes, nommées
+      if(release>0.02){
+        fLtether.setAttribute('y1',cy.toFixed(1));fLtether.setAttribute('y2',cy.toFixed(1));
+        fRtether.setAttribute('y1',cy.toFixed(1));fRtether.setAttribute('y2',cy.toFixed(1));
+        setOp(fLtether,0.4*(1-release));setOp(fRtether,0.4*(1-release));
+      }
+      // le PLAN (teal) monte au centre, sous la boule — écrit quand aucune peur n'était là
+      const pr=clamp((u-2.2)/1.0,0,1);
+      const py=lerp(1180,1000,eOut(pr));
+      const bob=4*Math.sin(u*1.3)+2*Math.sin(u*2.4);
+      planRect.setAttribute('x',(CX-170).toFixed(1));planRect.setAttribute('y',(py+bob).toFixed(1));planRect.setAttribute('width',340);planRect.setAttribute('height',150);setOp(planRect,pr);
+      for(let i=0;i<3;i++){const yy=py+bob+42+i*34;planL[i].setAttribute('x1',CX-128);planL[i].setAttribute('x2',CX+(i===2?60:128));planL[i].setAttribute('y1',yy.toFixed(1));planL[i].setAttribute('y2',yy.toFixed(1));setOp(planL[i],pr);}
+      // étiquettes
+      putCap(capB,'AM I ENTERING BECAUSE IT IS ALREADY MOVING',CX,620,INK,nameA);
+      putCap(capA,'AM I EXITING THOUGH NOTHING CHANGED',CX,686,INK,nameB);
+      putCap(capC,'YOUR PLAN',CX,py+bob+205,YOU,pr);
+      putCap(capD,'FEAR OF LOSING',210,1300,DEAD,release*0.9);
+      putCap(capE,'FEAR OF MISSING OUT',870,1300,DEAD,release*0.9);
+      putCap(capF,'WRITTEN WHEN NEITHER WAS HERE',CX,760,DEAD,clamp((u-3.4)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
