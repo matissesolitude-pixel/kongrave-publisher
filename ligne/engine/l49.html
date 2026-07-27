@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L49 « THE TIMEFRAME CHANGES THE ANSWER » — fusil : LA MÊME DONNÉE, deux distances. S1 : émotion frame 0 = CURIOSITÉ+CHOC —
+       deux panneaux côte à côte affichent la MÊME série de prix ; à gauche, zoomé, elle MONTE ; à droite, reculé, elle DESCEND ;
+       un lien relie le même instant dans les deux. La contradiction est entière dès t=0. S2 : un timeframe = une distance — un œil
+       s'avance (les petites poussées apparaissent) puis recule (elles fusionnent en un mouvement lisse) ; la donnée n'a pas bougé.
+       S3 : ton setup est VALIDE sur ta vue rapprochée ; on recule d'un cran → une structure BEAUCOUP plus grande apparaît autour et
+       décide où le prix a le droit d'aller ; ton setup devient minuscule. S4 (LA scène) : perdant → on zoome ARRIÈRE jusqu'à trouver
+       une échelle qui dit « tiens » → gardé, long, gris ; gagnant → on zoome AVANT jusqu'à « coupe » → coupé, court, teal. La
+       distribution est inversée, et le coupable s'affiche : le choix d'échelle APRÈS COUP. S5 : décharge — deux échelles VERROUILLÉES
+       en teal (DIRECTION, ENTRÉE), les autres barrées ; un signal venu d'une échelle non choisie REBONDIT sur le verrou. Doctrine :
+       aucun chiffre ; aucune unité de temps nommée ; gris = perte ; teal = toi ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── POOLS GÉNÉRIQUES (positionnés/masqués scène par scène) ──
+    const RECT=[]; for(let i=0;i<8;i++)RECT.push(mk('rect',{opacity:0}));                                   // panneaux, boîtes, barres
+    const LINE=[]; for(let i=0;i<14;i++)LINE.push(mk('line',{'stroke-linecap':'round',opacity:0}));         // bornes, liens, brackets, croix
+    const POLY=[]; for(let i=0;i<4;i++)POLY.push(mk('polyline',{fill:'none','stroke-linejoin':'round','stroke-linecap':'round',opacity:0})); // tracés de prix
+    const ELL =[]; for(let i=0;i<2;i++)ELL.push(mk('ellipse',{fill:'none',opacity:0}));                     // l'œil (la distance)
+    const DOT =[]; for(let i=0;i<6;i++)DOT.push(mk('circle',{opacity:0}));                                  // marqueurs, pupille, verrous
+    function setPoly(i,pts,stroke,w,op,dash){const e=POLY[i];e.removeAttribute('transform');e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',w);if(dash)e.setAttribute('stroke-dasharray',dash);else e.removeAttribute('stroke-dasharray');setOp(e,op);}
+    function setRect(i,x,y,w,h,stroke,fill,sw,op){const e=RECT[i];e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(0.1,w).toFixed(1));e.setAttribute('height',Math.max(0.1,h).toFixed(1));e.setAttribute('stroke',stroke||'none');e.setAttribute('fill',fill||'none');e.setAttribute('stroke-width',sw||0);e.setAttribute('rx',6);setOp(e,op);}
+    function setLine(i,x1,y1,x2,y2,stroke,w,op,dash,doff){const e=LINE[i];e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',w);if(dash){e.setAttribute('stroke-dasharray',dash);e.setAttribute('stroke-dashoffset',(doff||0).toFixed(0));}else e.removeAttribute('stroke-dasharray');setOp(e,op);}
+    function setDot(i,x,y,r,fill,op){const e=DOT[i];e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('fill',fill);setOp(e,op);}
+    function setEll(i,x,y,rx,ry,stroke,w,op){const e=ELL[i];e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));e.setAttribute('rx',Math.max(0.5,rx).toFixed(1));e.setAttribute('ry',Math.max(0.5,ry).toFixed(1));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',w);setOp(e,op);}
+    function hideGen(){for(const e of POLY)setOp(e,0);for(const e of RECT)setOp(e,0);for(const e of LINE)setOp(e,0);for(const e of DOT)setOp(e,0);for(const e of ELL)setOp(e,0);}
+    function mapArr(vals,x0,y0,w,h,vmin,vmax,padx,pady){const n=vals.length,xa=x0+padx,xb=x0+w-padx,ya=y0+pady,yb=y0+h-pady,span=(vmax-vmin)||1;
+      return vals.map((v,i)=>{const fx=n>1?i/(n-1):0.5,x=xa+(xb-xa)*fx,fy=(v-vmin)/span,y=yb-(yb-ya)*fy;return [x,y];});}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME MARKET —','WHY TWO OPPOSITE READS'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap copié TEL QUEL de l26 (MESURE getComputedTextLength) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══════════ DONNÉES PARTAGÉES (le fusil : LA MÊME série de prix) ═══════════
+    // Globalement DESCENDANTE, avec une jambe locale MONTANTE (indices 22..33) : reculée elle descend, zoomée sur cette
+    // fenêtre elle monte. Aucun Math.random — série déterministe.
+    const D1=(()=>{const N=64,a=[];let v=0.86;
+      for(let i=0;i<N;i++){let dr=-0.0115; if(i>=22&&i<34)dr=0.031;
+        v+=dr+0.009*Math.sin(i*1.27)+0.005*Math.sin(i*2.63); a.push(v);} return a;})();
+    const D1min=Math.min.apply(null,D1), D1max=Math.max.apply(null,D1);
+    const NW0=20,NW1=37, MI=28;                                  // fenêtre rapprochée + instant marqué
+    const D1near=D1.slice(NW0,NW1+1);
+    const D1nmin=Math.min.apply(null,D1near), D1nmax=Math.max.apply(null,D1near);
+
+    // ═══ S1 — MÊME DONNÉE, DEUX FORMES OPPOSÉES (verbe : le diptyque contradictoire) ═══
+    // Émotion frame 0 = CURIOSITÉ + CHOC : les deux panneaux sont pleins dès t=0, l'un monte, l'autre descend, reliés.
+    const LP=[90,760,420,470], RP=[570,760,420,470], PAD=46;    // panneaux gauche(zoom)/droite(recul)
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideGen();
+      const gf=1;                                                     // le diptyque reste PLEIN jusqu'à la coupe franche (seule la question fond)
+      // question : 1re ligne à t=0, ? à ~1s, tout fond pendant la tenue
+      const qout=clamp(1-(u-3.2)/1.0,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=u-(0.0+k*0.30),ap0=clamp((k===0?1:qt)/0.22,0,1),ap=ap0*qout,sc=0.7+0.3*backOut(ap0);
+        setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=clamp((u-1.0)/0.22,0,1),qap=qm*qout,qsc=0.6+0.4*backOut(qm);
+      setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // panneaux (contours ink fins)
+      setRect(0,LP[0],LP[1],LP[2],LP[3],INK,'none',5,gf); setRect(1,RP[0],RP[1],RP[2],RP[3],INK,'none',5,gf);
+      // respiration (deux harmoniques) — BAKÉE dans les points → mouvement de POSITION continu
+      const bxL=7*Math.sin(u*1.15)+3*Math.sin(u*2.05), byL=5*Math.sin(u*1.5)+3*Math.sin(u*2.7);
+      const bxR=7*Math.sin(u*1.15+1.4)+3*Math.sin(u*2.05+0.7), byR=5*Math.sin(u*1.5+2.1)+3*Math.sin(u*2.7+1.1);
+      const nearPts=mapArr(D1near,LP[0],LP[1],LP[2],LP[3],D1nmin,D1nmax,PAD,PAD).map(p=>[p[0]+bxL,p[1]+byL]);
+      const farPts =mapArr(D1,   RP[0],RP[1],RP[2],RP[3],D1min, D1max, PAD,PAD).map(p=>[p[0]+bxR,p[1]+byR]);
+      setPoly(0,nearPts,INK,7,gf); setPoly(1,farPts,INK,7,gf);
+      // marqueurs teal (le MÊME instant) + lien à travers la gouttière
+      const mn=nearPts[MI-NW0], mf=farPts[MI];
+      setDot(0,mn[0],mn[1],14,YOU,gf); setDot(1,mf[0],mf[1],14,YOU,gf);
+      setLine(0,mn[0],mn[1],mf[0],mf[1],YOU,4,gf*0.85,'14 10',(-u*22));
+      // étiquettes : gauche cx≤380, droite cx≥700, note au-dessus de la gouttière (zone vide)
+      putCap(capD,'THE SAME DATA · THE SAME MOMENT',CX,712,INK,gf*clamp((u-1.7)/0.7,0,1));
+      putCap(capA,'AN UPTREND',300,LP[1]+LP[3]+58,INK,gf);            // gauche cx≤380, court → tient dans sa moitié
+      putCap(capB,'A DOWNTREND',780,RP[1]+RP[3]+58,INK,gf);          // droite cx≥700, vrai espace au centre
+    }
+
+    // ═══ S2 — UN TIMEFRAME EST UNE DISTANCE (verbe : l'œil qui avance/recule, le détail qui fusionne) ═══
+    const P2=[480,960], YC2=1040, AMP2=112, MP=40;
+    const s2sm=f=>0.5+0.17*Math.sin(f*Math.PI*1.15-0.35)-0.10*Math.cos(f*Math.PI*0.6);
+    const s2wg=i=>0.115*Math.sin(i*0.85)+0.06*Math.sin(i*2.15+0.5);
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGen();
+      const near=eInOut((Math.sin(u*0.62-1.2)+1)/2);            // 0=loin (lisse) … 1=près (détail)
+      const d=near, EX=lerp(220,432,near), EY=1040+34*Math.sin(u*0.9);
+      // le tracé : mêmes bornes, le détail apparaît (d↑) ou fusionne (d↓) ; léger frisson de position permanent
+      const pts=[]; for(let i=0;i<MP;i++){const f=i/(MP-1);
+        const val=s2sm(f)+d*s2wg(i)+0.018*Math.sin(u*1.35+i*0.5);
+        pts.push([lerp(P2[0],P2[1],f), YC2-(val-0.5)*AMP2*2]);}
+      setPoly(0,pts,INK,7,1);
+      // l'œil (la distance) : grandit en s'approchant, pupille qui glisse vers le tracé
+      const er=near; setEll(0,EX,EY,52*(0.78+0.42*er),30*(0.78+0.42*er),INK,5,1);
+      setDot(0,EX+10*near,EY,13,INK,1);
+      setLine(0,EX,EY,pts[0][0],pts[0][1],INK,3,0.5,'10 9',(-u*18));
+      setLine(1,EX,EY,pts[MP-1][0],pts[MP-1][1],INK,3,0.5,'10 9',(u*18));
+      // étiquettes
+      putCap(capA,'HOW FAR YOU STAND',250,876,INK,1);                // gauche, près de l'œil
+      putCap(capC,'EVERY PUSH & PULL',772,876,INK,clamp((d-0.5)/0.22,0,1));   // droite, court → pas de collision avec capA
+      putCap(capD,'ONE SMOOTH MOVE',772,876,INK,clamp((0.5-d)/0.22,0,1));     // même place, exclusif (loin)
+      putCap(capB,'THE DATA NEVER MOVED — YOU DID',CX,1362,INK,clamp((u-2.4)/0.8,0,1));
+    }
+
+    // ═══ S3 — L'ÉCHELLE, PAS LA COMPÉTENCE (verbe : recul d'un cran, la grande cage apparaît) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGen();
+      const back=eInOut(clamp((u-2.0)/1.35,0,1)), bap=clamp((u-1.8)/0.8,0,1);
+      // ton setup : rétrécit du plein cadre vers un coin bas-gauche (toujours valide, devenu minuscule)
+      const sx0=lerp(210,150,back), sx1=lerp(870,470,back), sy0=lerp(720,1030,back), sy1=lerp(1150,1210,back);
+      setRect(0,sx0,sy0,sx1-sx0,sy1-sy0,INK,'none',3,0.55);
+      const SM=18,sp=[]; for(let i=0;i<SM;i++){const f=i/(SM-1);
+        const val=0.15+0.70*f+0.06*Math.sin(f*7+u*1.4)+0.03*Math.sin(f*13+u*2.3);
+        sp.push([lerp(sx0,sx1,f), sy1-(sy1-sy0)*clamp(val,0,1)]);}
+      setPoly(0,sp,INK,6,1);
+      // coche teal = validité (en haut-droite du setup)
+      const cxk=sx1-46, cyk=sy0+42+3*Math.sin(u*2.0);
+      setPoly(1,[[cxk-20,cyk],[cxk-6,cyk+16],[cxk+22,cyk-20]],YOU,7,1);
+      // la grande structure : plafond + plancher qui décident où le prix peut aller (respiration deux harmoniques)
+      const ceilY=668+6*Math.sin(u*1.1)+3*Math.sin(u*2.0), floorY=1252+6*Math.sin(u*1.3+1)+3*Math.sin(u*2.4+0.6);
+      setLine(0,120,ceilY,960,ceilY,INK,9,bap);
+      setLine(1,120,floorY,960,floorY,INK,9,bap);
+      setLine(2,124,ceilY,124,floorY,INK,4,bap*0.55,'12 12',(-u*14));
+      setLine(3,956,ceilY,956,floorY,INK,4,bap*0.55,'12 12',(u*14));
+      // étiquettes : haut hors cage (centre), setup (gauche), rôle de la cage (droite intérieure)
+      putCap(capC,'A BIGGER STRUCTURE DECIDES',CX,632,INK,bap);
+      putCap(capA,'YOUR SETUP · VALID',300,lerp(686,1002,back),YOU,1);
+      putCap(capE,'WHERE PRICE MAY GO',720,930,DEAD,bap*0.95);       // intérieur droit, dégagé du bord tireté et du setup
+    }
+
+    // ═══ S4 — LA scène : le zoom choisi APRÈS COUP inverse la distribution (verbe : deux zooms opposés) ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGen();
+      const pL=clamp(u/1.5,0,1), pW=clamp((u-1.5)/1.5,0,1), pB=clamp((u-3.0)/1.5,0,1);
+      const BX=200;
+      setLine(4,BX,700,BX,1250,INK,4,0.5);                       // ligne d'ancrage (départ commun)
+      // — PERDANT (haut) : on zoome ARRIÈRE jusqu'à « tiens » → gardé, LONG, gris
+      const loW=lerp(120,620,eOut(pL))+10*Math.sin(u*1.6)+5*Math.sin(u*2.5);
+      setRect(0,BX,772,loW,26,'none',DEAD,0,1);
+      const lc=BX+loW/2, lhw=lerp(58,338,eOut(pL))+16*Math.sin(u*1.55)+8*Math.sin(u*2.45);
+      setLine(0,lc-lhw,724,lc-lhw,844,DEAD,5,0.8); setLine(1,lc+lhw,724,lc+lhw,844,DEAD,5,0.8);
+      // — GAGNANT (bas) : on zoome AVANT jusqu'à « coupe » → coupé, COURT, teal ; potentiel abandonné qui dérive
+      const wiW=lerp(560,300,eOut(pW));
+      setRect(1,BX,1128,wiW,26,'none',YOU,0,1);
+      const wc=BX+560/2, whw=lerp(322,92,eOut(pW))+14*Math.sin(u*1.7+1)+7*Math.sin(u*2.6+0.5);
+      setLine(2,wc-whw,1080,wc-whw,1200,YOU,5,0.85); setLine(3,wc+whw,1080,wc+whw,1200,YOU,5,0.85);
+      const ghDrift=18+10*Math.sin(u*1.2)+5*Math.sin(u*2.1);    // le gain abandonné s'éloigne (position)
+      setLine(5,BX+wiW,1141,BX+560,1141-ghDrift,YOU,4,clamp((pW-0.4)/0.4,0,1)*0.5,'12 10',(u*20));
+      // étiquettes : perdant (haut G/D), gagnant (bas G/D), coupable (centre bas)
+      putCap(capA,'KEPT THE LOSER',300,700,DEAD,clamp((pL-0.3)/0.4,0,1));
+      putCap(capB,'ZOOM OUT → HOLD',780,700,INK,clamp((pL-0.3)/0.4,0,1));
+      putCap(capC,'CUT THE WINNER',300,1246,YOU,clamp((pW-0.3)/0.4,0,1));
+      putCap(capD,'ZOOM IN → CUT',780,1246,INK,clamp((pW-0.3)/0.4,0,1));
+      putCap(capE,'YOU PICKED THE SCALE AFTER THE FACT',CX,1384,INK,clamp((pB-0.2)/0.5,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : deux échelles verrouillées, les autres sans voix (verbe : l'éventail + le verrou) ═══
+    const RY=[720,820,920,1020,1120,1220], LENS=[300,540,220,460,360,180], LOCK=[1,4];
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideGen();
+      const lock=clamp((u-0.5)/1.3,0,1), grey=clamp((u-2.0)/1.35,0,1);
+      const BX0=380; let xl=4;                                        // compteur de lignes-croix (LINE[2],[3] = signal)
+      for(let i=0;i<6;i++){
+        const isLock=(i===LOCK[0]||i===LOCK[1]);
+        const w=LENS[i]+17*Math.sin(u*1.5+i*0.9)+8*Math.sin(u*2.7+i*0.5); // respiration ample → le bord droit bouge (vie tenue)
+        const yb=RY[i]+4*Math.sin(u*1.8+i*1.3);                         // léger bob vertical (progression jamais nulle)
+        const col=isLock?YOU:(grey>0?DEAD:INK);
+        setRect(i,BX0,yb-9,w,18,'none',col,0,1);
+        const rex=BX0+w;
+        if(isLock){ setDot(i>3?4:5, rex+2, yb, 11, YOU, lock); }     // nœud de verrou au bout
+        else { const cxm=BX0+w*0.5, cym=yb, r=13, g=grey;            // croix (barré)
+          setLine(xl,   cxm-r,cym-r,cxm+r,cym+r,DEAD,5,g);
+          setLine(xl+1, cxm-r,cym+r,cxm+r,cym-r,DEAD,5,g); xl+=2; }
+      }
+      // signal venu d'une échelle non choisie → fonce sur le verrou d'ENTRÉE et REBONDIT (boucle de position)
+      const tri=Math.abs(((u*0.7)%1)*2-1), lockRex=BX0+LENS[LOCK[1]]+22;
+      const ax=lerp(lockRex+16,988,eInOut(tri)), ay=RY[LOCK[1]];
+      setLine(2,ax+50,ay,ax,ay,DEAD,5,grey);                         // corps de la flèche
+      setDot(3,ax,ay,10,DEAD,grey);                                  // pointe qui rebondit
+      // étiquettes : verrous à gauche (cx≤380, hors des barres), signal en haut-droite, règle en bas
+      putCap(capA,'DIRECTION',210,RY[LOCK[0]]+9,YOU,lock);
+      putCap(capC,'ENTRY',210,RY[LOCK[1]]+9,YOU,lock);
+      putCap(capD,'A SIGNAL YOU DIDN’T CHOOSE',780,652,DEAD,grey);
+      putCap(capB,'TWO SCALES DECIDE — THE REST DON’T VOTE',CX,1360,INK,clamp((u-2.6)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
