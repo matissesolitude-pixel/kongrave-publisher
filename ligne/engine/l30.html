@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L30 « THE CONFIDENCE THAT LIES » — REPRODUCTION #2 (les deux masters précédents ont été refusés par Meta, erreur opaque). Ce rendu
+       DIFFÈRE MATÉRIELLEMENT des deux archives .refused_* : celles-ci étaient des jauges VERTICALES (barres nues, puis vaisseaux + ménisque)
+       avec pièce qui tombe/tourne, horizon, flèches verticales et FLAQUE grise débordant par le bas. ICI tout est réécrit en JAUGES
+       HORIZONTALES qui s'allongent vers la DROITE (la longueur = la valeur ; l'extrémité teal bouge en position = vie continue), la série =
+       un ARC de pastilles teal montantes, le 50/50 = une BALANCE fil-de-fer qui oscille autour de l'équilibre, le marché = une ligne neutre
+       à MÉMOIRE NULLE dont le repère dérive latéralement, la perte S4 = une VIDANGE horizontale (la teal reflue vers la gauche, le gris la
+       remplace) et non une flaque par le bas. Mr Dollar EN PAUSE (26/07) — AUCUN narrateur, émotion par objets SEULE. Fusil de Tchekhov =
+       la JAUGE DE CONFIANCE (teal, débordant son gabarit) : elle arme la perte (S4), se résout en S5 (drapeau jaune, taille tenue sur l'edge).
+       Doctrine : aucun chiffre ; gris = perte/délavage (pas de rouge) ; pas de brun ; le drapeau jaune = fanion d'alerte (WARN), jamais le
+       brun-camp ; la balance = fil-de-fer ; TOI = jauge teal ; bas du cadre vide. putCap COPIÉ TEL QUEL de l26 (mesure getComputedTextLength). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', WARN='#C9A94A';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // NARRATEUR MR DOLLAR : EN PAUSE (décision 26/07/2026) — aucun narrateur dans les nouveaux moteurs.
+    // L'épisode repose sur la mécanique « émotion par objets » SEULE.
+
+    // ═══ LES JAUGES HORIZONTALES : gabarit ENCRE (la capacité) + remplissage TEAL (la valeur), qui s'allonge vers la DROITE ═══
+    // L'extrémité droite du remplissage BOUGE EN POSITION à chaque frame (longueur à deux harmoniques) — jamais de l'opacité.
+    const confFrame=mk('rect',{rx:12,fill:'none',stroke:INK,'stroke-width':5,opacity:0}), confFill=mk('rect',{rx:8,fill:YOU,opacity:0}),
+          confBrim=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}), confBulge=mk('ellipse',{fill:YOU,opacity:0});
+    const sizeFrame=mk('rect',{rx:12,fill:'none',stroke:INK,'stroke-width':5,opacity:0}), sizeFill=mk('rect',{rx:8,fill:YOU,opacity:0}),
+          sizeBrim=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const edgeFrame=mk('rect',{rx:10,fill:'none',stroke:INK,'stroke-width':5,opacity:0}), edgeFill=mk('rect',{rx:7,fill:YOU,opacity:0});
+    const doubtFrame=mk('rect',{rx:10,fill:'none',stroke:INK,'stroke-width':5,opacity:0}), doubtFill=mk('rect',{rx:7,fill:YOU,opacity:0});
+    const normFrame=mk('rect',{rx:10,fill:'none',stroke:INK,'stroke-width':5,opacity:0}), normFill=mk('rect',{rx:7,fill:YOU,opacity:0}),
+          normNick=mk('rect',{rx:3,fill:DEAD,opacity:0});
+    const eraseBar=mk('rect',{rx:8,fill:DEAD,opacity:0});           // la VIDANGE grise qui reflue par la droite (S4)
+    function gframe(el,x0,cy,cap,h,op,dy){dy=dy||0;
+      el.setAttribute('x',(x0-9).toFixed(1));el.setAttribute('y',(cy-h/2-9+dy).toFixed(1));
+      el.setAttribute('width',(cap+18).toFixed(1));el.setAttribute('height',(h+18).toFixed(1));setOp(el,op);}
+    function gfill(el,x0,cy,len,h,wash,op,dy){dy=dy||0;len=Math.max(3,len);
+      el.setAttribute('x',x0.toFixed(1));el.setAttribute('y',(cy-h/2+dy).toFixed(1));
+      el.setAttribute('width',len.toFixed(1));el.setAttribute('height',h.toFixed(1));
+      el.setAttribute('fill',mix(YOU,DEAD,wash||0));setOp(el,op);}
+    function gbrim(el,x0,cy,cap,h,op,dy){dy=dy||0;const bx=x0+cap;
+      el.setAttribute('x1',bx.toFixed(1));el.setAttribute('x2',bx.toFixed(1));
+      el.setAttribute('y1',(cy-h/2-15+dy).toFixed(1));el.setAttribute('y2',(cy+h/2+15+dy).toFixed(1));setOp(el,op);}
+
+    // ── LA SÉRIE DE WINS : un ARC de pastilles teal qui MONTE vers la droite (la belle série) ──
+    const WINS=[]; for(let i=0;i<7;i++)WINS.push(mk('circle',{fill:YOU,opacity:0}));
+    function win(i,x,y,r,color,op){const e=WINS[i];e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(2,r).toFixed(1));e.setAttribute('fill',color);setOp(e,op);}
+
+    // ── LA BALANCE fil-de-fer (50/50) : un fléau qui oscille autour de l'ÉQUILIBRE — le prochain trade reste ~50/50 (S2) ──
+    const balBeam=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+          balFul=mk('polygon',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round',opacity:0}),
+          balL=mk('circle',{r:15,fill:'none',stroke:INK,'stroke-width':5,opacity:0}),
+          balR=mk('circle',{r:15,fill:'none',stroke:INK,'stroke-width':5,opacity:0});
+    // ── LE MARCHÉ : une ligne neutre à MÉMOIRE NULLE, son repère dérive latéralement, indifférent à la série (S2) ──
+    const mktLine=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+          mktDot=mk('circle',{r:12,fill:'none',stroke:DEAD,'stroke-width':5,opacity:0});
+    // ── LES FLÈCHES : la POUSSÉE confiance→taille (S3) ; le mouvement ORDINAIRE du marché (S4) ──
+    const pushLine=mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}), pushHead=mk('polygon',{fill:INK,opacity:0});
+    const tickLine=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0}), tickHead=mk('polygon',{fill:INK,opacity:0});
+    function drawArrow(lineEl,headEl,x1,y1,x2,y2,op){lineEl.setAttribute('x1',x1.toFixed(1));lineEl.setAttribute('y1',y1.toFixed(1));
+      lineEl.setAttribute('x2',x2.toFixed(1));lineEl.setAttribute('y2',y2.toFixed(1));setOp(lineEl,op);
+      const ang=Math.atan2(y2-y1,x2-x1),L=26,wg=0.5;
+      const p=[[x2,y2],[x2-L*Math.cos(ang-wg),y2-L*Math.sin(ang-wg)],[x2-L*Math.cos(ang+wg),y2-L*Math.sin(ang+wg)]];
+      headEl.setAttribute('points',p.map(q=>[q[0].toFixed(1),q[1].toFixed(1)].join(',')).join(' '));setOp(headEl,op);}
+    // ── LE DRAPEAU JAUNE (fanion d'alerte — jamais brun-camp) (S5) ──
+    const flagPole=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0}), flagPenn=mk('polygon',{fill:WARN,opacity:0});
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY IS FEELING SURE','SO DANGEROUS'];
+    const FS=72,lineH=96,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':158,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (getComputedTextLength), COPIÉ TEL QUEL de l26 ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(38),capD=caption(36),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, ignoré par l'ancienne estimation ×0.66 —
+      // cause du débordement live). Réduit la police pour tenir dans la zone sûre, puis borne le CENTRE par la
+      // demi-largeur MESURÉE : un texte ne peut PLUS être coupé au bord.
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // coupe franche : chaque scène ré-affiche SES objets, déjà pleins
+    function hideDyn(){for(const e of [confFrame,confFill,confBrim,confBulge,sizeFrame,sizeFill,sizeBrim,edgeFrame,edgeFill,
+      doubtFrame,doubtFill,normFrame,normFill,normNick,eraseBar,balBeam,balFul,balL,balR,mktLine,mktDot,
+      pushLine,pushHead,tickLine,tickHead,flagPole,flagPenn])setOp(e,0);
+      for(const e of WINS)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LA CONFIANCE QUI DÉBORDE (émotion frame 0 : TENSION, la teal passe le gabarit) ═══
+    // Verbe visuel : le débordement (la jauge horizontale s'allonge AU-DELÀ de son gabarit ; la série déjà montée).
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : la jauge de confiance est DÉJÀ trop-pleine — la teal dépasse le gabarit (deux harmoniques). ──
+      const x0=150, cy=890, h=100, cap=440;
+      const dy=5*Math.sin(u*0.85)+3*Math.sin(u*1.70);
+      const over=70+22*Math.sin(u*1.15)+12*Math.sin(u*2.05);            // longueur AU-DELÀ du gabarit = danger
+      const len=cap+over;
+      gframe(confFrame,x0,cy,cap,h,1,dy); gfill(confFill,x0,cy,len,h,0,1,dy); gbrim(confBrim,x0,cy,cap,h,1,dy);
+      const endX=x0+len, rx=18+6*Math.abs(Math.sin(u*1.9)), ry=h/2-4;    // la teal bombe en débordant le bout
+      confBulge.setAttribute('cx',endX.toFixed(1));confBulge.setAttribute('cy',(cy+dy).toFixed(1));
+      confBulge.setAttribute('rx',rx.toFixed(1));confBulge.setAttribute('ry',ry.toFixed(1));setOp(confBulge,1);
+      putCap(capA,'CONFIDENCE',x0+cap/2,cy+h/2+52,YOU,1);
+      // ── L'ARC DE WINS : des pastilles teal qui MONTENT vers la droite (la belle série), déjà là dès t=0 ──
+      for(let i=0;i<6;i++){const wx=210+i*126, wy=1330-i*34+9*Math.sin(u*1.7+i*0.8)+4*Math.sin(u*2.9+i*0.5);
+        win(i,wx,wy,26,YOU,1);}
+      putCap(capB,'A GOOD RUN',820,1095,YOU,clamp((u-1.6)/0.7,0,1)*gf);
+    }
+
+    // ═══ S2 — LA DIVERGENCE : l'edge COURT et STABLE, la confiance LONGUE ; la balance 50/50 ; le marché sans mémoire ═══
+    // Verbe visuel : la comparaison A/B (deux jauges de longueurs opposées) + la balance qui oscille à l'équilibre.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // EDGE (court, STABLE) — il ne s'allonge pas
+      const ex=150, ecy=770, eh=64, ecap=180, edy=4*Math.sin(u*1.3)+2*Math.sin(u*2.4);
+      const elen=170+4*Math.sin(u*1.3)+2*Math.sin(u*2.35);
+      gframe(edgeFrame,ex,ecy,ecap,eh,1,edy); gfill(edgeFill,ex,ecy,elen,eh,0,1,edy);
+      putCap(capC,'YOUR EDGE',ex+ecap/2,ecy+eh/2+50,YOU,1);
+      putCap(capE,'UNCHANGED',ex+ecap/2,ecy-eh/2-30,DEAD,clamp((u-2.4)/0.7,0,1));
+      // CONFIANCE (longue) — elle a divergé de l'edge (bob vertical ample : le large bord balaie => progression continue robuste)
+      const cx=150, ccy=1120, ch=104, ccap=760, cdy=10*Math.sin(u*0.86)+6*Math.sin(u*1.53);
+      const clen=712+20*Math.sin(u*1.05)+11*Math.sin(u*1.95);
+      gframe(confFrame,cx,ccy,ccap,ch,1,cdy); gfill(confFill,cx,ccy,clen,ch,0,1,cdy);
+      putCap(capA,'CONFIDENCE',cx+ccap/2,ccy+ch/2+52,YOU,1);
+      // LA BALANCE fil-de-fer (haut-droite) : elle oscille autour de l'équilibre — toujours 50/50
+      const bcx=810, bcy=790, BL=115, ang=0.10*Math.sin(u*1.35)+0.05*Math.sin(u*2.45);
+      const lx=bcx-BL*Math.cos(ang), ly=bcy+BL*Math.sin(ang), rxp=bcx+BL*Math.cos(ang), ryp=bcy-BL*Math.sin(ang);
+      balBeam.setAttribute('x1',lx.toFixed(1));balBeam.setAttribute('y1',ly.toFixed(1));balBeam.setAttribute('x2',rxp.toFixed(1));balBeam.setAttribute('y2',ryp.toFixed(1));setOp(balBeam,1);
+      balFul.setAttribute('points',`${bcx},${bcy+6} ${bcx-30},${bcy+64} ${bcx+30},${bcy+64}`);setOp(balFul,1);
+      balL.setAttribute('cx',lx.toFixed(1));balL.setAttribute('cy',ly.toFixed(1));setOp(balL,1);
+      balR.setAttribute('cx',rxp.toFixed(1));balR.setAttribute('cy',ryp.toFixed(1));setOp(balR,1);
+      putCap(capD,'STILL EVEN ODDS',bcx,bcy-72,INK,clamp((u-1.2)/0.6,0,1));
+      // LE MARCHÉ : une ligne neutre, son repère dérive latéralement, sans mémoire de la série
+      const my=958, mdrift=28*Math.sin(u*0.7)+12*Math.sin(u*1.55);
+      mktLine.setAttribute('x1',560);mktLine.setAttribute('x2',964);mktLine.setAttribute('y1',my);mktLine.setAttribute('y2',my);setOp(mktLine,1);
+      mktDot.setAttribute('cx',(762+mdrift).toFixed(1));mktDot.setAttribute('cy',my);setOp(mktDot,clamp((u-1.5)/0.6,0,1));
+      putCap(capF,'MARKET FORGETS',762,my-42,DEAD,clamp((u-1.8)/0.6,0,1));
+      putCap(capB,'CONFIDENCE GREW — YOUR EDGE DID NOT',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA POUSSÉE : la confiance allonge la TAILLE au sommet, pendant que le doute s'effondre ═══
+    // Verbe visuel : la poussée (une force allonge la taille vers la droite) + l'effondrement délavé du doute.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // CONFIANCE (haut) : la source, déjà longue
+      const cx=150, ccy=800, ch=90, ccap=520, cdy=5*Math.sin(u*0.85)+2.5*Math.sin(u*1.7);
+      const clen=498+18*Math.sin(u*1.1)+10*Math.sin(u*1.95);
+      gframe(confFrame,cx,ccy,ccap,ch,1,cdy); gfill(confFill,cx,ccy,clen,ch,0,1,cdy);
+      putCap(capA,'CONFIDENCE',cx+ccap/2,ccy-ch/2-30,YOU,1);
+      // TAILLE (bas) : poussée vers la droite, elle s'allonge — le remplissage grandit
+      const grow=eOut(clamp(u/2.4,0,1));
+      const sx=150, scy=1120, sh=110, scap=800, sdy=6*Math.sin(u*0.95)+3*Math.sin(u*1.8);
+      const slen=(190+520*grow)+16*Math.sin(u*1.25)+9*Math.sin(u*2.15);
+      gframe(sizeFrame,sx,scy,scap,sh,1,sdy); gfill(sizeFill,sx,scy,slen,sh,0,1,sdy);
+      putCap(capC,'POSITION SIZE',sx+scap/2,scy+sh/2+52,YOU,1);
+      // la flèche de poussée : de l'extrémité de la confiance vers l'extrémité de la taille (dans la gouttière entre les deux jauges)
+      drawArrow(pushLine,pushHead, cx+clen-10, ccy+ch/2+16, sx+slen-30, scy-sh/2-16, clamp((u-0.3)/0.6,0,1));
+      // DOUTE (droite, sur la même ligne que la confiance) : s'effondre et se délave (gris) — au plus court
+      const sink=eInOut(clamp(u/2.6,0,1));
+      const dx3=770, dcy=800, dh=90, dcap=222, ddy=4*Math.sin(u*0.8)+2*Math.sin(u*1.6);
+      const dlen=(206*(1-0.86*sink))+8*Math.sin(u*1.4)+4*Math.sin(u*2.3);
+      gframe(doubtFrame,dx3,dcy,dcap,dh,1,ddy); gfill(doubtFill,dx3,dcy,dlen,dh,0.20+0.72*sink,1,ddy);
+      putCap(capD,'DOUBT',dx3+dcap/2,dcy+dh/2+50,DEAD,1);
+      putCap(capE,'AT ITS LOWEST',dx3+dcap/2,dcy-dh/2-30,DEAD,clamp((u-2.2)/0.7,0,1));
+      putCap(capB,'BIGGEST SIZE — LEAST DOUBT — SAME MOMENT',CX,610,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA DÉCHARGE : un mouvement ORDINAIRE, une perte ÉNORME (parce que la taille l'était). NARRATEUR ABSENT. ═══
+    // Verbe visuel : la vidange horizontale (la teal reflue vers la gauche, le gris la remplace) vs l'éraflure.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // la série de wins (haut), effacée à mesure et grisée, qui glisse vers le bas
+      const wipe=clamp((u-1.8)/2.6,0,1);
+      for(let i=0;i<7;i++){const gone=clamp(wipe*7-i,0,1);
+        const wx=252+i*92, wy=690+9*Math.sin(u*1.6+i*0.6)+4*Math.sin(u*2.8+i*0.4)+42*gone;
+        win(i,wx,wy,26,mix(YOU,DEAD,gone),1-0.8*gone);}
+      // CENTRE — taille CONFIANCE (grande) : la teal reflue par la droite, le gris la remplace (vidange horizontale)
+      const drain=eInOut(clamp((u-1.6)/2.6,0,1));
+      // bob vertical ample : même une fois vidée, la large jauge (cadre + gris) balaie en position => progression continue robuste
+      const sx=150, scy=1000, sh=120, scap=800, sdy=10*Math.sin(u*0.86)+6*Math.sin(u*1.61);
+      const full=760, tealLen=full*(1-0.9*drain)+14*Math.sin(u*1.2)+8*Math.sin(u*2.1);
+      gframe(sizeFrame,sx,scy,scap,sh,1,sdy);
+      // le gris occupe la portion vidée (à droite de la teal restante) ; la teal reste à gauche
+      eraseBar.setAttribute('x',(sx+tealLen).toFixed(1));eraseBar.setAttribute('y',(scy-sh/2+sdy).toFixed(1));
+      eraseBar.setAttribute('width',Math.max(0,full-tealLen).toFixed(1));eraseBar.setAttribute('height',sh.toFixed(1));setOp(eraseBar,drain>0.02?0.92:0);
+      gfill(sizeFill,sx,scy,tealLen,sh,0,1,sdy);
+      putCap(capA,'CONFIDENCE SIZE',sx+scap/2,scy+sh/2+54,YOU,1);
+      // le mouvement ORDINAIRE du marché : une petite flèche encre au-dessus de la grande jauge (bande libre)
+      const ax=812+6*Math.sin(u*1.7), ay=832+10*Math.sin(u*1.3);
+      drawArrow(tickLine,tickHead, ax, ay, ax, ay+92, 1);
+      putCap(capD,'AN ORDINARY MOVE',812,806,INK,clamp((u-0.5)/0.6,0,1));
+      // BAS-GAUCHE — taille NORMALE : le même mouvement n'est qu'une éraflure
+      const nx=150, ncy=1300, nh=70, ncap=200, ndy=4*Math.sin(u*0.9)+2*Math.sin(u*1.8);
+      const nlen=190+8*Math.sin(u*1.2)+4*Math.sin(u*2.1);
+      gframe(normFrame,nx,ncy,ncap,nh,1,ndy); gfill(normFill,nx,ncy,nlen,nh,0,1,ndy);
+      normNick.setAttribute('x',(nx+nlen-18).toFixed(1));normNick.setAttribute('y',(ncy-nh/2+ndy).toFixed(1));
+      normNick.setAttribute('width',(14+2*Math.sin(u*3.0)).toFixed(1));normNick.setAttribute('height',nh.toFixed(1));setOp(normNick,clamp((u-1.5)/0.6,0,1));
+      putCap(capC,'NORMAL SIZE — A SCRATCH',nx+ncap/2+40,ncy+nh/2+50,DEAD,clamp((u-2.0)/0.6,0,1));
+      putCap(capB,'THE STREAK ARMED THE TRADE THAT ENDED IT',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE DU FUSIL : la confiance regonfle, mais la taille TIENT (drapeau jaune) ═══
+    // Verbe visuel : la retenue (la taille refuse de s'allonger) + le fanion d'alerte qui se lève.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // CONFIANCE (haut, longue) : elle regonfle, s'allonge
+      const cx=150, ccy=748, ch=88, ccap=580, cdy=5*Math.sin(u*0.85)+2.5*Math.sin(u*1.7);
+      const clen=470+70*eOut(clamp(u/2.2,0,1))+16*Math.sin(u*1.1)+9*Math.sin(u*1.95);
+      gframe(confFrame,cx,ccy,ccap,ch,1,cdy); gfill(confFill,cx,ccy,clen,ch,0,1,cdy);
+      putCap(capA,'CONFIDENCE',cx+ccap/2,ccy-ch/2-30,YOU,1);
+      // TAILLE (bas-gauche) : elle RESTE stable — ne s'allonge pas avec la confiance
+      const sx=150, scy=1150, sh=104, scap=400, sdy=4*Math.sin(u*0.9)+2*Math.sin(u*1.8);
+      const hold=300, slen=hold+11*Math.sin(u*1.2)+5*Math.sin(u*2.1);
+      gframe(sizeFrame,sx,scy,scap,sh,1,sdy); gfill(sizeFill,sx,scy,slen,sh,0,1,sdy);
+      putCap(capC,'SIZE — HELD',sx+scap/2,scy+sh/2+52,YOU,1);
+      // EDGE (bas-droite) : constante — la taille s'aligne sur elle, pas sur la confiance
+      const ex=650, ecy=1150, eh=104, ecap=210, edy=4*Math.sin(u*0.9)+2*Math.sin(u*1.9);
+      const elen=196+4*Math.sin(u*1.3)+2*Math.sin(u*2.4);
+      gframe(edgeFrame,ex,ecy,ecap,eh,1,edy); gfill(edgeFill,ex,ecy,elen,eh,0,1,edy);
+      putCap(capD,'EDGE — CONSTANT',ex+ecap/2,ecy+eh/2+52,YOU,clamp((u-2.0)/0.7,0,1));
+      // LE DRAPEAU JAUNE se lève dans la gouttière entre TAILLE et EDGE et fait tenir la taille (fanion pointé vers la taille)
+      const rise=eOut(clamp((u-0.4)/1.3,0,1));
+      const fx=600, fbaseY=scy-sh/2+6, ftopY=1090-200*rise;
+      flagPole.setAttribute('x1',fx);flagPole.setAttribute('x2',fx);flagPole.setAttribute('y1',fbaseY.toFixed(1));flagPole.setAttribute('y2',ftopY.toFixed(1));setOp(flagPole,rise);
+      const wave=12*Math.sin(u*3.0)+5*Math.sin(u*5.1);
+      flagPenn.setAttribute('points',`${fx},${ftopY.toFixed(1)} ${(fx-98).toFixed(1)},${(ftopY+26+wave).toFixed(1)} ${fx},${(ftopY+54).toFixed(1)}`);setOp(flagPenn,rise);
+      putCap(capE,'A YELLOW FLAG, NOT GREEN',540,878,WARN,clamp((u-1.4)/0.6,0,1));
+      putCap(capB,'STAY THE SAME SIZE — A BONUS, NOT A TRAP',CX,610,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
