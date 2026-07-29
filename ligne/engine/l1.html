@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L1 « THE FREE PLATFORM » — le broker qui empoche quand tu perds. S1 : émotion frame 0 = levier CURIOSITÉ — une
+       plateforme nette, tout est estampillé FREE… et une masse grise dépasse par-dessous : quel est le produit ? S2 : constat —
+       un flot d'ordres descend, se sépare : le côté MARCHÉ est barré, TOUS tes ordres tombent dans LEUR LIVRE. S3 : retournement —
+       UN SEUL livre, deux colonnes miroir : tes trades s'enfoncent, leur revenu monte du même mouvement. S4 : escalade — dix comptes,
+       la plupart tombent en gris (perte), deux tiennent : la loi les oblige à l'imprimer. S5 : tu n'es pas client, tu es la
+       CONTREPARTIE — chaque perte glisse de TOI vers LA MAISON. S6 : décharge/leçon — demande : A-book ou B ? Le silence répond.
+       Doctrine : aucun chiffre (la proportion par la QUANTITÉ) ; teal = TOI ; encre = neutre/la maison ; gris = perte ; pas de brun ;
+       narrateur EN PAUSE (aucun MrD) ; bas du cadre vide sauf raison narrative ; aucun nom de broker. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // vie continue : DEUX harmoniques (une sinusoïde unique a une vitesse nulle à ses extrêmes → l'image se fige)
+    const wob=(u,a,b,w1,w2)=>a*Math.sin(w1*u)+b*Math.sin(w2*u);
+    const rr=(x,y,w,h,r)=>`M${x+r} ${y} H${x+w-r} Q${x+w} ${y} ${x+w} ${y+r} V${y+h-r} Q${x+w} ${y+h} ${x+w-r} ${y+h} H${x+r} Q${x} ${y+h} ${x} ${y+h-r} V${y+r} Q${x} ${y} ${x+r} ${y} Z`;
+
+    // ── POOLS (z-order arrière→avant : contours, traits, blocs, jetons ; textes créés en dernier = au-dessus) ──
+    function pool(tag,n,a){const arr=[];for(let i=0;i<n;i++)arr.push(mk(tag,Object.assign({opacity:0},a||{})));return arr;}
+    const PATHS=pool('path',14,{fill:'none','stroke-linejoin':'round','stroke-linecap':'round'});
+    const LINES=pool('line',28,{'stroke-linecap':'round'});
+    const RECTS=pool('rect',54,{});
+    const CIRCS=pool('circle',36,{});
+    let pi=0,li=0,ri=0,ci=0;
+    function reset(){pi=li=ri=ci=0;}
+    function flush(){for(let i=pi;i<PATHS.length;i++)setOp(PATHS[i],0);for(let i=li;i<LINES.length;i++)setOp(LINES[i],0);for(let i=ri;i<RECTS.length;i++)setOp(RECTS[i],0);for(let i=ci;i<CIRCS.length;i++)setOp(CIRCS[i],0);}
+    function pth(d,stroke,w,op,fill){const e=PATHS[pi++];if(!e)return e;e.setAttribute('d',d);e.setAttribute('stroke',stroke||'none');e.setAttribute('stroke-width',w||0);e.setAttribute('fill',fill||'none');setOp(e,op);return e;}
+    function seg(x1,y1,x2,y2,stroke,w,op,dash){const e=LINES[li++];if(!e)return e;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',w);if(dash)e.setAttribute('stroke-dasharray',dash);else e.removeAttribute('stroke-dasharray');setOp(e,op);return e;}
+    function rect(x,y,w,h,fill,op,rx){const e=RECTS[ri++];if(!e)return e;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(0.5,w).toFixed(1));e.setAttribute('height',Math.max(0.5,h).toFixed(1));e.setAttribute('rx',rx==null?4:rx);e.setAttribute('fill',fill);setOp(e,op);return e;}
+    function circ(cx,cy,r,fill,op,stroke){const e=CIRCS[ci++];if(!e)return e;e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));e.setAttribute('r',Math.max(0.5,r).toFixed(1));if(stroke){e.setAttribute('fill','none');e.setAttribute('stroke',fill);e.setAttribute('stroke-width',stroke);}else{e.setAttribute('fill',fill);e.setAttribute('stroke','none');}setOp(e,op);return e;}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0, aucun draw-on progressif ──
+    const QLINES=['WHY IS YOUR','PLATFORM FREE'];
+    const FS=76,lineH=104,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    // grand « ? » réutilisé (fin de la question en S1, pivot pulsant en S6) — non chevauchant dans le temps
+    const bigMark=mk('text',{x:CX,y:512,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});bigMark.textContent='?';
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(bigMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap copié TEL QUEL de l26.html : il MESURE la largeur réelle ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(42),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36),capG=caption(34),capH=caption(34),capI=caption(34),capJ=caption(34);
+    const CAPS=[capA,capB,capC,capD,capE,capF,capG,capH,capI,capJ];
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of CAPS)setOp(e,0);}
+
+    // ═══ S1 — LA PLATEFORME « GRATUITE » : tout est estampillé FREE… et une masse dépasse par-dessous ═══
+    // Verbe visuel : l'énigme frame 0 (curiosité) — le produit caché sous l'écran net.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); reset();
+      // question — seul draw-on autorisé ; ligne 0 pleine dès t=0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.15+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);
+        setOp(qEls[k],ap);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.22,0,1),qsc=0.6+0.4*backOut(qap);
+      bigMark.setAttribute('font-size',132);bigMark.setAttribute('x',CX);bigMark.setAttribute('y',512);setOp(bigMark,qap);
+      bigMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(512*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ILLUSTRATION pleine dès u=0 (émotion frame 0) ──
+      pth(rr(300,700,470,430,26),INK,6,1);                                  // l'écran/plateforme
+      seg(320,958,750,958,INK,2,0.55);                                      // séparateur charts / compte
+      // les charts (teal) — trait vivant, deux harmoniques
+      {let d='';const n=26,ax=340,bx=730,cy=850;
+       for(let i=0;i<=n;i++){const x=ax+(bx-ax)*i/n,y=cy+wob(u+i*0.42,22,10,1.5,2.6);d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' ';}
+       pth(d,YOU,6,1);}
+      // le compte (teal) + avatar
+      const acy=1012+wob(u,5,3,1.4,2.3);
+      rect(372,acy,286,44,YOU,1,10);
+      circ(400,acy+22,20,PAPER,1); circ(400,acy+22,20,YOU,1,3);
+      // les badges FREE, dans la GOUTTIÈRE droite (jamais par-dessus un objet animé), reliés par un fil
+      const g1=772+wob(u,6,3,1.6,2.7), g2=1002+wob(u,6,3,1.5,2.5);
+      seg(800,g1+30,726,850,INK,3,0.8);  rect(800,g1,158,60,INK,1,16); putCap(capA,'FREE',879,g1+40,PAPER,1);
+      seg(800,g2+30,660,acy+22,INK,3,0.8); rect(800,g2,158,60,INK,1,16); putCap(capB,'FREE',879,g2+40,PAPER,1);
+      // la masse grise qui dépasse par-dessous : « le produit »
+      const py=1152+wob(u,10,5,1.3,2.1);
+      rect(452,py,176,84,DEAD,0.5,16);
+      putCap(capC,'THE PRODUCT?',540,1324+wob(u,4,2,1.4,2.2),DEAD,clamp((u-2.4)/0.8,0,1));
+      flush();
+    }
+
+    // ═══ S2 — LE FLOT D'ORDRES : le côté marché est barré, tout tombe dans LEUR LIVRE ═══
+    // Verbe visuel : le routage (un flux continu bifurque, toujours du même côté).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      const FX=540,FY=800, MKx=260,MKy=902, BKx=840,BKy=884;
+      pth(rr(680,858,320,322,20),INK,5,1);                                  // leur livre
+      for(let i=1;i<=3;i++)seg(700,1010+ (i-1)*70,980,1010+(i-1)*70,INK,2,0.5);
+      pth(rr(140,900,240,190,18),INK,5,1);                                  // le marché
+      seg(150,910,370,910,INK,10,1);                                        // la barrière (jamais envoyé)
+      for(let i=0;i<4;i++)seg(172+i*54,900,152+i*54,932,INK,3,0.9);
+      seg(FX,620,FX,FY,INK,5,0.9);                                          // conduite d'entrée
+      seg(FX,FY,MKx,MKy,INK,5,0.45);                                        // vers le marché (inutilisée)
+      seg(FX,FY,BKx,BKy,INK,5,0.9);                                         // vers le livre
+      const N=4;
+      for(let i=0;i<N;i++){
+        const pr=((u*0.28)+i/N)%1; let x,y;
+        if(pr<0.34){const f=pr/0.34;x=FX+wob(u+i,6,3,1.7,2.6);y=lerp(620,FY,f);}
+        else{const f=(pr-0.34)/0.66;x=lerp(FX,BKx,eInOut(f))+wob(u+i,5,2,1.6,2.5);y=lerp(FY,BKy,eInOut(f));}
+        circ(x,y,20,YOU,1);
+      }
+      const grown=Math.floor(clamp(lf*1.25,0,1)*7);                         // le revenu s'empile dans le livre
+      for(let i=0;i<grown;i++){const col=i%3,row=Math.floor(i/3);
+        rect(712+col*92+2*Math.sin(u*2.2+i), 1148-row*46+3*Math.sin(u*1.7+i*0.8), 78, 34, INK, 1, 6);}
+      putCap(capA,'YOUR ORDER',FX,584,YOU,1);
+      putCap(capB,'THE MARKET',260,1152,INK,1);
+      putCap(capC,'NEVER SENT',260,1208,DEAD,clamp((u-1.5)/0.7,0,1));
+      putCap(capD,'THEIR BOOK',840,1234,INK,1);
+      flush();
+    }
+
+    // ═══ S3 — UN SEUL LIVRE, DEUX COLONNES MIROIR : tes trades s'enfoncent, leur revenu monte ═══
+    // Verbe visuel : le miroir (le même geste, deux sens opposés — la divergence qui s'ouvre).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      pth(rr(160,700,760,600,24),INK,5,1);                                  // le livre unique
+      seg(540,712,540,1288,INK,3,0.8);                                      // l'arête centrale
+      const base=1000;
+      for(let i=0;i<4;i++){const x=232+i*80;                                // GAUCHE — tes trades (teal), vers le BAS
+        const h=60+150*eOut(clamp(lf*1.3-i*0.05,0,1))+wob(u+i*0.5,10,5,1.5,2.6);
+        rect(x,base,58,Math.max(6,h),YOU,1,6);}
+      for(let i=0;i<4;i++){const x=588+i*80;                                // DROITE — leur revenu (encre), vers le HAUT
+        const h=60+150*eOut(clamp(lf*1.3-i*0.05,0,1))+wob(u+i*0.5+1,10,5,1.6,2.5);
+        rect(x,base-Math.max(6,h),58,Math.max(6,h),INK,1,6);}
+      putCap(capA,'YOUR TRADES',300,1358,YOU,1);
+      putCap(capB,'THEIR REVENUE',780,1358,INK,1);
+      putCap(capC,'ONE BOOK',540,652,INK,clamp((u-0.8)/0.7,0,1));
+      flush();
+    }
+
+    // ═══ S4 — DIX COMPTES : la plupart tombent (perte, gris), deux tiennent ═══
+    // Verbe visuel : la vidange cadencée (lent → pressé → pluie), la chute en feuille morte.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      rect(150,1288,540,82,DEAD,0.42,18);                                   // le bassin des pertes
+      const N=10, x0=170, dx=82, rowY=800;
+      for(let i=0;i<N;i++){const bx=x0+i*dx;
+        if(i>=8){                                                          // les deux survivants (teal)
+          circ(bx+wob(u+i*0.7,5,2,1.2,2.1), rowY+wob(u+i,8,4,1.4,2.3), 30, YOU, 1);
+        }else{
+          const st=0.05+0.5*Math.pow(i/8,1.5);                             // départs non linéaires = la pluie
+          const pr=clamp((lf-st)/0.30,0,1);
+          const fx=bx-60*eOut(pr)-(bx-410)*0.32*eOut(pr);                  // dérive vers le bassin
+          const fy=lerp(rowY,1300-(i%3)*20,eIn(pr));
+          const zig=(10+6*(((i*37)%10)/10))*Math.sin(u*(2.0+0.3*((i*13)%5))+i);  // zigzag irrégulier
+          circ(fx+zig, fy+wob(u+i,4,3,1.3,2.2), 30, (pr>0.15?DEAD:YOU), 1);
+        }
+      }
+      putCap(capA,'CLIENT ACCOUNTS',540,690,INK,1);
+      putCap(capB,'MOST LOSE',300,1420,DEAD,clamp((lf-0.35)/0.2,0,1));
+      putCap(capC,'A FEW SURVIVE',822,986,YOU,clamp((lf-0.5)/0.2,0,1));
+      flush();
+    }
+
+    // ═══ S5 — TU N'ES PAS CLIENT, TU ES LA CONTREPARTIE : chaque perte glisse de TOI vers LA MAISON ═══
+    // Verbe visuel : le transfert (un flux de jetons glisse de la boule teal vers la maison qui grossit).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      pth(rr(715,872,250,258,20),INK,5,1);                                  // la maison
+      seg(715,872,840,802,INK,5,1); seg(840,802,965,872,INK,5,1);          // le toit
+      seg(322,1000,700,1000,INK,5,0.9);                                     // la poutre
+      const by=1000+wob(u,10,5,1.4,2.3);
+      circ(280,by,42,YOU,1);                                                // TOI
+      const N=4;
+      for(let i=0;i<N;i++){const pr=((u*0.30)+i/N)%1;                       // les jetons glissent, en continu
+        const x=lerp(330,690,pr), y=1000+wob(u+i,6,3,1.7,2.6)*(0.4+0.6*Math.sin(pr*Math.PI));
+        rect(x-22,y-14,44,28,YOU,1,6);}
+      const grown=Math.floor(clamp(lf*1.15,0,1)*8);                         // la maison encaisse
+      for(let i=0;i<grown;i++){const col=i%3,row=Math.floor(i/3);
+        rect(732+col*68+2*Math.sin(u*2.1+i), 1092-row*44+3*Math.sin(u*1.6+i*0.9), 58, 32, INK, 1, 6);}
+      putCap(capA,'YOU',280,by+96,YOU,1);
+      putCap(capB,'THE HOUSE',840,1188,INK,1);
+      putCap(capC,'YOU ARE THE COUNTERPARTY',540,680,INK,clamp((u-0.6)/0.7,0,1));
+      putCap(capD,'EVERY LOSS SLIDES OVER',540,1320,DEAD,clamp((u-1.6)/0.7,0,1));
+      flush();
+    }
+
+    // ═══ S6 — DÉCHARGE / LEÇON : A-book ou B ? le « ? » pulse, le silence répond ═══
+    // Verbe visuel : la bifurcation-question (un « ? » vivant au-dessus d'un aiguillage tenu).
+    function s6(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset();
+      pth(rr(140,1120,240,158,18),INK,5,1); seg(150,1128,370,1128,YOU,6,1); // A-book → marché (ouvert, teal)
+      pth(rr(700,1120,240,158,18),INK,5,1); rect(712,1132,216,134,INK,0.16,10); // B-book → la maison (fermé)
+      const jx=540, jy=904;
+      seg(jx,jy,255,1120,INK,5,0.9); seg(jx,jy,825,1120,INK,5,0.9);         // l'aiguillage
+      circ(jx+wob(u,20,10,1.3,2.2), jy-8+wob(u,7,4,1.5,2.6), 26, YOU, 1);   // l'ordre indécis
+      const ps=1+0.06*Math.sin(u*2.0)+0.03*Math.sin(u*3.3);                 // le « ? » pulse
+      bigMark.setAttribute('font-size',150);bigMark.setAttribute('x',jx);bigMark.setAttribute('y',800+wob(u,6,3,1.4,2.4));setOp(bigMark,1);
+      bigMark.setAttribute('transform',`translate(${(jx*(1-ps)).toFixed(2)} ${(800*(1-ps)).toFixed(2)}) scale(${ps.toFixed(3)})`);
+      circ(260+wob(u,6,3,1.6,2.5),1200+wob(u,5,3,1.4,2.2),12,YOU,1);        // A : ça circule
+      circ(820+wob(u,5,2,1.5,2.4),1200+wob(u,4,2,1.3,2.1),12,DEAD,1);       // B : piégé (gris)
+      putCap(capA,'A-BOOK?',255,1352,INK,1);
+      putCap(capB,'B-BOOK?',825,1352,INK,1);
+      putCap(capC,'ASK YOUR BROKER',540,624,INK,1);
+      putCap(capD,'THE SILENCE IS AN ANSWER',540,1420,DEAD,clamp((u-1.4)/0.8,0,1));
+      flush();
+    }
+
+    // scènes mappées par INDEX (le JSON L1, schéma hérité, ne porte pas de champ `id`)
+    const RENDER={s1,s2,s3,s4,s5,s6};
+    const ORDER=[s1,s2,s3,s4,s5,s6];
+    const SCENEFN=SC.map((_,i)=>ORDER[Math.min(i,ORDER.length-1)]);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
