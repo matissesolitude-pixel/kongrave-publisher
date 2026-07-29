@@ -563,5 +563,34 @@
     "container_id": "18141525379557833",
     "published_at": "2026-07-29T12:14:15.225630+00:00",
     "logged_at": "2026-07-29T12:14:15.225630+00:00"
+  },
+  {
+    "episode": "L28",
+    "status": "error",
+    "attempt": 2,
+    "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
+    "logged_at": "2026-07-29T17:46:03.054891+00:00"
+  },
+  {
+    "episode": "L30",
+    "status": "error",
+    "attempt": 1,
+    "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
+    "logged_at": "2026-07-29T17:46:03.054891+00:00"
+  },
+  {
+    "episode": "L39",
+    "status": "error",
+    "attempt": 2,
+    "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
+    "logged_at": "2026-07-29T17:46:03.054891+00:00"
+  },
+  {
+    "episode": "L41",
+    "status": "success",
+    "media_id": "18015565853864745",
+    "container_id": "18141597517557833",
+    "published_at": "2026-07-29T17:46:03.054891+00:00",
+    "logged_at": "2026-07-29T17:46:03.054891+00:00"
   }
 ]
