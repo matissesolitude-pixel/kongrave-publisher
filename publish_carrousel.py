@@ -114,6 +114,9 @@ def pick_from_queue():
     manifests = sorted(QUEUE_DIR.glob("*.json"))
     if not manifests:
         skip("file vide — aucun carrousel en attente")
+    # ORDRE ALPHABÉTIQUE du nom de fichier, pas de l'ID : on préfixe donc les fichiers
+    # de file (01-C5.json, 02-C3.json) pour imposer l'ordre éditorial de la LOI 3
+    # (alternance occidental/japonais), qui ne suit pas la numérotation des carrousels.
     return manifests[0]
 
 
@@ -176,7 +179,7 @@ def main():
     if args.queue:
         check_gates(args.force)
         man_path = pick_from_queue()
-        cid = man_path.stem
+        cid = json.loads(man_path.read_text()).get("id") or man_path.stem
     else:
         cid = args.carrousel_id
         man_path = CARROUSEL_DIR / f"{cid}.json"
@@ -197,7 +200,7 @@ def main():
     base = args.base_url.rstrip("/")
     urls = [f"{base}/{cid}/slide_{n}.jpg" for n in slides]
 
-    log(f"[carrousel] {cid} — {len(urls)} slides" + ("  (DRY-RUN)" if args.dry_run else ""))
+    log(f"[carrousel] {cid} ({man_path.name}) — {len(urls)} slides" + ("  (DRY-RUN)" if args.dry_run else ""))
 
     # 1) un conteneur par image
     children = []
