@@ -160,6 +160,59 @@ def create_container(mp4_path: Path, caption: str, trial_params: Optional[dict] 
     return container_id
 
 
+def create_image_item(image_url: str) -> str:
+    """
+    Crée un conteneur IMAGE destiné à un carrousel (is_carousel_item=true).
+    Retourne le container_id, à passer ensuite dans children de create_carousel().
+
+    L'API Graph ne sait PAS téléverser une image en binaire : elle va la CHERCHER à
+    l'URL fournie, qui doit donc être publique et en HTTPS. Et elle n'accepte que du
+    JPEG — un PNG est refusé.
+    """
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
+    resp = _request(
+        "POST",
+        url,
+        data={
+            "image_url": image_url,
+            "is_carousel_item": "true",
+            "access_token": _access_token(),
+        },
+    )
+    payload = _raise_for_api_error(resp, f"Conteneur image ({image_url})")
+    container_id = payload.get("id")
+    if not container_id:
+        raise IgApiError(f"Réponse sans id de conteneur image : {payload}")
+    return container_id
+
+
+def create_carousel(children: list, caption: str) -> str:
+    """
+    Crée le conteneur CAROUSEL qui agrège les conteneurs enfants, dans l'ordre donné.
+    Retourne le creation_id à publier. Instagram exige entre 2 et 10 enfants.
+    """
+    if not 2 <= len(children) <= 10:
+        raise IgApiError(
+            f"Un carrousel Instagram accepte 2 à 10 images, {len(children)} fournie(s)."
+        )
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
+    resp = _request(
+        "POST",
+        url,
+        data={
+            "media_type": "CAROUSEL",
+            "children": ",".join(children),
+            "caption": caption,
+            "access_token": _access_token(),
+        },
+    )
+    payload = _raise_for_api_error(resp, "Conteneur carrousel")
+    container_id = payload.get("id")
+    if not container_id:
+        raise IgApiError(f"Réponse sans id de conteneur carrousel : {payload}")
+    return container_id
+
+
 def get_status(container_id: str) -> str:
     """Retourne le status_code du conteneur (FINISHED / IN_PROGRESS / ERROR / EXPIRED / PUBLISHED)."""
     url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{container_id}"
