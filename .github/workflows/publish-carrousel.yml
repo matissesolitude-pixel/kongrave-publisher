@@ -1,22 +1,32 @@
-name: CARROUSEL publish (manuel)
+name: CARROUSEL auto-publish (file)
 
-# Publie un carrousel KONGRAVE sur @kongrave_ à partir de son manifeste carrousel/<ID>.json.
+# Publie un carrousel KONGRAVE depuis une FILE (carrousel/queue/), sur @kongrave_.
 #
-# Les slides ne sont PAS dans ce repo : l'API Graph ne sait pas recevoir un binaire pour
-# une image, elle va la CHERCHER à une URL publique HTTPS. Les JPEG sont donc hébergés sur
-# le GitHub Pages de disruptive-legal, et ce workflow ne transmet que leurs URL.
+# CADRAGE HORAIRE — pourquoi 20h et pas 18h30 :
+# un carrousel ne tient la colonne de gauche de la grille QUE s'il est le post le plus
+# récent. Le reel de LA LIGNE sort à 18h30 Paris ; le carrousel doit donc passer APRÈS,
+# sinon le reel du jour le pousse d'une case et la rangée est cassée.
 #
-# Déclenchement MANUEL uniquement. Pas de cron : l'ordre de publication du profil
-# (1 carrousel + 5 reels, cf. carrousel/ETAT_PROJET.md côté Mac) se décide à la main
-# tant que le planificateur n'existe pas.
+# ESPACEMENT — le script compte les posts depuis le dernier carrousel EN INTERROGEANT
+# INSTAGRAM, pas un compteur local. Cycle de 6 (1 carrousel + 5 reels) : 6 est multiple
+# de 3, donc tous les carrousels retombent dans la même colonne. Aucun couplage avec le
+# publisher de LA LIGNE — on ne touche pas à une chaîne qui tourne.
+#
+# Les slides ne sont PAS dans ce repo : l'API Graph ne reçoit pas de binaire pour une
+# image, elle va la CHERCHER à une URL publique. Les JPEG sont hébergés sur le GitHub
+# Pages de disruptive-legal ; ce workflow ne transmet que leur racine.
+#
+# La FILE est le garde-fou éditorial : rien ne part si aucun manifeste n'y est.
 
 on:
+  schedule:
+    - cron: "5 * * * *"        # toutes les heures ; le script ne retient que 20h-22h Paris
   workflow_dispatch:
     inputs:
       id:
-        description: "ID du carrousel (manifeste carrousel/<ID>.json)"
-        required: true
-        default: "C2"
+        description: "Publier CE carrousel tout de suite (laisser vide = mode file)"
+        required: false
+        default: ""
       base_url:
         description: "Racine publique des slides, sans slash final"
         required: true
@@ -25,14 +35,22 @@ on:
         description: "Dry-run : crée les conteneurs mais NE PUBLIE PAS"
         type: boolean
         default: true
+      force:
+        description: "Ignore fenêtre + espacement + cadence"
+        type: boolean
+        default: false
       no_comment:
-        description: "Publier sans poster le commentaire épinglé"
+        description: "Publier sans poster le commentaire CTA"
         type: boolean
         default: false
 
 concurrency:
   group: carrousel-publish
   cancel-in-progress: false
+
+# Nécessaire pour committer le déplacement queue->published + le journal.
+permissions:
+  contents: write
 
 jobs:
   publish:
@@ -56,9 +74,40 @@ jobs:
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           GRAPH_VERSION: v20.0
         run: |
+          BASE="${{ github.event.inputs.base_url }}"
+          if [ -z "$BASE" ]; then
+            BASE="https://matissesolitude-pixel.github.io/disruptive-legal/media/carrousel"
+          fi
           ARGS=""
+          if [ -n "${{ github.event.inputs.id }}" ]; then
+            TARGET="${{ github.event.inputs.id }}"
+          else
+            TARGET="--queue"
+          fi
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
           if [ "${{ github.event.inputs.no_comment }}" = "true" ]; then ARGS="$ARGS --no-comment"; fi
-          echo "publish_carrousel.py ${{ github.event.inputs.id }} $ARGS"
-          python publish_carrousel.py "${{ github.event.inputs.id }}" \
-            --base-url "${{ github.event.inputs.base_url }}" $ARGS
+          echo "publish_carrousel.py $TARGET $ARGS"
+          python publish_carrousel.py $TARGET --base-url "$BASE" $ARGS
+
+      - name: Persister le déplacement + le journal
+        if: ${{ github.event.inputs.dry_run != 'true' && always() }}
+        run: |
+          if [ -z "$(git status --porcelain carrousel/)" ]; then
+            echo "Aucune publication — rien à committer."; exit 0
+          fi
+          git config user.name  "kongrave-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A carrousel/
+          git commit -m "carrousel: publication $(date -u +%FT%TZ) [skip ci]"
+          # PUSH RÉSILIENT — même leçon que LA LIGNE : sans ça une collision rejette le
+          # push APRÈS la publication IG réelle, la file n'est pas vidée, et le carrousel
+          # repart au prochain créneau. Double publication.
+          for i in 1 2 3 4 5; do
+            if git push; then echo "push ok (essai $i)"; exit 0; fi
+            echo "push rejeté (essai $i) — pull --rebase puis retry…"
+            git pull --rebase --autostash origin main || true
+            sleep 3
+          done
+          echo "::error::push échoué après 5 essais — publication faite mais file/journal NON persistés (réparer à la main)"
+          exit 1
