@@ -1,0 +1,64 @@
+name: CARROUSEL publish (manuel)
+
+# Publie un carrousel KONGRAVE sur @kongrave_ à partir de son manifeste carrousel/<ID>.json.
+#
+# Les slides ne sont PAS dans ce repo : l'API Graph ne sait pas recevoir un binaire pour
+# une image, elle va la CHERCHER à une URL publique HTTPS. Les JPEG sont donc hébergés sur
+# le GitHub Pages de disruptive-legal, et ce workflow ne transmet que leurs URL.
+#
+# Déclenchement MANUEL uniquement. Pas de cron : l'ordre de publication du profil
+# (1 carrousel + 5 reels, cf. carrousel/ETAT_PROJET.md côté Mac) se décide à la main
+# tant que le planificateur n'existe pas.
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "ID du carrousel (manifeste carrousel/<ID>.json)"
+        required: true
+        default: "C2"
+      base_url:
+        description: "Racine publique des slides, sans slash final"
+        required: true
+        default: "https://matissesolitude-pixel.github.io/disruptive-legal/media/carrousel"
+      dry_run:
+        description: "Dry-run : crée les conteneurs mais NE PUBLIE PAS"
+        type: boolean
+        default: true
+      no_comment:
+        description: "Publier sans poster le commentaire épinglé"
+        type: boolean
+        default: false
+
+concurrency:
+  group: carrousel-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Dépendances
+        run: pip install requests python-dotenv
+
+      - name: Publier le carrousel
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          GRAPH_VERSION: v20.0
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ github.event.inputs.no_comment }}" = "true" ]; then ARGS="$ARGS --no-comment"; fi
+          echo "publish_carrousel.py ${{ github.event.inputs.id }} $ARGS"
+          python publish_carrousel.py "${{ github.event.inputs.id }}" \
+            --base-url "${{ github.event.inputs.base_url }}" $ARGS
