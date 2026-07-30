@@ -160,6 +160,29 @@ def create_container(mp4_path: Path, caption: str, trial_params: Optional[dict] 
     return container_id
 
 
+def list_recent_media(limit: int = 25) -> list:
+    """
+    Les médias les plus récents du compte, du PLUS RÉCENT au plus ancien.
+    Chaque entrée : {id, media_type, timestamp}. media_type vaut IMAGE, VIDEO ou
+    CAROUSEL_ALBUM.
+
+    Sert à mesurer l'espacement réel de la grille : c'est Instagram qui dit dans quel
+    ordre les posts sont sortis, pas un compteur local qui peut dériver.
+    """
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
+    resp = _request(
+        "GET",
+        url,
+        params={
+            "fields": "id,media_type,timestamp",
+            "limit": str(limit),
+            "access_token": _access_token(),
+        },
+    )
+    payload = _raise_for_api_error(resp, "Lecture des médias récents")
+    return payload.get("data", []) or []
+
+
 def create_image_item(image_url: str) -> str:
     """
     Crée un conteneur IMAGE destiné à un carrousel (is_carousel_item=true).
