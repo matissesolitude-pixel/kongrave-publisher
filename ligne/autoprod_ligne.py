@@ -21,6 +21,7 @@ séparé de publish_ligne.py / du cron E6.
 Usage : python3 autoprod_ligne.py            (fabrique tout le pending)
         python3 autoprod_ligne.py --one       (un seul, le plus ancien)
 """
+import hashlib
 import json
 import os
 import re
@@ -37,6 +38,17 @@ OUTDIR = ROOT / "output" / "pilotes"
 # cloud (repo kongrave-publisher) = ROOT/ligne/... (via LIGNE_QUEUE etc. dans le workflow).
 QUEUE = Path(os.environ.get("LIGNE_QUEUE", str(ROOT / "publisher" / "ligne" / "queue")))
 PUBLISHED = Path(os.environ.get("LIGNE_PUBLISHED", str(ROOT / "publisher" / "ligne" / "published")))
+
+# ANTI-BLOCAGE DE FABRICATION (symétrique du skip-to-next de publish_ligne.py).
+# L'auto-scan (build_ligne.scan_progression) est un FAIL-LOUD DÉTERMINISTE : un moteur qui
+# laisse un temps mort / écran vide échouera à CHAQUE run. Or l'autoprod tourne en `--one`
+# et prend TOUJOURS le plus petit numéro non produit — sans garde-fou, un seul épisode fautif
+# (ex. L45) gèle la fabrication pour de bon : la file ne se remplit plus, plus rien ne poste.
+# Règle : au refus de l'auto-scan, on QUARANTAINE l'épisode (autoprod_hold.json) et la
+# fabrication passe au suivant. La quarantaine est indexée sur le HASH du moteur : dès que le
+# moteur est recodé (hash différent), l'épisode ressort automatiquement de quarantaine et
+# est re-fabriqué. Aucune intervention pour le débloquer une fois le moteur corrigé.
+SCAN_HOLD_PATH = LIGNE / "autoprod_hold.json"    # {eid: hash-moteur-qui-a-raté-le-scan}
 
 sys.path.insert(0, os.environ.get("LIGNE_NOTIFY_DIR", str(ROOT / "publisher")))
 try:
@@ -73,8 +85,71 @@ def already_made(eid: str) -> bool:
     return (QUEUE / n).exists() or (PUBLISHED / n).exists()
 
 
+def _engine_path(eid: str) -> Path | None:
+    """Fichier moteur d'un épisode (champ `engine` de son JSON), ou None si introuvable."""
+    jp = EPISODES / f"{eid}.json"
+    if not jp.is_file():
+        return None
+    try:
+        eng = (json.loads(jp.read_text()) or {}).get("engine")
+    except Exception:
+        return None
+    if not eng:
+        return None
+    p = LIGNE / "engine" / f"{eng}.html"
+    return p if p.is_file() else None
+
+
+def _engine_hash(eid: str) -> str | None:
+    """SHA1 du moteur — sert de clé de quarantaine : un moteur recodé (hash ≠) sort de hold."""
+    p = _engine_path(eid)
+    if p is None:
+        return None
+    return hashlib.sha1(p.read_bytes()).hexdigest()
+
+
+def _load_hold() -> dict:
+    if not SCAN_HOLD_PATH.is_file():
+        return {}
+    try:
+        data = json.loads(SCAN_HOLD_PATH.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (ValueError, OSError):
+        return {}
+
+
+def _save_hold(hold: dict) -> None:
+    tmp = SCAN_HOLD_PATH.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(hold, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(SCAN_HOLD_PATH)  # écriture atomique
+
+
+def _quarantine(eid: str) -> None:
+    """Écarte un épisode qui a raté l'auto-scan (clé = hash du moteur fautif)."""
+    h = _engine_hash(eid)
+    if h is None:
+        return  # sans moteur identifiable, is_ready_episode l'exclut déjà
+    hold = _load_hold()
+    hold[eid] = h
+    _save_hold(hold)
+
+
+def _is_held(eid: str) -> bool:
+    """En quarantaine tant que le moteur n'a PAS changé depuis l'échec du scan.
+    Moteur recodé (hash différent) -> auto-libération : on nettoie l'entrée et on re-fabrique."""
+    hold = _load_hold()
+    if eid not in hold:
+        return False
+    if _engine_hash(eid) != hold[eid]:
+        hold.pop(eid, None)
+        _save_hold(hold)
+        return False
+    return True
+
+
 def pending() -> list[Path]:
-    eps = [p for p in EPISODES.glob("L*.json") if is_ready_episode(p) and not already_made(p.stem)]
+    eps = [p for p in EPISODES.glob("L*.json")
+           if is_ready_episode(p) and not already_made(p.stem) and not _is_held(p.stem)]
     return sorted(eps, key=lambda p: int(p.stem[1:]))
 
 
@@ -179,10 +254,15 @@ def make_one(jp: Path) -> bool:
     anim_rc = _run([eid, "anim"], screenshot=True)   # le SCAN est ici (fail-loud)
     anim = RENDER / eid / "anim.mp4"
     if anim_rc != 0:
+        # ANTI-BLOCAGE : l'auto-scan est déterministe -> on met l'épisode en quarantaine
+        # (indexée sur le hash du moteur) pour que la fabrication passe AU SUIVANT au lieu
+        # de re-buter éternellement dessus. Recoder le moteur libère l'épisode automatiquement.
+        _quarantine(eid)
         frames = extract_frames(anim) if anim.exists() else []
         notify_frames(f"🔴 {n} À REVOIR — l'auto-scan a bloqué (temps mort / écran vide). "
-                      f"Pas de mise en file. Frames ci-dessous.", frames)
-        print(f"[{eid}] SCAN KO → non publié.")
+                      f"Écarté de la file ; la fabrication passe au suivant. "
+                      f"Recode le moteur {eid.lower()}.html pour le remettre en jeu.", frames)
+        print(f"[{eid}] SCAN KO → quarantaine (moteur inchangé) → au suivant.")
         return False
 
     if _run([eid, "build"]) != 0:
