@@ -51,6 +51,7 @@ PARIS = ZoneInfo("Europe/Paris")
 WINDOW_HOURS = (20, 21, 22)     # heure de Paris
 MIN_SPACING = 5                 # posts depuis le dernier carrousel
 CADENCE_HOURS = 20              # entre deux carrousels
+HARD_CEILING = 12               # au-delà, on publie même mal aligné
 
 POLL_INTERVAL = 4
 POLL_TIMEOUT = 180
@@ -154,7 +155,20 @@ def check_gates(force):
         skip(f"espacement — seulement {since} post(s) depuis le dernier carrousel "
              f"(du {ts}), il en faut {MIN_SPACING}. Le carrousel doit ouvrir une rangée : "
              f"publier plus tôt le décalerait de colonne.")
+    elif (since + 1) % 3 != 0 and since < HARD_CEILING:
+        # La grille fait 3 colonnes : le carrousel ne retombe à gauche que si le CYCLE
+        # (espacement + 1) est un multiple de 3. « >= 5 » ne suffit pas — à 6, 7, 9 ou 10
+        # posts d'écart le carrousel atterrit au milieu d'une rangée.
+        need = next(n for n in range(since + 1, since + 4) if (n + 1) % 3 == 0)
+        skip(f"alignement — {since} posts depuis le dernier carrousel : le cycle ferait "
+             f"{since + 1}, or il doit être un multiple de 3. On attend {need} "
+             f"(cycle {need + 1}).")
     else:
+        if (since + 1) % 3 != 0:
+            log(f"[carrousel] ⚠ ALIGNEMENT PERDU — {since} posts d'écart (cycle {since + 1}, "
+                f"pas un multiple de 3). Publication forcée après {HARD_CEILING} posts "
+                f"d'attente : mieux vaut un carrousel décalé qu'un carrousel jamais publié. "
+                f"Cause probable : la cadence des reels n'est pas de 1/jour.")
         log(f"[carrousel] espacement OK — {since} posts depuis le dernier carrousel ({ts})")
 
 
