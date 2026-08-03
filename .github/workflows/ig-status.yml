@@ -1,0 +1,28 @@
+name: IG status (lecture seule)
+
+# Dit ce que le compte a VRAIMENT en ligne. Aucune écriture, aucune publication.
+# Le token ne vit que dans les Secrets, donc la seule façon de vérifier est de le
+# demander depuis la CI.
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "Nombre de médias à lister"
+        required: false
+        default: "15"
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install requests python-dotenv
+      - name: Lire les médias du compte
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          GRAPH_VERSION: v20.0
+        run: python ig_status.py "${{ github.event.inputs.n }}"
