@@ -174,7 +174,7 @@ def list_recent_media(limit: int = 25) -> list:
         "GET",
         url,
         params={
-            "fields": "id,media_type,timestamp",
+            "fields": "id,media_type,timestamp,permalink",
             "limit": str(limit),
             "access_token": _access_token(),
         },
