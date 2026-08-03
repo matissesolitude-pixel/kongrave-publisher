@@ -211,6 +211,17 @@ def _last_publish(log: list) -> Optional[datetime]:
 # --------------------------------------------------------------------------- #
 # File d'attente
 # --------------------------------------------------------------------------- #
+def _priority_names() -> list:
+    """Noms d'épisodes listés dans queue/.priority (à publier D'ABORD, un par ligne)."""
+    f = QUEUE_DIR / ".priority"
+    if not f.is_file():
+        return []
+    try:
+        return [ln.strip() for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    except OSError:
+        return []
+
+
 def _oldest_episode(exclude: frozenset = frozenset()) -> Optional[Path]:
     """Plus ancien = sous-dossier au nom trié en premier (préfixe sortable).
     `exclude` : noms de dossiers à ignorer (déjà tentés-et-échoués ce run) pour passer au suivant."""
@@ -480,8 +491,14 @@ def run(dry_run: bool = False, force: bool = False) -> int:
             # Pas encore quarantaine : reste en file, sera reretenté au prochain run.
             _set_fail_count(name, fails)
             notify.send(f"⚠️ LIGNE {name} : refus Meta ({fails}/{QUARANTINE_AFTER}). "
-                        f"Je tente l'épisode suivant ; {name} reste en file.")
-        # passer au suivant ce run (skip-to-next)
+                        f"{name} reste en file, re-tenté au prochain run.")
+        # GARDE-FOU PRIORITÉ : un épisode PRIORITAIRE qui échoue ne doit JAMAIS être « sauté »
+        # au profit d'un non-prioritaire (sinon on publie le mauvais épisode, cf. incident L55/L48
+        # du 03/08). On ARRÊTE le run : rien d'autre ne part tant que le prioritaire n'est pas sorti.
+        if name in _priority_names():
+            print(f"[ligne] {name} est PRIORITAIRE — pas de saut au suivant, run arrêté.")
+            break
+        # sinon : passer au suivant ce run (skip-to-next)
         continue
 
     # Sortie de boucle sans publication.
