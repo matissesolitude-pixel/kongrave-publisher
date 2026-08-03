@@ -2,10 +2,9 @@ name: CARROUSEL auto-publish (file)
 
 # Publie un carrousel KONGRAVE depuis une FILE (carrousel/queue/), sur @kongrave_.
 #
-# CADRAGE HORAIRE — pourquoi 20h et pas 18h30 :
-# un carrousel ne tient la colonne de gauche de la grille QUE s'il est le post le plus
-# récent. Le reel de LA LIGNE sort à 18h30 Paris ; le carrousel doit donc passer APRÈS,
-# sinon le reel du jour le pousse d'une case et la rangée est cassée.
+# PAS DE FENÊTRE HORAIRE (décision PO du 03/08) : la position dans la grille dépend de
+# l'ORDRE des posts, pas de l'heure. Publier à midi ou à 21h donne la même colonne.
+# La seule règle est l'espacement : un carrousel tous les 5 posts.
 #
 # ESPACEMENT — le script compte les posts depuis le dernier carrousel EN INTERROGEANT
 # INSTAGRAM, pas un compteur local. Cycle de 6 (1 carrousel + 5 reels) : 6 est multiple
@@ -20,7 +19,7 @@ name: CARROUSEL auto-publish (file)
 
 on:
   schedule:
-    - cron: "5 * * * *"        # toutes les heures ; le script ne retient que 20h-22h Paris
+    - cron: "5 * * * *"        # toutes les heures ; le script publie dès que l'écart est atteint
   workflow_dispatch:
     inputs:
       id:
@@ -36,7 +35,7 @@ on:
         type: boolean
         default: true
       force:
-        description: "Ignore fenêtre + espacement + cadence"
+        description: "Ignore espacement + cadence"
         type: boolean
         default: false
       no_comment:
