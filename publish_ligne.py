@@ -216,12 +216,25 @@ def _oldest_episode(exclude: frozenset = frozenset()) -> Optional[Path]:
     `exclude` : noms de dossiers à ignorer (déjà tentés-et-échoués ce run) pour passer au suivant."""
     if not QUEUE_DIR.is_dir():
         return None
-    subs = sorted(
-        (p for p in QUEUE_DIR.iterdir()
-         if p.is_dir() and not p.name.startswith(".") and p.name not in exclude),
-        key=lambda p: p.name,
-    )
-    return subs[0] if subs else None
+    subs = [p for p in QUEUE_DIR.iterdir()
+            if p.is_dir() and not p.name.startswith(".") and p.name not in exclude]
+    if not subs:
+        return None
+    # PRIORITÉ MANUELLE : queue/.priority peut nommer des épisodes à publier D'ABORD
+    # (un nom par ligne, dans l'ordre). Un nom absent de la file est ignoré. Sert à
+    # « je veux CET épisode en premier » sans renommer les dossiers. Une fois publié,
+    # l'épisode quitte la file -> l'entrée devient inerte (on peut la laisser).
+    prio = QUEUE_DIR / ".priority"
+    if prio.is_file():
+        try:
+            wanted = [ln.strip() for ln in prio.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        except OSError:
+            wanted = []
+        for name in wanted:
+            for p in subs:
+                if p.name == name:
+                    return p
+    return sorted(subs, key=lambda p: p.name)[0]
 
 
 def _fail_counts() -> dict:

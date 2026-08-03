@@ -1,0 +1,112 @@
+{
+  "id": "L55",
+  "engine": "l55",
+  "title": "L55 — THE SMALL ACCOUNT DEATH SPIRAL",
+  "_format": "COMMON BELIEF BUSTER (Format Finder). Structure 5 blocs : HOOK / GAMBLER'S FALLACY / PROFESSIONAL APPROACH / THE 1% RULE / PAYOFF. Durée cible ~52s (vs 84s habituels) — principe 'get in, bust the myth, prove it, get out'. UN VISUEL DE PREUVE PAR BLOC. Décision PO : on garde l'euro et le 1%.",
+
+  "voice": [
+    "Trying to grow a small account with high-risk trades? That's the guaranteed way to keep it small. Everyone thinks you need home runs. Here's why that's the losing strategy.",
+    "Swinging for the fences with high leverage isn't trading, it's gambling. And the math is brutal: a fifty percent loss needs a hundred percent gain just to get back to even. You're not climbing back. You're digging.",
+    "Professionals don't chase home runs. They chase survival. Manage the downside, stay in the game long enough for the edge to actually show up. Base hits, not lottery tickets.",
+    "The simplest way to enforce that is the one percent rule. Never risk more than one percent of your account on a single trade. On a twenty-five thousand euro account, that's two hundred and fifty euros. It forces you to be selective, and no single trade can ever wipe you out.",
+    "This is the result. Not explosive overnight growth — survival. The gambler is out by trade ten. The disciplined one is still here at a hundred, still holding a full account. That's the whole difference."
+  ],
+
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook buster : tu crois qu'il faut des gros coups pour faire grossir un petit compte. C'est la garantie de le garder petit.",
+      "question": "HIGH RISK ON A SMALL ACCOUNT?",
+      "emotion_lever": "CHOC — dès la frame 0, une barre de compte qui s'effondre d'un seul trait vertical. La chute est déjà là, brutale, avant même la première phrase.",
+      "cast": {
+        "account": {"type": "gauge", "note": "le compte = une barre teal, verticale"},
+        "wipe": {"type": "block", "note": "un trait vertical qui traverse et vide la barre d'un coup. le fusil = la barre qu'on va reconstruire."}
+      },
+      "beats": [
+        {"t": "0-0.5", "do": "FRAME 0 À TENSION MAX : une barre de compte teal, pleine, et un TRAIT VERTICAL brutal qui la traverse et l'efface aux trois quarts — un seul trade, un compte détruit. Le geste est SAISI EN COURS, la barre finit de se vider. Overlay 'THE SMALL ACCOUNT DEATH SPIRAL'."},
+        {"t": "0.5-1.5", "do": "le ? POP par-dessus, 200px. La question tombe pendant que la barre est encore en train de tomber."},
+        {"t": "1.5-8", "do": "TENUE VIVANTE COURTE (format resserré) : ce qui reste de la barre tremble, le trait de destruction s'estompe. le ? fade."}
+      ],
+      "camera": "fixe",
+      "dod": "la barre de compte détruite d'un seul trait, geste saisi en cours, dès la frame 0",
+      "fusil": "la barre du compte — on va voir laquelle survit à la fin."
+    },
+    {
+      "id": "s2",
+      "clarity": "La math du gambler : une perte de 50% exige un gain de 100% juste pour revenir à zéro. Tu ne remontes pas, tu creuses.",
+      "label": "the math is brutal",
+      "beats": [
+        {"t": "0-1.5", "do": "PREUVE VISUELLE 1 — l'asymétrie. Une barre pleine, à côté d'une flèche qui descend et la coupe EN DEUX : label '−50%'. La moitié restante est petite, évidente."},
+        {"t": "1.5-3", "do": "puis la remontée : une flèche part de la demi-barre et doit MONTER DEUX FOIS SA PROPRE HAUTEUR pour retrouver le niveau d'origine (un trait pointillé marque le point de départ). Label '+100% juste pour revenir'. Les deux flèches sont montrées CÔTE À CÔTE : la descente est courte, la remontée est deux fois plus longue. L'asymétrie se voit d'un coup d'œil."},
+        {"t": "3-10", "do": "TENUE VIVANTE : les deux flèches côte à côte, l'écart de longueur évident. La descente facile, la remontée impossible."}
+      ],
+      "camera": "fixe",
+      "dod": "la flèche de descente courte (−50%) vs la flèche de remontée deux fois plus longue (+100%) — l'asymétrie lisible en une seconde",
+      "turn": "tu ne remontes pas la pente. tu creuses."
+    },
+    {
+      "id": "s3",
+      "clarity": "Les pros ne cherchent pas le home run, ils cherchent la survie. Rester dans le jeu assez longtemps pour que l'edge s'exprime.",
+      "label": "survival, not home runs",
+      "beats": [
+        {"t": "0-1.5", "do": "PREUVE VISUELLE 2 — deux trajectoires. GAUCHE 'home run' : une flèche unique, énorme, qui vise très haut... et se brise net. DROITE 'base hits' : une série de petits pas teal réguliers, chacun minuscule, qui montent en escalier."},
+        {"t": "1.5-3", "do": "on laisse le temps courir : la flèche unique brisée reste au sol, l'escalier de petits pas continue, cran après cran, et DÉPASSE la hauteur que le home run visait. Le lent gagne parce qu'il continue."},
+        {"t": "3-10", "do": "TENUE VIVANTE : l'escalier qui monte encore, la grande flèche brisée immobile à côté."}
+      ],
+      "camera": "fixe",
+      "dod": "la grande flèche brisée vs l'escalier de petits pas qui la dépasse en continuant",
+      "turn": "l'edge n'a pas besoin de gros coups. il a besoin de temps."
+    },
+    {
+      "id": "s4",
+      "clarity": "La règle du 1% : jamais plus de 1% du compte sur un seul trade. Sur 25 000 €, ça fait 250 €. Ça force la sélection, et aucun trade ne peut te sortir.",
+      "note": "LA scene — la règle rendue concrète et chiffrée.",
+      "beats": [
+        {"t": "0-1.5", "do": "PREUVE VISUELLE 3 — la découpe. La barre du compte s'affiche entière, étiquetée '25 000 €'. Une tranche MINUSCULE se détache en bas, surlignée : '1% = 250 €'. Le rapport de taille est saisissant — la tranche est presque invisible face à la barre."},
+        {"t": "1.5-3", "do": "on met la tranche à l'épreuve : le trade perd → seule cette tranche minuscule se délave en gris, la barre reste quasi intacte. On répète : dix pertes d'affilée → dix tranches minuscules → la barre tient encore, largement. AUCUN trade ne peut vider le compte."},
+        {"t": "3-11", "do": "TENUE VIVANTE : la barre encore pleine après les dix pertes, les tranches consommées empilées à côté, ridicules face au capital restant."}
+      ],
+      "camera": "fixe",
+      "dod": "la tranche 1% (250 € sur 25 000 €) minuscule face à la barre + dix pertes qui n'entament presque rien",
+      "turn": "aucun trade ne peut te sortir. c'est ça, la règle."
+    },
+    {
+      "id": "s5",
+      "clarity": "Le résultat : pas une croissance explosive — la SURVIE. Le joueur est sorti au trade dix. Le discipliné est encore là au centième, compte plein.",
+      "beats": [
+        {"t": "0-2", "do": "DÉCHARGE — PREUVE VISUELLE 4, la comparaison finale, lisible au premier coup d'œil. DEUX BARRES côte à côte sur un axe horizontal gradué en TRADES. HAUT 'high risk' : la barre se vide en quelques crans et disparaît — un marqueur tombe au trade 10, plus rien après. BAS 'disciplined' : la barre avance cran par cran, entamée par endroits mais TOUJOURS DEBOUT, et continue jusqu'au trade 100."},
+        {"t": "2-3.5", "do": "l'axe s'étend : au trade 100, il ne reste QU'UNE barre à l'écran. L'autre a disparu depuis longtemps, son point d'arrêt marqué d'un trait gris au trade 10. Label : 'still in the game'. La différence n'est pas le profit — c'est d'exister encore."},
+        {"t": "3.5-12", "do": "IMAGE FINALE TENUE >=3s : les deux trajectoires sur l'axe des trades, l'une arrêtée net à 10, l'autre encore debout à 100. Immobile. Survivre EST le résultat."}
+      ],
+      "camera": "fixe",
+      "dod": "l'axe en trades : la barre high-risk qui s'arrête net au trade 10, la disciplinée encore debout au trade 100 — la survie, pas le profit",
+      "fusil_decharge": "la barre détruite de S1 se résout : celle qui survit n'est pas celle qui a visé gros, c'est celle qui n'a jamais risqué plus de 1% — le résultat, c'est d'être encore là."
+    }
+  ],
+
+  "total": 52.0,
+
+  "caption": "Comment \"LINE\" for the checklist on what actually kills small accounts. Trying to grow a small account with high-risk trades is the guaranteed way to keep it small.\n\nThe math is brutal: a 50% loss needs a 100% gain just to break even. Professionals don't chase home runs, they chase survival — never risking more than 1% of the account on a single trade. On a €25k account, that's €250. The gambler is out by trade ten. The disciplined one is still here at a hundred.\n\nTHE LINE — the result isn't explosive growth. It's still being in the game.\n\n#trading #riskmanagement #positionsizing #propfirm #daytrading #forex #tradingeducation #discipline #smallaccount #trader",
+
+  "pinned_comment": "A 50% loss needs a 100% gain just to get back to even. You're not climbing back — you're digging. Comment \"LINE\" for the checklist 👊",
+
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER appliqué à la ruine du petit compte. Structure Format Finder en 5 blocs, durée resserrée à 52s. Angle : la survie comme résultat, pas le profit.",
+    "cta_keyword": "LINE → checklist (whop.com/otp-consulting/5-signs-checklist)",
+    "caption_structure": "LIGNE 1 = CTA D'ABORD, puis l'accroche.",
+    "emotion_frame0": "CHOC — la barre de compte détruite d'un seul trait, geste saisi en cours dès la frame 0.",
+    "buster": "hook = croyance + réfutation dans la MÊME phrase, sous 3s : 'Trying to grow a small account with high-risk trades? That's the guaranteed way to keep it small.'",
+    "preuve_visuelle": "UN visuel de preuve PAR BLOC (principe Format Finder) : S2 l'asymétrie des flèches, S3 flèche brisée vs escalier, S4 la tranche 1% face à la barre, S5 l'axe des trades avec la survie. Chacun lisible au PREMIER COUP D'ŒIL.",
+    "fin_actionnable": "la règle du 1% + 'le résultat, c'est d'être encore là au trade 100'.",
+    "chiffres": "DÉCISION PO : on garde l'euro (25 000 € / 250 €) et le 1%. Les chiffres sont ici le PUNCH (le rapport de taille EST la démonstration), conformément à la règle chiffres v2.",
+    "interdits": "pas de courbe de gains / equity curve qui monte (promesse de performance) — la preuve finale est la SURVIE. gris = perte (M-couleur). pas de brun. bas du cadre vide.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "52s au lieu de 84 — principe Format Finder 'get in, bust the myth, prove it, get out'. Tenues vivantes RACCOURCIES en conséquence.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+
+  "_narrator": {
+    "regle_unique": "Mr Dollar est SORTI des reels (décision actée). Aucun narrateur visible ici — la voix George narre en off, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'ignorer : les reels LA LIGNE n'ont plus de personnage."
+  }
+}

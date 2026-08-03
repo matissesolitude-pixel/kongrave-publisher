@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L55 « THE SMALL ACCOUNT DEATH SPIRAL » — Common Belief Buster, format resserré ~52s, SANS narrateur.
+       S1 : émotion frame 0 = CHOC — une barre de compte teal DÉJÀ détruite aux 3/4 par un trait vertical (un trade, un compte
+       effacé) ; question + ?. S2 : l'asymétrie — flèche descente courte (−50%) vs flèche remontée deux fois plus longue (+100%
+       juste pour revenir). S3 : le home run (une flèche énorme qui se brise) vs les base hits (un escalier de petits pas qui
+       DÉPASSE en continuant). S4 (LA scene) : la règle du 1% — barre 25 000 €, tranche minuscule 250 €, dix pertes qui n'entament
+       presque rien (chiffres = PUNCH ici, autorisés). S5 : décharge — deux barres sur un AXE EN TRADES : high-risk s'arrête net au
+       trade 10, disciplinée encore debout au trade 100 ; la survie, pas le profit. Doctrine : gris = perte ; teal = TOI ; pas de
+       courbe de gains ; pas de brun ; bas du cadre vide. Chiffres UNIQUEMENT en S4 (le rapport de taille EST la démonstration). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+    const mix=(a,b,f)=>{const A=hx(a),B=hx(b);return `rgb(${A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')})`;};
+
+    // ── OBJETS (créés une fois, replacés/masqués par scène) ──
+    const bar=mk('rect',{rx:3,fill:YOU,opacity:0});            // le compte (TOI, teal)
+    const barLoss=mk('rect',{rx:3,fill:DEAD,opacity:0});       // la part détruite / délavée
+    const strike=mk('line',{stroke:INK,'stroke-width':12,'stroke-linecap':'round',opacity:0}); // S1 : le trait vertical destructeur
+    const halfBar=mk('rect',{rx:3,fill:YOU,opacity:0});        // S2 : la demi-barre restante
+    const originLine=mk('line',{stroke:INK,'stroke-width':5,'stroke-dasharray':'16 12','stroke-linecap':'round',opacity:0}); // S2 : niveau d'origine
+    const dnL=mk('line',{stroke:INK,'stroke-width':10,'stroke-linecap':'round',opacity:0}), dnH=mk('polygon',{fill:INK,opacity:0}); // flèche −50%
+    const upL=mk('line',{stroke:YOU,'stroke-width':10,'stroke-linecap':'round',opacity:0}), upH=mk('polygon',{fill:YOU,opacity:0});  // flèche +100%
+    const hrL=mk('line',{stroke:DEAD,'stroke-width':11,'stroke-linecap':'round',opacity:0}), hrH=mk('polygon',{fill:DEAD,opacity:0}); // S3 home run (brisée)
+    const hrBreak=mk('line',{stroke:DEAD,'stroke-width':11,'stroke-linecap':'round',opacity:0}); // le tronçon brisé qui retombe
+    const STEPS=[]; for(let i=0;i<14;i++)STEPS.push(mk('rect',{rx:2,fill:YOU,opacity:0}));        // S3 base hits (escalier)
+    const SLICES=[]; for(let i=0;i<10;i++)SLICES.push(mk('rect',{rx:1,fill:DEAD,opacity:0}));     // S4 : les tranches 1% consommées
+    const oneSlice=mk('rect',{rx:2,fill:YOU,stroke:INK,'stroke-width':3,opacity:0});              // S4 : la tranche 1% mise en avant
+    const axis=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});       // S5 : l'axe des trades
+    const barA=mk('rect',{rx:3,fill:YOU,opacity:0});          // S5 high-risk (s'arrête)
+    const barB=mk('rect',{rx:3,fill:YOU,opacity:0});          // S5 disciplined (tient)
+    const stopMark=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-dasharray':'10 8','stroke-linecap':'round',opacity:0}); // S5 : arrêt au trade 10
+    const TICKS=[]; for(let i=0;i<6;i++)TICKS.push(mk('line',{stroke:DEAD,'stroke-width':3,opacity:0}));
+
+    function drawArrow(lineEl,headEl,x1,y1,x2,y2,op,col){
+      lineEl.setAttribute('x1',x1.toFixed(1));lineEl.setAttribute('y1',y1.toFixed(1));
+      lineEl.setAttribute('x2',x2.toFixed(1));lineEl.setAttribute('y2',y2.toFixed(1));setOp(lineEl,op);
+      const a=Math.atan2(y2-y1,x2-x1),L=30,w=0.5;
+      const p=[[x2,y2],[x2-L*Math.cos(a-w),y2-L*Math.sin(a-w)],[x2-L*Math.cos(a+w),y2-L*Math.sin(a+w)]];
+      headEl.setAttribute('points',p.map(q=>[q[0].toFixed(1),q[1].toFixed(1)].join(',')).join(' '));setOp(headEl,op);
+    }
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['HIGH RISK ON','A SMALL ACCOUNT?'];
+    const FS=84,lineH=110,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':170,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — mesure réelle + clamp, jamais de débordement ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(40),capD=caption(40),capE=caption(38),capF=caption(38);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [bar,barLoss,strike,halfBar,originLine,dnL,dnH,upL,upH,hrL,hrH,hrBreak,oneSlice,axis,barA,barB,stopMark])setOp(e,0);
+      for(const e of STEPS)setOp(e,0);for(const e of SLICES)setOp(e,0);for(const e of TICKS)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LE COMPTE DÉTRUIT D'UN SEUL TRAIT (émotion frame 0 : CHOC) ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // la barre de compte : pleine, puis effacée aux 3/4 par le trait vertical (geste saisi en cours)
+      const BX=540, BW=200, FLOOR=1400, FULL=760;
+      const wipe=eInOut(clamp((u-0.05)/0.5,0,1));                 // 0 = pleine, 1 = 3/4 effacée
+      const rem=FULL*(1-0.75*wipe);
+      const jit=9*Math.sin(u*1.9)+4*Math.sin(u*3.3);           // le reste tremble (vie continue)
+      bar.setAttribute('x',(BX-BW/2).toFixed(1));bar.setAttribute('y',(FLOOR-rem+jit).toFixed(1));
+      bar.setAttribute('width',BW);bar.setAttribute('height',rem.toFixed(1));setOp(bar,1);
+      barLoss.setAttribute('x',(BX-BW/2).toFixed(1));barLoss.setAttribute('y',(FLOOR-FULL).toFixed(1));
+      barLoss.setAttribute('width',BW);barLoss.setAttribute('height',(FULL-rem).toFixed(1));setOp(barLoss,(1-wipe)*0.5);
+      // le trait vertical destructeur, qui s'estompe après le choc
+      const stOp=clamp(1-(u-0.4)/0.9,0,1);
+      strike.setAttribute('x1',(BX+34).toFixed(1));strike.setAttribute('x2',(BX-30).toFixed(1));
+      strike.setAttribute('y1',(FLOOR-FULL-20).toFixed(1));strike.setAttribute('y2',(FLOOR-rem+40).toFixed(1));setOp(strike,stOp);
+      putCap(capA,'ONE TRADE. ONE ACCOUNT GONE.',CX,FLOOR+70,DEAD,clamp((u-1.8)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — L'ASYMÉTRIE : −50% court, +100% deux fois plus long ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const FLOOR=1300, TOP=620, FULLH=TOP-FLOOR;   // FULLH négatif (vers le haut)
+      // GAUCHE : la demi-barre restante après −50%
+      const LX=330, BW=150;
+      const cut=eInOut(clamp(u/1.2,0,1));            // la barre se coupe en deux
+      const fullTopY=FLOOR-680, halfTopY=FLOOR-340;
+      const topY=lerp(fullTopY, halfTopY, cut);
+      originLine.setAttribute('x1',(LX-110).toFixed(1));originLine.setAttribute('x2',(LX+110).toFixed(1));
+      originLine.setAttribute('y1',fullTopY);originLine.setAttribute('y2',fullTopY);setOp(originLine,1);
+      const br2=8*Math.sin(u*1.5)+4*Math.sin(u*2.7);
+      halfBar.setAttribute('x',(LX-BW/2).toFixed(1));halfBar.setAttribute('y',(topY+br2).toFixed(1));
+      halfBar.setAttribute('width',BW);halfBar.setAttribute('height',(FLOOR-topY).toFixed(1));setOp(halfBar,1);
+      // la flèche de descente (courte)
+      drawArrow(dnL,dnH, LX+BW/2+40, fullTopY, LX+BW/2+40, halfTopY, clamp(u/0.6,0,1), INK);
+      putCap(capC,'−50%',195,790,INK,clamp((u-0.4)/0.5,0,1));
+      // DROITE : la flèche de remontée, deux fois plus longue, part de la demi et doit atteindre l'origine
+      const RX=760;
+      const grow=eInOut(clamp((u-1.4)/1.4,0,1));
+      const upTop=lerp(halfTopY, fullTopY, grow);
+      originLine.setAttribute('x1',(LX-110).toFixed(1));   // (garde la ligne d'origine à gauche)
+      // repère d'origine à droite aussi (pointillé) pour montrer la cible
+      drawArrow(upL,upH, RX, halfTopY+br2, RX, upTop+br2*0.6, clamp((u-1.4)/0.5,0,1), YOU);
+      putCap(capD,'+100%',905,790,YOU,clamp((u-2.0)/0.6,0,1));
+      putCap(capA,'THE MATH IS BRUTAL',CX,540,INK,clamp((u-0.2)/0.6,0,1));
+      putCap(capB,'YOU DON’T CLIMB BACK — YOU DIG',CX,1460,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — HOME RUN (brisée) vs BASE HITS (escalier qui dépasse) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const FLOOR=1320;
+      // GAUCHE : le home run — une flèche énorme qui vise très haut et se brise
+      const LX=300, aim=FLOOR-720;
+      const rise=eInOut(clamp(u/1.0,0,1));
+      const breakY=FLOOR-380;                        // là où elle casse
+      const tip=lerp(FLOOR-40, breakY, rise) + (rise>=1?5*Math.sin(u*2.3):0);
+      drawArrow(hrL,hrH, LX, FLOOR-40, LX, tip, clamp(u/0.4,0,1), DEAD);
+      // le tronçon brisé qui part de travers après la cassure
+      const brk=clamp((u-1.0)/0.5,0,1);
+      if(brk>0){ hrBreak.setAttribute('x1',LX);hrBreak.setAttribute('y1',breakY.toFixed(1));
+        hrBreak.setAttribute('x2',(LX-70*brk).toFixed(1));hrBreak.setAttribute('y2',(breakY+120*brk).toFixed(1));setOp(hrBreak,brk); }
+      originLine.setAttribute('x1',(LX-90).toFixed(1));originLine.setAttribute('x2',(760+140).toFixed(1));
+      originLine.setAttribute('y1',aim);originLine.setAttribute('y2',aim);setOp(originLine,clamp((u-0.3)/0.5,0,1)*0.6);
+      putCap(capC,'HOME RUN',LX,FLOOR+70,DEAD,clamp((u-0.4)/0.5,0,1));
+      // DROITE : les base hits — un escalier de petits pas qui monte et DÉPASSE la cible
+      const RX0=640, sw=52, sh=48;
+      const nShown=Math.round(lerp(0,14,clamp((u-0.4)/2.0,0,1)));
+      for(let i=0;i<STEPS.length;i++){ if(i>=nShown){setOp(STEPS[i],0);continue;}
+        const sx=RX0+i*22, sy=FLOOR-40-(i+1)*sh + 6*Math.sin(u*2.1+i*0.6)+3*Math.sin(u*3.3+i);
+        STEPS[i].setAttribute('x',sx.toFixed(1));STEPS[i].setAttribute('y',sy.toFixed(1));
+        STEPS[i].setAttribute('width',sw);STEPS[i].setAttribute('height',sh-8);setOp(STEPS[i],0.95);}
+      putCap(capD,'BASE HITS',RX0+150,FLOOR+70,YOU,clamp((u-1.0)/0.5,0,1));
+      putCap(capB,'THE EDGE NEEDS TIME — NOT BIG SWINGS',CX,540,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA scene : LA RÈGLE DU 1% (chiffres = PUNCH, autorisés) ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const BX=360, BW=210, FLOOR=1380, FULL=800;
+      const jit=7*Math.sin(u*1.7)+3*Math.sin(u*2.9);
+      // le compte entier, étiqueté 25 000 €
+      const drain=clamp((u-1.5)/2.0,0,1);            // dix pertes consommées progressivement
+      const gone=FULL*0.01*10*drain;                  // 10 tranches de 1% = 10% max
+      bar.setAttribute('x',(BX-BW/2).toFixed(1));bar.setAttribute('y',(FLOOR-FULL+gone+jit).toFixed(1));
+      bar.setAttribute('width',BW);bar.setAttribute('height',(FULL-gone).toFixed(1));setOp(bar,1);
+      putCap(capF,'NO SINGLE TRADE CAN WIPE YOU OUT',CX,462,INK,clamp((u-3.2)/0.7,0,1));
+      putCap(capA,'€25,000',BX,FLOOR-FULL-28,INK,clamp(u/0.5,0,1));
+      // la tranche 1% mise en avant, minuscule au bas de la barre
+      const sliceH=FULL*0.01;
+      oneSlice.setAttribute('x',(BX-BW/2-4).toFixed(1));oneSlice.setAttribute('y',(FLOOR-sliceH).toFixed(1));
+      oneSlice.setAttribute('width',BW+8);oneSlice.setAttribute('height',sliceH.toFixed(1));setOp(oneSlice,clamp((u-0.5)/0.5,0,1));
+      putCap(capB,'1% = €250',BX,FLOOR+64,YOU,clamp((u-0.7)/0.5,0,1));
+      // les dix tranches consommées, empilées à droite, ridicules face au capital
+      const nLoss=Math.round(10*drain);
+      for(let i=0;i<SLICES.length;i++){ if(i>=nLoss){setOp(SLICES[i],0);continue;}
+        SLICES[i].setAttribute('x',(760+ (i%5)*40).toFixed(1));
+        SLICES[i].setAttribute('y',(FLOOR-40-Math.floor(i/5)*22 - 5*Math.sin(u*2.1+i)).toFixed(1));
+        SLICES[i].setAttribute('width',34);SLICES[i].setAttribute('height',sliceH.toFixed(1));setOp(SLICES[i],0.85);}
+      putCap(capC,'TEN LOSSES IN A ROW',855,FLOOR-210,DEAD,clamp((u-2.0)/0.6,0,1));
+      putCap(capE,'STILL STANDING',855,FLOOR-164,DEAD,clamp((u-2.4)/0.6,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : L'AXE DES TRADES — high-risk s'arrête à 10, disciplinée debout à 100 ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const AX0=170, AX1=980, AYt=760, AYb=1150;      // deux couloirs : haut (high risk) / bas (disciplined)
+      // l'axe des trades (bas)
+      const axY=1300;
+      axis.setAttribute('x1',AX0);axis.setAttribute('x2',AX1);axis.setAttribute('y1',axY);axis.setAttribute('y2',axY);setOp(axis,clamp(u/0.4,0,1));
+      for(let i=0;i<6;i++){const tx=AX0+i*((AX1-AX0)/5);
+        TICKS[i].setAttribute('x1',tx);TICKS[i].setAttribute('x2',tx);TICKS[i].setAttribute('y1',axY-10);TICKS[i].setAttribute('y2',axY+10);setOp(TICKS[i],clamp(u/0.4,0,1));}
+      putCap(capA,'TRADES  →',CX,axY+58,DEAD,clamp(u/0.5,0,1));
+      const prog=eInOut(clamp((u-0.4)/2.2,0,1));       // le temps court le long de l'axe
+      const x10=AX0+((AX1-AX0)/5)*0.6;                 // trade 10 (tôt)
+      // HAUT — HIGH RISK : la barre se vide en quelques crans et disparaît au trade 10
+      const hrX=AX0+ (x10-AX0)*Math.min(1,prog/0.25);
+      const alive=clamp(1-(prog-0.25)/0.05,0,1);       // meurt vers prog=0.25
+      barA.setAttribute('x',(hrX-26).toFixed(1));barA.setAttribute('y',(AYt-140*alive+2*Math.sin(u*2)).toFixed(1));
+      barA.setAttribute('width',52);barA.setAttribute('height',(140*alive).toFixed(1));setOp(barA,alive);
+      stopMark.setAttribute('x1',x10);stopMark.setAttribute('x2',x10);stopMark.setAttribute('y1',AYt-160);stopMark.setAttribute('y2',axY-14);setOp(stopMark,clamp((prog-0.25)/0.1,0,1)*0.8);
+      putCap(capC,'HIGH RISK',AX0+120,588,DEAD,clamp((u-0.6)/0.6,0,1));
+      putCap(capD,'OUT BY TRADE 10',285,1010,DEAD,clamp((prog-0.28)/0.08,0,1));
+      // BAS — DISCIPLINED : la barre avance cran par cran, entamée mais debout, jusqu'au trade 100
+      const dbX=AX0+(AX1-AX0)*prog;
+      const dent=0.80+0.10*Math.sin(u*1.3)+0.04*Math.sin(u*2.3);   // entamée mais debout, respire (tenue finale)
+      barB.setAttribute('x',(dbX-26).toFixed(1));barB.setAttribute('y',(AYb-150*dent+8*Math.sin(u*1.6)+4*Math.sin(u*2.9)).toFixed(1));
+      barB.setAttribute('width',52);barB.setAttribute('height',(150*dent).toFixed(1));setOp(barB,1);
+      putCap(capE,'DISCIPLINED',AX0+150,AYb+82,YOU,clamp((u-0.9)/0.6,0,1));
+      putCap(capB,'STILL IN THE GAME AT 100',CX,470,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
