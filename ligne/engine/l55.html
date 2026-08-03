@@ -45,6 +45,29 @@
     const barB=mk('rect',{rx:3,fill:YOU,opacity:0});          // S5 disciplined (tient)
     const stopMark=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-dasharray':'10 8','stroke-linecap':'round',opacity:0}); // S5 : arrêt au trade 10
     const TICKS=[]; for(let i=0;i<6;i++)TICKS.push(mk('line',{stroke:DEAD,'stroke-width':3,opacity:0}));
+    const redCurve=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':9,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}); // S5 high-risk : pique et meurt
+    const tealCurve=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}); // S5 disciplined : compose
+    // révèle une courbe (points [[x,y]]) jusqu'à la fraction `prog`, avec une micro-ondulation continue (scan)
+    function drawCurve(el,pts,prog,col,op,wob,u){
+      if(prog<=0){setOp(el,0);return;}
+      const n=pts.length, seg=(n-1)*clamp(prog,0,1), last=Math.floor(seg), frac=seg-last, out=[];
+      for(let i=0;i<=Math.min(last,n-1);i++){const w=(wob||0)*Math.sin((u||0)*1.5+i*0.8);out.push(pts[i][0].toFixed(1)+','+(pts[i][1]+w).toFixed(1));}
+      if(last<n-1){const a=pts[last],b=pts[last+1];out.push((a[0]+(b[0]-a[0])*frac).toFixed(1)+','+(a[1]+(b[1]-a[1])*frac).toFixed(1));}
+      el.setAttribute('points',out.join(' '));el.setAttribute('stroke',col);setOp(el,op);
+    }
+    // S1 : compteur de solde qui CHUTE au-dessus de la jauge (plus clair qu'un trait)
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':66,'letter-spacing':'1',opacity:0});
+    // S5 : tête de mort sur le high-risk mort (on le GARDE visible, mais fini)
+    const skull=mk('g',{opacity:0});
+    mk('ellipse',{cx:0,cy:-6,rx:27,ry:25,fill:DEAD},skull);
+    mk('rect',{x:-15,y:12,width:30,height:16,rx:4,fill:DEAD},skull);
+    mk('circle',{cx:-11,cy:-8,r:8,fill:PAPER},skull);
+    mk('circle',{cx:11,cy:-8,r:8,fill:PAPER},skull);
+    mk('polygon',{points:'0,2 -6,12 6,12',fill:PAPER},skull);
+    mk('line',{x1:-6,y1:14,x2:-6,y2:26,stroke:PAPER,'stroke-width':3},skull);
+    mk('line',{x1:0,y1:14,x2:0,y2:28,stroke:PAPER,'stroke-width':3},skull);
+    mk('line',{x1:6,y1:14,x2:6,y2:26,stroke:PAPER,'stroke-width':3},skull);
+    function drawSkull(x,y,op){skull.setAttribute('transform',`translate(${x.toFixed(1)},${y.toFixed(1)})`);setOp(skull,op);}
 
     function drawArrow(lineEl,headEl,x1,y1,x2,y2,op,col){
       lineEl.setAttribute('x1',x1.toFixed(1));lineEl.setAttribute('y1',y1.toFixed(1));
@@ -80,7 +103,7 @@
     function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
 
     function hideDyn(){for(const e of [bar,barLoss,strike,halfBar,originLine,dnL,dnH,upL,upH,hrL,hrH,hrBreak,oneSlice,axis,barA,barB,stopMark])setOp(e,0);
-      for(const e of STEPS)setOp(e,0);for(const e of SLICES)setOp(e,0);for(const e of TICKS)setOp(e,0);hideCaps();}
+      for(const e of STEPS)setOp(e,0);for(const e of SLICES)setOp(e,0);for(const e of TICKS)setOp(e,0);setOp(redCurve,0);setOp(tealCurve,0);setOp(counter,0);setOp(skull,0);hideCaps();}
 
     // ═══ S1 — LE COMPTE DÉTRUIT D'UN SEUL TRAIT (émotion frame 0 : CHOC) ═══
     function s1(lf,t,s){
@@ -90,17 +113,19 @@
       const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
       // la barre de compte : pleine, puis effacée aux 3/4 par le trait vertical (geste saisi en cours)
       const BX=540, BW=200, FLOOR=1400, FULL=760;
-      const wipe=eInOut(clamp((u-0.05)/0.5,0,1));                 // 0 = pleine, 1 = 3/4 effacée
+      const wipe=eInOut(clamp((u+0.2)/1.6,0,1));                  // chute VISIBLE (~1,4s), déjà amorcée à frame 0
       const rem=FULL*(1-0.75*wipe);
       const jit=9*Math.sin(u*1.9)+4*Math.sin(u*3.3);           // le reste tremble (vie continue)
       bar.setAttribute('x',(BX-BW/2).toFixed(1));bar.setAttribute('y',(FLOOR-rem+jit).toFixed(1));
       bar.setAttribute('width',BW);bar.setAttribute('height',rem.toFixed(1));setOp(bar,1);
       barLoss.setAttribute('x',(BX-BW/2).toFixed(1));barLoss.setAttribute('y',(FLOOR-FULL).toFixed(1));
       barLoss.setAttribute('width',BW);barLoss.setAttribute('height',(FULL-rem).toFixed(1));setOp(barLoss,(1-wipe)*0.5);
-      // le trait vertical destructeur, qui s'estompe après le choc
-      const stOp=clamp(1-(u-0.4)/0.9,0,1);
-      strike.setAttribute('x1',(BX+34).toFixed(1));strike.setAttribute('x2',(BX-30).toFixed(1));
-      strike.setAttribute('y1',(FLOOR-FULL-20).toFixed(1));strike.setAttribute('y2',(FLOOR-rem+40).toFixed(1));setOp(strike,stOp);
+      // COMPTEUR de solde qui CHUTE au-dessus de la jauge (remplace le trait noir, bien plus clair)
+      const topY=FLOOR-rem+jit;
+      const val=Math.round(lerp(25000,1600,wipe)/100)*100;
+      counter.textContent='€'+val.toLocaleString('en-US');
+      counter.setAttribute('x',BX);counter.setAttribute('y',(topY-34).toFixed(1));
+      counter.setAttribute('fill',mix(INK,DEAD,wipe*0.75));setOp(counter,clamp(u/0.25,0,1));
       putCap(capA,'ONE TRADE. ONE ACCOUNT GONE.',CX,FLOOR+70,DEAD,clamp((u-1.8)/0.8,0,1)*gf);
     }
 
@@ -188,33 +213,30 @@
       putCap(capE,'STILL STANDING',855,FLOOR-164,DEAD,clamp((u-2.4)/0.6,0,1));
     }
 
-    // ═══ S5 — DÉCHARGE : L'AXE DES TRADES — high-risk s'arrête à 10, disciplinée debout à 100 ═══
+    // ═══ S5 — DÉCHARGE : DEUX COURBES D'EQUITY sur l'axe des trades (comparaison mort vs composition ; AUCUN chiffre) ═══
     function s5(lf,t,s){
       const u=t-s; hideQ(); hideDyn();
-      const AX0=170, AX1=980, AYt=760, AYb=1150;      // deux couloirs : haut (high risk) / bas (disciplined)
-      // l'axe des trades (bas)
-      const axY=1300;
+      const AX0=170, AX1=980, axY=1300;                // l'axe des trades
       axis.setAttribute('x1',AX0);axis.setAttribute('x2',AX1);axis.setAttribute('y1',axY);axis.setAttribute('y2',axY);setOp(axis,clamp(u/0.4,0,1));
       for(let i=0;i<6;i++){const tx=AX0+i*((AX1-AX0)/5);
         TICKS[i].setAttribute('x1',tx);TICKS[i].setAttribute('x2',tx);TICKS[i].setAttribute('y1',axY-10);TICKS[i].setAttribute('y2',axY+10);setOp(TICKS[i],clamp(u/0.4,0,1));}
       putCap(capA,'TRADES  →',CX,axY+58,DEAD,clamp(u/0.5,0,1));
-      const prog=eInOut(clamp((u-0.4)/2.2,0,1));       // le temps court le long de l'axe
-      const x10=AX0+((AX1-AX0)/5)*0.6;                 // trade 10 (tôt)
-      // HAUT — HIGH RISK : la barre se vide en quelques crans et disparaît au trade 10
-      const hrX=AX0+ (x10-AX0)*Math.min(1,prog/0.25);
-      const alive=clamp(1-(prog-0.25)/0.05,0,1);       // meurt vers prog=0.25
-      barA.setAttribute('x',(hrX-26).toFixed(1));barA.setAttribute('y',(AYt-140*alive+2*Math.sin(u*2)).toFixed(1));
-      barA.setAttribute('width',52);barA.setAttribute('height',(140*alive).toFixed(1));setOp(barA,alive);
-      stopMark.setAttribute('x1',x10);stopMark.setAttribute('x2',x10);stopMark.setAttribute('y1',AYt-160);stopMark.setAttribute('y2',axY-14);setOp(stopMark,clamp((prog-0.25)/0.1,0,1)*0.8);
-      putCap(capC,'HIGH RISK',AX0+120,588,DEAD,clamp((u-0.6)/0.6,0,1));
-      putCap(capD,'OUT BY TRADE 10',285,1010,DEAD,clamp((prog-0.28)/0.08,0,1));
-      // BAS — DISCIPLINED : la barre avance cran par cran, entamée mais debout, jusqu'au trade 100
-      const dbX=AX0+(AX1-AX0)*prog;
-      const dent=0.80+0.10*Math.sin(u*1.3)+0.04*Math.sin(u*2.3);   // entamée mais debout, respire (tenue finale)
-      barB.setAttribute('x',(dbX-26).toFixed(1));barB.setAttribute('y',(AYb-150*dent+8*Math.sin(u*1.6)+4*Math.sin(u*2.9)).toFixed(1));
-      barB.setAttribute('width',52);barB.setAttribute('height',(150*dent).toFixed(1));setOp(barB,1);
-      putCap(capE,'DISCIPLINED',AX0+150,AYb+82,YOU,clamp((u-0.9)/0.6,0,1));
-      putCap(capB,'STILL IN THE GAME AT 100',CX,470,INK,clamp((u-2.6)/0.7,0,1));
+      const x10=AX0+((AX1-AX0)/5)*0.6;                 // trade 10 (tôt sur l'axe)
+      // COURBE HIGH RISK (grise) : pique très haut, très vite, puis PLONGE et meurt au trade 10
+      const RED=[[AX0,1180],[205,820],[233,650],[245,730],[249,1010],[x10,1210]];
+      const redProg=eInOut(clamp(u/1.0,0,1));
+      drawCurve(redCurve,RED,redProg,DEAD,clamp(u/0.3,0,1),2,u);
+      // la courbe rouge RESTE visible (elle ne s'efface pas) ; une TÊTE DE MORT dit qu'elle est finie
+      drawSkull(x10, 1150, clamp((u-1.1)/0.4,0,1));
+      putCap(capC,'HIGH RISK',245,586,DEAD,clamp((u-0.5)/0.6,0,1));
+      putCap(capD,'OUT BY TRADE 10',460,1216,DEAD,clamp((u-1.1)/0.5,0,1));
+      // COURBE DISCIPLINED (teal) : petits paliers réguliers qui COMPOSENT, montent de plus en plus,
+      // dépassent le sommet de la rouge, et continuent jusqu'au trade 100 en sortant du cadre.
+      const TEAL=[[AX0,1180],[240,1150],[315,1108],[400,1052],[495,978],[600,880],[710,758],[820,612],[915,452],[985,360]];
+      const tealProg=eInOut(clamp((u-0.4)/2.6,0,1));
+      drawCurve(tealCurve,TEAL,tealProg,YOU,1,4,u);     // wob=4 : micro-vie continue jusqu'à la tenue finale
+      putCap(capE,'STILL COMPOUNDING',785,586,YOU,clamp((u-1.2)/0.6,0,1));
+      putCap(capB,'SURVIVE, THEN COMPOUND',CX,462,INK,clamp((u-2.6)/0.7,0,1));
     }
 
     const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
