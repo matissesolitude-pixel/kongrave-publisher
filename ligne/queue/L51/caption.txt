@@ -1,0 +1,7 @@
+Comment "LINE" for the checklist on what your order really did. You can spend an hour managing a position that's half the size you think it is.
+
+An order is a request matched against whatever is available. If there isn't enough on the other side, part fills and the rest doesn't. But your risk, your target and your whole sense of the trade were calculated on the full size — and it cuts both ways: half in means your winner pays half, half out means you're still holding when you thought you were flat.
+
+THE LINE — confirm the fill, not the click.
+
+#trading #trader #execution #orderflow #liquidity #daytrading #forex #tradingeducation #riskmanagement #priceaction
