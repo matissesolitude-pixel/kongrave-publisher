@@ -19,15 +19,14 @@ Flux Instagram (différent d'un Reel : aucun upload binaire possible pour les im
 Contraintes Meta appliquées : JPEG uniquement (le PNG est refusé), 2 à 10 images,
 ratio entre 4:5 et 1.91:1 (nos slides 1080x1350 = 4:5 pile).
 
---- LES TROIS BARRIÈRES DU MODE FILE ---------------------------------------------
-1. FENÊTRE : entre 20h et 22h heure de Paris. Le reel de LA LIGNE sort à 18h30 ; le
-   carrousel doit passer APRÈS pour être le post le plus récent, sinon il n'est pas en
-   haut à gauche de la grille.
-2. ESPACEMENT : au moins 5 posts depuis le dernier carrousel, mesuré SUR INSTAGRAM
-   (pas sur un compteur local). Cycle de 6 = 1 carrousel + 5 reels -> 6 est multiple de
-   3, donc les carrousels tiennent la colonne de gauche.
-3. CADENCE : jamais deux carrousels à moins de 20h d'intervalle (garde-fou contre un
-   double déclenchement du cron).
+--- LES DEUX BARRIÈRES DU MODE FILE ----------------------------------------------
+1. ESPACEMENT : 5 posts depuis le dernier carrousel, mesuré SUR INSTAGRAM (pas sur un
+   compteur local). C'est LA règle. Cycle de 6 = 1 carrousel + 5 reels ; 6 est multiple
+   de 3, donc les carrousels tiennent la colonne de gauche de la grille.
+2. CADENCE : jamais deux carrousels à moins de 20h d'intervalle (anti double-clic du cron).
+
+PAS de fenêtre horaire : la position dans la grille dépend de l'ORDRE des posts, pas de
+l'heure. Publier à midi ou à 21h donne la même colonne. La fenêtre ne faisait que retarder.
 
 La FILE est le vrai garde-fou éditorial : rien ne part si aucun manifeste n'y est.
 """
@@ -37,7 +36,6 @@ import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 import ig_api
 
@@ -47,11 +45,8 @@ QUEUE_DIR = CARROUSEL_DIR / "queue"
 PUBLISHED_DIR = CARROUSEL_DIR / "published"
 JOURNAL = CARROUSEL_DIR / "journal.jsonl"
 
-PARIS = ZoneInfo("Europe/Paris")
-WINDOW_HOURS = (20, 21, 22)     # heure de Paris
-MIN_SPACING = 5                 # posts depuis le dernier carrousel
-CADENCE_HOURS = 20              # entre deux carrousels
-HARD_CEILING = 12               # au-delà, on publie même mal aligné
+MIN_SPACING = 5                 # posts depuis le dernier carrousel — LA règle
+CADENCE_HOURS = 20              # entre deux carrousels (anti double-déclenchement)
 
 POLL_INTERVAL = 4
 POLL_TIMEOUT = 180
@@ -126,12 +121,6 @@ def check_gates(force):
         log("[carrousel] --force : fenêtre, espacement et cadence ignorés")
         return
 
-    now_paris = datetime.now(PARIS)
-    if now_paris.hour not in WINDOW_HOURS:
-        skip(f"hors fenêtre — il est {now_paris:%H:%M} à Paris, "
-             f"la fenêtre est {WINDOW_HOURS[0]}h–{WINDOW_HOURS[-1]}h "
-             f"(après le reel de 18h30, pour rester le post le plus récent)")
-
     # cadence : d'après notre propre journal (plus fiable qu'un aller-retour API)
     entries = [e for e in read_journal() if e.get("event") == "published"]
     if entries:
@@ -155,21 +144,18 @@ def check_gates(force):
         skip(f"espacement — seulement {since} post(s) depuis le dernier carrousel "
              f"(du {ts}), il en faut {MIN_SPACING}. Le carrousel doit ouvrir une rangée : "
              f"publier plus tôt le décalerait de colonne.")
-    elif (since + 1) % 3 != 0 and since < HARD_CEILING:
-        # La grille fait 3 colonnes : le carrousel ne retombe à gauche que si le CYCLE
-        # (espacement + 1) est un multiple de 3. « >= 5 » ne suffit pas — à 6, 7, 9 ou 10
-        # posts d'écart le carrousel atterrit au milieu d'une rangée.
-        need = next(n for n in range(since + 1, since + 4) if (n + 1) % 3 == 0)
-        skip(f"alignement — {since} posts depuis le dernier carrousel : le cycle ferait "
-             f"{since + 1}, or il doit être un multiple de 3. On attend {need} "
-             f"(cycle {need + 1}).")
     else:
-        if (since + 1) % 3 != 0:
-            log(f"[carrousel] ⚠ ALIGNEMENT PERDU — {since} posts d'écart (cycle {since + 1}, "
-                f"pas un multiple de 3). Publication forcée après {HARD_CEILING} posts "
-                f"d'attente : mieux vaut un carrousel décalé qu'un carrousel jamais publié. "
-                f"Cause probable : la cadence des reels n'est pas de 1/jour.")
         log(f"[carrousel] espacement OK — {since} posts depuis le dernier carrousel ({ts})")
+        if (since + 1) % 3 != 0:
+            # Diagnostic, PAS un blocage : la règle est « tous les 5 posts », point.
+            # Mais la grille fait 3 colonnes, donc le carrousel ne retombe à gauche que si
+            # le CYCLE (espacement + 1) est un multiple de 3. Un écart de 5 le garantit ;
+            # un écart plus grand veut dire que des reels sont sortis en paquet entre deux
+            # passages du cron — c'est la cadence des reels qu'il faut regarder, pas ce gate.
+            log(f"[carrousel] ⚠ GRILLE DÉCALÉE — {since} posts d'écart au lieu de "
+                f"{MIN_SPACING} : le cycle fait {since + 1}, pas un multiple de 3, donc ce "
+                f"carrousel n'ouvrira pas une rangée. Cause : les reels ne sortent pas à "
+                f"1/jour.")
 
 
 def main():
