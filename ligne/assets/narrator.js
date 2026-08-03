@@ -43,8 +43,14 @@
     this.defaultPose = cfg.defaultPose || 'idle_soft';
   }
 
-  /* Rendu bas niveau : ancrage aux PIEDS (x,y), rotation et squash autour des pieds. */
-  MrDollar.prototype.draw = function (pose, x, y, h, op, flip, rot, sx, sy) {
+  /* ⛔ MR DOLLAR NEUTRALISÉ DANS LES REELS (décision Matisse, rappelée le 03/08/2026 :
+     « je ne veux plus de Mr Dollar dans les reels »). TOUTES les méthodes visibles du
+     narrateur passent par draw() ; on le rend muet ici, au point de passage unique. Ainsi,
+     même si un moteur (ou la routine cloud) appelle encore enter/say/pointAt/show/gag, RIEN
+     ne se dessine. Le schéma reste, le personnage disparaît. Pour le réactiver un jour :
+     supprimer ces deux lignes. */
+  MrDollar.prototype.draw = function () { this.hide(); };
+  MrDollar.prototype._drawEnabled = function (pose, x, y, h, op, flip, rot, sx, sy) {
     var name = this.poses[pose] ? pose : this.defaultPose;
     var P = this.poses[name];
     if (!P) return;
