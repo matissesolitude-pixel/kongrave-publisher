@@ -133,12 +133,12 @@
     }
   ],
   "total": 52.0,
-  "caption": "Comment \"LINE\" for the checklist on what actually kills small accounts. Trying to grow a small account with high-risk trades is the guaranteed way to keep it small.\n\nThe math is brutal: a 50% loss needs a 100% gain just to break even. Professionals don't chase home runs, they chase survival — never risking more than 1% of the account on a single trade. On a €25k account, that's €250. The gambler is out by trade ten. The disciplined one is still here at a hundred.\n\nTHE LINE — the result isn't explosive growth. It's still being in the game.\n\n#trading #riskmanagement #positionsizing #propfirm #daytrading #forex #tradingeducation #discipline #smallaccount #trader",
-  "pinned_comment": "A 50% loss needs a 100% gain just to get back to even. You're not climbing back — you're digging. Comment \"LINE\" for the checklist 👊",
+  "caption": "The part that got me is what happens at trade 10. #trading #riskmanagement #propfirm #daytrading",
+  "pinned_comment": "Comment \"LINE\" and I'll send you the checklist on what actually kills small accounts 👊",
   "_rules": {
     "doctrine": "COMMON BELIEF BUSTER appliqué à la ruine du petit compte. Structure Format Finder en 5 blocs, durée resserrée à 52s. Angle : la survie comme résultat, pas le profit.",
     "cta_keyword": "LINE → checklist (whop.com/otp-consulting/5-signs-checklist)",
-    "caption_structure": "LIGNE 1 = CTA D'ABORD, puis l'accroche.",
+    "caption_structure": "TEST FORMAT FINDER (03/08) : caption ULTRA-COURTE (<110 car.), intrigante, qui NE RÉSUME PAS et pointe vers la FIN de la vidéo (pas un timecode précoce — inutile, tout le monde y arrive). Hashtags après. Le CTA vit UNIQUEMENT dans le pinned_comment, et le pinned est SEC : le mot-clé + le bénéfice, rien d'autre, pas de rappel du contenu. À MESURER : si les commentaires ManyChat chutent, revenir à la règle CTA-d'abord.",
     "emotion_frame0": "CHOC — la barre de compte détruite d'un seul trait, geste saisi en cours dès la frame 0.",
     "buster": "hook = croyance + réfutation dans la MÊME phrase, sous 3s : 'Trying to grow a small account with high-risk trades? That's the guaranteed way to keep it small.'",
     "preuve_visuelle": "UN visuel de preuve PAR BLOC (principe Format Finder), chacun lisible au PREMIER COUP D'ŒIL : S2 l'asymétrie des flèches, S3 flèche brisée vs escalier, S4 la tranche 1% face à la barre, S5 les deux courbes d'equity sur l'axe des trades (visuel recommandé par Format Finder : compounding curve up and to the right).",
