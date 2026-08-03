@@ -770,5 +770,12 @@
     "note": "publié le 03/08 15:39Z lors d'un run force ; push du runner échoué -> journalisé à la main pour éviter le double-post",
     "published_at": "2026-08-03T15:39:50+00:00",
     "logged_at": "2026-08-03T15:39:50+00:00"
+  },
+  {
+    "episode": "L55",
+    "status": "error",
+    "attempt": 2,
+    "error": "Upload du fichier — HTTP 400 : {\"debug_info\":{\"retriable\":false,\"type\":\"ProcessingFailedError\",\"message\":\"Request processing failed\"}}",
+    "logged_at": "2026-08-03T15:48:05.008276+00:00"
   }
 ]
