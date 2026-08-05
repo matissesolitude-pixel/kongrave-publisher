@@ -185,13 +185,13 @@
       const bladeY=lerp(716, cutY, eInOut(cutProg));
       // PERTES (gauche, gris) — tailles contrôlées, JAMAIS touchées (respirent : position, deux harmoniques)
       const lossH=[250,300,220,282,240];
-      for(let k=0;k<5;k++){const x=118+k*72;const br=4*Math.sin(u*0.9+k*0.7)+2*Math.sin(u*1.8+k*1.1);
+      for(let k=0;k<5;k++){const x=118+k*72;const br=10*Math.sin(u*1.2+k*0.7)+5*Math.sin(u*2.1+k*1.1);
         bar(x, baseY-lossH[k]+br, 56, lossH[k]-br, DEAD, 1);}
       // GAGNANTS (droite, teal) — variés, certains très hauts ; TOUS rabotés au même niveau
       const winTop=[812,900,760,980,700,940];   // sommets d'origine (petit y = plus haut)
       const wx0=566, wW=52, wGap=12, nWin=6;
       for(let k=0;k<nWin;k++){const x=wx0+k*(wW+wGap);
-        const br=4*Math.sin(u*1.05+k*0.6)+2*Math.sin(u*2.0+k*1.2);
+        const br=10*Math.sin(u*1.25+k*0.6)+5*Math.sin(u*2.2+k*1.2);
         const orig=winTop[k]+br;
         const top=lerp(orig, Math.max(orig,cutY), cutProg);
         bar(x, top, wW, baseY-top, YOU, 1);
@@ -229,13 +229,13 @@
       // LA COLONNE (droite) : monte librement jusqu'à la cible, aucune tranche coupée (respire : deux harmoniques)
       const baseY=1400, cX=628, cW=168, cCX=712, targetY=740;
       const rise=clamp(u/2.2,0,1);
-      const topFree=lerp(baseY, targetY, eInOut(rise)) - 6*Math.sin(u*0.8) - 3*Math.sin(u*1.7);
+      const topFree=lerp(baseY, targetY, eInOut(rise)) - 13*Math.sin(u*1.1) - 6*Math.sin(u*2.1);
       bar(cX, topFree, cW, baseY-topFree, YOU, 1);
       gline(cX-24,targetY,cX+cW+24,targetY,YOU,6,1,'16 10');               // la cible ATTEINTE
       // TOI : la boule SE DÉTOURNE (descend vers le bas-gauche, plus de regard rivé), puis bobe doucement
       const away=clamp((u-0.5)/1.6,0,1);
       const bx=lerp(cX-78, 300, eInOut(away));
-      const by=lerp(1000, 1300, eInOut(away)) + (away>0.9?(6*Math.sin(u*1.5)+3*Math.sin(u*2.9)):0);
+      const by=lerp(1000, 1300, eInOut(away)) + (away>0.6?(13*Math.sin(u*1.5)+6*Math.sin(u*2.9)):0);
       setBall(bx,by,38,1);
       // étiquettes — le caption actionnable en haut (au-dessus de tout), 'FULLY CASHED' au-dessus de la colonne
       putCap(capF,'DECIDE HOW OFTEN YOU LOOK',CX,566,INK,clamp((u-2.4)/0.8,0,1));

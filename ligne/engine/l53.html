@@ -38,7 +38,7 @@
     const fRtether=mk('line',{stroke:DEAD,'stroke-width':8,'stroke-linecap':'round',opacity:0});
     const fRhead=mk('polygon',{fill:DEAD,opacity:0});
     const ring=mk('circle',{fill:'none',stroke:INK,'stroke-width':6,opacity:0});
-    const path=mk('polyline',{fill:'none',stroke:INK,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const path=mk('polyline',{fill:'none',stroke:INK,'stroke-width':9,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
     const slice=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':15,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
     // pools génériques
     const dots=[]; for(let i=0;i<6;i++)dots.push(mk('circle',{opacity:0}));
@@ -167,7 +167,7 @@
       path.setAttribute('points',all.map(p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '));setOp(path,0.9);
       // entrée TARD (fe) / sortie TÔT après (fx) — révélées dans le temps
       const fe=0.52, fx=0.66;
-      const eShow=clamp((u-0.8)/0.5,0,1), xShow=clamp((u-2.0)/0.5,0,1);
+      const eShow=clamp((u-0.2)/0.5,0,1), xShow=clamp((u-2.0)/0.5,0,1);
       // tranche capturée (teal épais) : n'apparaît qu'après la sortie
       const capShow=clamp((u-2.4)/0.6,0,1);
       const seg=all.filter((p,i)=>{const f=i/N;return f>=fe-1e-6&&f<=fx+1e-6;});
@@ -178,7 +178,7 @@
       // le prix qui court sur TOUT le mouvement (dot voyageuse) — montre ce qui passe avant l'entrée et après la sortie
       const dof=(u*0.15)%1, dp=pt(dof);
       dots[0].setAttribute('cx',dp[0].toFixed(1));dots[0].setAttribute('cy',dp[1].toFixed(1));dots[0].setAttribute('r',12);dots[0].setAttribute('fill',INK);setOp(dots[0],0.9);
-      putCap(capB,'LATE IN,  EARLY OUT',CX,640,INK,clamp((u-3.0)/0.7,0,1));
+      putCap(capB,'LATE IN,  EARLY OUT',CX,640,INK,clamp((u-0.4)/0.7,0,1));
       putCap(capC,'ENTERS LATE',300,720,DEAD,eShow);
       putCap(capD,'EXITS EARLY',770,720,DEAD,xShow);
       putCap(capE,'ALL YOU KEPT',CX,1330,YOU,capShow);
