@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L56 « THE SIGNAL THAT ARRIVES LATE » — l'indicateur RAPPORTE, la structure SE FORME. SANS narrateur.
+       S1 : émotion frame 0 = le prix a DÉJÀ fait sa jambe (montée finie), l'indicateur (en dessous) commence seulement à se
+       retourner en retard. S2 : la mécanique du retard — bougies FERMÉES → calcul → ligne décalée d'un cran ; la bougie en cours
+       est écartée (grise). S3 : le timing — la ligne se retourne et 'CONFIRMED' tombe AU SOMMET ; une position teal entre là et
+       se fait retracer ; portion disponible AVANT (surlignée) vs nulle APRÈS. S4 : la foule — une nappe de ronds fil-de-fer entre
+       au même marqueur, leurs stops en bande juste sous l'entrée, le pullback balaie la bande. S5 : décharge — deux lectures sur
+       le même prix : 'reporting' (ligne en retard) vs 'forming' (structure à l'heure) ; on avance d'un cran, l'écart se voit.
+       Doctrine : gris = perte ; teal = TOI/structure ; pas de brun ; bas du cadre vide ; aucun chiffre. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LE PRIX (jambe : montée -> sommet -> retrace) et l'INDICATEUR (même forme, DÉCALÉE à droite = en retard) ──
+    const X0=150, X1=950, span=X1-X0;
+    function priceY(f){ // f in [0,1] ; sommet vers f=0.46
+      const g=clamp(f,0,1);
+      let y;
+      if(g<0.46) y=lerp(1200,700,eOut(g/0.46));
+      else y=lerp(700,1010,eInOut((g-0.46)/0.54));
+      return y;
+    }
+    function priceX(f){return X0+span*clamp(f,0,1);}
+    const LAG=0.14;                        // l'indicateur décrit le prix avec ce retard
+    function indY(f){return priceY(f-LAG)+250;}   // en dessous, et en retard
+    function pts(fn,a,b,n){const o=[];for(let i=0;i<=n;i++){const f=a+(b-a)*i/n;o.push([priceX(f),fn(f)]);}return o;}
+
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':9,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const indic=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const struct=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const confDot=mk('circle',{r:16,fill:DEAD,opacity:0});     // le marqueur CONFIRMED (en retard)
+    const nowDot=mk('circle',{r:16,fill:YOU,opacity:0});       // le point de structure « maintenant »
+    const posDot=mk('circle',{r:20,fill:YOU,stroke:INK,'stroke-width':3,opacity:0}); // la position qui entre
+    const missBand=mk('rect',{fill:YOU,'fill-opacity':0.18,opacity:0});   // la portion disponible AVANT
+    const stopBand=mk('rect',{fill:DEAD,'fill-opacity':0.22,opacity:0});  // S4 : la bande de stops
+    const CROWD=[]; for(let i=0;i<16;i++)CROWD.push(mk('circle',{r:11,fill:'none',stroke:INK,'stroke-width':4,opacity:0}));
+    const CANDLES=[]; for(let i=0;i<7;i++)CANDLES.push(mk('rect',{rx:2,opacity:0}));
+    const CARR=[]; for(let i=0;i<7;i++)CARR.push(mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'6 6',opacity:0}));
+    const calcLine=mk('line',{stroke:DEAD,'stroke-width':7,opacity:0});
+
+    function drawCurve(el,ptsArr,prog,col,op,wob,u){
+      if(prog<=0){setOp(el,0);return;}
+      const n=ptsArr.length, seg=(n-1)*clamp(prog,0,1), last=Math.floor(seg), frac=seg-last, out=[];
+      for(let i=0;i<=Math.min(last,n-1);i++){const w=(wob||0)*Math.sin((u||0)*1.5+i*0.7);out.push(ptsArr[i][0].toFixed(1)+','+(ptsArr[i][1]+w).toFixed(1));}
+      if(last<n-1){const a=ptsArr[last],b=ptsArr[last+1];out.push((a[0]+(b[0]-a[0])*frac).toFixed(1)+','+(a[1]+(b[1]-a[1])*frac).toFixed(1));}
+      el.setAttribute('points',out.join(' '));el.setAttribute('stroke',col);setOp(el,op);
+    }
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['YOUR INDICATOR SIGNALED.','WHEN?'];
+    const FS=82,lineH=108,y0=214,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':160,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.6));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(38),capF=caption(38);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [price,indic,struct,confDot,nowDot,posDot,missBand,stopBand,calcLine])setOp(e,0);
+      for(const e of CROWD)setOp(e,0);for(const e of CANDLES)setOp(e,0);for(const e of CARR)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LE MOUVEMENT DÉJÀ FAIT, LE SIGNAL EN RETARD (émotion frame 0) ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const wob=3*Math.sin(u*1.4);
+      // le prix : jambe COMPLÈTE (déjà faite), et il commence à redescendre
+      drawCurve(price, pts(priceY,0,0.9,40), 1, INK, 1, 3, u);
+      // l'indicateur (en dessous) : ne se retourne vers le haut qu'APRÈS — il finit sa montée pendant que le prix redescend
+      const ip=clamp((u+0.3)/1.8,0,1);
+      drawCurve(indic, pts(indY,0,0.62,30), ip, DEAD, 1, 3, u);
+      // le point courant du prix (déjà en train de retracer)
+      const pf=0.62+0.28*clamp((u)/6,0,1);
+      nowDot.setAttribute('cx',priceX(pf).toFixed(1));nowDot.setAttribute('cy',(priceY(pf)+wob).toFixed(1));setOp(nowDot,1);
+      putCap(capA,'PRICE — ALREADY MOVED',CX,640,INK,clamp((u-1.8)/0.8,0,1)*gf);
+      putCap(capB,'THE LINE IS A RECEIPT, NOT A SIGNAL',CX,1500,INK,clamp((u-3.2)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LA MÉCANIQUE DU RETARD : bougies fermées -> calcul -> ligne décalée ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const baseY=1160, cw=64, gap=36, x0=190, n=7;
+      const litN=Math.round(clamp((u-0.3)/1.8,0,1)*6);   // les fermées s'illuminent une à une
+      for(let i=0;i<n;i++){const x=x0+i*(cw+gap);
+        const h=[150,210,270,330,300,250,200][i];
+        const forming=(i===n-1);
+        const on=forming?1:(i<=litN?1:0.25);
+        CANDLES[i].setAttribute('x',x);CANDLES[i].setAttribute('y',(baseY-h+3*Math.sin(u*1.5+i)).toFixed(1));
+        CANDLES[i].setAttribute('width',cw);CANDLES[i].setAttribute('height',h);
+        CANDLES[i].setAttribute('fill', forming?PAPER:INK);
+        CANDLES[i].setAttribute('stroke', forming?DEAD:INK);CANDLES[i].setAttribute('stroke-width', forming?4:0);
+        CANDLES[i].setAttribute('stroke-dasharray', forming?'8 8':'0');
+        setOp(CANDLES[i], forming?0.9:on);
+        // flèche de chaque fermée vers le calcul
+        if(!forming && i<=litN){CARR[i].setAttribute('x1',(x+cw/2).toFixed(1));CARR[i].setAttribute('y1',(baseY+30).toFixed(1));
+          CARR[i].setAttribute('x2',(x+cw/2).toFixed(1));CARR[i].setAttribute('y2',(baseY+120).toFixed(1));setOp(CARR[i],0.6);}else setOp(CARR[i],0);
+      }
+      // le calcul -> la ligne qui sort décalée d'un cran (sous les bougies)
+      calcLine.setAttribute('x1',x0);calcLine.setAttribute('x2',(x0+(n-1)*(cw+gap)+cw).toFixed(1));
+      calcLine.setAttribute('y1',(baseY+150).toFixed(1));calcLine.setAttribute('y2',(baseY+150).toFixed(1));setOp(calcLine,clamp((u-1.2)/0.6,0,1));
+      const lp=clamp((u-1.2)/2.2,0,1);
+      drawCurve(indic, pts(f=>baseY+240+70*Math.sin(f*5), 0.06, 0.82, 22), lp, DEAD, 1, 3, u);
+      putCap(capC,'CLOSED CANDLES',430,560,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capD,'STILL FORMING — IGNORED',x0+6*(cw+gap)+cw/2,baseY-330,DEAD,clamp((u-1.6)/0.7,0,1));
+      putCap(capA,'THE LINE NEEDS HISTORY TO EXIST',CX,1520,INK,clamp((u-3.0)/0.8,0,1));
+      putCap(capB,'IT DESCRIBES WHAT PRICE DID',CX,470,INK,clamp((u-2.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE TIMING : CONFIRMED tombe au sommet, la position se fait retracer ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      drawCurve(price, pts(priceY,0,0.95,40), clamp(u/0.5,0,1), INK, 1, 3, u);
+      const ip=clamp((u-0.15)/1.4,0,1);
+      drawCurve(indic, pts(indY,0,0.75,30), ip, DEAD, 1, 3, u);
+      // CONFIRMED : au retournement de l'indicateur = déjà au sommet du prix
+      const cf=0.46, cShow=clamp((u-1.6)/0.5,0,1);
+      confDot.setAttribute('cx',priceX(cf).toFixed(1));confDot.setAttribute('cy',(priceY(cf)-2).toFixed(1));setOp(confDot,cShow);
+      putCap(capC,'CONFIRMED',priceX(cf),priceY(cf)-46,DEAD,cShow);
+      // portion disponible AVANT (surlignée, gauche du marqueur)
+      missBand.setAttribute('x',X0);missBand.setAttribute('y',700);missBand.setAttribute('width',(priceX(cf)-X0).toFixed(1));missBand.setAttribute('height',500);setOp(missBand,clamp((u-2.6)/0.7,0,1));
+      putCap(capD,'THE MOVE YOU MISSED',priceX(0.23),1250,YOU,clamp((u-2.8)/0.7,0,1));
+      // la position entre au marqueur, puis se délave (retrace)
+      const pf=lerp(cf,0.8,clamp((u-2.0)/2.0,0,1));
+      posDot.setAttribute('cx',priceX(pf).toFixed(1));posDot.setAttribute('cy',(priceY(pf)+4*Math.sin(u*1.6)).toFixed(1));
+      posDot.setAttribute('fill', clamp((u-2.4)/1.0,0,1)>0.5?DEAD:YOU);setOp(posDot,cShow);
+      putCap(capB,'YOU ENTER AT THE TOP OF THE LEG',CX,470,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA FOULE : tout le monde entre au même marqueur, les stops balayés ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      drawCurve(price, pts(priceY,0,0.95,40), 1, INK, 1, 3, u);
+      const cf=0.46;
+      confDot.setAttribute('cx',priceX(cf).toFixed(1));confDot.setAttribute('cy',(priceY(cf)-2).toFixed(1));setOp(confDot,1);
+      // la nappe de ronds fil-de-fer qui entrent au marqueur
+      const ent=clamp((u-0.3)/1.2,0,1);
+      for(let i=0;i<CROWD.length;i++){const col=i%4, row=Math.floor(i/4);
+        const cx=priceX(cf)-70+col*46+6*Math.sin(u*1.4+i), cy=priceY(cf)-40+row*40+5*Math.sin(u*1.8+i);
+        CROWD[i].setAttribute('cx',cx.toFixed(1));CROWD[i].setAttribute('cy',cy.toFixed(1));setOp(CROWD[i], ent*(clamp(1-(u-2.4)/0.8,0,1)));}
+      // la bande de stops juste sous l'entrée, que le pullback balaie
+      const bandY=priceY(cf)+70;
+      stopBand.setAttribute('x',priceX(cf)-100);stopBand.setAttribute('y',bandY);stopBand.setAttribute('width',260);stopBand.setAttribute('height',70);
+      const swept=clamp((u-2.0)/1.2,0,1);
+      stopBand.setAttribute('fill', swept>0.5?DEAD:INK);setOp(stopBand, clamp((u-1.0)/0.6,0,1)*(1-0.5*swept));
+      // le point de prix qui descend et TRAVERSE la bande
+      const pf=lerp(cf,0.82,clamp((u-1.6)/2.0,0,1));
+      nowDot.setAttribute('cx',priceX(pf).toFixed(1));nowDot.setAttribute('cy',(priceY(pf)).toFixed(1));nowDot.setAttribute('fill',INK);setOp(nowDot,1);
+      putCap(capC,'EVERYONE — SAME SIGNAL',CX,600,DEAD,clamp((u-1.2)/0.7,0,1));
+      putCap(capD,'STOPS SWEPT',priceX(cf)+30,bandY+120,DEAD,clamp((u-2.4)/0.6,0,1));
+      putCap(capB,'YOU ENTER WHEN THE CROWD DOES',CX,470,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : deux lectures — reporting (en retard) vs forming (à l'heure) ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // la structure (teal, EN HAUT) enregistre le point MAINTENANT
+      drawCurve(struct, pts(priceY,0,0.9,40), 1, YOU, 1, 4, u);
+      // la ligne qui rapporte (grise, EN BAS) — en retard
+      drawCurve(indic, pts(indY,0,0.78,30), 1, DEAD, 1, 4, u);
+      // on avance d'un cran : la structure a déjà le nouveau point, la ligne pas encore
+      const adv=eInOut(clamp((u-1.2)/1.4,0,1));
+      const nf=0.9+0.06*adv;
+      nowDot.setAttribute('cx',priceX(nf).toFixed(1));nowDot.setAttribute('cy',(priceY(nf)+6*Math.sin(u*1.5)).toFixed(1));nowDot.setAttribute('fill',YOU);setOp(nowDot,1);
+      const lf2=0.78-LAG+0.02*adv;
+      confDot.setAttribute('cx',priceX(lf2+LAG).toFixed(1));confDot.setAttribute('cy',(indY(lf2)+6*Math.sin(u*1.5+1)).toFixed(1));setOp(confDot,1);
+      putCap(capC,'STRUCTURE — FORMING NOW',CX,600,YOU,clamp((u-0.5)/0.7,0,1));
+      putCap(capD,'THE LINE — REPORTING LATE',CX,1360,DEAD,clamp((u-0.9)/0.7,0,1));
+      putCap(capB,'READ WHAT’S HAPPENING — NOT WHAT HAPPENED',CX,470,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+{
+  "id": "L56",
+  "engine": "l56",
+  "title": "L56 — THE SIGNAL THAT ARRIVES LATE",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "Your indicator gave you a signal? It gave it to you after the move. That's not a signal, that's a receipt.",
+    "Every one of these tools calculates on candles that already closed. The math needs history to produce a line. So the line always describes what price did — never what it's doing.",
+    "Which means the moment it turns, the move it's describing is already spent. You enter on the confirmation, and the confirmation is the top of the leg.",
+    "So you don't get in early. You get in exactly when the crowd gets in, right before the pullback that takes you out.",
+    "Read the structure that's forming, not the line that's reporting. One of them is happening now. The other is telling you what happened."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : ton indicateur t'a donné un signal ? Il te l'a donné après le mouvement.",
+      "question": "YOUR INDICATOR SIGNALED. WHEN?",
+      "emotion_lever": "CHOC — le mouvement est fini et le signal s'allume seulement maintenant. L'absurdité du retard saute aux yeux.",
+      "cast": {
+        "price": {
+          "type": "path",
+          "note": "le tracé de prix, mouvement déjà accompli"
+        },
+        "line": {
+          "type": "path",
+          "note": "la ligne d'indicateur en dessous, qui se retourne en retard. le fusil = l'écart entre les deux."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un tracé de prix qui a DÉJÀ fait son mouvement — la jambe est montée et terminée. Et EN DESSOUS, une ligne d'indicateur qui commence tout juste à se retourner, en retard. Le DÉCALAGE entre les deux est marqué par un écart horizontal net, souligné. On voit le retard avant même la première phrase."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : le prix commence déjà à redescendre pendant que l'indicateur finit de se retourner vers le haut. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le mouvement déjà terminé + le signal qui s'allume en retard, décalage visible dès la frame 0",
+      "fusil": "l'écart entre le mouvement et le signal — on va voir ce qu'il coûte."
+    },
+    {
+      "id": "s2",
+      "clarity": "Ces outils calculent sur des bougies déjà fermées. Le calcul a besoin d'historique pour produire une ligne. Elle décrit toujours ce que le prix A FAIT.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — la mécanique du retard. Une rangée de bougies. Les bougies FERMÉES s'illuminent une à une et une flèche part de chacune vers le bas, vers un bloc 'calcul'. Le bloc produit un point de la ligne."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on rejoue au ralenti : la bougie en cours de formation, elle, N'ALIMENTE PAS le calcul — elle est grisée, écartée. La ligne ne peut donc être produite qu'avec un cran de retard. Le décalage est structurel, pas un réglage."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le flux bougies-fermées → calcul → ligne, avec la bougie en cours toujours écartée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — les bougies fermées qui alimentent le calcul, la ligne qui sort APRÈS, décalée d'un cran net",
+      "turn": "la ligne ne peut pas décrire le présent. elle est faite du passé."
+    },
+    {
+      "id": "s3",
+      "clarity": "Donc au moment où elle se retourne, le mouvement qu'elle décrit est déjà consommé. Tu entres sur la confirmation, et la confirmation est le haut de la jambe.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — le timing. La jambe de prix se déroule entièrement : départ, montée, sommet. La ligne d'indicateur se retourne et un marqueur 'CONFIRMED' s'allume — PILE au sommet."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une position teal entre à ce marqueur. Immédiatement après, le prix RETRACE. La position se délave. On surligne la portion du mouvement qui était disponible AVANT la confirmation (large, teal pâle) vs celle disponible APRÈS (quasi nulle)."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la grande portion manquée à gauche du marqueur, la portion nulle à droite, la position entamée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — la jambe complète, le point d'entrée sur confirmation placé au sommet, et le retracement qui suit",
+      "turn": "la confirmation arrive quand il n'y a plus rien à prendre."
+    },
+    {
+      "id": "s4",
+      "clarity": "Tu n'entres pas tôt. Tu entres exactement quand la foule entre, juste avant le pullback qui te sort.",
+      "note": "LA scene — le signal partagé crée la zone de stops.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — la foule. Au marqueur de confirmation, une NAPPE de petits ronds fil-de-fer entrent en même temps que toi. Tout le monde a eu le même signal, au même instant."
+        },
+        {
+          "t": "1.5-3",
+          "do": "leurs stops se posent juste sous l'entrée — une bande dense, visible. Le retracement descend, TRAVERSE la bande, la balaie, puis repart. La nappe se délave. Aucune intention n'est prêtée : le prix va simplement là où la liquidité est empilée."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : la bande de stops consommée, le prix reparti, la nappe grise."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — la foule qui entre au même marqueur + le pullback qui balaie la zone de stops juste en dessous",
+      "turn": "un signal que tout le monde reçoit crée l'endroit où tout le monde se fait sortir."
+    },
+    {
+      "id": "s5",
+      "clarity": "Lis la structure qui se forme, pas la ligne qui rapporte. L'une se passe maintenant. L'autre raconte ce qui s'est passé.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4. Le MÊME tracé de prix, deux lectures superposées. EN BAS 'reporting' : la ligne d'indicateur, avec son décalage marqué, étiquetée 'describes what happened'. AU-DESSUS 'forming' : la structure elle-même — les points hauts et bas qui se posent EN TEMPS RÉEL, étiquetée 'happening now'."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on avance le temps d'un cran : la structure enregistre le nouveau point IMMÉDIATEMENT, la ligne, elle, ne bouge pas encore. L'écart se voit en direct. Un seul mot reste : la structure est présente, la ligne est un compte rendu."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : les deux lectures sur le même prix, l'une à l'heure, l'autre en retard. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — deux lectures côte à côte sur le même prix : la ligne qui rapporte (en retard) vs la structure qui se forme (en direct)",
+      "fusil_decharge": "l'écart de S1 se résout : ce n'est pas un réglage à optimiser, c'est la nature du calcul — lire la structure qui se forme, pas la ligne qui rapporte."
+    }
+  ],
+  "total": 50.0,
+  "caption": "The part that got me is where the confirmation actually lands. #trading #priceaction #daytrading #forex",
+  "pinned_comment": "Comment \"MAP\" and I'll send you the 3T engine indicator 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : le retard est STRUCTUREL (le calcul a besoin de bougies fermées), pas un problème de paramètre. Factuel, aucun outil nommé — on parle de la mécanique, pas des marques.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "MAP"
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
