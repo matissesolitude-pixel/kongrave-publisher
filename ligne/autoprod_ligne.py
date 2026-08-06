@@ -153,6 +153,27 @@ def pending() -> list[Path]:
     return sorted(eps, key=lambda p: int(p.stem[1:]))
 
 
+# GARDE-FOU DE PROFONDEUR DE FILE (économie de minutes Actions). La fabrication rend une vidéo
+# (Chromium, ~18 min/run) : c'est le gros poste de conso. Inutile de rendre en avance quand la
+# file a déjà de quoi tenir plusieurs créneaux de publication. Tant que la file contient au moins
+# QUEUE_TARGET_DEPTH épisodes, l'autoprod SORT sans rien fabriquer (court-circuit <1 min). Elle ne
+# reprend que lorsque la publication a fait descendre la file sous le seuil. Réglable par env.
+QUEUE_TARGET_DEPTH = max(1, int(os.environ.get("LIGNE_QUEUE_TARGET", "3")))
+
+
+def queue_depth() -> int:
+    """Nombre d'épisodes déjà en file d'attente de publication (dossiers LXX de queue/)."""
+    if not QUEUE.is_dir():
+        return 0
+    return sum(1 for p in QUEUE.iterdir()
+               if p.is_dir() and EP_RE.match(p.name))
+
+
+def buffer_full() -> bool:
+    """True si la file a déjà QUEUE_TARGET_DEPTH épisodes d'avance : on ne fabrique pas ce run."""
+    return queue_depth() >= QUEUE_TARGET_DEPTH
+
+
 def notify_text(msg: str):
     print(f"[TELEGRAM] {msg}")
     if notify:
@@ -286,11 +307,24 @@ def make_one(jp: Path) -> bool:
 
 
 def main() -> int:
-    # --check : compte les épisodes prêts et sort (court-circuit CI, aucune install/notif nécessaire).
+    # --check : compte le TRAVAIL RÉEL et sort (court-circuit CI, aucune install/notif nécessaire).
+    # Buffer plein -> PENDING=0 : le workflow sort avant toute install (économie de minutes Actions),
+    # exactement comme quand aucun JSON n'est prêt.
     if "--check" in sys.argv:
-        print(f"PENDING={len(pending())}")
+        if buffer_full():
+            print(f"[autoprod] buffer plein ({queue_depth()} ≥ {QUEUE_TARGET_DEPTH}) — rien à fabriquer ce run.")
+            print("PENDING=0")
+        else:
+            print(f"PENDING={len(pending())}")
         return 0
     one = "--one" in sys.argv
+
+    # GARDE-FOU DE PROFONDEUR : la file a déjà de quoi tenir -> on ne rend rien (le gros poste
+    # de conso Actions est le rendu vidéo). On reprend quand la publication l'aura fait descendre.
+    if buffer_full():
+        print(f"[autoprod] buffer plein ({queue_depth()} ≥ {QUEUE_TARGET_DEPTH}) — pas de fabrication ce run.")
+        return 0
+
     eps = pending()
     if not eps:
         print("[autoprod] file de fabrication vide — aucun JSON non fabriqué.")

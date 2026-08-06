@@ -11,7 +11,10 @@ name: LIGNE autoprod (fabrication)
 
 on:
   schedule:
-    - cron: "20 */2 * * *"           # 12 créneaux/jour (UTC) — les créneaux sans épisode prêt sortent en <1 min (court-circuit)
+    - cron: "20 */6 * * *"           # 4 créneaux/jour (UTC) — suffit pour la cadence de publication (6/j).
+                                      # Économie de minutes Actions : le rendu vidéo (~18 min) est le gros poste.
+                                      # Double court-circuit <1 min : (a) aucun épisode prêt, (b) buffer déjà plein
+                                      # (LIGNE_QUEUE_TARGET épisodes en file). On ne rend que lorsque la file baisse.
   workflow_dispatch:
     inputs:
       episode:
