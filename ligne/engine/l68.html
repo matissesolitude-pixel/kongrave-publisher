@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L68 « TWO TRADERS, ONE CALENDAR » — MONTAGE PARALLÈLE : deux bandes horizontales qui avancent TOUJOURS ensemble. SANS narrateur.
+       S1 : deux bandes (haut/bas), même départ, axe en semaines. S2 : semaine 1, les deux perdent (résultats mêlés) ; en HAUT le bloc
+       de méthode change de teinte, en BAS il reste le même. S3 : semaine 4 — HAUT quatre segments courts hachés (méthodes différentes),
+       BAS un seul segment continu 4× plus long, même durée totale. S4 : sous chaque bande un COMPTEUR d'échantillon ; en haut quatre
+       compteurs bas SOUS un seuil, en bas un compteur unique qui FRANCHIT le seuil ; les deux comptes encore plats. S5 : la prise — le
+       seuil posé AU DÉPART, les idées différées dans un carnet + CTA. Doctrine : teal = méthode tenue/toi ; gris = perte/dispersion ;
+       pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', TEAL2='#4A8494';
+    const CX=540, X0=140, X1=940;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const wk=w=>X0+(X1-X0)*(w/4);
+    const TONES=[YOU,DEAD,TEAL2,INK];
+
+    const TY=780, BY=1120;   // axes des deux bandes
+    const axT=mk('line',{stroke:INK,'stroke-width':4,opacity:0}), axB=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    const WT=[]; for(let i=0;i<10;i++)WT.push(mk('line',{stroke:DEAD,'stroke-width':3,opacity:0}));  // graduations semaines
+    // segments de méthode
+    const segT=[]; for(let i=0;i<4;i++)segT.push(mk('rect',{rx:5,opacity:0}));
+    const segB=mk('rect',{fill:YOU,rx:5,opacity:0});
+    // résultats (ticks)
+    const RT=[]; for(let i=0;i<16;i++)RT.push(mk('circle',{r:8,opacity:0}));
+    const RB=[]; for(let i=0;i<16;i++)RB.push(mk('circle',{r:8,opacity:0}));
+    // compteurs d'échantillon (S4) + seuil
+    const cntT=[]; for(let i=0;i<4;i++)cntT.push(mk('rect',{fill:DEAD,rx:4,opacity:0}));
+    const cntB=mk('rect',{fill:YOU,rx:4,opacity:0});
+    const thr=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'12 8',opacity:0});
+    // S5 carnet d'idées différées
+    const book=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,rx:8,opacity:0}); const BL=[]; for(let i=0;i<3;i++)BL.push(mk('line',{stroke:DEAD,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME METHOD. SAME WEEK.','WHAT SEPARATES THEM?'];
+    const FS=62,lineH=88,y0=210,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+80,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,940/Math.max(1,t.length*0.56));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=60, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [axT,axB,segB,cntB,thr,book])setOp(e,0);
+      for(const a of [WT,segT,RT,RB,cntT,BL])for(const e of a)setOp(e,0);hideCaps();}
+
+    function axes(op){axT.setAttribute('x1',X0);axT.setAttribute('x2',X1);axT.setAttribute('y1',TY);axT.setAttribute('y2',TY);setOp(axT,op);
+      axB.setAttribute('x1',X0);axB.setAttribute('x2',X1);axB.setAttribute('y1',BY);axB.setAttribute('y2',BY);setOp(axB,op);
+      for(let i=0;i<=4;i++){const x=wk(i);WT[i].setAttribute('x1',x);WT[i].setAttribute('x2',x);WT[i].setAttribute('y1',TY-12);WT[i].setAttribute('y2',TY+12);setOp(WT[i],op);
+        WT[i+5].setAttribute('x1',x);WT[i+5].setAttribute('x2',x);WT[i+5].setAttribute('y1',BY-12);WT[i+5].setAttribute('y2',BY+12);setOp(WT[i+5],op);}}
+
+    // ═══ S1 — DEUX BANDES, MÊME DÉPART ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      axes(clamp(u/0.3,0,1)*gf);
+      const w=lerp(0.1,1.0,clamp(u/5,0,1));   // les deux avancent ENSEMBLE
+      segT[0].setAttribute('x',X0);segT[0].setAttribute('width',(wk(w)-X0).toFixed(1));segT[0].setAttribute('y',TY-38);segT[0].setAttribute('height',30);segT[0].setAttribute('fill',YOU);setOp(segT[0],clamp(u/0.3,0,1)*gf);
+      segB.setAttribute('x',X0);segB.setAttribute('width',(wk(w)-X0).toFixed(1));segB.setAttribute('y',BY-38);segB.setAttribute('height',30);setOp(segB,clamp(u/0.3,0,1)*gf);
+      putCap(capC,'TRADER A',300,TY-70,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capD,'TRADER B',300,BY-70,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'SAME START — SAME METHOD',CX,1360,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    function results(arr,by,n,u,op){for(let i=0;i<16;i++){if(i<n){const x=X0+30+((i*83)%740);const yy=by-70+((i*37)%40)+3*Math.sin(u*2+i);arr[i].setAttribute('cx',x.toFixed(1));arr[i].setAttribute('cy',yy.toFixed(1));arr[i].setAttribute('fill',(i%3===0)?YOU:DEAD);setOp(arr[i],op);}else setOp(arr[i],0);}}
+
+    // ═══ S2 — SEMAINE 1 : LES DEUX PERDENT, LE HAUT CHANGE DE MÉTHODE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axes(1);
+      const w=lerp(1.0,1.4,clamp(u/2.4,0,1));
+      // résultats mêlés sur les deux
+      const n=Math.min(10,Math.floor(clamp(u/0.5,0,1)*10));
+      results(RT,TY,n,u,clamp(u/0.4,0,1));results(RB,BY,n,u,clamp(u/0.4,0,1));
+      // HAUT : le bloc clignote puis change de teinte
+      const swap=u>1.6;const blink=(!swap&&u>1.2)?(0.4+0.6*Math.abs(Math.sin(u*10))):1;
+      segT[0].setAttribute('x',X0);segT[0].setAttribute('width',(wk(w)-X0).toFixed(1));segT[0].setAttribute('y',TY-38);segT[0].setAttribute('height',30);segT[0].setAttribute('fill',swap?DEAD:YOU);setOp(segT[0],blink);
+      // BAS : reste teal
+      segB.setAttribute('x',X0);segB.setAttribute('width',(wk(w)-X0).toFixed(1));segB.setAttribute('y',BY-38);segB.setAttribute('height',30);setOp(segB,1);
+      putCap(capC,'A → LOOKS FOR A BETTER ONE',CX,TY-70,DEAD,clamp((u-1.8)/0.5,0,1));
+      putCap(capD,'B → STAYS',CX,BY+80,YOU,clamp((u-1.8)/0.5,0,1));
+      putCap(capB,'BOTH LOSE — THAT’S NORMAL',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — SEMAINE 4 : 4 SEGMENTS HACHÉS vs 1 CONTINU ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axes(1);
+      const prog=clamp(u/2.2,0,1);
+      const wend=lerp(1.4,4.0,prog);
+      const br=6*Math.sin(u*1.3)+3*Math.sin(u*2.4);   // respiration continue
+      // HAUT : quatre segments courts, teintes différentes, séparés par des trous
+      for(let i=0;i<4;i++){const a=wk(i)+8,b=wk(i+1)-8;const vis=(wend>i+0.1);const wgrow=clamp((wend-i),0,1);const xe=lerp(a,b,wgrow);
+        segT[i].setAttribute('x',a.toFixed(1));segT[i].setAttribute('width',Math.max(0,(xe-a)).toFixed(1));segT[i].setAttribute('y',(TY-38+br).toFixed(1));segT[i].setAttribute('height',30);segT[i].setAttribute('fill',TONES[i]);setOp(segT[i],vis?1:0);}
+      putCap(capC,'FOUR METHODS',CX,TY-70,DEAD,clamp((u-1.0)/0.5,0,1));
+      // BAS : un seul segment continu, même teinte
+      segB.setAttribute('x',X0);segB.setAttribute('width',(wk(wend)-X0).toFixed(1));segB.setAttribute('y',(BY-38-br).toFixed(1));segB.setAttribute('height',30);setOp(segB,1);
+      putCap(capD,'ONE METHOD — FOUR TIMES LONGER',CX,BY+80,YOU,clamp((u-1.0)/0.5,0,1));
+      putCap(capB,'SAME DURATION — DIFFERENT DEPTH',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LES COMPTEURS D'ÉCHANTILLON ET LE SEUIL ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axes(0.5);
+      // segments finaux rappelés (fins)
+      for(let i=0;i<4;i++){const a=wk(i)+8,b=wk(i+1)-8;segT[i].setAttribute('x',a.toFixed(1));segT[i].setAttribute('width',(b-a).toFixed(1));segT[i].setAttribute('y',TY-30);segT[i].setAttribute('height',16);segT[i].setAttribute('fill',TONES[i]);setOp(segT[i],0.7);}
+      segB.setAttribute('x',X0);segB.setAttribute('width',(X1-X0).toFixed(1));segB.setAttribute('y',BY-30);segB.setAttribute('height',16);setOp(segB,0.7);
+      const fill=clamp((u-0.4)/2.0,0,1);
+      const thrY=1000;
+      thr.setAttribute('x1',120);thr.setAttribute('x2',960);thr.setAttribute('y1',thrY);thr.setAttribute('y2',thrY);setOp(thr,clamp(u/0.4,0,1));
+      putCap(capA,'SAMPLE THRESHOLD',275,thrY-18,INK,clamp((u-0.4)/0.5,0,1));
+      // HAUT : quatre compteurs bas, sous le seuil
+      for(let i=0;i<4;i++){const x=(wk(i)+wk(i+1))/2-20;const h=lerp(0,70,fill)+3*Math.sin(u*1.6+i);cntT[i].setAttribute('x',x.toFixed(1));cntT[i].setAttribute('width',40);cntT[i].setAttribute('y',(thrY+130-h).toFixed(1));cntT[i].setAttribute('height',h.toFixed(1));setOp(cntT[i],clamp((u-0.6)/0.5,0,1));}
+      putCap(capC,'FOUR SHORT COUNTS',CX,1270,DEAD,clamp((u-1.4)/0.5,0,1));
+      // BAS : un compteur unique qui FRANCHIT le seuil
+      const H=lerp(0,320,fill)+4*Math.sin(u*1.4);cntB.setAttribute('x',CX-25);cntB.setAttribute('width',50);cntB.setAttribute('y',(thrY+130-H).toFixed(1));cntB.setAttribute('height',H.toFixed(1));setOp(cntB,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'ONLY ONE HAS ENOUGH TO KNOW ANYTHING',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE SEUIL POSÉ AU DÉPART + LE CARNET + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axB.setAttribute('x1',X0);axB.setAttribute('x2',X1);axB.setAttribute('y1',1000);axB.setAttribute('y2',1000);setOp(axB,clamp(u/0.3,0,1));
+      for(let i=0;i<=4;i++){const x=wk(i);WT[i+5].setAttribute('x1',x);WT[i+5].setAttribute('x2',x);WT[i+5].setAttribute('y1',988);WT[i+5].setAttribute('y2',1012);setOp(WT[i+5],clamp(u/0.3,0,1));}
+      // le seuil posé AVANT la 1re semaine
+      const thrX=wk(1.2);
+      thr.setAttribute('x1',thrX);thr.setAttribute('x2',thrX);thr.setAttribute('y1',900);thr.setAttribute('y2',1100);thr.setAttribute('stroke',YOU);setOp(thr,clamp((u-0.3)/0.4,0,1));
+      putCap(capC,'THRESHOLD SET AT THE START',CX,870,YOU,clamp((u-0.4)/0.5,0,1));
+      // le segment continu se remplit jusqu'au seuil puis au-delà
+      const w=lerp(0.1,3.6,clamp((u-0.6)/2.2,0,1));
+      segB.setAttribute('x',X0);segB.setAttribute('width',(wk(w)-X0).toFixed(1));segB.setAttribute('y',984);segB.setAttribute('height',30);setOp(segB,clamp(u/0.3,0,1));
+      // le carnet d'idées différées
+      book.setAttribute('x',380);book.setAttribute('y',(1180+6*Math.sin(u*1.4)).toFixed(1));book.setAttribute('width',320);book.setAttribute('height',150);setOp(book,clamp((u-1.2)/0.5,0,1));
+      for(let i=0;i<3;i++){BL[i].setAttribute('x1',410);BL[i].setAttribute('x2',670);BL[i].setAttribute('y1',(1220+i*36+6*Math.sin(u*1.4)).toFixed(1));BL[i].setAttribute('y2',(1220+i*36+6*Math.sin(u*1.4)).toFixed(1));setOp(BL[i],clamp((u-1.4-i*0.1)/0.5,0,1)*0.7);}
+      putCap(capD,'IDEAS DEFERRED — NOT SWITCHED TO',CX,1370,INK,clamp((u-2.2)/0.6,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "LINE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'WHAT A REAL SAMPLE LOOKS LIKE',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

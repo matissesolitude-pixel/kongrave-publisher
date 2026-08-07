@@ -1,0 +1,151 @@
+{
+  "id": "L68",
+  "engine": "l68",
+  "title": "L68 — TWO TRADERS, ONE CALENDAR",
+  "_cellule": "SIRX (Glacier) · Curiosité · Speed · regard=son moi passé · passé · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders start the same week with the same method. Watch what happens to each of them.",
+    "Week one, both take losses. That's normal — any method loses often. One of them starts looking for a better one.",
+    "By week four, the first trader has run four methods. The second has run one, four times longer.",
+    "Neither of them has a good week yet. But only one of them has enough trades to know anything at all.",
+    "A method you switch before the sample fills teaches you nothing. Comment LINE and I'll send you the checklist on what a real sample looks like."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MONTAGE PARALLÈLE : deux traders lancés au même instant, sur deux bandes horizontales.",
+      "question": "SAME METHOD. SAME WEEK. WHAT SEPARATES THEM?",
+      "emotion_lever": "CURIOSITÉ + SYMÉTRIE — deux départs identiques, et l'annonce qu'ils vont diverger.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "bande haute — le trader qui changera"
+        },
+        "lane2": {
+          "type": "path",
+          "note": "bande basse — le trader qui restera"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : l'écran est divisé en DEUX BANDES HORIZONTALES (haut / bas), chacune avec un axe temporel gradué en semaines. Les deux partent du MÊME point de départ, avec la MÊME méthode (un bloc teal identique en tête de chaque bande). Le mouvement démarre déjà : les deux avancent en parallèle."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : les deux bandes avancent d'un cran, toujours identiques. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'écran divisé en deux bandes horizontales, deux traders partis exactement au même point, même méthode",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux bandes avancent TOUJOURS en même temps, jamais l'une après l'autre. La divergence se construit dans le TEMPS, pas dans l'espace."
+    },
+    {
+      "id": "s2",
+      "clarity": "Semaine 1 : les deux perdent. C'est normal — toute méthode perd souvent.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux bandes avancent d'une semaine. Sur CHACUNE, des résultats se posent : quelques gris, quelques teal. Les deux distributions sont comparables — normales."
+        },
+        {
+          "t": "1.5-3",
+          "do": "dans la bande HAUTE, le bloc de méthode teal se met à CLIGNOTER, puis est REMPLACÉ par un bloc d'une autre teinte. Dans la bande BASSE, le bloc reste identique. Premier écart : pas dans les résultats, dans la réaction aux résultats."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux bandes qui avancent, un bloc changé en haut, inchangé en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux bandes qui encaissent des pertes identiques + la divergence qui s'amorce dans la bande haute",
+      "turn": "les pertes étaient les mêmes. la réponse aux pertes ne l'est plus."
+    },
+    {
+      "id": "s3",
+      "clarity": "Semaine 4 : quatre méthodes en haut, une seule en bas — quatre fois plus longue.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux bandes défilent jusqu'à la semaine 4, TOUJOURS EN PARALLÈLE. En HAUT : quatre segments courts, chacun d'une teinte différente, séparés par des ruptures nettes."
+        },
+        {
+          "t": "1.5-3",
+          "do": "en BAS : un SEUL segment, continu, quatre fois plus long, de la même teinte du début à la fin. Les deux bandes couvrent exactement la même durée. La différence n'est pas le temps passé — c'est le nombre de ruptures."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les quatre segments hachés en haut, le segment continu en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux bandes à la semaine 4 : quatre segments courts et colorés en haut, un seul segment long en bas",
+      "turn": "même durée. quatre départs contre un."
+    },
+    {
+      "id": "s4",
+      "clarity": "Aucun des deux n'a encore eu une bonne semaine. Mais un seul a de quoi savoir quelque chose.",
+      "note": "LA scene — le montage parallèle livre son verdict : ce n'est pas le résultat qui diverge, c'est la CONNAISSANCE.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Sous chaque bande, un COMPTEUR D'ÉCHANTILLON. En haut : quatre compteurs séparés, chacun à un niveau bas — et une ligne de SEUIL horizontale passe bien au-dessus d'eux tous. Aucun n'atteint le seuil."
+        },
+        {
+          "t": "2-3.5",
+          "do": "en bas : UN compteur unique, alimenté sans interruption, qui FRANCHIT la ligne de seuil. Les deux barres de compte, elles, sont encore plates : personne n'a gagné. Mais un seul a de quoi conclure. On souligne : même effort, même durée, une seule mesure exploitable."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les quatre compteurs sous le seuil, le compteur unique au-dessus."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le compteur de trades sous chaque bande : quatre petits échantillons inexploitables vs un échantillon qui atteint le seuil",
+      "turn": "ni l'un ni l'autre n'a gagné. un seul peut apprendre."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : sur la bande basse, une ligne de SEUIL est posée AU DÉPART, avant la première semaine — un nombre de trades sous lequel on ne juge rien. À côté, un petit CARNET reçoit les idées de changement : elles ne sont pas rejetées, elles sont DATÉES pour après le seuil. La curiosité est rangée, pas éteinte."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA À L'ÉCRAN, zone médiane : « Comment LINE » + « checklist: what a real sample looks like ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le seuil posé au départ, le carnet d'idées différées, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le seuil d'échantillon écrit d'avance + le carnet d'idées différées, et le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"LINE\" for the checklist on what a real sample looks like. Two traders start the same week with the same method — watch what four weeks do to each of them.\n\nBoth lose in week one, because any method loses often. One starts looking for a better one. By week four the first has run four methods and the second has run one, four times longer. Neither has had a good week yet, but only one has enough trades to know anything.\n\nTHE LINE — the threshold is set before the first trade, and new ideas get a date, not a veto.\n\n#trading #tradingstrategy #backtesting #daytrading #forex #discipline #propfirm #priceaction #tradingeducation #trader",
+  "pinned_comment": "Neither of them had a good week. Only one of them can learn anything from it. Comment \"LINE\" for the checklist 👊",
+  "_rules": {
+    "cta_keyword": "LINE",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "MECANIQUE",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
