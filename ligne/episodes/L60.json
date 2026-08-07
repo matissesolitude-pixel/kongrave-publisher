@@ -1,0 +1,151 @@
+{
+  "id": "L60",
+  "engine": "l60",
+  "title": "L60 — THE TOP YOU KEEP CUTTING OFF",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "Watching the chart all day makes you a better trader? It's quietly cutting the top off every winner you have.",
+    "Watching doesn't give you information. It gives you exposure to noise — price moves constantly for reasons that have nothing to do with your idea.",
+    "And every one of those wiggles reaches you as a small pulse of doubt. The trade hasn't changed. You have. So you protect the profit early, before the plan said to.",
+    "Now look at the arithmetic. Your winners get shortened, every one of them. Your losses keep their full size, because the stop doesn't flinch. You cut the only side that was paying you.",
+    "Decide how often you're allowed to look, and write it into the plan next to the stop and the target. The position doesn't know you're watching. Only you do. Comment PROFILE, and I'll send you the free trader test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : surveiller le graphe toute la journée te rend meilleur ? Ça coupe le haut de chacun de tes gagnants.",
+      "question": "WHAT IS WATCHING COSTING YOU?",
+      "emotion_lever": "TENSION — le potentiel est visiblement raboté, et une tranche de plus se détache sous nos yeux.",
+      "cast": {
+        "pos": {
+          "type": "gauge",
+          "note": "la position teal qui monte"
+        },
+        "top": {
+          "type": "block",
+          "note": "le haut du potentiel, découpé en tranches non réclamées. le fusil = les tranches."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : une position teal qui monte bien, et au-dessus d'elle sa zone de potentiel. Mais le HAUT est DÉJÀ découpé — trois tranches manquantes, coupées net, qui flottent à côté, non réclamées. Le potentiel est là, amputé, avant même la première phrase."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : la position monte encore un peu, une quatrième tranche se détache du haut et rejoint les autres. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le potentiel du trade déjà raboté par le haut, tranches détachées et non réclamées, dès la frame 0",
+      "fusil": "les tranches détachées — on va voir qui les découpe."
+    },
+    {
+      "id": "s2",
+      "clarity": "Regarder ne donne pas d'information. Ça donne de l'exposition au BRUIT — le prix bouge en permanence pour des raisons étrangères à ton idée.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — deux objets distincts. L'IDÉE du trade : un trait teal net, parfaitement immobile. Le PRIX : un tracé qui frémit en permanence autour, secousses dans tous les sens."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on superpose une mesure : le trait de l'idée ne bouge PAS d'un pixel pendant que le prix fait des dizaines de micro-mouvements. Ce que tu regardes toute la journée, ce n'est pas ton idée — c'est le bruit autour d'elle."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le trait immobile, le prix qui s'agite autour, l'écart d'activité évident."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — l'idée (trait stable) vs le prix (qui frémit), les deux séparés à l'écran",
+      "turn": "tu ne surveilles pas ton idée. tu surveilles le bruit."
+    },
+    {
+      "id": "s3",
+      "clarity": "Et chaque secousse t'arrive comme une petite impulsion de doute. Le trade n'a pas changé. Toi si. Alors tu protèges le gain tôt, avant ce que disait le plan.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — la transformation. Le gain en cours est montré comme une COLONNE en construction, solide, qui monte. Chaque secousse du prix envoie une impulsion vers elle."
+        },
+        {
+          "t": "1.5-3",
+          "do": "sous les impulsions, la colonne se RE-LIT : elle devient un objet fragile posé en équilibre, qu'on pourrait faire tomber. Une main teal se précipite pour l'ATTRAPER — sortie précoce. Une tranche du haut se détache, non réclamée. Le plan, lui, indiquait un niveau bien plus haut, marqué en pointillé, jamais atteint."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : l'objet serré trop tôt, la tranche abandonnée, le niveau du plan intact au-dessus."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — les impulsions qui frappent la boule, le gain qui passe de 'construction' à 'objet fragile'",
+      "turn": "le doute ne change pas le trade. il raccourcit ta main."
+    },
+    {
+      "id": "s4",
+      "clarity": "L'arithmétique : tes gagnants sont raccourcis, tous. Tes pertes gardent leur taille pleine, parce que le stop ne bronche pas. Tu as coupé le seul côté qui te payait.",
+      "note": "LA scene — l'asymétrie : le doute ne coupe que les gagnants.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — la distribution. À droite les GAGNANTS : des colonnes teal de hauteurs variées, certaines très hautes. À gauche les PERTES : des colonnes grises, toutes de taille contrôlée par le stop."
+        },
+        {
+          "t": "1.5-3",
+          "do": "l'effet du regard s'applique : une ligne horizontale descend et RABOTE tous les gagnants au même niveau bas. Les plus hauts — ceux qui portaient tout le résultat — perdent le plus. Les pertes, elles, ne bougent PAS d'un pixel : le stop est mécanique, il ne doute pas. Seul le côté payant a été coupé."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : la distribution asymétrique — gagnants nivelés bas, pertes intactes — et la pile de tranches rabotées à côté, énorme."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — la distribution entière : tous les gagnants rabotés au même niveau bas, les pertes intactes",
+      "turn": "le doute n'atteint pas tes pertes. il ne coupe que ce qui te payait."
+    },
+    {
+      "id": "s5",
+      "clarity": "Décide à quelle fréquence tu as le droit de regarder, et écris-le dans le plan, à côté du stop et de la cible. La position ne sait pas que tu la regardes.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4. Le plan du trade s'affiche avec ses éléments habituels : STOP, TARGET. Un TROISIÈME élément vient se poser au même niveau, avec le même statut : 'LOOK FREQUENCY'. Il n'est pas une envie, il est une règle du plan."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la position est laissée seule : le regard se détourne, le prix travaille, les secousses passent sans atteindre personne. La colonne monte jusqu'au niveau du plan — ENTIÈRE, aucune tranche détachée. À côté, la version surveillée est rappelée, rabotée. Le même trade, deux hauteurs."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le plan à trois règles et la colonne complète, intacte. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — le plan à trois règles (stop, cible, fréquence de regard) et la colonne encaissée entière",
+      "fusil_decharge": "les tranches de S1 se résolvent : c'est le regard qui les découpait — la fréquence de regard devient une règle du plan, au même rang que le stop."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"PROFILE\" to find your trader type. Watching the chart all day makes you a better trader? It’s quietly cutting the top off every winner you have.\n\nStaring rewards action, so you exit on noise — you cut winners early and let losers run. The screen isn’t information, it’s temptation, and it eats the tail that pays for everything.\n\nTHE LINE — the position doesn’t know you’re watching. Only you do, and it’s costing you the top.\n\n#trading #tradingpsychology #discipline #daytrading #forex #tradingeducation #patience #riskmanagement #mindset #trader",
+  "pinned_comment": "Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : sur-surveillance et sortie précoce, avec l'ASYMÉTRIE comme cœur (le doute coupe les gagnants, jamais les pertes).",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "PROFILE",
+    "cta_spoken_added": "Comment PROFILE, and I'll send you the free trader test."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

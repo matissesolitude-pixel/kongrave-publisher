@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L60 « THE TOP YOU KEEP CUTTING OFF » — surveiller le graphe rabote le haut de chaque gagnant. SANS narrateur.
+       S1 : une position teal qui monte, mais le HAUT est déjà découpé — des tranches se détachent et s'échappent. S2 : deux objets
+       distincts — l'IDÉE (trait teal immobile) vs le PRIX (tracé qui frémit) ; ce que tu regardes = bruit. S3 : le gain en cours
+       est une COLONNE solide ; sous les secousses elle se re-lit comme un objet fragile qu'une prise serre trop tôt — la tranche du
+       haut abandonnée, le niveau du plan intact au-dessus. S4 : la distribution — gagnants teal de hauteurs variées RABOTÉS à plat
+       par une ligne qui descend, pertes grises intactes ; la pile de tranches rabotées énorme à côté. S5 : le plan à trois règles
+       STOP/TARGET/LOOK, la position laissée seule monte pleine + CTA. Doctrine : teal = gain/toi ; gris = perte ; pas de brun ;
+       bas du cadre vide ; la hauteur rabotée = le punch visuel. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const BASE=1360;                                  // ligne de sol des colonnes
+    // — éléments réutilisés —
+    const col=mk('rect',{fill:YOU,rx:6,opacity:0});                        // colonne du gain (S1/S3/S5)
+    const potZone=mk('rect',{fill:'none',stroke:YOU,'stroke-width':4,'stroke-dasharray':'12 10',rx:8,opacity:0});
+    const SLICE=[]; for(let i=0;i<6;i++)SLICE.push(mk('rect',{rx:5,opacity:0}));   // tranches détachées du haut
+    const idea=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});   // S2 l'idée immobile
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round',opacity:0}); // S2 le prix qui frémit
+    const grip1=mk('path',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round',opacity:0});      // S3 la prise (crochet)
+    const grip2=mk('path',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    const planLine=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0});
+    const WIN=[]; for(let i=0;i<6;i++)WIN.push(mk('rect',{fill:YOU,rx:5,opacity:0}));   // S4 gagnants
+    const LOSS=[]; for(let i=0;i<4;i++)LOSS.push(mk('rect',{fill:DEAD,rx:5,opacity:0})); // S4 pertes
+    const plane=mk('line',{stroke:INK,'stroke-width':6,opacity:0});                      // S4 la ligne qui rabote
+    const PILE=[]; for(let i=0;i<8;i++)PILE.push(mk('rect',{fill:YOU,'fill-opacity':0.5,rx:4,opacity:0})); // S4 pile de tranches
+    const planCard=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:14,opacity:0});  // S5 le plan
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':100,opacity:0});
+
+    function pricePts(cx,cy,w,u,amp){const o=[];const n=40;for(let i=0;i<=n;i++){const f=i/n;const x=cx-w/2+w*f;const y=cy+amp*Math.sin(f*22+u*6)+amp*0.5*Math.sin(f*38+u*9);o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['WHAT IS WATCHING','COSTING YOU?'];
+    const FS=82,lineH=108,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.56));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [col,potZone,idea,price,grip1,grip2,planLine,plane,planCard,counter])setOp(e,0);
+      for(const a of [SLICE,WIN,LOSS,PILE])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LA POSITION QUI MONTE, LE HAUT DÉJÀ DÉCOUPÉ ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // colonne teal qui monte
+      const h=lerp(240,460,eOut(clamp(u/5,0,1)))+8*Math.sin(u*1.6);
+      col.setAttribute('x',CX-110);col.setAttribute('width',220);col.setAttribute('y',(BASE-h).toFixed(1));col.setAttribute('height',h.toFixed(1));setOp(col,1);
+      // la zone de potentiel (ce que ça pourrait donner) au-dessus, en pointillés
+      potZone.setAttribute('x',CX-110);potZone.setAttribute('width',220);potZone.setAttribute('y',(BASE-h-320).toFixed(1));potZone.setAttribute('height',320);setOp(potZone,clamp((u-0.6)/0.8,0,1)*0.8);
+      // tranches déjà découpées, mises de côté À DROITE de la zone de potentiel (jamais dans le texte de la question)
+      const nSlice=Math.min(4,1+Math.floor(u/1.5));
+      for(let i=0;i<nSlice;i++){const age=clamp((u-i*1.5)/2,0,1);const sx=690+i*14+30*age;const sy=(BASE-h-300)+i*66+18*age+6*Math.sin(u*1.3+i);SLICE[i].setAttribute('x',sx.toFixed(1));SLICE[i].setAttribute('y',sy.toFixed(1));SLICE[i].setAttribute('width',150);SLICE[i].setAttribute('height',44);SLICE[i].setAttribute('fill',YOU);setOp(SLICE[i],(0.85-age*0.35)*clamp(age/0.3,0,1));}
+      putCap(capB,'THE TOP — ALREADY CUT OFF',CX,1520,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — L'IDÉE IMMOBILE vs LE PRIX QUI FRÉMIT ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // l'IDÉE : trait teal parfaitement immobile (gauche)
+      idea.setAttribute('x1',300);idea.setAttribute('x2',300);idea.setAttribute('y1',760);idea.setAttribute('y2',1160);setOp(idea,clamp(u/0.6,0,1));
+      putCap(capC,'THE IDEA — STILL',300,720,YOU,clamp((u-0.3)/0.6,0,1));
+      // le PRIX : tracé qui s'agite en permanence (droite)
+      price.setAttribute('points',pricePts(760,960,300,u,42));setOp(price,clamp(u/0.6,0,1));
+      putCap(capD,'THE PRICE — NOISE',760,720,INK,clamp((u-0.3)/0.6,0,1));
+      // le compteur d'activité : idée 0, prix qui grimpe
+      const moves=Math.floor(clamp((u-1.2)/0.12,0,60));
+      counter.textContent=moves+' MOVES';counter.setAttribute('font-size',72);counter.setAttribute('x',760);counter.setAttribute('y',1240);counter.setAttribute('fill',INK);setOp(counter,clamp((u-1.2)/0.5,0,1));
+      const c0=mk;  // (idée : 0 moves) label statique
+      putCap(capA,'0 MOVES',300,1240,YOU,clamp((u-1.2)/0.5,0,1));
+      putCap(capB,'WATCHING IS EXPOSURE TO NOISE',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE GAIN SOLIDE RE-LU COMME FRAGILE, SERRÉ TROP TÔT ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le niveau du plan, intact, au-dessus
+      const planY=760;
+      planLine.setAttribute('x1',180);planLine.setAttribute('x2',900);planLine.setAttribute('y1',planY);planLine.setAttribute('y2',planY);setOp(planLine,clamp(u/0.5,0,1));
+      putCap(capC,'PLAN TARGET',CX,planY-26,INK,clamp((u-0.3)/0.5,0,1));
+      // la colonne monte vers le plan, tremble sous les secousses
+      const breath=9*Math.sin(u*1.5)+5*Math.sin(u*2.6);   // respiration continue (jamais figé)
+      const grabbed=clamp((u-3.0)/0.8,0,1);
+      const hFull=560, hCut=380;
+      const h=lerp(300,hFull,eOut(clamp(u/2.4,0,1)));
+      const hNow=lerp(h,hCut,grabbed)+ (grabbed<1?6*Math.sin(u*7):0);   // serrée trop tôt -> raccourcie
+      col.setAttribute('x',CX-110);col.setAttribute('width',220);col.setAttribute('y',(BASE-hNow+breath).toFixed(1));col.setAttribute('height',hNow.toFixed(1));setOp(col,1);
+      // la tranche du haut abandonnée (entre hCut et hFull) devient grise et se détache
+      if(grabbed>0){const sy=BASE-hFull;SLICE[0].setAttribute('x',CX-110);SLICE[0].setAttribute('width',220);SLICE[0].setAttribute('y',(sy- 40*grabbed - 26*Math.sin(u*1.1)).toFixed(1));SLICE[0].setAttribute('height',(hFull-hCut).toFixed(1));SLICE[0].setAttribute('fill',DEAD);setOp(SLICE[0],grabbed*0.8);}
+      // la prise teal qui serre (deux crochets)
+      const gy=BASE-hCut+breath;
+      grip1.setAttribute('d',`M ${CX-150} ${gy-30} q -26 26 0 52`);grip2.setAttribute('d',`M ${CX+150} ${gy-30} q 26 26 0 52`);
+      setOp(grip1,grabbed);setOp(grip2,grabbed);
+      putCap(capD,'PROTECTED TOO EARLY',CX,1470,DEAD,grabbed);
+      putCap(capB,'THE TRADE DIDN’T CHANGE — YOU DID',CX,660,INK,clamp((u-4.0)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA DISTRIBUTION RABOTÉE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const winH=[300,470,240,540,360,500];         // gagnants variés
+      const lossH=[300,360,300,340];                 // pertes pleines
+      const planeY=BASE-260;                          // niveau du rabot (bas)
+      const cut=clamp((u-1.5)/1.2,0,1);
+      // pertes (gauche) intactes
+      for(let i=0;i<4;i++){const x=150+i*70;LOSS[i].setAttribute('x',x);LOSS[i].setAttribute('width',54);LOSS[i].setAttribute('y',(BASE-lossH[i]+3*Math.sin(u*2+i)).toFixed(1));LOSS[i].setAttribute('height',lossH[i]);setOp(LOSS[i],1);}
+      putCap(capC,'LOSSES — FULL SIZE',270,BASE+70,DEAD,clamp((u-0.6)/0.6,0,1));
+      // gagnants (droite) rabotés au niveau plane
+      for(let i=0;i<6;i++){const x=560+i*80;const full=winH[i];const capped=Math.min(full, lerp(full, BASE-planeY, cut));const wob=3*Math.sin(u*2+i);WIN[i].setAttribute('x',x);WIN[i].setAttribute('width',60);WIN[i].setAttribute('y',(BASE-capped+wob).toFixed(1));WIN[i].setAttribute('height',capped.toFixed(1));setOp(WIN[i],1);}
+      putCap(capD,'WINNERS — PLANED FLAT',760,BASE+70,YOU,clamp((u-0.6)/0.6,0,1));
+      // la ligne qui rabote
+      plane.setAttribute('x1',520);plane.setAttribute('x2',1010);plane.setAttribute('y1',lerp(BASE-560,planeY,cut).toFixed(1));plane.setAttribute('y2',lerp(BASE-560,planeY,cut).toFixed(1));setOp(plane,clamp(u/0.5,0,1));
+      // la pile ÉNORME de tranches rabotées, à côté (au-dessus droite)
+      for(let i=0;i<8;i++){const stackY=560-i*46;const ap=clamp((u-1.8-i*0.12)/0.5,0,1);PILE[i].setAttribute('x',900);PILE[i].setAttribute('width',120);PILE[i].setAttribute('y',stackY);PILE[i].setAttribute('height',38);setOp(PILE[i],ap*0.7);}
+      putCap(capB,'YOU CUT THE ONLY SIDE THAT PAID',CX,620,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE PLAN À TROIS RÈGLES, LA POSITION LAISSÉE SEULE ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // la carte du plan (haut) : STOP / TARGET / LOOK
+      planCard.setAttribute('x',150);planCard.setAttribute('y',470);planCard.setAttribute('width',780);planCard.setAttribute('height',300);setOp(planCard,clamp(u/0.6,0,1));
+      const rows=[['STOP',DEAD,0],['TARGET',YOU,1],['LOOK  2× / DAY',INK,2]];
+      for(const [txt,col2,i] of rows){const ap=clamp((u-0.4-i*0.4)/0.5,0,1);putCap(i===0?capA:i===1?capC:capD,txt,540,545+i*82,col2,ap);}
+      // la position laissée seule monte PLEINE, intacte
+      const breath=9*Math.sin(u*1.4)+5*Math.sin(u*2.5);   // respiration continue (jamais figé)
+      const h=lerp(300,560,eOut(clamp((u-1.6)/2.2,0,1)));
+      col.setAttribute('x',CX-110);col.setAttribute('width',220);col.setAttribute('y',(BASE-h+breath).toFixed(1));col.setAttribute('height',h.toFixed(1));setOp(col,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'THE POSITION DOESN’T KNOW YOU’RE WATCHING',CX,BASE+70,INK,clamp((u-2.4)/0.7,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
