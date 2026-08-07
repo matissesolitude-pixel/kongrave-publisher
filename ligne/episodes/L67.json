@@ -1,0 +1,155 @@
+{
+  "id": "L67",
+  "engine": "l67",
+  "title": "L67 — THE SAME FRAME, TWICE",
+  "_cellule": "OERX (Assaillant) · Éducation · Risk · regard=les autres traders · présent · −−",
+  "_dispositif": "RIME VISUELLE",
+  "voice": [
+    "Look at this frame. Remember it — you'll see it again in forty seconds, and it will mean the opposite.",
+    "This is the moment after a win. Same chart, same size box, same account bar. The read feels sharp. Everything is aligned.",
+    "So the next position goes up. Not because the setup improved — because you did. That's the substitution nobody catches.",
+    "The market didn't change. Your sample didn't grow. The only thing that moved was how you feel, and it moved the one number that decides survival.",
+    "Size is decided before the session, not after a win. Comment MAP and I'll send you the 3T engine indicator."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "RIME VISUELLE — on POSE le cadre de référence. Il reviendra à l'identique en S4.",
+      "question": "WHAT DECIDES YOUR SIZE?",
+      "emotion_lever": "ATTENTION DIRIGÉE — on demande explicitement de retenir l'image. Le spectateur regarde mieux.",
+      "cast": {
+        "chart": {
+          "type": "path",
+          "note": "le tracé, en haut"
+        },
+        "box": {
+          "type": "block",
+          "note": "la boîte de taille, au centre — L'OBJET DE LA RIME"
+        },
+        "acct": {
+          "type": "gauge",
+          "note": "la barre de compte, en bas"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : une composition NETTE et mémorisable — un tracé de prix en haut, une BOÎTE DE TAILLE au centre (carrée, teal, de dimension précise), une barre de compte en bas. La composition est volontairement simple et symétrique : elle doit être RECONNAISSABLE au premier regard."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la boîte de taille pulse doucement. le ? fade. LA COMPOSITION EXACTE EST À MÉMORISER — elle revient en S4."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "un cadre précis et mémorisable : chart + boîte de taille + barre de compte, dans une composition qu'on pourra reproduire exactement",
+      "dispositif_cle": "RIME VISUELLE : ce cadrage EXACT (positions, tailles, proportions) doit être reproductible au pixel en S4. C'est le dispositif."
+    },
+    {
+      "id": "s2",
+      "clarity": "C'est le moment après un gain. Tout semble aligné.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Un gain teal vient se poser sur la barre de compte : elle monte d'un cran. Le tracé du haut s'éclaircit — la lecture paraît limpide, évidente."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une onde part de la barre de compte et remonte vers le HAUT du cadre, vers la zone de décision. Elle est teal, agréable, pas menaçante. C'est l'état après un gain : tout paraît aligné."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : l'onde qui circule, la lecture claire, la boîte de taille encore INCHANGÉE."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le gain qui vient d'être encaissé + la lecture qui paraît nette — l'état euphorique montré sans jugement",
+      "turn": "rien n'a bougé sur le graphe. quelque chose a bougé ailleurs."
+    },
+    {
+      "id": "s3",
+      "clarity": "La substitution : la taille monte, mais ce n'est pas le setup qui a changé.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La BOÎTE DE TAILLE grandit. Nettement. On cherche pourquoi : une lentille passe sur le tracé du haut — il est STRICTEMENT identique à S1, aucun critère supplémentaire, aucun signal nouveau."
+        },
+        {
+          "t": "1.5-3",
+          "do": "la lentille passe alors sur l'onde teal venue du gain : c'est LÀ qu'est la cause. La taille n'a pas été décidée par le marché. Elle a été décidée par un état. Deux curseurs sont montrés : 'setup' immobile, 'state' déplacé."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la boîte agrandie, le curseur setup immobile, le curseur state déplacé."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la boîte de taille qui grandit + le curseur qui a bougé identifié comme l'état, pas le graphe",
+      "turn": "le setup n'a pas bougé. toi si."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RIME : le cadre EXACT de S1 revient — même composition, sens inversé.",
+      "note": "LA scene — la rime visuelle se referme. Le même cadrage, l'évolution dedans.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "LE CADRE DE S1 REVIENT À L'IDENTIQUE : même tracé en haut, boîte au centre, barre de compte en bas, mêmes positions, mêmes proportions. La composition est reconnaissable immédiatement. UNE SEULE CHOSE DIFFÈRE : la boîte de taille est bien plus grande."
+        },
+        {
+          "t": "2-3.5",
+          "do": "et la barre de compte, elle, est EFFONDRÉE — bien plus basse qu'en S1. Le même cadre, le sens opposé. Aucun texte n'explique : la rime porte seule. On peut afficher discrètement les deux repères temporels (after a win / after that trade)."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la composition jumelle de S1, boîte énorme, compte effondré. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la composition de S1 reproduite au pixel, mais boîte agrandie et barre de compte effondrée — la rime dit tout sans un mot",
+      "turn": "même image. sens inverse."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : la boîte de taille se VERROUILLE — un cadre encre se referme autour d'elle, posé AVANT la session (un marqueur temporel le montre). Le gain arrive, l'onde teal remonte comme en S2... et la boîte NE BOUGE PAS. Le verrou tient."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA À L'ÉCRAN, zone médiane : « Comment MAP » + « the 3T engine indicator ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la boîte verrouillée, l'onde qui passe sans effet, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la boîte de taille verrouillée avant la session + le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"MAP\" for the 3T engine indicator. Look at the frame at the start, then look at it again at the end — same composition, opposite meaning.\n\nAfter a win the read feels sharp and everything looks aligned, so the next position goes up. Not because the setup improved: because you did. The market didn't change, the sample didn't grow, and the only thing that moved was the one number that decides survival.\n\nTHE LINE — size is locked before the session, never after a win.\n\n#trading #riskmanagement #positionsizing #priceaction #daytrading #forex #propfirm #discipline #tradingpsychology #trader",
+  "pinned_comment": "The setup didn't change. You did. And size was the thing that moved. Comment \"MAP\" for the 3T engine indicator 👊",
+  "_rules": {
+    "cta_keyword": "MAP",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "RIME VISUELLE — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "STRUCTURE",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

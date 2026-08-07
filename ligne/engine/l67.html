@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L67 « THE SAME FRAME, TWICE » — RIME VISUELLE : le cadre EXACT de S1 revient en S4, sens inversé. SANS narrateur.
+       S1 : composition nette à mémoriser — tracé en haut, BOÎTE DE TAILLE au centre, barre de compte en bas. S2 : après un gain, la
+       barre monte, une onde teal remonte vers la zone de décision (l'état émotionnel). S3 : la substitution — la boîte GRANDIT ; une
+       lentille montre que le tracé est identique à S1 (setup inchangé), la cause est l'onde de l'état. S4 : LE CADRE DE S1 REVIENT À
+       L'IDENTIQUE, mais boîte énorme + compte effondré — même cadre, sens opposé, la rime porte seule. S5 : la prise — la boîte se
+       VERROUILLE (cadre encre posé AVANT la session), l'onde passe sans effet + CTA. Doctrine : teal = toi/taille/gain ; gris = compte
+       perdu/curseur inerte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, BOXCY=960;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // — le cadre reproductible : tracé (haut) + boîte de taille (centre) + barre de compte (bas) —
+    const TRACEPTS=(function(){const ys=[700,660,690,640,700,650,690,660,700];const o=[];for(let i=0;i<ys.length;i++){const x=150+i*(780/(ys.length-1));o.push(x.toFixed(0)+','+ys[i]);}return o.join(' ');})();
+    const trace=mk('polyline',{points:TRACEPTS,fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const box=mk('rect',{fill:YOU,'fill-opacity':0.28,stroke:YOU,'stroke-width':5,rx:8,opacity:0});
+    const acctTrack=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:8,opacity:0});
+    const acctFill=mk('rect',{fill:YOU,rx:5,opacity:0});
+    function drawFrame(side,acctFrac,u,op){
+      trace.setAttribute('opacity',op);
+      box.setAttribute('x',(CX-side/2).toFixed(1));box.setAttribute('y',(BOXCY-side/2).toFixed(1));box.setAttribute('width',side);box.setAttribute('height',side);setOp(box,op);
+      const tx=300,tw=480,ty=1220;acctTrack.setAttribute('x',tx);acctTrack.setAttribute('y',ty);acctTrack.setAttribute('width',tw);acctTrack.setAttribute('height',54);setOp(acctTrack,op);
+      acctFill.setAttribute('x',tx+4);acctFill.setAttribute('y',ty+4);acctFill.setAttribute('width',((tw-8)*clamp(acctFrac,0,1)).toFixed(1));acctFill.setAttribute('height',46);setOp(acctFill,op);
+    }
+    // onde de l'état (S2/S3/S5)
+    const wave=mk('circle',{fill:'none',stroke:YOU,'stroke-width':5,opacity:0});
+    const gain=mk('rect',{fill:YOU,rx:5,opacity:0});
+    // lentille + curseurs (S3)
+    const lens=mk('circle',{r:64,fill:'none',stroke:INK,'stroke-width':6,opacity:0}), lensH=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const scL=mk('line',{stroke:DEAD,'stroke-width':4,opacity:0}), scR=mk('line',{stroke:DEAD,'stroke-width':4,opacity:0});
+    const curSet=mk('circle',{r:12,fill:DEAD,opacity:0}), curState=mk('circle',{r:12,fill:YOU,opacity:0});
+    // verrou (S5)
+    const lock=mk('rect',{fill:'none',stroke:INK,'stroke-width':7,rx:10,opacity:0});
+    const marker=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'8 8',opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHAT DECIDES','YOUR SIZE?'];
+    const FS=88,lineH=112,y0=210,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=60, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [trace,box,acctTrack,acctFill,wave,gain,lens,lensH,scL,scR,curSet,curState,lock,marker])setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LA COMPOSITION DE RÉFÉRENCE (À MÉMORISER) ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const side=140+4*Math.sin(u*2);   // pulse doux
+      drawFrame(side,0.6,u,clamp(u/0.3,0,1)*gf);
+      putCap(capC,'SIZE',CX,BOXCY+8,YOU,clamp((u-0.4)/0.5,0,1)*gf);
+      putCap(capD,'ACCOUNT',CX,1330,INK,clamp((u-0.4)/0.5,0,1)*gf);
+      putCap(capB,'REMEMBER THIS FRAME',CX,1440,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — APRÈS UN GAIN : LA BARRE MONTE, L'ONDE REMONTE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const acct=lerp(0.6,0.8,clamp(u/1.2,0,1));
+      drawFrame(140+4*Math.sin(u*2),acct,u,1);
+      // le gain teal qui se pose
+      const drop=clamp(u/0.8,0,1);gain.setAttribute('x',720);gain.setAttribute('width',60);gain.setAttribute('y',(1150- (1-drop)*80).toFixed(1));gain.setAttribute('height',60);setOp(gain,drop*(1-clamp((u-1.2)/0.4,0,1)));
+      // l'onde qui remonte vers la zone de décision (répétée)
+      const ph=(u*0.5)%1;wave.setAttribute('cx',CX);wave.setAttribute('cy',lerp(1220,760,ph).toFixed(1));wave.setAttribute('r',(30+40*ph).toFixed(1));setOp(wave,clamp((u-0.8)/0.4,0,1)*(1-ph)*0.9);
+      putCap(capC,'A WIN LANDS — READ FEELS SHARP',CX,BOXCY+180,DEAD,clamp((u-1.4)/0.6,0,1));
+      putCap(capB,'EVERYTHING FEELS ALIGNED',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA SUBSTITUTION : LA BOÎTE GRANDIT, LA CAUSE EST L'ÉTAT ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const grow=clamp((u-0.4)/1.6,0,1);
+      const side=lerp(140,280,grow)+4*Math.sin(u*2);
+      drawFrame(side,0.8,u,1);
+      // lentille : d'abord sur le tracé (identique), puis sur l'onde (la cause)
+      const onTrace=u<1.6;
+      const lx=onTrace?lerp(300,780,clamp(u/1.4,0,1)):CX;
+      const ly=onTrace?690:1080;
+      lens.setAttribute('cx',lx.toFixed(1));lens.setAttribute('cy',ly);setOp(lens,clamp(u/0.3,0,1));
+      lensH.setAttribute('x1',(lx+46).toFixed(1));lensH.setAttribute('y1',(ly+46).toFixed(1));lensH.setAttribute('x2',(lx+84).toFixed(1));lensH.setAttribute('y2',(ly+84).toFixed(1));setOp(lensH,clamp(u/0.3,0,1));
+      if(!onTrace){const ph=(u*0.6)%1;wave.setAttribute('cx',CX);wave.setAttribute('cy',lerp(1180,780,ph).toFixed(1));wave.setAttribute('r',(30+36*ph).toFixed(1));setOp(wave,(1-ph)*0.9);}
+      // deux curseurs : setup immobile / state déplacé
+      scL.setAttribute('x1',200);scL.setAttribute('x2',200);scL.setAttribute('y1',1360);scL.setAttribute('y2',1420);setOp(scL,clamp((u-1.6)/0.4,0,1));
+      scR.setAttribute('x1',760);scR.setAttribute('x2',760);scR.setAttribute('y1',1360);scR.setAttribute('y2',1420);setOp(scR,clamp((u-1.6)/0.4,0,1));
+      curSet.setAttribute('cx',200);curSet.setAttribute('cy',(1390).toFixed(1));setOp(curSet,clamp((u-1.6)/0.4,0,1));
+      const cs=lerp(760,900,clamp((u-1.8)/0.8,0,1));curState.setAttribute('cx',cs.toFixed(1));curState.setAttribute('cy',1390);setOp(curState,clamp((u-1.6)/0.4,0,1));
+      putCap(capC,'SETUP',200,1350,DEAD,clamp((u-1.6)/0.4,0,1));
+      putCap(capD,'STATE',830,1350,YOU,clamp((u-1.6)/0.4,0,1));
+      putCap(capB,'THE SUBSTITUTION NOBODY CATCHES',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA RIME : LE CADRE DE S1, SENS INVERSÉ ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le cadre EXACT revient : même tracé, boîte, barre — mais boîte énorme + compte effondré
+      const side=lerp(140,280,clamp(u/1.6,0,1))+4*Math.sin(u*2);
+      const acct=lerp(0.6,0.14,clamp(u/1.6,0,1));
+      drawFrame(side,acct,u,1);
+      putCap(capC,'SIZE',CX,BOXCY+8,YOU,clamp(u/0.4,0,1));
+      putCap(capD,'ACCOUNT',CX,1330,DEAD,clamp(u/0.4,0,1));
+      putCap(capB,'SAME FRAME — OPPOSITE MEANING',CX,540,INK,clamp((u-2.4)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE VERROU POSÉ AVANT + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const side=140;
+      drawFrame(side,0.6,u,1);
+      // le verrou encre se referme autour de la boîte (posé AVANT)
+      const close=clamp((u-0.4)/0.8,0,1);
+      const m=lerp(80,14,close);
+      lock.setAttribute('x',(CX-side/2-m).toFixed(1));lock.setAttribute('y',(BOXCY-side/2-m).toFixed(1));lock.setAttribute('width',(side+2*m).toFixed(1));lock.setAttribute('height',(side+2*m).toFixed(1));setOp(lock,clamp(u/0.3,0,1));
+      marker.setAttribute('x1',330);marker.setAttribute('x2',750);marker.setAttribute('y1',810);marker.setAttribute('y2',810);setOp(marker,clamp((u-0.2)/0.4,0,1));
+      putCap(capC,'LOCKED BEFORE THE SESSION',CX,865,YOU,clamp((u-0.4)/0.5,0,1));
+      // l'onde passe sans effet (la boîte ne bouge pas)
+      const ph=(u*0.5)%1;wave.setAttribute('cx',CX);wave.setAttribute('cy',lerp(1200,800,ph).toFixed(1));wave.setAttribute('r',(30+36*ph).toFixed(1));setOp(wave,clamp((u-1.4)/0.4,0,1)*(1-ph)*0.7);
+      putCap(capD,'THE WAVE PASSES — SIZE HOLDS',CX,1330,INK,clamp((u-2.4)/0.6,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "MAP"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE 3T ENGINE INDICATOR',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
