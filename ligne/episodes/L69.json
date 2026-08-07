@@ -1,0 +1,155 @@
+{
+  "id": "L69",
+  "engine": "l69",
+  "title": "L69 — THE THING OUTSIDE THE FRAME",
+  "_cellule": "OIRD (Circuit) · Miroir · Likelihood · regard=un pair extérieur · présent · ++",
+  "_dispositif": "HORS-CHAMP NARRATIF",
+  "voice": [
+    "Your plan is being followed. Your discipline is intact. And something outside this frame has been changing for six weeks.",
+    "Everything you monitor sits inside the frame: entries, stops, sizes, execution. All of it is clean.",
+    "What's degrading is not in there. It's the relationship between your setup and a market that stopped behaving the way it did when the plan was written.",
+    "Discipline can't detect that. Discipline executes — it doesn't ask whether the thing it's executing still works.",
+    "What you need isn't more discipline. It's a sensor pointed outside. Comment MAP and I'll send you the 3T engine indicator."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "HORS-CHAMP : tout est propre DANS le cadre. Quelque chose bouge DEHORS, jamais montré.",
+      "question": "EVERYTHING INSIDE IS CLEAN. SO WHY?",
+      "emotion_lever": "INQUIÉTUDE — tout est parfait à l'écran et pourtant quelque chose pousse depuis dehors. Le hors-champ crée la tension.",
+      "cast": {
+        "frame": {
+          "type": "block",
+          "note": "le cadre de ce qui est surveillé"
+        },
+        "routine": {
+          "type": "path",
+          "note": "l'exécution propre, dedans"
+        },
+        "pressure": {
+          "type": "block",
+          "note": "la déformation du bord — JAMAIS révélée, jamais montrée en entier"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : un CADRE net, encre, occupe le centre. Dedans, tout est irréprochable : une routine d'exécution qui tourne, des stops posés, des tailles régulières, une cadence propre. MAIS le bord DROIT du cadre se DÉFORME légèrement vers l'intérieur — quelque chose pousse depuis l'extérieur. On ne voit jamais quoi. Une ombre passe hors-cadre."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la routine continue impeccablement, la déformation du bord droit s'accentue d'un cran. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "un cadre net et irréprochable + une pression visible sur le bord droit venue de l'extérieur, jamais révélée",
+      "dispositif_cle": "HORS-CHAMP : la cause n'est JAMAIS montrée. On ne montre que ses EFFETS sur le bord du cadre. Ne pas céder à la tentation de la révéler en S4."
+    },
+    {
+      "id": "s2",
+      "clarity": "Tout ce que tu surveilles est DANS le cadre. Et tout y est propre.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Dans le cadre, un INVENTAIRE se déplie : entrées, stops, tailles, exécution. Chaque ligne reçoit une coche teal. Tout est conforme."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une jauge 'discipline' monte au maximum et y reste. Rien à corriger. Le regard balaie l'intérieur du cadre de gauche à droite — et s'arrête net au bord. Il ne va jamais au-delà. Ce qui est surveillé est exactement délimité par le cadre."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : l'inventaire tout coché, la jauge au max, le bord qui se déforme un peu plus."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'inventaire de ce qui est mesuré, tout au vert — la surveillance est complète… à l'intérieur",
+      "turn": "tout ce que tu mesures est conforme. tout ce que tu mesures est dedans."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce qui se dégrade n'est pas là-dedans. C'est la relation entre ton setup et un marché qui a changé.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le SETUP est représenté par une forme teal, parfaitement stable, immobile — elle n'a pas changé d'un pixel depuis l'écriture du plan."
+        },
+        {
+          "t": "1.5-3",
+          "do": "mais le CADRE, lui, se met à GLISSER lentement autour d'elle. La forme ne bouge pas ; c'est son environnement qui se décale. L'écart entre les deux grandit visiblement. On ne voit toujours PAS ce qui cause le glissement — seulement le glissement lui-même."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le setup immobile, le cadre décalé, l'écart entre les deux tenu à l'écran."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le setup immobile pendant que le cadre entier glisse — le décalage relatif, sans jamais montrer l'extérieur",
+      "turn": "le setup n'a pas vieilli. son environnement s'est déplacé."
+    },
+    {
+      "id": "s4",
+      "clarity": "La discipline ne peut pas détecter ça. Elle exécute — elle ne demande jamais si ce qu'elle exécute marche encore.",
+      "note": "LA scene — la discipline exécute, elle n'audite pas. Le hors-champ reste hors-champ.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Une BOUCLE d'exécution se dessine : signal → entrée → stop → sortie → signal. Elle tourne, régulière, impeccable. Aucune de ses étapes ne pose de question sur elle-même."
+        },
+        {
+          "t": "2-3.5",
+          "do": "à côté, la barre de résultat s'érode, cran après cran, très lentement. La boucle continue de tourner à la même vitesse — elle n'a aucun capteur qui regarde la barre. Six marqueurs de semaine défilent. Aucune alerte ne se déclenche, parce qu'aucune alerte n'existe. La déformation du bord droit est maintenant importante — toujours pas révélée."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la boucle qui tourne, la barre érodée, aucune alerte, le bord déformé."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la boucle d'exécution qui tourne parfaitement, aveugle au décalage — et le résultat qui s'érode sans alerte",
+      "turn": "la boucle ne se demande pas si elle sert encore."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : un CAPTEUR se pose SUR LE BORD du cadre, tourné vers l'extérieur — le premier objet de tout l'épisode qui regarde dehors. Il ne montre toujours pas ce qu'il y a dehors : il MESURE la déformation. Un seuil est réglé dessus."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la déformation atteint le seuil → une ALERTE se déclenche, la boucle d'exécution S'ARRÊTE d'elle-même, et la barre de résultat cesse de s'éroder. Le capteur n'a pas rendu le trader plus discipliné : il lui a donné ce que la discipline ne fournit pas. ⚠️ CTA À L'ÉCRAN, zone médiane : « Comment MAP » + « the 3T engine indicator ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le capteur tourné vers l'extérieur, l'alerte allumée, la boucle arrêtée, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "un capteur POINTÉ VERS L'EXTÉRIEUR du cadre + l'alerte qui se déclenche, et le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"MAP\" for the 3T engine indicator. Your plan is being followed, your discipline is intact — and something outside the frame has been changing for six weeks.\n\nEverything you monitor sits inside: entries, stops, sizes, execution, all clean. What degrades is the relationship between your setup and a market that stopped behaving the way it did when the plan was written. Discipline executes; it never asks whether the thing it executes still works.\n\nTHE LINE — what you need isn't more discipline, it's a sensor pointed outside.\n\n#trading #priceaction #riskmanagement #daytrading #forex #tradingstrategy #propfirm #discipline #marketstructure #trader",
+  "pinned_comment": "Discipline executes. It doesn't ask whether the thing it executes still works. Comment \"MAP\" for the 3T engine indicator 👊",
+  "_rules": {
+    "cta_keyword": "MAP",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "HORS-CHAMP NARRATIF — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "STRUCTURE",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

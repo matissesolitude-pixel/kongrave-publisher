@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L69 « THE THING OUTSIDE THE FRAME » — HORS-CHAMP : la cause n'est JAMAIS montrée, seulement son effet sur le BORD du cadre.
+       SANS narrateur. S1 : un cadre net, dedans tout est irréprochable, mais le bord droit se DÉFORME (quelque chose pousse dehors).
+       S2 : inventaire tout coché, jauge 'discipline' au max — et le regard bute sur le bord déformé. S3 : le SETUP (forme teal) reste
+       immobile, c'est le CADRE qui GLISSE autour de lui ; l'écart grandit. S4 : une BOUCLE d'exécution tourne impeccablement mais la
+       barre de résultat s'érode — aucun capteur ne regarde dehors. S5 : la prise — un CAPTEUR posé SUR LE BORD tourné vers l'extérieur,
+       l'alerte se déclenche, la boucle s'arrête + CTA. Doctrine : teal = setup/toi/capteur ; gris = érosion/déformation ; pas de brun. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // — le cadre (3 côtés droits + bord droit qui se déforme) —
+    const FL=200,FR=860,FT=650,FB=1310,FMID=(FT+FB)/2;
+    const fTop=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const fLeft=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const fBot=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const fRight=mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    function drawFrame(deform,ox,op){
+      fTop.setAttribute('x1',FL+ox);fTop.setAttribute('y1',FT);fTop.setAttribute('x2',FR+ox);fTop.setAttribute('y2',FT);setOp(fTop,op);
+      fLeft.setAttribute('x1',FL+ox);fLeft.setAttribute('y1',FT);fLeft.setAttribute('x2',FL+ox);fLeft.setAttribute('y2',FB);setOp(fLeft,op);
+      fBot.setAttribute('x1',FL+ox);fBot.setAttribute('y1',FB);fBot.setAttribute('x2',FR+ox);fBot.setAttribute('y2',FB);setOp(fBot,op);
+      const rx=FR+ox;fRight.setAttribute('d',`M ${rx} ${FT} Q ${(rx-deform).toFixed(1)} ${FMID} ${rx} ${FB}`);setOp(fRight,op);
+    }
+    // inventaire (S2)
+    const INV=[]; const INVc=[];
+    for(let i=0;i<4;i++){INV.push(mk('text',{'text-anchor':'start','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':38,opacity:0}));
+      const g=mk('g',{});mk('polyline',{points:'0,10 8,20 24,-2',fill:'none',stroke:YOU,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},g);INVc.push(g);}
+    const gOut=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:10,opacity:0}), gFill=mk('rect',{fill:YOU,rx:6,opacity:0});
+    // setup (S3)
+    const setup=mk('circle',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':6,opacity:0});
+    // boucle (S4)
+    const LNODE=[]; for(let i=0;i<4;i++)LNODE.push(mk('circle',{r:34,fill:'none',stroke:INK,'stroke-width':5,opacity:0}));
+    const LARC=mk('circle',{fill:'none',stroke:DEAD,'stroke-width':4,'stroke-dasharray':'6 12',opacity:0});
+    const runner=mk('circle',{r:14,fill:YOU,opacity:0});
+    const LLAB=[]; for(let i=0;i<4;i++)LLAB.push(mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':26,opacity:0}));
+    const resOut=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:8,opacity:0}), resFill=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    // capteur + alerte (S5)
+    const sensor=mk('polygon',{fill:YOU,opacity:0});
+    const alert=mk('circle',{r:26,fill:'none',stroke:DEAD,'stroke-width':6,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['EVERYTHING INSIDE','IS CLEAN. SO WHY?'];
+    const FS=78,lineH=104,y0=205,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':144,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+
+    function hideDyn(){for(const e of [fTop,fLeft,fBot,fRight,gOut,gFill,setup,LARC,runner,resOut,resFill,sensor,alert])setOp(e,0);
+      for(const a of [INV,INVc,LNODE,LLAB])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LE CADRE PROPRE, LE BORD QUI SE DÉFORME ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const deform=lerp(6,90,clamp(u/5,0,1))+4*Math.sin(u*1.5);
+      drawFrame(deform,0,clamp(u/0.3,0,1)*gf);
+      // dedans : exécution impeccable (petites barres régulières)
+      for(let i=0;i<4;i++){const y=800+i*110;INV[i].textContent='';setOp(INV[i],0);
+        const g=INVc[i];place(g, 300, y-6+3*Math.sin(u*1.4+i), clamp((u-0.4-i*0.1)/0.5,0,1)*gf);}
+      putCap(capC,'ALL CLEAN INSIDE',CX,760,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'SOMETHING OUTSIDE HAS BEEN CHANGING',CX,1420,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — INVENTAIRE TOUT COCHÉ, DISCIPLINE AU MAX ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const deform=lerp(60,110,clamp(u/2.6,0,1))+4*Math.sin(u*1.5);
+      drawFrame(deform,0,1);
+      const items=['ENTRIES','STOPS','SIZES','EXECUTION'];
+      const nChk=Math.floor(clamp(u/0.5,0,4));
+      for(let i=0;i<4;i++){const y=800+i*110;INV[i].textContent=items[i];INV[i].setAttribute('x',300);INV[i].setAttribute('y',(y+30).toFixed(1));INV[i].setAttribute('fill',INK);setOp(INV[i],clamp((u-0.2-i*0.1)/0.5,0,1));
+        place(INVc[i], 620, y+6+3*Math.sin(u*1.4+i), i<nChk?1:0);}
+      // jauge discipline au max (clairement DANS le cadre)
+      const gy=790,gh=360;gOut.setAttribute('x',660);gOut.setAttribute('y',gy);gOut.setAttribute('width',80);gOut.setAttribute('height',gh);setOp(gOut,clamp(u/0.4,0,1));
+      const frac=lerp(0.5,0.97,clamp(u/1.6,0,1))+0.01*Math.sin(u*3);const fh=frac*(gh-10);
+      gFill.setAttribute('x',665);gFill.setAttribute('y',(gy+gh-5-fh).toFixed(1));gFill.setAttribute('width',70);gFill.setAttribute('height',fh.toFixed(1));setOp(gFill,clamp(u/0.4,0,1));
+      putCap(capD,'DISCIPLINE',700,gy+gh+48,YOU,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'NOTHING TO CORRECT — IN HERE',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE SETUP IMMOBILE, LE CADRE GLISSE ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const slide=lerp(0,150,clamp((u-0.6)/2.0,0,1)) + 8*Math.sin(u*1.1)+4*Math.sin(u*2.3);   // dérive continue
+      const deform=lerp(80,110,clamp(u/2.6,0,1))+4*Math.sin(u*1.5);
+      drawFrame(deform, slide, 1);   // le cadre se décale
+      // le setup ne bouge PAS (mais respire légèrement pour ne jamais figer l'image)
+      setup.setAttribute('cx',CX-40);setup.setAttribute('cy',(FMID+6*Math.sin(u*1.3)).toFixed(1));setup.setAttribute('r',110);setOp(setup,clamp(u/0.4,0,1));
+      putCap(capC,'THE SETUP HASN’T MOVED',CX-40,FMID+180,YOU,clamp((u-0.4)/0.5,0,1));
+      // l'écart (une double flèche entre le setup et le bord gauche du cadre décalé)
+      putCap(capD,'THE FRAME SLID AROUND IT',CX,760,DEAD,clamp((u-1.6)/0.5,0,1));
+      putCap(capB,'THE MARKET STOPPED BEHAVING THE SAME',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA BOUCLE TOURNE, LE RÉSULTAT S'ÉRODE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      drawFrame(110,0,0.4);
+      const cx=430,cy=960,R=170;
+      LARC.setAttribute('cx',cx);LARC.setAttribute('cy',cy);LARC.setAttribute('r',R);setOp(LARC,clamp(u/0.3,0,1));
+      const labs=['SIGNAL','ENTRY','STOP','EXIT'];
+      for(let i=0;i<4;i++){const a=-Math.PI/2 + i*Math.PI/2;const nx=cx+Math.cos(a)*R,ny=cy+Math.sin(a)*R;
+        LNODE[i].setAttribute('cx',nx.toFixed(1));LNODE[i].setAttribute('cy',ny.toFixed(1));setOp(LNODE[i],clamp((u-0.2-i*0.1)/0.4,0,1));
+        LLAB[i].textContent=labs[i];LLAB[i].setAttribute('x',nx.toFixed(1));LLAB[i].setAttribute('y',(ny+9).toFixed(1));LLAB[i].setAttribute('fill',INK);setOp(LLAB[i],clamp((u-0.2-i*0.1)/0.4,0,1));}
+      // le runner tourne en continu (impeccable)
+      const ra=-Math.PI/2 + u*1.6;runner.setAttribute('cx',(cx+Math.cos(ra)*R).toFixed(1));runner.setAttribute('cy',(cy+Math.sin(ra)*R).toFixed(1));setOp(runner,clamp(u/0.4,0,1));
+      // la barre de résultat s'érode lentement (clairement DANS le cadre)
+      const gy=790,gh=360;resOut.setAttribute('x',680);resOut.setAttribute('y',gy);resOut.setAttribute('width',80);resOut.setAttribute('height',gh);setOp(resOut,clamp(u/0.4,0,1));
+      const frac=lerp(0.85,0.35,clamp((u-0.6)/2.6,0,1))+0.008*Math.sin(u*3);const fh=frac*(gh-10);
+      resFill.setAttribute('x',685);resFill.setAttribute('y',(gy+gh-5-fh).toFixed(1));resFill.setAttribute('width',70);resFill.setAttribute('height',fh.toFixed(1));setOp(resFill,clamp(u/0.4,0,1));
+      putCap(capD,'RESULT — ERODING',710,gy+gh+48,DEAD,clamp((u-1.0)/0.5,0,1));
+      putCap(capB,'DISCIPLINE EXECUTES — IT DOESN’T ASK',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE CAPTEUR TOURNÉ DEHORS, L'ALERTE, LA BOUCLE S'ARRÊTE + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const fired=clamp((u-1.8)/1.0,0,1);
+      drawFrame(lerp(110,110,1),0,1);
+      // la boucle (s'arrête quand l'alerte se déclenche)
+      const cx=430,cy=960,R=150;
+      LARC.setAttribute('cx',cx);LARC.setAttribute('cy',cy);LARC.setAttribute('r',R);setOp(LARC,0.6);
+      const ra=-Math.PI/2 + (fired<1? u*1.6 : (1.8*1.6));runner.setAttribute('cx',(cx+Math.cos(ra)*R).toFixed(1));runner.setAttribute('cy',(cy+Math.sin(ra)*R).toFixed(1));setOp(runner,1);
+      // le CAPTEUR posé SUR LE BORD droit, tourné vers l'extérieur (triangle vers la droite)
+      const sx=FR - 110 + 6*Math.sin(u*1.5), sy=FMID;
+      sensor.setAttribute('points',`${sx},${sy-26} ${sx},${sy+26} ${sx+50},${sy}`);setOp(sensor,clamp(u/0.4,0,1));
+      putCap(capC,'A SENSOR POINTED OUTSIDE',CX,780,YOU,clamp((u-0.4)/0.5,0,1));
+      // l'alerte
+      alert.setAttribute('cx',sx+30);alert.setAttribute('cy',sy);alert.setAttribute('stroke', fired>0.3?YOU:DEAD);setOp(alert,fired);
+      putCap(capD,'THRESHOLD HIT — LOOP STOPS',CX,1300,INK,clamp((u-2.4)/0.6,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "MAP"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE 3T ENGINE INDICATOR',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
