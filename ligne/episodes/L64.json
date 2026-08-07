@@ -1,0 +1,152 @@
+{
+  "id": "L64",
+  "engine": "l64",
+  "title": "L64 — THE SETUP THAT LEFT WITHOUT YOU",
+  "_cellule": "SIRD (Glacier) · Miroir · Effort · regard=le prospect · présent · −−",
+  "_dispositif": "IRONIE DRAMATIQUE",
+  "voice": [
+    "You're not being careful. You're being left behind — and you can't see it happening.",
+    "Watch the right side of the screen while you check your criteria. That's the part you never look at.",
+    "Every criterion you add costs you the same thing: distance. The level moves away while the checklist gets longer.",
+    "And the entry you were protecting doesn't get safer. It gets worse — because you'll take it late, or not at all.",
+    "Your wiring decides how many boxes you need before you move. Comment PROFILE and I'll send you the free trader profile test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Ironie dramatique : le spectateur VOIT le setup partir pendant que le trader coche ses critères.",
+      "question": "WHAT ARE YOU ACTUALLY PROTECTING?",
+      "emotion_lever": "IRONIE — le spectateur sait, le trader ignore. Tension du 'ne fais pas ça'.",
+      "cast": {
+        "check": {
+          "type": "block",
+          "note": "la checklist qui s'allonge, à gauche"
+        },
+        "price": {
+          "type": "path",
+          "note": "le prix qui part, à droite. Les deux zones ne communiquent JAMAIS visuellement."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : l'écran est SÉPARÉ EN DEUX par un trait vertical. GAUCHE : une checklist teal, trois cases cochées, une quatrième en train de s'ajouter. DROITE : le prix qui QUITTE DÉJÀ la zone, une flèche nette qui monte et sort du cadre. Le spectateur voit les deux. Le côté gauche ne voit pas le côté droit."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : une cinquième case s'ajoute à gauche, le prix monte encore à droite. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'écran coupé en deux dès la frame 0 : à gauche la checklist qui s'allonge, à droite le prix qui S'EN VA — le spectateur voit ce que le trader ignore",
+      "dispositif_cle": "le split : le spectateur a l'information, le trader ne l'a pas. Ne JAMAIS les faire se rejoindre avant S4."
+    },
+    {
+      "id": "s2",
+      "clarity": "Chaque critère ajouté coûte de la distance. La checklist s'allonge, le niveau s'éloigne.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une RÈGLE GRADUÉE apparaît entre la checklist et le prix : c'est la distance au niveau d'entrée idéal. Elle mesure 1 cran."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une case se coche → la règle passe à 3 crans. Une autre → 6 crans. Une autre → 11. La checklist devient plus longue, la règle aussi. Les deux grandissent ENSEMBLE, mécaniquement."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la règle très longue, la checklist complète, le niveau d'entrée minuscule au loin."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la mesure de distance qui grandit à chaque case cochée — le coût est comptable, pas moral",
+      "turn": "la prudence n'est pas gratuite. elle se paie en distance."
+    },
+    {
+      "id": "s3",
+      "clarity": "Et l'entrée protégée ne devient pas plus sûre. Elle devient pire.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "DEUX configurations côte à côte. GAUCHE 'entered at 3/4' : l'entrée est près de la structure, le stop tient dessous, la distance au stop est courte."
+        },
+        {
+          "t": "1.5-3",
+          "do": "DROITE 'entered at 6/6' : l'entrée est loin, mais la structure n'a pas bougé — donc le stop doit rester au MÊME endroit, bien plus bas. La distance au stop a doublé. Le risque par point a doublé. La certitude supplémentaire a coûté la moitié du rapport."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux barres de risque côte à côte, l'écart flagrant."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux entrées comparées : celle à 3 critères (proche, stop court) vs celle à 6 (loin, stop large)",
+      "turn": "tu n'as pas acheté de la sécurité. tu as acheté du retard."
+    },
+    {
+      "id": "s4",
+      "clarity": "La révélation : le trader découvre enfin ce que le spectateur voit depuis le début.",
+      "note": "LA scene — la révélation de l'ironie.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "LE TRAIT DE SÉPARATION TOMBE. Les deux moitiés de l'écran se rejoignent pour la première fois. La checklist, complète, entièrement cochée, se retrouve face à la zone d'entrée — VIDE. Le prix est loin au-dessus, hors de portée."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la checklist reste allumée, inutile. Aucune case n'était fausse. Toutes étaient justes. Et le trade n'existe pas."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la checklist parfaite et la zone vide, côte à côte, sans commentaire."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le trait de séparation qui TOMBE — les deux moitiés se rejoignent, la checklist complète face à une zone vide",
+      "turn": "aucun critère n'était faux. c'est le temps qui a tranché."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ PREMIER ÉPISODE AVEC CTA DANS LA VIDÉO (loi 07/08). Le CTA reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : un SEUIL se pose sur la checklist — un trait horizontal à 3 cases sur 4, écrit AVANT la session, pas pendant. Quand le seuil est atteint, une flèche part immédiatement vers la zone d'entrée, encore proche. Le trade existe."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA À L'ÉCRAN : sous la démonstration, en zone MÉDIANE (le bas 12% reste vide), s'affiche en encre nette : « Comment PROFILE » et en dessous, plus petit : « free trader profile test ». Lisible sans son. La voix le prononce en même temps."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le seuil, la flèche partie à temps, et le CTA tenu à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la règle du seuil décidé avant + le CTA affiché à l'écran (zone médiane) et prononcé par la voix"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"PROFILE\" to find how many boxes your wiring needs before you move. You're not being careful — you're being left behind, and the checklist is what hides it.\n\nEvery criterion you add costs distance. The level moves away while the list gets longer, and the entry you were protecting gets worse, not safer. None of your criteria were wrong. Time decided instead of you.\n\nTHE LINE — the threshold is written before the session, never during.\n\n#trading #tradingpsychology #daytrading #forex #discipline #analysisparalysis #propfirm #priceaction #mindset #trader",
+  "pinned_comment": "None of the criteria were wrong. Time decided instead of you. Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_rules": {
+    "cta_keyword": "PROFILE",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "IRONIE DRAMATIQUE — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "MENTAL",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

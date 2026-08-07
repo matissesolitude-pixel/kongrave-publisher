@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L64 « THE SETUP THAT LEFT WITHOUT YOU » — ironie dramatique : le spectateur voit le setup partir pendant que le trader coche.
+       SANS narrateur. Le TRAIT VERTICAL sépare deux mondes (l'info du spectateur | l'aveuglement du trader) — ils ne se rejoignent
+       QU'EN S4. S1 : gauche checklist qui s'allonge, droite le prix qui monte et s'en va. S2 : une règle graduée = la distance au
+       niveau, qui grandit avec la checklist. S3 : entré à 3/4 (stop court) vs entré à 6/6 (stop bien plus large, structure inchangée).
+       S4 : le trait tombe, les deux moitiés se rejoignent — checklist parfaite + zone vide, aucune case fausse, pas de trade.
+       S5 : le seuil écrit AVANT (3/4), la flèche partie à temps + CTA. Doctrine : teal = toi/checklist/seuil ; gris = distance/risque
+       perdu ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const split=mk('line',{stroke:INK,'stroke-width':5,'stroke-dasharray':'4 10','stroke-linecap':'round',opacity:0});
+    // checklist (gauche)
+    const BOX=[]; const CHK=[];
+    for(let i=0;i<5;i++){BOX.push(mk('rect',{width:52,height:52,rx:10,fill:'none',stroke:YOU,'stroke-width':4,opacity:0}));
+      const g=mk('g',{});mk('polyline',{points:'0,12 10,24 30,-4',fill:'none',stroke:YOU,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},g);CHK.push(g);}
+    // prix (droite)
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const zone=mk('rect',{fill:'none',stroke:YOU,'stroke-width':4,'stroke-dasharray':'12 10',rx:8,opacity:0});
+    const gonedot=mk('circle',{r:15,fill:INK,opacity:0});
+    // règle graduée (S2)
+    const ruler=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const NOTCH=[]; for(let i=0;i<12;i++)NOTCH.push(mk('line',{stroke:DEAD,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    const lvlMark=mk('circle',{r:14,fill:'none',stroke:YOU,'stroke-width':5,opacity:0});
+    // S3 risque
+    const struct=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const struct2=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const eA=mk('circle',{r:15,fill:YOU,opacity:0}),eB=mk('circle',{r:15,fill:YOU,opacity:0});
+    const riskA=mk('rect',{fill:DEAD,rx:5,opacity:0}),riskB=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const stopA=mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0}),stopB=mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0});
+    // S5 seuil + flèche
+    const thr=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const arrow=mk('polygon',{fill:YOU,opacity:0});
+    const target=mk('circle',{r:16,fill:'none',stroke:YOU,'stroke-width':5,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHAT ARE YOU','ACTUALLY PROTECTING?'];
+    const FS=80,lineH=106,y0=200,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+86,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=60, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+
+    function hideDyn(){for(const e of [split,price,zone,gonedot,ruler,lvlMark,struct,struct2,eA,eB,riskA,riskB,stopA,stopB,thr,arrow,target])setOp(e,0);
+      for(const a of [BOX,CHK,NOTCH])for(const e of a)setOp(e,0);hideCaps();}
+
+    function drawPrice(x0,y0b,x1,y1b,rise,u){const o=[];const n=36;const r=clamp(rise,0.02,1);for(let i=0;i<=n;i++){const f=i/n; if(f>r)break;const g=f/r;const x=x0+(x1-x0)*g;const y=y0b+(y1b-y0b)*eIn(g)+5*Math.sin(g*16+u*2);o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    function checklist(x,y0b,n,checked,u,op){
+      for(let i=0;i<5;i++){const shown=i<n;const yy=y0b+i*94+ (shown?3*Math.sin(u*1.4+i):0);
+        BOX[i].setAttribute('x',x);BOX[i].setAttribute('y',yy.toFixed(1));setOp(BOX[i],shown?op:0);
+        place(CHK[i], x+10, yy+6, (i<checked)?op:0);}
+    }
+
+    // ═══ S1 — LE SPLIT : checklist (G) qui s'allonge, prix (D) qui s'en va ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      split.setAttribute('x1',CX);split.setAttribute('x2',CX);split.setAttribute('y1',600);split.setAttribute('y2',1320);setOp(split,clamp(u/0.4,0,1));
+      // GAUCHE : checklist qui s'allonge
+      const n=Math.min(5,2+Math.floor(u/1.4));
+      checklist(150,650,n,n,u,1);
+      putCap(capC,'YOUR CRITERIA',300,620,YOU,clamp((u-0.3)/0.5,0,1)*gf);
+      // DROITE : le prix monte et quitte la zone
+      zone.setAttribute('x',600);zone.setAttribute('y',1120);zone.setAttribute('width',170);zone.setAttribute('height',120);setOp(zone,clamp(u/0.5,0,1));
+      const rise=clamp(u/5,0,1);
+      price.setAttribute('points',drawPrice(680,1180,980,660,rise,u));setOp(price,clamp(u/0.3,0,1));
+      putCap(capD,'THE PRICE',820,620,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'YOU’RE BEING LEFT BEHIND',CX,1420,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LA RÈGLE GRADUÉE : la distance grandit avec la checklist ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      split.setAttribute('x1',CX);split.setAttribute('x2',CX);split.setAttribute('y1',600);split.setAttribute('y2',1320);setOp(split,0.6);
+      const step=clamp(u/2.4,0,1);
+      const n=Math.min(5,3+Math.floor(step*2));
+      checklist(140,650,n,n,u,1);
+      // la règle : longueur ~ nombre de crans (3,6,11) selon les cases (respire en continu)
+      const notches=[3,3,6,11,11][Math.min(4,n-1)];
+      const ry=1180, rx0=620, per=26;
+      const rlen=notches*per + 6*Math.sin(u*1.3);
+      ruler.setAttribute('x1',rx0);ruler.setAttribute('x2',(rx0+rlen).toFixed(1));ruler.setAttribute('y1',ry);ruler.setAttribute('y2',ry);setOp(ruler,clamp(u/0.15,0,1));
+      for(let i=0;i<12;i++){const on=i<notches;const x=rx0+i*per+ (on?3*Math.sin(u*1.6+i):0);NOTCH[i].setAttribute('x1',x);NOTCH[i].setAttribute('x2',x);NOTCH[i].setAttribute('y1',ry-14);NOTCH[i].setAttribute('y2',ry+14);setOp(NOTCH[i],on?0.9:0);}
+      lvlMark.setAttribute('cx',(rx0+rlen).toFixed(1));lvlMark.setAttribute('cy',(ry+3*Math.sin(u*2)).toFixed(1));setOp(lvlMark,clamp(u/0.3,0,1));
+      putCap(capC,'DISTANCE TO THE ENTRY',CX,1090,DEAD,clamp(u/0.2,0,1));
+      putCap(capB,'EACH CRITERION COSTS DISTANCE',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — ENTRÉ À 3/4 (stop court) vs 6/6 (stop bien plus large) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const inA=clamp(u/0.15,0,1);
+      const grow=clamp((u-0.4)/1.4,0,1);
+      const br=6*Math.sin(u*1.4)+3*Math.sin(u*2.5);   // respiration continue
+      // structure commune (le stop reste au même endroit)
+      const structY=1200;
+      struct.setAttribute('x1',150);struct.setAttribute('x2',480);struct.setAttribute('y1',structY);struct.setAttribute('y2',structY);setOp(struct,inA);
+      struct2.setAttribute('x1',600);struct2.setAttribute('x2',930);struct2.setAttribute('y1',structY);struct2.setAttribute('y2',structY);setOp(struct2,inA);
+      // GAUCHE 3/4 : entrée proche, risque court
+      const eAy=1080+br; eA.setAttribute('cx',315);eA.setAttribute('cy',eAy.toFixed(1));setOp(eA,inA);
+      riskA.setAttribute('x',360);riskA.setAttribute('width',40);riskA.setAttribute('y',eAy.toFixed(1));riskA.setAttribute('height',(structY-eAy).toFixed(1));setOp(riskA,inA);
+      stopA.setAttribute('x1',150);stopA.setAttribute('x2',480);stopA.setAttribute('y1',structY+20);stopA.setAttribute('y2',structY+20);setOp(stopA,inA);
+      putCap(capC,'ENTERED 3/4',300,1020,YOU,inA);
+      // DROITE 6/6 : entrée LOIN (haut), risque long
+      const eBy=lerp(1080,760,grow)+br; eB.setAttribute('cx',765);eB.setAttribute('cy',eBy.toFixed(1));setOp(eB,inA);
+      riskB.setAttribute('x',810);riskB.setAttribute('width',40);riskB.setAttribute('y',eBy.toFixed(1));riskB.setAttribute('height',(structY-eBy).toFixed(1));setOp(riskB,inA);
+      stopB.setAttribute('x1',600);stopB.setAttribute('x2',930);stopB.setAttribute('y1',structY+20);stopB.setAttribute('y2',structY+20);setOp(stopB,inA);
+      putCap(capD,'ENTERED 6/6',760,700,DEAD,inA);
+      putCap(capB,'SAME STOP — FAR WORSE ENTRY',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE TRAIT TOMBE : checklist parfaite + zone vide ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le trait de séparation tombe (glisse vers le bas et s'efface)
+      const fall=clamp(u/1.2,0,1);
+      split.setAttribute('x1',CX);split.setAttribute('x2',CX);split.setAttribute('y1',(600+fall*400).toFixed(1));split.setAttribute('y2',1320);setOp(split,(1-fall));
+      // checklist parfaite (toutes cochées), à gauche-centre
+      checklist(220,700,5,5,u,1);
+      putCap(capC,'EVERY BOX — RIGHT',360,660,YOU,clamp((u-0.4)/0.5,0,1));
+      // la zone d'entrée, vide, à droite-centre
+      zone.setAttribute('x',700);zone.setAttribute('y',(900+6*Math.sin(u*1.4)).toFixed(1));zone.setAttribute('width',200);zone.setAttribute('height',180);setOp(zone,clamp((u-0.6)/0.5,0,1));
+      putCap(capD,'NO TRADE',800,860,DEAD,clamp((u-0.8)/0.5,0,1));
+      putCap(capB,'NONE WAS WRONG. TIME DECIDED.',CX,1360,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE SEUIL ÉCRIT AVANT + LA FLÈCHE PARTIE À TEMPS + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // la checklist avec un SEUIL à 3/4, posé avant
+      const nTick=Math.min(3,Math.floor(clamp((u-0.6)/0.5,0,3)));
+      checklist(150,640,4,nTick,u,1);
+      // le seuil (trait horizontal sous la 3e case)
+      const thrY=640+3*94-12;
+      thr.setAttribute('x1',120);thr.setAttribute('x2',420);thr.setAttribute('y1',thrY);thr.setAttribute('y2',thrY);setOp(thr,clamp((u-0.4)/0.4,0,1));
+      putCap(capC,'THRESHOLD — WRITTEN BEFORE',300,600,YOU,clamp((u-0.3)/0.5,0,1));
+      // quand le seuil est atteint, la flèche PART à temps et attrape le niveau
+      const fired=clamp((u-2.0)/1.4,0,1);
+      const ax=lerp(560,900,eOut(fired));
+      const ay=lerp(1120,820,eOut(fired));
+      const p=[[ax,ay],[ax-30,ay+16],[ax-30,ay-16]];
+      arrow.setAttribute('points',p.map(q=>q.join(',')).join(' '));setOp(arrow,fired>0?1:0);
+      target.setAttribute('cx',910);target.setAttribute('cy',(810+4*Math.sin(u*2)).toFixed(1));setOp(target,clamp((u-1.6)/0.5,0,1));
+      putCap(capD,'GONE IN TIME',700,1200,INK,clamp((u-2.4)/0.6,0,1));
+      // CTA À L'ÉCRAN (zone médiane)
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
