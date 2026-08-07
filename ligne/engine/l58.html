@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L58 « THE WIN RATE THAT MEANS NOTHING » — un résultat a DEUX nombres ; le ratio gain/perte est tout. SANS narrateur.
+       S1 : émotion frame 0 = une majorité de petits blocs teal (ça a l'air excellent), MAIS deux gros blocs gris et le compte EN
+       BAS. S2 : deux moitiés — 'how often' (éclairée) vs 'how much' (dans l'ombre). S3 : deux traders qui divergent à contre-sens
+       des couleurs (souvent-gagnant qui saigne, souvent-perdant qui monte). S4 : la déformation — pour tenir le %, on rabote les
+       teal et on étire les gris. S5 : décharge — le compteur de taux BARRÉ, une balance 'average win' vs 'average loss' + CTA.
+       Doctrine : teal = gain/toi ; gris = perte ; pas de brun ; bas du cadre vide ; chiffre (le %) UNIQUEMENT comme punch. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // pools de blocs (résultats) + barres + balance
+    const BLK=[]; for(let i=0;i<40;i++)BLK.push(mk('rect',{rx:2,opacity:0}));
+    const acctL=mk('rect',{rx:3,opacity:0}), acctR=mk('rect',{rx:3,opacity:0});
+    const frameL=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:8,opacity:0}), frameR=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:8,opacity:0});
+    const veil=mk('rect',{fill:DEAD,'fill-opacity':0.34,rx:8,opacity:0});
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});
+    const crossA=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0}), crossB=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const beam=mk('line',{stroke:INK,'stroke-width':11,'stroke-linecap':'round',opacity:0});
+    const pivot=mk('polygon',{fill:INK,opacity:0});
+    const panL=mk('rect',{rx:4,fill:YOU,opacity:0}), panR=mk('rect',{rx:4,fill:DEAD,opacity:0});
+    const hangL=mk('line',{stroke:INK,'stroke-width':4,opacity:0}), hangR=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    function blk(idx,x,y,w,h,col,op){const e=BLK[idx];e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',w.toFixed(1));e.setAttribute('height',h.toFixed(1));e.setAttribute('fill',col);setOp(e,op);}
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['HIGH WIN RATE.','WHY IS THE ACCOUNT DOWN?'];
+    const FS=80,lineH=106,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.58));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [acctL,acctR,frameL,frameR,veil,counter,crossA,crossB,beam,pivot,panL,panR,hangL,hangR])setOp(e,0);
+      for(const e of BLK)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — BEAUCOUP DE TEAL, MAIS LE COMPTE EN BAS ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // une nappe de petits blocs teal (les gains fréquents) + 2 gros gris (les grosses pertes)
+      const x0=150, y0b=780;
+      for(let i=0;i<24;i++){const col=i%6, row=Math.floor(i/6);
+        const big=(i===8||i===17);
+        const w=big?150:70, h=big?180:44;
+        const jx=3*Math.sin(u*1.6+i), jy=2*Math.sin(u*2.1+i);
+        blk(i, x0+col*80+jx, y0b+row*56+jy, w, h, big?DEAD:YOU, 1);}
+      putCap(capC,'MOSTLY WINS',300,730,YOU,clamp((u-0.4)/0.6,0,1));
+      // la barre du compte : EN BAS (descend encore)
+      const drop=clamp((u)/6,0,1);
+      acctL.setAttribute('x',820);acctL.setAttribute('y',(900+120*drop+4*Math.sin(u*1.5)).toFixed(1));acctL.setAttribute('width',120);acctL.setAttribute('height',(360-120*drop).toFixed(1));acctL.setAttribute('fill',DEAD);setOp(acctL,1);
+      putCap(capD,'ACCOUNT — DOWN',880,1320,DEAD,clamp((u-1.4)/0.7,0,1));
+      putCap(capB,'MOST WINS — AND STILL BLEEDING',CX,1520,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — DEUX MOITIÉS : 'how often' éclairée, 'how much' dans l'ombre ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      frameL.setAttribute('x',120);frameL.setAttribute('y',760);frameL.setAttribute('width',380);frameL.setAttribute('height',420);setOp(frameL,clamp(u/0.5,0,1));
+      frameR.setAttribute('x',580);frameR.setAttribute('y',760);frameR.setAttribute('width',380);frameR.setAttribute('height',420);setOp(frameR,clamp(u/0.5,0,1));
+      putCap(capC,'HOW OFTEN',310,730,YOU,clamp((u-0.3)/0.6,0,1));
+      putCap(capD,'HOW MUCH',770,730,DEAD,clamp((u-0.3)/0.6,0,1));
+      // GAUCHE : des coches (fréquence), brillantes
+      for(let i=0;i<12;i++){const c=i%4,r=Math.floor(i/4);blk(i,170+c*80+4*Math.sin(u*1.8+i),830+r*110+4*Math.sin(u*2.3+i*0.7),54,54,YOU,1);}
+      // DROITE : deux blocs de tailles très différentes (le ratio, ignoré)
+      blk(20,650,1050+6*Math.sin(u*1.5),120,90,YOU,1);      // petit gain
+      blk(21,800,860+8*Math.sin(u*1.3),120,290,DEAD,1);     // grosse perte
+      // le projecteur n'éclaire QUE la gauche -> la droite reste voilée
+      const dark=clamp((u-1.0)/0.8,0,1);
+      veil.setAttribute('x',580);veil.setAttribute('y',760);veil.setAttribute('width',380);veil.setAttribute('height',420);setOp(veil,dark);
+      putCap(capA,'THE ONLY NUMBER YOU TALK ABOUT',310,1230,YOU,clamp((u-1.6)/0.7,0,1));
+      putCap(capB,'A RESULT HAS TWO NUMBERS, NOT ONE',CX,570,INK,clamp((u-2.4)/0.7,0,1));
+    }
+
+    // ═══ S3 — DEUX TRADERS QUI DIVERGENT À CONTRE-SENS DES COULEURS ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // GAUCHE 'wins often' : petits teal + rares gros gris -> compte DESCEND
+      const n=Math.round(clamp((u-0.3)/1.8,0,1)*10);
+      for(let i=0;i<n&&i<10;i++){const big=(i===4||i===9);blk(i,150+ (i%5)*54, big?860:1000-(Math.floor(i/5))*60, big?60:44, big?150:40, big?DEAD:YOU,0.95);}
+      const dL=clamp((u-0.4)/2.2,0,1);
+      acctL.setAttribute('x',150);acctL.setAttribute('y',(1120+120*dL).toFixed(1));acctL.setAttribute('width',300);acctL.setAttribute('height',(200-120*dL+4*Math.sin(u*1.5)).toFixed(1));acctL.setAttribute('fill',DEAD);setOp(acctL,1);
+      putCap(capC,'WINS OFTEN',290,730,DEAD,clamp((u-0.5)/0.6,0,1));
+      // DROITE 'wrong often' : petits gris + rares gros teal -> compte MONTE
+      for(let i=0;i<n&&i<10;i++){const big=(i===3||i===8);blk(20+i,630+ (i%5)*54, big?860:1000-(Math.floor(i/5))*60, big?60:44, big?150:40, big?YOU:DEAD,0.95);}
+      const dR=clamp((u-0.4)/2.2,0,1);
+      acctR.setAttribute('x',630);acctR.setAttribute('y',(1320-260*dR+4*Math.sin(u*1.7)).toFixed(1));acctR.setAttribute('width',300);acctR.setAttribute('height',(60+260*dR).toFixed(1));acctR.setAttribute('fill',YOU);setOp(acctR,1);
+      putCap(capD,'WRONG OFTEN',790,730,YOU,clamp((u-0.9)/0.6,0,1));
+      putCap(capB,'THE RATIO DECIDES — NOT THE COUNT',CX,570,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA DÉFORMATION : pour tenir le %, on rabote les teal et on étire les gris ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const push=eInOut(clamp((u-0.4)/2.4,0,1));
+      counter.textContent=Math.round(lerp(70,92,push))+'%';
+      counter.setAttribute('x',CX);counter.setAttribute('y',560);counter.setAttribute('fill',YOU);
+      const pop=1+0.05*Math.sin(u*6);counter.setAttribute('transform',`translate(${CX} 560) scale(${pop.toFixed(3)}) translate(${-CX} -560)`);setOp(counter,clamp(u/0.4,0,1));
+      putCap(capC,'WIN RATE — FLATTERING',CX,640,YOU,clamp((u-0.4)/0.6,0,1));
+      // la distribution en dessous se déforme : teal raboté, gris étiré
+      const y0b=820;
+      for(let i=0;i<8;i++){const teal=i<5;
+        const w=64, x=180+i*90;
+        if(teal){const h=lerp(200,90,push)+3*Math.sin(u*2+i);blk(i,x,y0b,w,h,YOU,1);}   // gain raboté (haut)
+        else{const h=lerp(120,360,push)+3*Math.sin(u*2.2+i);blk(i,x,y0b,w,h,DEAD,1);}   // perte étirée (bas)
+      }
+      putCap(capA,'WINNERS SHAVED',330,1300,YOU,clamp((u-1.4)/0.6,0,1));
+      putCap(capD,'LOSERS STRETCHED',790,1300,DEAD,clamp((u-1.8)/0.6,0,1));
+      putCap(capB,'YOU PROTECT THE NUMBER — YOU FEED THE LEAK',CX,700,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : le compteur BARRÉ, la balance win/loss + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le compteur de taux, barré (il ne décide pas)
+      counter.textContent='90%';counter.setAttribute('x',270);counter.setAttribute('y',650);counter.setAttribute('fill',DEAD);counter.setAttribute('transform','');
+      const cf=clamp((u-0.6)/0.6,0,1);setOp(counter, clamp(u/0.4,0,1)*(1-0.4*cf));
+      crossA.setAttribute('x1',170);crossA.setAttribute('y1',595);crossA.setAttribute('x2',370);crossA.setAttribute('y2',680);setOp(crossA,cf);
+      crossB.setAttribute('x1',370);crossB.setAttribute('y1',595);crossB.setAttribute('x2',170);crossB.setAttribute('y2',680);setOp(crossB,cf);
+      putCap(capC,'THE RATE DOESN’T DECIDE',270,745,DEAD,clamp((u-0.8)/0.6,0,1));
+      // la balance : average win (teal) vs average loss (gris) — penche vers le gain
+      const tilt=lerp(0,-0.22,eInOut(clamp((u-1.4)/1.6,0,1)))+0.02*Math.sin(u*1.1);  // gain plus lourd -> gauche descend? on fait pencher côté gain (droite/teal en bas)
+      const cxp=680, topY=860, L=300;
+      const lx=cxp-Math.cos(tilt)*L, ly=topY+Math.sin(tilt)*L, rx=cxp+Math.cos(tilt)*L, ry=topY-Math.sin(tilt)*L;
+      beam.setAttribute('x1',lx.toFixed(1));beam.setAttribute('y1',ly.toFixed(1));beam.setAttribute('x2',rx.toFixed(1));beam.setAttribute('y2',ry.toFixed(1));setOp(beam,clamp((u-1.0)/0.5,0,1));
+      pivot.setAttribute('points',`${cxp},${topY} ${cxp-38},${topY+140} ${cxp+38},${topY+140}`);setOp(pivot,clamp((u-1.0)/0.5,0,1));
+      function pan(el,hEl,x,y,col){hEl.setAttribute('x1',x);hEl.setAttribute('y1',y);hEl.setAttribute('x2',x);hEl.setAttribute('y2',(y+90).toFixed(1));setOp(hEl,clamp((u-1.0)/0.5,0,1));
+        el.setAttribute('x',(x-70).toFixed(1));el.setAttribute('y',(y+90).toFixed(1));el.setAttribute('width',140);el.setAttribute('height',54);el.setAttribute('fill',col);setOp(el,clamp((u-1.2)/0.5,0,1));}
+      pan(panL,hangL,lx,ly,DEAD); pan(panR,hangR,rx,ry,YOU);
+      putCap(capA,'AVG LOSS',lx,ly+210,DEAD,clamp((u-1.6)/0.6,0,1));
+      putCap(capD,'AVG WIN',rx,ry+210,YOU,clamp((u-1.6)/0.6,0,1));
+      putCap(capB,'THAT RATIO IS THE WHOLE BUSINESS',CX,470,INK,clamp((u-2.6)/0.7,0,1));
+      // CTA À L'ÉCRAN (règle 07/08)
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

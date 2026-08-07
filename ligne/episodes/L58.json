@@ -1,0 +1,151 @@
+{
+  "id": "L58",
+  "engine": "l58",
+  "title": "L58 — THE WIN RATE THAT MEANS NOTHING",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "You think a high win rate makes you profitable? It's almost irrelevant, and here's the part that stings.",
+    "A result has two numbers, not one. How often you win, and how much you win compared to what you lose. Only one of them ever gets talked about.",
+    "So a trader winning most of the time can bleed, if the losses are bigger than the wins. And a trader wrong most of the time can grow, if the wins are much bigger than the losses.",
+    "And chasing the percentage actively damages you. To keep it high, you close winners early and let losers run. You protect the number and you feed the leak.",
+    "Stop counting how often you're right. Measure what an average win pays against what an average loss costs. That ratio is the whole business. Comment PROFILE, and I'll send you the free trader test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : tu crois qu'un taux de réussite élevé te rend rentable ? Il est presque sans rapport.",
+      "question": "HIGH WIN RATE. WHY IS THE ACCOUNT DOWN?",
+      "emotion_lever": "CHOC — une majorité de gains ET un compte qui baisse. La contradiction happe.",
+      "cast": {
+        "results": {
+          "type": "block",
+          "note": "la colonne de résultats : beaucoup de teal petits, deux gris énormes"
+        },
+        "account": {
+          "type": "gauge",
+          "note": "la barre du compte, en baisse. le fusil = l'écart entre le taux et le solde."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : une colonne de RÉSULTATS. Une majorité écrasante de petits blocs TEAL (les gains) — visuellement, ça a l'air excellent. Mais deux blocs GRIS, énormes, plus hauts que tous les teal réunis. Et à côté, la barre du compte : EN BAISSE. Le paradoxe est visible avant la première phrase."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : les petits teal pulsent, les deux gris pèsent, la barre du compte descend encore d'un cran. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux colonnes de résultats : beaucoup de gains minuscules vs peu de pertes énormes, le compte en baisse malgré le taux",
+      "fusil": "le taux flatteur et le compte qui baisse — on va voir ce qui manque au calcul."
+    },
+    {
+      "id": "s2",
+      "clarity": "Un résultat a DEUX nombres, pas un. À quelle fréquence tu gagnes, et combien tu gagnes comparé à ce que tu perds. Un seul est jamais discuté.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — les deux moitiés. Deux cadres côte à côte. GAUCHE : 'how often' — un compteur de coches, brillant, mis en avant, celui que tout le monde regarde. DROITE : 'how much' — une paire de blocs (taille moyenne gain vs taille moyenne perte), laissée dans l'ombre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "un projecteur éclaire UNIQUEMENT le cadre de gauche. Le cadre de droite reste sombre, alors qu'il contient deux blocs de tailles très différentes. Le résultat dépend des DEUX cadres, on n'en regarde qu'un."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le cadre gauche éclairé, le droit dans l'ombre, les deux blocs de taille inégale à peine visibles."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — les deux nombres affichés côte à côte, l'un surligné (fréquence) et l'autre laissé dans l'ombre (taille)",
+      "turn": "un résultat a deux nombres. tu n'en comptes qu'un."
+    },
+    {
+      "id": "s3",
+      "clarity": "Donc un trader qui gagne souvent peut saigner, si les pertes sont plus grosses. Et un trader qui a tort la plupart du temps peut croître, si les gains sont bien plus gros.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — les deux traders. GAUCHE 'wins often' : une longue file de petits blocs teal, ponctuée de rares blocs gris ÉNORMES. Sa barre de compte DESCEND."
+        },
+        {
+          "t": "1.5-3",
+          "do": "DROITE 'wrong often' : une longue file de petits blocs gris, ponctuée de rares blocs teal ÉNORMES. Sa barre de compte MONTE. Les deux files sont montrées à la même échelle : ce n'est pas la couleur dominante qui décide, c'est la TAILLE des blocs."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux barres de compte qui divergent, à contre-sens de ce que les couleurs laissaient croire."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — deux traders côte à côte : le majoritairement gagnant qui descend, le majoritairement perdant qui monte",
+      "turn": "ce n'est pas la couleur dominante qui décide. c'est la taille."
+    },
+    {
+      "id": "s4",
+      "clarity": "Et courir après le pourcentage t'abîme activement. Pour le garder haut, tu coupes les gagnants tôt et tu laisses courir les perdants.",
+      "note": "LA scene — protéger le pourcentage déforme la distribution.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — la déformation. Le compteur de taux est affiché, et on le pousse vers le haut. À chaque cran gagné : un bloc teal se fait RABOTER par le haut (sortie précoce = plus de gains comptés, mais plus petits)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "et un bloc gris s'ÉTIRE vers le bas (on laisse courir pour éviter de compter une perte). Le compteur monte, brillant. La distribution, elle, se déforme : teal écrasés, gris étirés. Le nombre est protégé, la fuite est nourrie."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : le compteur haut et flatteur, la distribution difforme en dessous."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — le taux qui monte pendant que la distribution se déforme : gagnants rabotés, perdants étirés",
+      "turn": "tu protèges le nombre, tu nourris la fuite."
+    },
+    {
+      "id": "s5",
+      "clarity": "Arrête de compter à quelle fréquence tu as raison. Mesure ce que rapporte un gain moyen face à ce que coûte une perte moyenne. Ce rapport, c'est tout le métier.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4. Le compteur de taux revient au centre, brillant. Une croix le BARRE et il s'estompe : il ne décide pas."
+        },
+        {
+          "t": "2-3.5",
+          "do": "à sa place, une BALANCE à deux plateaux : 'average win' contre 'average loss'. On la fait pencher : quand le plateau gain est plus lourd, le compte monte — même avec une majorité de gris. Quand le plateau perte est plus lourd, le compte descend — même avec une majorité de teal. Le taux n'apparaît nulle part dans la balance."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la balance seule, le compteur de taux barré à côté. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — le compteur de taux barré, remplacé par la balance gain moyen / perte moyenne",
+      "fusil_decharge": "l'écart de S1 se résout : le taux ne mesurait qu'une moitié — la balance gain moyen / perte moyenne mesure ce qui décide vraiment."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"PROFILE\" to find your trader type. You think a high win rate makes you profitable? It’s almost irrelevant — and the reason stings.\n\nA 90% win rate with tiny wins and one oversized loss still bleeds. Protecting the percentage makes you cut winners early and refuse to take the loss — you end up defending the number instead of the account.\n\nTHE LINE — your win rate is a story about your exits, not your edge.\n\n#trading #tradingpsychology #winrate #riskmanagement #daytrading #forex #tradingeducation #expectancy #discipline #trader",
+  "pinned_comment": "Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : expectancy sans le mot. Le taux ne décide pas — le rapport gain moyen/perte moyenne décide. AUCUN chiffre de rendement affiché, tout passe par la MASSE des blocs.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "PROFILE",
+    "cta_spoken_added": "Comment PROFILE, and I'll send you the free trader test."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
