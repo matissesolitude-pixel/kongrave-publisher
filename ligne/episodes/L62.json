@@ -1,0 +1,151 @@
+{
+  "id": "L62",
+  "engine": "l62",
+  "title": "L62 — THE DISCIPLINE YOU DON'T LACK",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "You think you lack discipline? You lack a frame. Discipline with nothing to obey is just willpower, and willpower runs out.",
+    "Every trade asks you the same questions. Direction, entry, stop, target, when to quit. If each one is answered on feel, you're making five judgment calls under pressure, every single time.",
+    "That's not a character flaw, it's a workload. And the first thing that fails under load isn't your will — it's the decision you never wrote down.",
+    "A frame doesn't remove the judgment. It aims it. The question stops being what do I think, and becomes what does the structure say. Same trader, far less to carry.",
+    "So stop trying to want it more. Write the answer to each question before the session, and let the frame carry what your willpower was carrying alone. Comment PROFILE, and I'll send you the free trader test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : tu crois manquer de discipline ? Il te manque un cadre. La discipline sans rien à obéir, c'est de la volonté — et la volonté s'épuise.",
+      "question": "IS IT DISCIPLINE YOU'RE MISSING?",
+      "emotion_lever": "RECONNAISSANCE DE SOI — la volonté qui se vide devant des questions non résolues. Situation vécue chaque session.",
+      "cast": {
+        "will": {
+          "type": "gauge",
+          "note": "la jauge de volonté qui se vide"
+        },
+        "questions": {
+          "type": "block",
+          "note": "la pile de questions ouvertes. le fusil = ce qui doit les porter."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : une jauge teal étiquetée 'willpower', DÉJÀ à moitié vide et qui continue de descendre visiblement. En face d'elle, une PILE de cinq points d'interrogation empilés, tous ouverts, aucun résolu. La jauge se vide en les regardant. L'épuisement est en cours."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : la jauge descend encore d'un cran, la pile de questions reste intacte. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la jauge de volonté qui se vide face à une pile de décisions non répondues, dès la frame 0",
+      "fusil": "la jauge qui se vide — on va voir ce qui devrait porter la charge à sa place."
+    },
+    {
+      "id": "s2",
+      "clarity": "Chaque trade pose les mêmes questions. Direction, entrée, stop, cible, quand arrêter. Si chacune se répond au feeling, tu fais cinq jugements sous pression, à chaque fois.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — les cinq charges. La pile se déplie : cinq questions distinctes s'alignent, chacune nommée. Direction. Entrée. Stop. Cible. Arrêt."
+        },
+        {
+          "t": "1.5-3",
+          "do": "face à chacune, un DÉ se pose — pas une règle, un dé. Cinq dés, cinq jugements improvisés. Et à chaque dé posé, la jauge de volonté perd un cran. La charge est comptable : ce n'est pas un défaut de caractère, c'est un volume de décisions."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les cinq dés alignés, la jauge nettement plus basse qu'au début."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — les cinq questions identifiées, chacune répondue par un dé (au feeling) et non par une règle",
+      "turn": "ce n'est pas un défaut de caractère. c'est une charge."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce n'est pas un défaut de caractère, c'est une charge de travail. Et la première chose qui lâche sous la charge, ce n'est pas ta volonté — c'est la décision que tu n'as jamais écrite.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — l'ordre de rupture. Les cinq décisions sont montrées comme cinq barres portant un poids. Quatre sont ÉCRITES (traits pleins, ancrées). Une est NON ÉCRITE (contour pointillé, flottante)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on augmente la pression : la barre en pointillé cède la PREMIÈRE, bien avant que la jauge de volonté ne soit vide. Les quatre écrites tiennent. Ce n'est donc pas la volonté qui a lâché — c'est l'endroit où il n'y avait rien à obéir."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la barre non écrite affaissée, les quatre écrites droites, la jauge encore à moitié pleine."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — sous la charge, la décision non écrite cède en premier, avant la jauge",
+      "turn": "ce qui cède, c'est là où rien n'était écrit."
+    },
+    {
+      "id": "s4",
+      "clarity": "Un cadre ne supprime pas le jugement. Il le VISE. La question cesse d'être 'qu'est-ce que je pense' et devient 'que dit la structure'. Même trader, beaucoup moins à porter.",
+      "note": "LA scene — le cadre reprend la charge, le jugement reste.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — le transfert de charge. Les cinq dés sont retirés un à un et remplacés par cinq RÈGLES écrites, ancrées, chacune reliée à sa question."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à chaque remplacement, la jauge de volonté REMONTE d'un cran — elle n'a plus à porter cette décision. Le jugement, lui, reste présent : une petite lentille teal se pose sur chaque règle (il faut encore LIRE la structure). Le cadre n'a pas supprimé le trader, il a supprimé l'improvisation."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : les cinq règles ancrées, la lentille du jugement au-dessus, la jauge stable et haute."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — les cinq dés remplacés par cinq règles, la jauge de volonté qui cesse de descendre",
+      "turn": "le cadre ne te remplace pas. il porte ce que ta volonté portait seule."
+    },
+    {
+      "id": "s5",
+      "clarity": "Arrête d'essayer de le vouloir plus fort. Écris la réponse à chaque question AVANT la session, et laisse le cadre porter ce que ta volonté portait seule.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4, deux sessions côte à côte sur un axe de temps. HAUT 'no frame' : cinq jugements improvisés, la jauge descend à chaque décision, et en fin de session elle est vide — la dernière décision est prise à sec."
+        },
+        {
+          "t": "2-3.5",
+          "do": "BAS 'with a frame' : les mêmes cinq questions, mais les réponses sont écrites AVANT le début. La jauge reste haute toute la session : elle n'a servi qu'à exécuter, pas à décider. Même trader, même journée, deux états d'épuisement. Label : 'written before, not decided under pressure'."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : les deux sessions, la jauge vide en haut, la jauge pleine en bas. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — deux sessions comparées : sans cadre (jauge vidée, décisions improvisées) vs avec cadre (jauge intacte)",
+      "fusil_decharge": "la jauge de S1 se résout : elle ne se vidait pas par faiblesse, elle se vidait parce qu'elle portait des décisions qui auraient dû être écrites avant."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"PROFILE\" to find your trader type. You think you lack discipline? You lack a frame — and that’s a different problem.\n\nDiscipline with nothing to obey is just willpower, and willpower runs out the moment it matters. A rule you can point to survives pressure; a feeling doesn’t. What breaks first isn’t your will — it’s the absence of a line to hold.\n\nTHE LINE — build the frame first. Discipline is just obeying it.\n\n#trading #discipline #tradingpsychology #mindset #daytrading #forex #tradingeducation #riskmanagement #trader #consistency",
+  "pinned_comment": "Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : la discipline n'est pas une vertu mais une CHARGE. Le cadre transfère la charge, le jugement reste. Aucune méthode livrée — on montre le manque, pas le contenu du cadre.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "PROFILE",
+    "cta_spoken_added": "Comment PROFILE, and I'll send you the free trader test."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

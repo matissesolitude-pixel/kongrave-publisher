@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L62 « THE DISCIPLINE YOU DON'T LACK » — pas un manque de discipline : un manque de CADRE. SANS narrateur.
+       S1 : une jauge 'willpower' déjà à moitié vide qui descend, face à une pile de questions intactes. S2 : les cinq charges —
+       DIRECTION/ENTRY/STOP/TARGET/QUIT ; devant chacune un DÉ se pose (jugement improvisé) et la jauge perd un cran. S3 : l'ordre
+       de rupture — cinq barres, quatre ÉCRITES (pleines) une NON écrite (pointillé) ; sous la pression la pointillée cède la
+       PREMIÈRE, bien avant que la volonté soit vide. S4 : le transfert de charge — les dés remplacés un à un par des RÈGLES ancrées,
+       la jauge REMONTE ; le jugement reste (une lentille au-dessus : on le VISE). S5 : deux sessions — 'no frame' la jauge se vide,
+       'with a frame' elle reste haute + CTA. Doctrine : teal = volonté/toi ; gris = charge non tenue/dé ; pas de brun ; bas vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const QS=['DIRECTION','ENTRY','STOP','TARGET','QUIT'];
+
+    // — jauge réutilisable (contour + remplissage depuis le bas) —
+    function gauge(){const g=mk('g',{});const out=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:10},g);const fill=mk('rect',{fill:YOU,rx:6},g);return {g,out,fill};}
+    function setGauge(G,x,y,w,h,frac,op){G.out.setAttribute('x',x);G.out.setAttribute('y',y);G.out.setAttribute('width',w);G.out.setAttribute('height',h);
+      const fh=clamp(frac,0,1)*(h-10);G.fill.setAttribute('x',x+5);G.fill.setAttribute('y',(y+h-5-fh).toFixed(1));G.fill.setAttribute('width',w-10);G.fill.setAttribute('height',fh.toFixed(1));
+      setOp(G.out,op);setOp(G.fill,op);}
+    const GA=gauge(), GB=gauge();   // GA principale, GB seconde session (S5)
+
+    // — dé (carré + points) : le jugement improvisé —
+    function die(){const g=mk('g',{});mk('rect',{width:56,height:56,rx:10,fill:'none',stroke:DEAD,'stroke-width':4},g);const p=[[16,16],[40,40],[28,28]];p.forEach(q=>mk('circle',{cx:q[0],cy:q[1],r:5,fill:DEAD},g));return g;}
+    const DICE=[]; for(let i=0;i<5;i++)DICE.push(die());
+    // — règle ancrée (tag plein + trait d'ancrage) —
+    const RULE=[]; for(let i=0;i<5;i++){const g=mk('g',{});mk('rect',{width:56,height:56,rx:10,fill:YOU},g);mk('line',{x1:28,y1:56,x2:28,y2:86,stroke:YOU,'stroke-width':5},g);RULE.push(g);}
+    // — cinq barres portant un poids (S3) —
+    const BAR=[]; for(let i=0;i<5;i++)BAR.push(mk('line',{'stroke-width':9,'stroke-linecap':'round',opacity:0}));
+    const WEIGHT=[]; for(let i=0;i<5;i++)WEIGHT.push(mk('rect',{width:60,height:34,rx:6,fill:DEAD,opacity:0}));
+    const lens=mk('circle',{r:44,fill:'none',stroke:INK,'stroke-width':6,opacity:0});   // le jugement visé
+    const lensH=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const QCARD=[]; for(let i=0;i<5;i++)QCARD.push(mk('rect',{width:300,height:52,rx:8,fill:'none',stroke:DEAD,'stroke-width':3,opacity:0})); // pile S1
+    const QLAB=[]; for(let i=0;i<5;i++)QLAB.push(mk('text',{'text-anchor':'start','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':34,opacity:0}));
+
+    // ── QUESTION (§M15) ──
+    const QL=['IS IT DISCIPLINE','YOU’RE MISSING?'];
+    const FS=80,lineH=106,y0=205,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+86,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=64, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+    function hideDyn(){setOp(GA.out,0);setOp(GA.fill,0);setOp(GB.out,0);setOp(GB.fill,0);setOp(lens,0);setOp(lensH,0);
+      for(const a of [DICE,RULE,BAR,WEIGHT,QCARD,QLAB])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LA JAUGE QUI DESCEND FACE À LA PILE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // jauge willpower, déjà à moitié, qui descend
+      const frac=lerp(0.5,0.28,clamp(u/5,0,1))+0.01*Math.sin(u*3);
+      setGauge(GA,220,760,150,440,frac,1);
+      putCap(capC,'WILLPOWER',295,1250,INK,clamp((u-0.4)/0.5,0,1)*gf);
+      // la pile de questions, intacte, à droite
+      for(let i=0;i<5;i++){const ap=clamp((u-0.5-i*0.12)/0.5,0,1)*gf;const y=780+i*84+3*Math.sin(u*1.4+i);QCARD[i].setAttribute('x',560);QCARD[i].setAttribute('y',y.toFixed(1));setOp(QCARD[i],ap);
+        QLAB[i].textContent=QS[i];QLAB[i].setAttribute('x',580);QLAB[i].setAttribute('y',(y+35).toFixed(1));QLAB[i].setAttribute('fill',DEAD);setOp(QLAB[i],ap);}
+      putCap(capB,'YOU LACK A FRAME — NOT WILL',CX,1360,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — CINQ QUESTIONS, CINQ DÉS, LA JAUGE PERD UN CRAN CHACUN ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rolled=clamp((u-1.2)/2.4,0,1);
+      const nDie=Math.floor(clamp((u-1.2)/0.42,0,5));
+      for(let i=0;i<5;i++){const y=560+i*128;const ap=clamp((u-0.2-i*0.1)/0.5,0,1);
+        QLAB[i].textContent=QS[i];QLAB[i].setAttribute('x',150);QLAB[i].setAttribute('y',(y+40).toFixed(1));QLAB[i].setAttribute('fill',INK);QLAB[i].setAttribute('font-size',40);setOp(QLAB[i],ap);
+        // un dé se pose devant chaque question
+        const shown=i<nDie;const drop=shown?clamp((u-1.2-i*0.42)/0.3,0,1):0;
+        place(DICE[i], 720, y+2 - 40*(1-drop) + (shown?4*Math.sin(u*2+i):0), shown?1:0);}
+      // la jauge perd un cran par dé
+      const frac=lerp(0.5,0.16,rolled);
+      setGauge(GA,150,760,0,0,0,0);   // (masquée : on la montre compacte en haut-droite)
+      setGauge(GA,900,560,120,620,frac,clamp(u/0.4,0,1));
+      putCap(capC,'FIVE JUDGMENT CALLS — ON FEEL',CX,520,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — L'ORDRE DE RUPTURE : la non-écrite cède la première ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const press=clamp((u-1.4)/1.6,0,1);
+      for(let i=0;i<5;i++){const y=640+i*118;const written=(i!==2);   // la 3e (STOP) non écrite -> pointillé
+        const sag=written?0: press*90;
+        BAR[i].setAttribute('x1',300);BAR[i].setAttribute('x2',780);BAR[i].setAttribute('y1',(y+ (written?0:sag)).toFixed(1));BAR[i].setAttribute('y2',(y+ (written?0:sag*0.6)).toFixed(1));
+        BAR[i].setAttribute('stroke',written?INK:DEAD);BAR[i].setAttribute('stroke-dasharray',written?'0':'14 10');setOp(BAR[i],clamp((u-0.2-i*0.08)/0.5,0,1));
+        WEIGHT[i].setAttribute('x',510);WEIGHT[i].setAttribute('y',(y-40+(written?3*Math.sin(u*1.5+i):sag)).toFixed(1));setOp(WEIGHT[i],clamp((u-0.4-i*0.08)/0.5,0,1));
+        QLAB[i].textContent=QS[i];QLAB[i].setAttribute('x',120);QLAB[i].setAttribute('y',(y+10).toFixed(1));QLAB[i].setAttribute('fill',written?INK:DEAD);QLAB[i].setAttribute('font-size',30);setOp(QLAB[i],clamp((u-0.2)/0.5,0,1));}
+      // jauge encore à moitié pleine (ce n'est pas la volonté qui a lâché)
+      setGauge(GA,900,640,120,560,lerp(0.5,0.46,press),clamp(u/0.4,0,1));
+      putCap(capD,'THE ONE YOU NEVER WROTE DOWN FAILS FIRST',CX,540,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE TRANSFERT DE CHARGE : dés -> règles, la jauge remonte ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const done=clamp((u-1.0)/2.6,0,1);
+      const nRule=Math.floor(clamp((u-1.0)/0.5,0,5));
+      for(let i=0;i<5;i++){const y=640+i*118;
+        QLAB[i].textContent=QS[i];QLAB[i].setAttribute('x',150);QLAB[i].setAttribute('y',(y+40).toFixed(1));QLAB[i].setAttribute('fill',INK);QLAB[i].setAttribute('font-size',38);setOp(QLAB[i],clamp((u-0.2)/0.5,0,1));
+        const swapped=i<nRule;
+        place(DICE[i], 640, y, swapped?0:1);
+        place(RULE[i], 640, y + (swapped?4*Math.sin(u*1.6+i):0), swapped?1:0);}
+      // la lentille du jugement, au-dessus (on le VISE, on ne le supprime pas)
+      lens.setAttribute('cx',CX);lens.setAttribute('cy',(540+8*Math.sin(u*1.3)).toFixed(1));setOp(lens,clamp((u-1.5)/0.6,0,1));
+      lensH.setAttribute('x1',CX+30);lensH.setAttribute('y1',(566+8*Math.sin(u*1.3)).toFixed(1));lensH.setAttribute('x2',CX+62);lensH.setAttribute('y2',(598+8*Math.sin(u*1.3)).toFixed(1));setOp(lensH,clamp((u-1.5)/0.6,0,1));
+      // la jauge REMONTE à chaque remplacement
+      setGauge(GA,900,640,120,560,lerp(0.28,0.82,done),clamp(u/0.4,0,1));
+      putCap(capC,'IT AIMS THE JUDGMENT — DOESN’T REMOVE IT',CX,1340,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S5 — DEUX SESSIONS : sans cadre vide / avec cadre haute + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // HAUT : no frame — la jauge se vide
+      const prog=clamp((u-0.6)/2.6,0,1);
+      setGauge(GA,760,470,120,300,lerp(0.5,0.06,prog)+0.01*Math.sin(u*3),clamp(u/0.4,0,1));
+      putCap(capC,'NO FRAME',300,560,DEAD,clamp((u-0.3)/0.5,0,1));
+      for(let i=0;i<5;i++){place(DICE[i], 160+i*90, 640+ (i<Math.floor(prog*5)?4*Math.sin(u*2+i):0), clamp((u-0.4-i*0.1)/0.4,0,1));}
+      // BAS : with a frame — la jauge reste haute
+      setGauge(GB,760,1050,120,300,lerp(0.86,0.8,prog)+0.01*Math.sin(u*2.3),clamp((u-0.6)/0.4,0,1));
+      putCap(capD,'WITH A FRAME',300,1140,YOU,clamp((u-0.8)/0.5,0,1));
+      for(let i=0;i<5;i++){place(RULE[i], 160+i*90, 1210 + 4*Math.sin(u*1.6+i), clamp((u-1.0-i*0.1)/0.4,0,1));}
+      putCap(capB,'WRITE THE ANSWERS BEFORE THE SESSION',CX,1480,INK,clamp((u-2.6)/0.7,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
