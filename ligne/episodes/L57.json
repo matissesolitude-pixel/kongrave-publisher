@@ -1,0 +1,151 @@
+{
+  "id": "L57",
+  "engine": "l57",
+  "title": "L57 — THE STOP THAT KEEPS YOU SMALL",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "You put your stop close to feel safe? That's exactly what keeps getting you stopped out.",
+    "A stop has one job: to sit where your idea is proven wrong. Not where the loss feels comfortable. Those are two completely different places on the chart.",
+    "When you place it on comfort, you place it inside the noise — right where price breathes on its own, with nobody proven wrong yet.",
+    "And there's a second cost nobody mentions. A tight stop shrinks your reward-to-risk. Same target, bigger risk-per-point, so the same trade pays you less for the same idea.",
+    "Put it where the idea dies, then size down to make that distance affordable. The distance is decided by the chart. The size is decided by you. Comment LINE, and I'll send you the checklist."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : tu places ton stop près pour te sentir en sécurité ? C'est exactement ce qui te fait sortir.",
+      "question": "WHY DOES YOUR STOP KEEP GETTING HIT?",
+      "emotion_lever": "RECONNAISSANCE DE SOI — sorti par une mèche, et le prix part sans toi. Situation vécue, immédiate.",
+      "cast": {
+        "pos": {
+          "type": "gauge",
+          "note": "ta position teal"
+        },
+        "stop": {
+          "type": "hline",
+          "note": "le stop, collé sous l'entrée. le fusil = sa distance."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : une position teal, et son stop posé TRÈS PRÈS juste en dessous — presque collé. Une mèche descend, TOUCHE le stop, et le prix repart aussitôt vers le haut, laissant la position derrière. Le geste est saisi juste après la sortie : la position est grise, le prix monte sans elle."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : le prix continue de monter, la position grise reste en bas, immobile. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le stop collé sous l'entrée + la mèche qui le prend et repart, dès la frame 0",
+      "fusil": "la distance du stop — on va voir qui la décide."
+    },
+    {
+      "id": "s2",
+      "clarity": "Un stop a un seul travail : se poser là où ton idée est INVALIDÉE. Pas là où la perte est confortable. Ce sont deux endroits différents.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — deux endroits, pas un. Sur le tracé, DEUX niveaux se marquent. Le premier, tout près de l'entrée, étiqueté 'where the loss feels small'. Le second, nettement plus bas, sous la structure, étiqueté 'where the idea is wrong'."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on souligne l'ÉCART entre les deux : il est large. Ce ne sont pas deux variantes du même endroit — ce sont deux logiques différentes. L'une regarde ton compte. L'autre regarde le graphe."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux niveaux tenus à l'écran, l'écart entre eux surligné."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — les deux emplacements marqués sur le même graphe : 'confortable' près de l'entrée, 'idée morte' bien plus bas",
+      "turn": "l'un est décidé par ton confort. l'autre par la structure."
+    },
+    {
+      "id": "s3",
+      "clarity": "Quand tu le poses sur le confort, tu le poses DANS le bruit — là où le prix respire tout seul, sans que personne n'ait tort.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — la bande de bruit. Autour du prix, une BANDE d'amplitude s'affiche : c'est la respiration normale, les allers-retours qui ne prouvent rien. Le stop court est À L'INTÉRIEUR de cette bande."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le prix respire — sans tendance, juste sa respiration — et cette respiration seule suffit à toucher le stop court. Le stop structurel, lui, est EN DEHORS de la bande : la respiration ne l'atteint pas. Il faut un vrai mouvement pour le prendre."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la bande qui respire, le stop court touché à répétition, le stop structurel intact."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — la bande de bruit visualisée : le stop court est DEDANS, le stop structurel est en dehors",
+      "turn": "dans le bruit, tu ne te fais pas invalider — tu te fais respirer dessus."
+    },
+    {
+      "id": "s4",
+      "clarity": "Et il y a un second coût. Un stop serré écrase ton rapport gain/risque. Même cible, risque par point plus gros : le même trade te paie moins.",
+      "note": "LA scene — le stop court ne protège pas, il rabote le RR.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — le RR écrasé. La MÊME cible est marquée en haut. Deux configurations : à gauche, stop court → la distance risque est minuscule, mais la position doit être GROSSE pour risquer le même montant. À droite, stop structurel → distance large, position PETITE."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on mesure le rapport : à gauche, une barre RR courte ; à droite, une barre RR longue, plusieurs fois plus grande, pour EXACTEMENT LE MÊME TRADE. Le stop court n'a pas réduit le risque — il a réduit la récompense."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : les deux barres RR côte à côte, l'écart de longueur flagrant."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — deux barres de RR côte à côte, même cible : stop court = barre courte, stop structurel = barre longue",
+      "turn": "tu n'as pas réduit ton risque. tu as réduit ce que le trade pouvait te rendre."
+    },
+    {
+      "id": "s5",
+      "clarity": "Pose-le là où l'idée meurt, puis réduis la TAILLE pour que cette distance soit tenable. La distance est décidée par le graphe. La taille est décidée par toi.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4, l'ordre des décisions. ÉTAPE 1 : le graphe donne la distance — le niveau d'invalidation s'allume, hors de la bande de bruit. Il n'est pas négociable, il est lu."
+        },
+        {
+          "t": "2-3.5",
+          "do": "ÉTAPE 2 : la position teal se RÉDUIT jusqu'à ce que cette distance corresponde au risque accepté. La taille est le seul curseur qui bouge. Le prix respire ensuite — le stop tient, la position est toujours là. Label : 'the chart sets the distance, you set the size'."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la distance fixée par le graphe, la taille ajustée dessous, la position qui survit à la respiration. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — la séquence inversée : d'abord la distance lue sur le graphe, ensuite la taille ajustée pour tenir",
+      "fusil_decharge": "la distance de S1 se résout : elle n'était pas à toi. Le graphe la donne, et c'est la taille qu'on ajuste — jamais l'inverse."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"LINE\" for the checklist on what actually stops you out. You put your stop close to feel safe — that’s exactly what keeps getting you hit.\n\nA stop has one job: to sit where your idea is proven wrong, not where the loss feels comfortable. Place it on comfort and you place it inside the noise, right where price breathes on its own. And a tight stop quietly shrinks your reward-to-risk for the same idea.\n\nTHE LINE — put it where the idea dies, then size down to make that distance affordable.\n\n#trading #riskmanagement #stoploss #positionsizing #daytrading #forex #tradingeducation #discipline #priceaction #trader",
+  "pinned_comment": "Comment \"LINE\" and I'll send you the checklist on what your stop is really doing 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : le stop n'est pas le problème — sa DISTANCE décidée par la peur l'est. Double coût : dans le bruit + RR écrasé. GARDE-FOU : on ne décourage JAMAIS de mettre un stop.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "LINE",
+    "cta_spoken_added": "Comment LINE, and I'll send you the checklist."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

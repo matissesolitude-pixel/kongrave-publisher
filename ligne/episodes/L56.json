@@ -8,7 +8,7 @@
     "Every one of these tools calculates on candles that already closed. The math needs history to produce a line. So the line always describes what price did — never what it's doing.",
     "Which means the moment it turns, the move it's describing is already spent. You enter on the confirmation, and the confirmation is the top of the leg.",
     "So you don't get in early. You get in exactly when the crowd gets in, right before the pullback that takes you out.",
-    "Read the structure that's forming, not the line that's reporting. One of them is happening now. The other is telling you what happened."
+    "Read the structure that's forming, not the line that's reporting. One of them is happening now. The other is telling you what happened. Comment MAP, and I'll send you the tool that reads structure live."
   ],
   "scenes": [
     {
@@ -131,7 +131,7 @@
     }
   ],
   "total": 50.0,
-  "caption": "The part that got me is where the confirmation actually lands. #trading #priceaction #daytrading #forex",
+  "caption": "Comment \"MAP\" for the tool that reads structure live. Your indicator gave you a signal — after the move already happened.\n\nEvery one of these tools calculates on candles that already closed, so the line describes what price DID, never what it’s doing. The moment it turns, the move is already spent: you enter on the confirmation, and the confirmation is the top of the leg — right where the crowd enters, right before the pullback.\n\nTHE LINE — read the structure that’s forming, not the line that’s reporting.\n\n#trading #priceaction #indicators #daytrading #forex #tradingeducation #structure #scalping #technicalanalysis #trader",
   "pinned_comment": "Comment \"MAP\" and I'll send you the 3T engine indicator 👊",
   "_rules": {
     "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : le retard est STRUCTUREL (le calcul a besoin de bougies fermées), pas un problème de paramètre. Factuel, aucun outil nommé — on parle de la mécanique, pas des marques.",
@@ -141,7 +141,8 @@
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
     "circuit": "M24 frames DoD d'abord.",
-    "cta_keyword": "MAP"
+    "cta_keyword": "MAP",
+    "cta_spoken_added": "Comment MAP, and I'll send you the tool that reads structure live."
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L57 « THE STOP THAT KEEPS YOU SMALL » — le stop doit être où l'idée est INVALIDÉE, pas où la perte est confortable. SANS narrateur.
+       S1 : émotion frame 0 = une position teal, son stop TRÈS PRÈS juste dessous ; une mèche touche le stop, le prix repart en haut sans toi.
+       S2 : deux endroits, pas un — 'feels safe' (près) vs 'idea is wrong' (loin) ; l'écart surligné. S3 : la bande de bruit — le prix
+       respire, cette respiration seule touche le stop court ; le stop structurel est DEHORS. S4 : le RR écrasé — même cible, barre RR
+       courte (stop serré) vs longue (stop structurel). S5 : décharge — étape 1 le graphe donne la distance (invalidation hors bruit),
+       étape 2 la taille se réduit pour la rendre tenable + CTA. Doctrine : gris = perte ; teal = TOI ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── NIVEAUX (lignes horizontales) + BANDE DE BRUIT + POSITION + PRIX ──
+    const LX0=210, LX1=760;
+    function lvl(){return mk('line',{'stroke-linecap':'round',opacity:0});}
+    const entry=lvl(), tight=lvl(), struct=lvl(), target=lvl();
+    const noise=mk('rect',{fill:YOU,'fill-opacity':0.14,opacity:0});
+    const gapBand=mk('rect',{fill:YOU,'fill-opacity':0.16,opacity:0});   // S2 : l'écart entre les deux stops
+    const pos=mk('rect',{rx:4,fill:YOU,opacity:0});                       // la position (largeur = taille)
+    const wick=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const price=mk('circle',{r:15,fill:INK,opacity:0});
+    const upLeg=mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const rrL=mk('rect',{rx:4,fill:DEAD,opacity:0}), rrR=mk('rect',{rx:4,fill:YOU,opacity:0}); // S4 : barres RR
+    const HITS=[]; for(let i=0;i<5;i++)HITS.push(mk('circle',{r:9,fill:DEAD,opacity:0}));      // S3 : touches répétées du stop court
+
+    function setLvl(el,y,col,w,dash,op){el.setAttribute('x1',LX0);el.setAttribute('x2',LX1);el.setAttribute('y1',y.toFixed(1));el.setAttribute('y2',y.toFixed(1));
+      el.setAttribute('stroke',col);el.setAttribute('stroke-width',w);el.setAttribute('stroke-dasharray',dash||'0');setOp(el,op);}
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['WHY DOES YOUR STOP','KEEP GETTING HIT?'];
+    const FS=82,lineH=108,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':160,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.6));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [entry,tight,struct,target,noise,gapBand,pos,wick,price,upLeg,rrL,rrR])setOp(e,0);
+      for(const e of HITS)setOp(e,0);hideCaps();}
+
+    const ENTRY=1040, TIGHT=1140, STRUCT=1320, TARGET=720;
+
+    // ═══ S1 — LE STOP TROP PRÈS : la mèche le touche, le prix repart sans toi ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      setLvl(entry,ENTRY,YOU,7,'0',1);
+      setLvl(tight,TIGHT,DEAD,5,'14 10',1);
+      putCap(capC,'ENTRY',LX0+70,ENTRY-24,YOU,1);
+      putCap(capD,'STOP — TOO CLOSE',LX1-10,TIGHT+52,DEAD,clamp((u-0.4)/0.6,0,1));
+      // la mèche descend, touche le stop
+      const dip=eInOut(clamp((u+0.2)/0.9,0,1)), pyDip=lerp(ENTRY-40,TIGHT,dip);
+      const px=lerp(430,470,dip);
+      // puis le prix repart en haut (sans toi)
+      const upP=clamp((u-1.1)/2.4,0,1);
+      const legPts=[]; for(let i=0;i<=Math.round(upP*20);i++){const f=i/20;legPts.push([lerp(px,760,f).toFixed(1),lerp(TIGHT,TARGET+40,eOut(f)).toFixed(1)]);}
+      if(legPts.length>1){upLeg.setAttribute('points',legPts.join(' '));setOp(upLeg,1);}
+      wick.setAttribute('x1',px.toFixed(1));wick.setAttribute('y1',(ENTRY-60).toFixed(1));wick.setAttribute('x2',px.toFixed(1));wick.setAttribute('y2',pyDip.toFixed(1));setOp(wick,clamp(1-(u-1.4)/0.8,0,1));
+      // la position : grise dès qu'elle est stoppée, immobile en bas
+      const stopped=clamp((u-0.9)/0.4,0,1);
+      pos.setAttribute('x',(px-34).toFixed(1));pos.setAttribute('y',(TIGHT+4*Math.sin(u*1.6)).toFixed(1));pos.setAttribute('width',68);pos.setAttribute('height',54);
+      pos.setAttribute('fill', stopped>0.5?DEAD:YOU);setOp(pos,1);
+      putCap(capB,'CLOSE ≠ SAFE — CLOSE = STOPPED OUT',CX,1520,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — DEUX ENDROITS, PAS UN : 'feels safe' vs 'idea is wrong', l'écart surligné ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      setLvl(entry,ENTRY,YOU,7,'0',1);
+      setLvl(tight,TIGHT,DEAD,6,'14 10',clamp(u/0.5,0,1));
+      setLvl(struct,STRUCT,DEAD,6,'14 10',clamp((u-0.8)/0.6,0,1));
+      putCap(capC,'ENTRY',LX0+70,ENTRY-24,YOU,1);
+      putCap(capA,'WHERE THE LOSS FEELS SAFE',CX,TIGHT-24,DEAD,clamp((u-0.4)/0.6,0,1));
+      putCap(capD,'WHERE THE IDEA IS WRONG',CX,STRUCT+52,DEAD,clamp((u-1.2)/0.6,0,1));
+      // l'écart entre les deux stops, surligné (large)
+      const gp=clamp((u-1.6)/0.8,0,1);
+      gapBand.setAttribute('x',LX0);gapBand.setAttribute('y',TIGHT);gapBand.setAttribute('width',(LX1-LX0).toFixed(1));gapBand.setAttribute('height',(STRUCT-TIGHT).toFixed(1));setOp(gapBand,gp*0.9);
+      // vie continue : un prix qui oscille sur l'entrée
+      price.setAttribute('cx',(lerp(300,680,(u*0.2)%1)).toFixed(1));price.setAttribute('cy',(ENTRY+18*Math.sin(u*2.0)).toFixed(1));setOp(price,1);
+      putCap(capB,'TWO DIFFERENT PLACES ON THE CHART',CX,570,INK,clamp((u-2.4)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA BANDE DE BRUIT : la respiration seule touche le stop court ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      setLvl(entry,ENTRY,YOU,7,'0',1);
+      // la bande de bruit autour de l'entrée
+      const bandH=150;
+      noise.setAttribute('x',LX0);noise.setAttribute('y',(ENTRY-bandH/2).toFixed(1));noise.setAttribute('width',(LX1-LX0).toFixed(1));noise.setAttribute('height',bandH);setOp(noise,clamp(u/0.6,0,1));
+      putCap(capC,'NORMAL NOISE',LX0+130,ENTRY-bandH/2-20,DEAD,clamp((u-0.4)/0.6,0,1));
+      setLvl(tight,TIGHT-20,DEAD,6,'14 10',1);   // le stop court : DANS la bande
+      setLvl(struct,STRUCT,DEAD,6,'14 10',1);     // le structurel : DEHORS
+      putCap(capA,'TIGHT STOP — INSIDE THE NOISE',CX,TIGHT+44,DEAD,clamp((u-0.6)/0.6,0,1));
+      putCap(capD,'STRUCTURAL STOP — OUTSIDE',CX,STRUCT+50,YOU,clamp((u-1.4)/0.6,0,1));
+      // le prix respire (zigzag irrégulier) et touche le stop court à répétition
+      const px=lerp(280,700,(u*0.12)%1);
+      const py=ENTRY-58*Math.sin(u*2.4)-24*Math.sin(u*3.9);
+      price.setAttribute('cx',px.toFixed(1));price.setAttribute('cy',py.toFixed(1));setOp(price,1);
+      for(let i=0;i<HITS.length;i++){const on=(u>1.5+i*1.2)?1:0;
+        HITS[i].setAttribute('cx',(300+i*90).toFixed(1));HITS[i].setAttribute('cy',(TIGHT-20).toFixed(1));setOp(HITS[i], on*(0.6+0.4*Math.abs(Math.sin(u*3+i))));}
+      putCap(capB,'ITS OWN BREATHING HITS THE CLOSE STOP',CX,560,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE RR ÉCRASÉ : même cible, barre RR courte (serré) vs longue (structurel) ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      setLvl(target,TARGET,INK,6,'16 10',1);
+      putCap(capC,'SAME TARGET',CX,TARGET-24,INK,clamp(u/0.5,0,1));
+      // GAUCHE : stop serré -> barre RR COURTE
+      const gr=eInOut(clamp((u-0.4)/1.6,0,1));
+      const lx=330, lh=lerp(0,220,gr);
+      rrL.setAttribute('x',(lx-40).toFixed(1));rrL.setAttribute('y',(1200-lh+3*Math.sin(u*1.6)).toFixed(1));rrL.setAttribute('width',80);rrL.setAttribute('height',lh.toFixed(1));setOp(rrL,1);
+      putCap(capA,'TIGHT STOP',lx,1250,DEAD,clamp((u-0.6)/0.6,0,1));
+      // DROITE : stop structurel -> barre RR LONGUE (même trade)
+      const rx=760, rh=lerp(0,560,gr);
+      rrR.setAttribute('x',(rx-40).toFixed(1));rrR.setAttribute('y',(1200-rh+4*Math.sin(u*1.4)).toFixed(1));rrR.setAttribute('width',80);rrR.setAttribute('height',rh.toFixed(1));setOp(rrR,1);
+      putCap(capD,'STRUCTURAL STOP',rx,1250,YOU,clamp((u-1.0)/0.6,0,1));
+      putCap(capB,'SAME TRADE — PAID LESS FOR IT',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : le graphe donne la distance, la taille s'ajuste + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      setLvl(entry,ENTRY,YOU,7,'0',1);
+      const bandH=150;
+      noise.setAttribute('x',LX0);noise.setAttribute('y',(ENTRY-bandH/2).toFixed(1));noise.setAttribute('width',(LX1-LX0).toFixed(1));noise.setAttribute('height',bandH);setOp(noise,0.7);
+      // ÉTAPE 1 : le niveau d'invalidation s'allume, HORS de la bande de bruit
+      setLvl(struct,STRUCT,YOU,7,'16 10',clamp(u/0.6,0,1));
+      putCap(capC,'STEP 1 — THE CHART SETS THE DISTANCE',CX,STRUCT+52,YOU,clamp((u-0.4)/0.7,0,1));
+      // ÉTAPE 2 : la taille (largeur de la position) SE RÉDUIT pour rendre la distance tenable
+      const shrink=eInOut(clamp((u-1.4)/1.6,0,1));
+      const w=lerp(360,120,shrink);
+      pos.setAttribute('x',(CX-w/2).toFixed(1));pos.setAttribute('y',(ENTRY+6*Math.sin(u*1.5)).toFixed(1));pos.setAttribute('width',w.toFixed(1));pos.setAttribute('height',56);setOp(pos,1);
+      putCap(capD,'STEP 2 — SIZE DOWN TO AFFORD IT',CX,ENTRY+120,YOU,clamp((u-1.6)/0.7,0,1));
+      putCap(capB,'THE CHART DECIDES DISTANCE. YOU DECIDE SIZE.',CX,600,INK,clamp((u-2.6)/0.7,0,1));
+      // CTA À L'ÉCRAN (règle 07/08)
+      putCap(capE,'COMMENT "LINE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE CHECKLIST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
