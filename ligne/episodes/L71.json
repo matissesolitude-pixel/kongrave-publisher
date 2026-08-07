@@ -1,0 +1,151 @@
+{
+  "id": "L71",
+  "engine": "l71",
+  "title": "L71 — THE HOLE AND THE SHOVEL",
+  "_cellule": "OETX (Assaillant) · Éducation · Nightmare · regard=le marché-ennemi · présent · −−",
+  "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
+  "voice": [
+    "You're in a hole. The tool in your hand is the one that made it.",
+    "Doubling after a loss feels like the fastest way out, because one win now erases two mistakes. The arithmetic looks like rescue.",
+    "But the same move that halves the climb also doubles the depth if it fails. It cuts both ways, always — and one of those sides ends the account.",
+    "Two losses at normal size need a normal recovery. Two losses doubled need a move the market rarely gives you in one go.",
+    "The way out of a hole is not a bigger shovel. Comment LINE and I'll send you the checklist on what doubling really costs."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MÉTAPHORE PORTÉE SEULE : le trou et la pelle. Aucun fusil, aucun objet à décharger — l'image dit tout.",
+      "question": "WHY IS THE HOLE GETTING DEEPER?",
+      "emotion_lever": "RECONNAISSANCE + ABSURDE — creuser pour sortir d'un trou. L'image est immédiate, universelle.",
+      "cast": {
+        "hole": {
+          "type": "block",
+          "note": "le trou, la perte accumulée"
+        },
+        "shovel": {
+          "type": "block",
+          "note": "la pelle = la taille de position. LA MÉTAPHORE, pas un fusil : elle n'a pas à se transformer, elle a à être COMPRISE."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : un TROU creusé dans la masse encre. Au fond, une forme teal — et dans sa main, une PELLE. Le geste est SAISI EN COURS : elle creuse encore. La terre remonte, le trou s'approfondit sous elle. Aucune explication, aucun texte : la métaphore porte seule."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : une pelletée de plus, le fond descend d'un cran. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : une silhouette teal au fond d'un trou, une pelle à la main, en train de creuser encore",
+      "dispositif_cle": "MÉTAPHORE PORTÉE SEULE : pas de trajectoire d'objet à décharger. L'image doit être lisible sans un mot dès S1."
+    },
+    {
+      "id": "s2",
+      "clarity": "Doubler après une perte paraît être la sortie la plus rapide.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La PELLE grandit — elle double. À côté, une mesure : la hauteur qu'il reste à remonter pour sortir du trou. Quand la pelle double, cette hauteur se RÉDUIT de moitié."
+        },
+        {
+          "t": "1.5-3",
+          "do": "c'est montré sans ironie : le raisonnement est juste. Un gain à taille double efface deux pertes à taille normale. L'arithmétique de sauvetage est réelle — c'est précisément pour ça qu'elle est irrésistible."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la grande pelle, la hauteur de remontée réduite de moitié."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'arithmétique séduisante montrée honnêtement : la pelle grandit, la remontée nécessaire raccourcit",
+      "turn": "le calcul n'est pas faux. il est incomplet."
+    },
+    {
+      "id": "s3",
+      "clarity": "Mais le même geste qui divise la remontée double la profondeur s'il échoue.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La pelle est montrée AVEC SES DEUX EFFETS, simultanément : une flèche vers le HAUT (la remontée possible) et une flèche vers le BAS (l'approfondissement possible). Les deux flèches ont EXACTEMENT la même longueur."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on double la pelle : les DEUX flèches doublent ensemble. On ne peut jamais doubler l'une sans l'autre. La flèche du bas est suivie jusqu'à son terme : elle atteint le fond du cadre — le compte n'existe plus. La flèche du haut, elle, mène simplement au niveau de départ."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux flèches jumelles, l'une bornée par le retour à zéro, l'autre par la fin."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la pelle montrée comme une lame à deux tranchants : un côté remonte, l'autre creuse — même amplitude",
+      "turn": "les deux côtés doublent. un seul des deux est définitif."
+    },
+    {
+      "id": "s4",
+      "clarity": "Deux pertes normales demandent une remontée normale. Deux pertes doublées demandent un mouvement rare.",
+      "note": "LA scene — la profondeur exige un mouvement que le marché donne rarement d'un coup.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DEUX trous côte à côte. GAUCHE 'normal size' : le trou est peu profond, et la hauteur de remontée nécessaire tient dans la fourchette des mouvements habituels — une bande teal marque cette fourchette, la remontée est DEDANS."
+        },
+        {
+          "t": "2-3.5",
+          "do": "DROITE 'doubled' : le trou est bien plus profond. La hauteur de remontée nécessaire dépasse LARGEMENT la bande des mouvements habituels — elle sort du cadre. Ce n'est pas impossible, c'est RARE. Et il faut que ça arrive maintenant, en une fois, alors qu'on n'a plus de marge pour attendre."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la remontée dedans à gauche, la remontée hors cadre à droite."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux trous comparés : profondeur normale (remontée atteignable) vs profondeur doublée (remontée hors d'échelle)",
+      "turn": "tu n'as pas accéléré la sortie. tu as changé ce qu'il faut pour sortir."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : la forme teal POSE la pelle — elle la lâche, la pelle reste au fond. À la place, une ÉCHELLE se dresse contre la paroi, à barreaux RÉGULIERS, tous de la même taille. Elle monte, barreau après barreau, sans jamais changer d'amplitude."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le trou ne s'approfondit plus. La sortie est plus lente et elle est ATTEIGNABLE — chaque barreau est de taille normale. ⚠️ CTA À L'ÉCRAN, zone médiane : « Comment LINE » + « checklist: what doubling really costs ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la pelle abandonnée au fond, l'échelle à barreaux réguliers, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la pelle posée, l'échelle à barreaux réguliers + le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"LINE\" for the checklist on what doubling really costs. You're in a hole, and the tool in your hand is the one that made it.\n\nDoubling after a loss looks like rescue: one win at double size erases two mistakes, and the arithmetic is real. But the same move that halves the climb doubles the depth when it fails — both sides scale together, and only one of them is final. Two losses at normal size need a normal recovery; two doubled need a move the market rarely gives in one go.\n\nTHE LINE — the way out of a hole is not a bigger shovel.\n\n#trading #riskmanagement #revengetrading #daytrading #forex #positionsizing #discipline #propfirm #tradingpsychology #trader",
+  "pinned_comment": "The move that halves the climb doubles the depth. Both sides scale. Comment \"LINE\" for the checklist 👊",
+  "_rules": {
+    "cta_keyword": "LINE",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "MECANIQUE",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

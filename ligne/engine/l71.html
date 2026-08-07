@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L71 « THE HOLE AND THE SHOVEL » — MÉTAPHORE PORTÉE SEULE : le trou et la pelle (martingale). SANS narrateur, sans fusil.
+       S1 : un trou, au fond une forme teal, une PELLE grise à la main, geste saisi en cours. S2 : la pelle DOUBLE ; la hauteur à
+       remonter se réduit de moitié — l'arithmétique de sauvetage est réelle. S3 : la pelle avec SES DEUX EFFETS — flèche haut (remontée)
+       et flèche bas (approfondissement) ; doubler double les DEUX ; la flèche du bas mène à la FIN du compte. S4 : deux trous — 'normal'
+       (remontée dans la fourchette des mouvements habituels) vs 'doubled' (remontée qui SORT du cadre, mouvement rare). S5 : la prise —
+       la forme LÂCHE la pelle, une ÉCHELLE à barreaux réguliers se dresse, sortie plus lente mais atteignable + CTA. Doctrine :
+       teal = toi/échelle ; gris = pelle/profondeur/perte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, SURF=800;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // — le trou : surface + deux parois + fond —
+    const surf=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const wallL=mk('line',{stroke:INK,'stroke-width':6,opacity:0}), wallR=mk('line',{stroke:INK,'stroke-width':6,opacity:0});
+    const floor=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const fig=mk('circle',{r:34,fill:YOU,'fill-opacity':0.5,stroke:YOU,'stroke-width':5,opacity:0});
+    // — la pelle (grise, grandit) —
+    const shov=mk('g',{});mk('line',{x1:0,y1:0,x2:0,y2:56,stroke:DEAD,'stroke-width':7,'stroke-linecap':'round'},shov);mk('rect',{x:-24,y:56,width:48,height:52,rx:8,fill:DEAD},shov);setOp(shov,0);
+    // — mesure de remontée + flèches —
+    const climb=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const arrU=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0}), arrUh=mk('polygon',{fill:YOU,opacity:0});
+    const arrD=mk('line',{stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0}), arrDh=mk('polygon',{fill:DEAD,opacity:0});
+    const band=mk('rect',{fill:DEAD,'fill-opacity':0.16,opacity:0});   // fourchette des mouvements habituels
+    const endLine=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'12 8',opacity:0});
+    // — S4 deuxième trou —
+    const wallL2=mk('line',{stroke:INK,'stroke-width':6,opacity:0}), wallR2=mk('line',{stroke:INK,'stroke-width':6,opacity:0}), floor2=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const arrU2=mk('line',{stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0}), arrU2h=mk('polygon',{fill:DEAD,opacity:0});
+    const band2=mk('rect',{fill:DEAD,'fill-opacity':0.16,opacity:0});
+    // — S5 échelle —
+    const railL=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0}), railR=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const RUNG=[]; for(let i=0;i<6;i++)RUNG.push(mk('line',{stroke:YOU,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHY IS THE HOLE','GETTING DEEPER?'];
+    const FS=80,lineH=106,y0=205,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':144,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,sc,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(sc||1).toFixed(3)})`);setOp(g,op);}
+    function head(el,x,y,dir){const s=18;const p=dir<0?[[x,y],[x-12,y+s],[x+12,y+s]]:[[x,y],[x-12,y-s],[x+12,y-s]];el.setAttribute('points',p.map(q=>q.join(',')).join(' '));}
+
+    function hideDyn(){for(const e of [surf,wallL,wallR,floor,fig,shov,climb,arrU,arrUh,arrD,arrDh,band,endLine,wallL2,wallR2,floor2,arrU2,arrU2h,band2,railL,railR])setOp(e,0);
+      for(const e of RUNG)setOp(e,0);hideCaps();}
+
+    function drawHole(xl,xr,floorY,op){surf.setAttribute('x1',120);surf.setAttribute('x2',960);surf.setAttribute('y1',SURF);surf.setAttribute('y2',SURF);setOp(surf,op);
+      wallL.setAttribute('x1',xl);wallL.setAttribute('y1',SURF);wallL.setAttribute('x2',xl);wallL.setAttribute('y2',floorY);setOp(wallL,op);
+      wallR.setAttribute('x1',xr);wallR.setAttribute('y1',SURF);wallR.setAttribute('x2',xr);wallR.setAttribute('y2',floorY);setOp(wallR,op);
+      floor.setAttribute('x1',xl);floor.setAttribute('x2',xr);floor.setAttribute('y1',floorY);floor.setAttribute('y2',floorY);setOp(floor,op);}
+
+    // ═══ S1 — LE TROU, LA FORME AU FOND, LA PELLE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const floorY=lerp(1020,1240,clamp(u/5,0,1))+4*Math.sin(u*1.5);   // il creuse encore
+      drawHole(CX-130,CX+130,floorY,clamp(u/0.3,0,1)*gf);
+      fig.setAttribute('cx',CX-40);fig.setAttribute('cy',(floorY-40).toFixed(1));setOp(fig,clamp(u/0.3,0,1)*gf);
+      place(shov, CX+30, floorY-150+10*Math.sin(u*3), 1.0, clamp((u-0.3)/0.4,0,1)*gf);
+      putCap(capB,'THE TOOL IN YOUR HAND MADE IT',CX,1400,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LA PELLE DOUBLE, LA REMONTÉE SE RÉDUIT DE MOITIÉ ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const floorY=1180;
+      drawHole(CX-130,CX+130,floorY,1);
+      fig.setAttribute('cx',CX-40);fig.setAttribute('cy',(floorY-40+4*Math.sin(u*1.4)).toFixed(1));setOp(fig,1);
+      const dbl=clamp((u-0.6)/1.4,0,1);
+      place(shov, CX+40, floorY-180+6*Math.sin(u*1.5), lerp(1.0,1.9,dbl), 1);
+      // mesure de remontée : hauteur restante, qui se réduit de moitié (barre à DROITE du trou)
+      const climbTop=lerp(SURF, lerp(SURF,floorY,0.5), dbl);   // la hauteur restante ↓
+      climb.setAttribute('x1',800);climb.setAttribute('x2',800);climb.setAttribute('y1',floorY);climb.setAttribute('y2',climbTop.toFixed(1));setOp(climb,clamp(u/0.4,0,1));
+      putCap(capC,'CLIMB LEFT',800,climbTop-24,DEAD,clamp((u-0.5)/0.5,0,1));
+      putCap(capA,'HALVED',800,floorY+50,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'ONE DOUBLE WIN ERASES TWO LOSSES',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — LES DEUX EFFETS JUMEAUX : REMONTÉE ↑ ET PROFONDEUR ↓ ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const dbl=clamp((u-1.0)/1.4,0,1);
+      const br=8*Math.sin(u*1.3)+4*Math.sin(u*2.4);   // respiration continue
+      const pivotY=1000+br, span=lerp(150,300,dbl);   // les deux flèches doublent ensemble
+      const inA=clamp(u/0.15,0,1);
+      // flèche du haut (remontée possible)
+      arrU.setAttribute('x1',CX-140);arrU.setAttribute('x2',CX-140);arrU.setAttribute('y1',pivotY.toFixed(1));arrU.setAttribute('y2',(pivotY-span).toFixed(1));setOp(arrU,inA);
+      head(arrUh,CX-140,pivotY-span,1);setOp(arrUh,inA);
+      putCap(capC,'CLIMB',CX-140,pivotY-span-30,YOU,clamp((u-0.2)/0.4,0,1));
+      // flèche du bas (approfondissement) — suivie jusqu'à la FIN
+      arrD.setAttribute('x1',CX+140);arrD.setAttribute('x2',CX+140);arrD.setAttribute('y1',pivotY.toFixed(1));arrD.setAttribute('y2',(pivotY+span).toFixed(1));setOp(arrD,inA);
+      head(arrDh,CX+140,pivotY+span,-1);setOp(arrDh,inA);
+      putCap(capD,'DEPTH',CX+250,(pivotY+span*0.5),DEAD,clamp((u-0.2)/0.4,0,1));
+      // la pelle au pivot
+      place(shov, CX, pivotY-120, lerp(1.0,1.7,dbl), inA);
+      // la ligne de fin (le compte à zéro), que la flèche du bas atteint
+      endLine.setAttribute('x1',300);endLine.setAttribute('x2',780);endLine.setAttribute('y1',(pivotY+span+40).toFixed(1));endLine.setAttribute('y2',(pivotY+span+40).toFixed(1));setOp(endLine, dbl>0.7?clamp((u-2.0)/0.4,0,1):0);
+      putCap(capA, 'ACCOUNT ENDS', CX, pivotY+span+95, INK, dbl>0.7?clamp((u-2.2)/0.4,0,1):0);
+      putCap(capB,'IT CUTS BOTH WAYS — ALWAYS',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — DEUX TROUS : NORMAL (dans la fourchette) vs DOUBLED (hors cadre) ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=7*Math.sin(u*1.3)+4*Math.sin(u*2.4);   // respiration continue
+      surf.setAttribute('x1',120);surf.setAttribute('x2',960);surf.setAttribute('y1',SURF);surf.setAttribute('y2',SURF);setOp(surf,1);
+      // la fourchette des mouvements habituels (bande sous la surface)
+      band.setAttribute('x',150);band.setAttribute('y',SURF);band.setAttribute('width',330);band.setAttribute('height',150);setOp(band,clamp(u/0.4,0,1));
+      band2.setAttribute('x',600);band2.setAttribute('y',SURF);band2.setAttribute('width',330);band2.setAttribute('height',150);setOp(band2,clamp(u/0.4,0,1));
+      // GAUCHE normal : trou peu profond, remontée DANS la bande
+      const fy1=1010;wallL.setAttribute('x1',210);wallL.setAttribute('y1',SURF);wallL.setAttribute('x2',210);wallL.setAttribute('y2',fy1);setOp(wallL,1);
+      wallR.setAttribute('x1',420);wallR.setAttribute('y1',SURF);wallR.setAttribute('x2',420);wallR.setAttribute('y2',fy1);setOp(wallR,1);
+      floor.setAttribute('x1',210);floor.setAttribute('x2',420);floor.setAttribute('y1',fy1);floor.setAttribute('y2',fy1);setOp(floor,1);
+      arrU.setAttribute('x1',315);arrU.setAttribute('x2',315);arrU.setAttribute('y1',(fy1+br).toFixed(1));arrU.setAttribute('y2',(SURF+20+br*0.5).toFixed(1));setOp(arrU,clamp((u-0.6)/0.4,0,1));head(arrUh,315,SURF+20+br*0.5,1);setOp(arrUh,clamp((u-0.6)/0.4,0,1));
+      putCap(capC,'NORMAL',315,1080,YOU,clamp((u-0.6)/0.5,0,1));
+      // DROITE doubled : trou profond, remontée SORT du cadre
+      const fy2=1300;wallL2.setAttribute('x1',680);wallL2.setAttribute('y1',SURF);wallL2.setAttribute('x2',680);wallL2.setAttribute('y2',fy2);setOp(wallL2,1);
+      wallR2.setAttribute('x1',850);wallR2.setAttribute('y1',SURF);wallR2.setAttribute('x2',850);wallR2.setAttribute('y2',fy2);setOp(wallR2,1);
+      floor2.setAttribute('x1',680);floor2.setAttribute('x2',850);floor2.setAttribute('y1',fy2);floor2.setAttribute('y2',fy2);setOp(floor2,1);
+      arrU2.setAttribute('x1',765);arrU2.setAttribute('x2',765);arrU2.setAttribute('y1',(fy2+br).toFixed(1));arrU2.setAttribute('y2',(430+br).toFixed(1));setOp(arrU2,clamp((u-1.2)/0.4,0,1));head(arrU2h,765,430+br,1);setOp(arrU2h,clamp((u-1.2)/0.4,0,1));
+      putCap(capD,'DOUBLED',765,1370,DEAD,clamp((u-1.2)/0.5,0,1));
+      putCap(capB,'A MOVE THE MARKET RARELY GIVES',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA PELLE LÂCHÉE, L'ÉCHELLE À BARREAUX RÉGULIERS + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const floorY=1200;
+      drawHole(CX-140,CX+140,floorY,1);
+      // la pelle abandonnée au fond
+      place(shov, CX+90, floorY-40, 1.0, clamp(u/0.3,0,1));
+      shov.setAttribute('transform',`translate(${CX+90} ${floorY-30}) rotate(78) scale(1)`);
+      // la forme grimpe (montée régulière)
+      const climbF=clamp((u-1.0)/2.4,0,1);
+      fig.setAttribute('cx',CX-70);fig.setAttribute('cy',(floorY-40 - (floorY-SURF-60)*climbF).toFixed(1));setOp(fig,clamp(u/0.3,0,1));
+      // l'échelle à barreaux réguliers contre la paroi
+      const grow=clamp((u-0.4)/1.2,0,1);
+      const topY=lerp(floorY, SURF+10, grow);
+      railL.setAttribute('x1',CX-30);railL.setAttribute('x2',CX-30);railL.setAttribute('y1',floorY);railL.setAttribute('y2',topY.toFixed(1));setOp(railL,clamp(u/0.4,0,1));
+      railR.setAttribute('x1',CX+70);railR.setAttribute('x2',CX+70);railR.setAttribute('y1',floorY);railR.setAttribute('y2',topY.toFixed(1));setOp(railR,clamp(u/0.4,0,1));
+      for(let i=0;i<6;i++){const ry=floorY-60-i*70;const on=ry>topY-10;RUNG[i].setAttribute('x1',CX-30);RUNG[i].setAttribute('x2',CX+70);RUNG[i].setAttribute('y1',ry);RUNG[i].setAttribute('y2',ry);setOp(RUNG[i],on?clamp((u-0.6-i*0.08)/0.4,0,1):0);}
+      putCap(capC,'REGULAR RUNGS — REACHABLE',CX,floorY+70,YOU,clamp((u-1.0)/0.5,0,1));
+      putCap(capD,'NOT A BIGGER SHOVEL',CX,600,INK,clamp((u-2.4)/0.6,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "LINE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'WHAT DOUBLING REALLY COSTS',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
