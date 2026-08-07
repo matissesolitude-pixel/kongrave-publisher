@@ -1,0 +1,151 @@
+{
+  "id": "L59",
+  "engine": "l59",
+  "title": "L59 — THE BACKTEST THAT PROVES NOTHING",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "Your backtest shows ninety percent? That number says more about how you built the test than about the market.",
+    "When you look at closed history, you can see the right edge. Every level you drew, you drew it knowing what came after it. The chart already told you the answer.",
+    "So you weren't testing a strategy. You were explaining a shape you could already see — and that skill has nothing to do with the one you need live.",
+    "Then there's the sample. A short run proves nothing in either direction: a real edge still loses often, and no edge at all can produce a great streak by chance.",
+    "Cover the right side. Stop the chart at the decision, and only count what you had at that moment. If it still holds over hundreds of those, then you have something. Comment MAP, and I'll send you the tool that reads structure live."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : ton backtest affiche 90% ? Ce nombre dit plus sur la façon dont tu as construit le test que sur le marché.",
+      "question": "90% ON THE BACKTEST. ON WHAT?",
+      "emotion_lever": "CURIOSITÉ + CHOC — un résultat parfait dont la condition est en train d'être effacée sous nos yeux.",
+      "cast": {
+        "chart": {
+          "type": "path",
+          "note": "le graphe complet avec ses trades gagnants"
+        },
+        "curtain": {
+          "type": "block",
+          "note": "le rideau qui masque la droite. le fusil = ce qui reste quand il est fermé."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un graphe COMPLET avec une série de trades marqués, presque tous gagnants — un résultat éclatant, un compteur '90%' bien visible. MAIS un rideau encre glisse DÉJÀ depuis le bord droit et a recouvert un tiers du graphe. On voit le résultat ET sa condition en train de disparaître."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : le rideau avance encore, les trades gagnants disparaissent dessous un à un. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le graphe complet avec le résultat éclatant + le rideau qui masque déjà la partie droite, dès la frame 0",
+      "fusil": "le rideau — on va voir ce que le test vaut une fois fermé."
+    },
+    {
+      "id": "s2",
+      "clarity": "Sur de l'historique fermé, tu vois le bord droit. Chaque niveau que tu as tracé, tu l'as tracé en sachant ce qui venait après.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — le niveau tracé à l'envers. Rideau OUVERT : une main pose un niveau exactement là où le prix a réagi. Le geste est fluide, évident, il n'y a pas d'hésitation — l'endroit est visible."
+        },
+        {
+          "t": "1.5-3",
+          "do": "rideau FERMÉ : le même instant, sans l'après. La main hésite : il y a QUATRE endroits candidats, tous également défendables. Elle en pose un — et rien ne dit que c'est celui qu'elle aurait posé avec l'après sous les yeux."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les quatre candidats à l'écran, un seul avait été retenu quand l'après était visible."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — le même niveau tracé deux fois : avec l'après visible (facile) et sans (impossible à placer)",
+      "turn": "tu n'as pas trouvé le niveau. tu l'as reconnu après coup."
+    },
+    {
+      "id": "s3",
+      "clarity": "Donc tu ne testais pas une stratégie. Tu expliquais une forme déjà visible — et cette compétence n'a rien à voir avec celle dont tu as besoin en direct.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — deux compétences. GAUCHE 'explaining' : sur le graphe complet, une main repasse la forme déjà tracée. Aucune résistance, geste continu."
+        },
+        {
+          "t": "1.5-3",
+          "do": "DROITE 'committing' : au bord du rideau, la même main doit s'engager dans le VIDE. Elle hésite, s'arrête, repart. Rien pour la guider. Les deux gestes sont montrés en parallèle : l'un glisse, l'autre bute. Ce ne sont pas deux niveaux de la même compétence — ce sont deux compétences."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le geste fluide à gauche, le geste suspendu au-dessus du vide à droite."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — deux exercices : repasser une forme visible (fluide) vs s'engager dans le vide (lourd)",
+      "turn": "expliquer une forme visible et s'engager à l'aveugle sont deux métiers."
+    },
+    {
+      "id": "s4",
+      "clarity": "Et il y a l'échantillon. Une série courte ne prouve rien dans aucun sens : un vrai edge perd souvent, et l'absence d'edge peut produire une belle série par hasard.",
+      "note": "LA scene — le 90% décrit la fenêtre, pas la méthode.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — la fenêtre qui glisse. Un LONG flux de résultats défile, teal et gris mélangés, issu d'une source unique. Une petite FENÊTRE (la taille d'un backtest court) se pose dessus."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on déplace la fenêtre : ici elle attrape 9 teal sur 10 — '90%'. Un cran plus loin, 4 sur 10. Encore plus loin, 7 sur 10. MÊME source, mêmes règles : seul l'emplacement de la fenêtre a changé. Le nombre décrit la fenêtre, pas la méthode."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : la fenêtre qui glisse en boucle, le nombre qui change à chaque position."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — une fenêtre courte qui glisse sur un long flux et ramasse des résultats opposés selon sa position",
+      "turn": "sur un échantillon court, la même source donne n'importe quel pourcentage."
+    },
+    {
+      "id": "s5",
+      "clarity": "Couvre la partie droite. Arrête le graphe à l'instant de la décision et ne compte que ce que tu avais à ce moment-là. Si ça tient sur des centaines, tu as quelque chose.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4, le rideau devient un outil. Cette fois il est TIRÉ VOLONTAIREMENT jusqu'à l'instant de la décision. La décision est prise avec ce qui était disponible, puis le rideau s'ouvre pour révéler le résultat — dans cet ordre, jamais l'inverse."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on répète le geste, cadence qui accélère : décider à l'aveugle, révéler, enregistrer. À dix répétitions, la mesure oscille sauvagement. À plusieurs centaines, le trait se STABILISE sur une valeur qui, elle, veut dire quelque chose. Le rideau subi est devenu la méthode."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le rideau tiré à l'instant de décision, la mesure convergée sur un grand échantillon. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — le rideau utilisé comme OUTIL : décision prise à l'aveugle, répétée, la mesure qui converge",
+      "fusil_decharge": "le rideau de S1, subi, devient l'outil : décider avant de voir, et répéter assez pour que le chiffre cesse de décrire la fenêtre."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"MAP\" for the tool that reads structure live. Your backtest shows 90%? That number describes how you built the test, not the market.\n\nCurve-fit rules, no slippage, exits chosen in hindsight — it proves you can explain the past, not trade the future. The market that’s forming now doesn’t know your test existed.\n\nTHE LINE — read the structure happening now, not a curve fit to what already happened.\n\n#trading #backtesting #priceaction #daytrading #forex #tradingeducation #strategy #structure #technicalanalysis #trader",
+  "pinned_comment": "Comment \"MAP\" and I'll send you the 3T engine indicator 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : biais rétrospectif + taille d'échantillon, réunis. Le nombre décrit la fenêtre et la connaissance de l'après, pas la méthode. Factuel.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "MAP",
+    "cta_spoken_added": "Comment MAP, and I'll send you the tool that reads structure live."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

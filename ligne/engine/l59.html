@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L59 « THE BACKTEST THAT PROVES NOTHING » — le rideau (le bord droit) + la fenêtre glissante. SANS narrateur.
+       S1 : 90% éclatant sur un graphe complet ; le rideau avance, les gagnants disparaissent dessous. S2 : le niveau tracé À
+       L'ENVERS — rideau ouvert il tombe pile, rideau fermé QUATRE candidats également défendables. S3 : deux compétences —
+       expliquer une forme visible (fluide) vs s'engager dans le vide (hésitant). S4 : la fenêtre qui glisse — même source, 90%
+       ici, 40% un cran plus loin, 70% encore après. S5 : le rideau devient un OUTIL — tiré à l'instant de décision, mesure qui
+       converge sur un grand échantillon + CTA. Doctrine : teal = gagnant/toi ; gris = perte ; pas de brun ; bas du cadre vide ;
+       chiffre (le %) comme punch (la fenêtre qui change le nombre). -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const X0=140, X1=940, span=X1-X0;
+    function chY(f){return 1120-260*Math.sin(f*3.1)-120*Math.sin(f*1.3)-90*f;}
+    function chX(f){return X0+span*clamp(f,0,1);}
+    function chpts(a,b,n){const o=[];for(let i=0;i<=n;i++){const f=a+(b-a)*i/n;o.push([chX(f).toFixed(1),chY(f).toFixed(1)]);}return o.map(p=>p.join(',')).join(' ');}
+
+    const chart=mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const chart2=mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const curtain=mk('rect',{fill:DEAD,'fill-opacity':0.9,opacity:0});
+    const level=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'16 10','stroke-linecap':'round',opacity:0});
+    const CAND=[]; for(let i=0;i<4;i++)CAND.push(mk('line',{stroke:DEAD,'stroke-width':5,'stroke-dasharray':'12 10','stroke-linecap':'round',opacity:0}));
+    const ptr=mk('polygon',{fill:INK,opacity:0});
+    const TR=[]; for(let i=0;i<12;i++)TR.push(mk('circle',{r:12,opacity:0}));   // marqueurs de trades
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':120,opacity:0});
+    const FLUX=[]; for(let i=0;i<30;i++)FLUX.push(mk('rect',{rx:2,opacity:0}));   // S4 flux de résultats
+    const window_=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:6,opacity:0});
+    function ptrAt(x,y,op){const p=[[x,y],[x-18,y-30],[x+18,y-30]];ptr.setAttribute('points',p.map(q=>q.join(',')).join(' '));setOp(ptr,op);}
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['90% ON THE BACKTEST.','ON WHAT?'];
+    const FS=80,lineH=106,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.58));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [chart,chart2,curtain,level,ptr,counter,window_])setOp(e,0);
+      for(const e of CAND)setOp(e,0);for(const e of TR)setOp(e,0);for(const e of FLUX)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — 90% ÉCLATANT, LE RIDEAU AVANCE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      chart.setAttribute('points',chpts(0,1,50));setOp(chart,1);
+      // trades gagnants (teal) sur la courbe
+      for(let i=0;i<10;i++){const f=0.05+i*0.093;TR[i].setAttribute('cx',chX(f).toFixed(1));TR[i].setAttribute('cy',(chY(f)+3*Math.sin(u*2+i)).toFixed(1));TR[i].setAttribute('fill',i===6?DEAD:YOU);setOp(TR[i],1);}
+      // le compteur 90% (le punch trompeur)
+      counter.textContent='90%';counter.setAttribute('x',CX);counter.setAttribute('y',640);counter.setAttribute('fill',YOU);counter.setAttribute('transform',`translate(${CX} 640) scale(${(1+0.04*Math.sin(u*5)).toFixed(3)}) translate(${-CX} -640)`);setOp(counter,clamp((u-0.3)/0.4,0,1));
+      // le rideau avance depuis la droite et masque les gagnants
+      const cx=lerp(X1,X0+260,clamp(u/6,0,1));
+      curtain.setAttribute('x',cx.toFixed(1));curtain.setAttribute('y',700);curtain.setAttribute('width',(1080-cx).toFixed(1));curtain.setAttribute('height',700);setOp(curtain,clamp((u-1.4)/0.8,0,1)*0.9);
+      putCap(capB,'A NUMBER FROM A CHART THAT ALREADY ENDED',CX,1520,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LE NIVEAU TRACÉ À L'ENVERS : 1 évident vs 4 candidats ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      chart.setAttribute('points',chpts(0,1,50));setOp(chart,1);
+      // rideau OUVERT (phase 1) : le niveau tombe pile
+      const closed=clamp((u-2.0)/0.8,0,1);
+      const cx=lerp(X1,540,closed);
+      if(closed<1){ level.setAttribute('x1',X0);level.setAttribute('x2',X1);level.setAttribute('y1',chY(0.62).toFixed(1));level.setAttribute('y2',chY(0.62).toFixed(1));setOp(level,clamp(u/0.6,0,1)*(1-closed));
+        ptrAt(chX(0.62), chY(0.62)+40, clamp(u/0.6,0,1)*(1-closed));
+        putCap(capC,'DRAWN KNOWING THE ANSWER',CX,600,YOU,clamp((u-0.6)/0.6,0,1)*(1-closed)); }
+      // rideau FERMÉ (phase 2) : 4 candidats également défendables
+      curtain.setAttribute('x',cx.toFixed(1));curtain.setAttribute('y',700);curtain.setAttribute('width',(1080-cx).toFixed(1));curtain.setAttribute('height',700);setOp(curtain,closed*0.9);
+      const cys=[880,1000,1120,1220];
+      for(let i=0;i<4;i++){CAND[i].setAttribute('x1',X0);CAND[i].setAttribute('x2',cx.toFixed(1));CAND[i].setAttribute('y1',(cys[i]+3*Math.sin(u*1.6+i)).toFixed(1));CAND[i].setAttribute('y2',(cys[i]+3*Math.sin(u*1.6+i)).toFixed(1));setOp(CAND[i],closed*(0.5+0.5*Math.abs(Math.sin(u*1.5+i))));}
+      if(closed>0.2){const hi=Math.floor((u*0.6)%4);ptrAt(cx-40, cys[hi]-6, closed);
+        putCap(capD,'FOUR CANDIDATES',780,1330,PAPER,closed);}
+      putCap(capB,'THE CHART TOLD YOU THE ANSWER',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — DEUX COMPÉTENCES : expliquer (fluide) vs s'engager dans le vide (hésitant) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // GAUCHE : expliquer la forme visible (le pointeur repasse, fluide)
+      const lf2=(u*0.28)%1;
+      chart.setAttribute('points',chpts(0,0.5,26));setOp(chart,1);
+      ptrAt(chX(lf2*0.5), chY(lf2*0.5)+38, 1);
+      putCap(capC,'EXPLAINING',300,730,DEAD,clamp((u-0.4)/0.6,0,1));
+      // DROITE : s'engager dans le vide (le pointeur hésite au bord du rideau)
+      chart2.setAttribute('points',chpts(0.52,0.78,16));setOp(chart2,1);
+      const cx=chX(0.80);
+      curtain.setAttribute('x',cx.toFixed(1));curtain.setAttribute('y',700);curtain.setAttribute('width',(1080-cx).toFixed(1));curtain.setAttribute('height',700);setOp(curtain,0.9);
+      const hesit=cx+40+30*Math.sin(u*3.4)+15*Math.sin(u*6.1);   // il hésite
+      ptrAt(hesit, chY(0.79)+38, 1);
+      putCap(capD,'COMMITTING',712,730,YOU,clamp((u-0.8)/0.6,0,1));
+      putCap(capB,'A DIFFERENT SKILL — THE ONE YOU NEED LIVE',CX,570,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA FENÊTRE QUI GLISSE : même source, le nombre change ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const y0b=1000, bw=28, gap=4, x0=110;
+      // flux de résultats (teal/gris) d'une SOURCE unique
+      const seed=[1,1,0,1,1,1,0,1,0,1,1,1,1,0,1,0,1,1,1,0,1,1,0,1,1,1,0,1,1,1];
+      for(let i=0;i<30;i++){FLUX[i].setAttribute('x',(x0+i*(bw+gap)).toFixed(1));FLUX[i].setAttribute('y',(y0b+3*Math.sin(u*2+i)).toFixed(1));FLUX[i].setAttribute('width',bw);FLUX[i].setAttribute('height',80);FLUX[i].setAttribute('fill',seed[i]?YOU:DEAD);setOp(FLUX[i],1);}
+      // la fenêtre (le test) glisse ; on compte les teal dedans
+      const nWin=10, pos=Math.floor((u*3)%20);
+      const wx=x0+pos*(bw+gap)-4;
+      window_.setAttribute('x',wx.toFixed(1));window_.setAttribute('y',(y0b-14).toFixed(1));window_.setAttribute('width',(nWin*(bw+gap)+4).toFixed(1));window_.setAttribute('height',108);setOp(window_,clamp(u/0.4,0,1));
+      let teal=0;for(let i=pos;i<pos+nWin;i++)teal+=seed[i%30];
+      counter.textContent=(teal*10)+'%';counter.setAttribute('x',CX);counter.setAttribute('y',760);counter.setAttribute('fill',teal>=7?YOU:DEAD);counter.setAttribute('transform','');setOp(counter,clamp((u-0.4)/0.4,0,1));
+      putCap(capC,'SAME SOURCE — SAME RULES',CX,860,DEAD,clamp((u-1.2)/0.6,0,1));
+      putCap(capB,'A SHORT RUN PROVES NOTHING',CX,600,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE RIDEAU-OUTIL : décidé à l'aveugle, la mesure converge + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      chart.setAttribute('points',chpts(0,1,50));setOp(chart,0.9);
+      // le rideau tiré VOLONTAIREMENT à l'instant de décision
+      const cx=chX(0.6);
+      curtain.setAttribute('x',cx.toFixed(1));curtain.setAttribute('y',700);curtain.setAttribute('width',(1080-cx).toFixed(1));curtain.setAttribute('height',700);setOp(curtain,0.9);
+      level.setAttribute('x1',cx-6);level.setAttribute('x2',cx-6);level.setAttribute('y1',700);level.setAttribute('y2',1400);level.setAttribute('stroke',YOU);level.setAttribute('stroke-dasharray','0');level.setAttribute('stroke-width',7);setOp(level,1);
+      ptrAt(cx-6, 760, 1);
+      putCap(capC,'STOP AT THE DECISION',cx-6,690,YOU,clamp((u-0.4)/0.6,0,1));
+      // la mesure converge : oscille fort tôt, se stabilise sur un grand échantillon
+      const n=Math.round(lerp(10,400,eOut(clamp((u-0.8)/2.4,0,1))));
+      const noise=lerp(28,2,clamp((u-0.8)/2.4,0,1));
+      const val=Math.round(58+noise*Math.sin(u*5));
+      counter.textContent=val+'%';counter.setAttribute('x',CX);counter.setAttribute('y',1160);counter.setAttribute('fill',INK);counter.setAttribute('transform','');setOp(counter,clamp((u-0.8)/0.4,0,1));
+      putCap(capD,'HUNDREDS OF THOSE — THEN YOU HAVE SOMETHING',CX,1300,INK,clamp((u-2.0)/0.7,0,1));
+      putCap(capB,'ONLY COUNT WHAT YOU HAD AT THAT MOMENT',CX,600,INK,clamp((u-2.6)/0.7,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "MAP"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE TOOL THAT READS STRUCTURE',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
