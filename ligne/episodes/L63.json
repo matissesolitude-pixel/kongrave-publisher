@@ -1,0 +1,151 @@
+{
+  "id": "L63",
+  "engine": "l63",
+  "title": "L63 — THE DECISION YOU MADE BY WAITING",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "Waiting for more information keeps you safe? Waiting is a decision, and it's the one you never priced.",
+    "Every extra check feels like diligence. Another timeframe, another indicator, one more look before committing. None of it made the setup clearer.",
+    "What it did was move the decision later. And later is where setups expire — the level goes without you, and the thing you were being careful about happens anyway.",
+    "Then comes the second bill. You either enter late, chasing, at a worse price with a wider stop. Or you don't enter at all and call it patience.",
+    "Decide in advance what makes the read complete, and stop looking when it is. Not deciding is deciding. It just doesn't feel like it, because nothing happened. Comment PROFILE, and I'll send you the free trader test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : attendre plus d'information te protège ? Attendre est une décision, et c'est celle que tu n'as jamais chiffrée.",
+      "question": "WHAT IS WAITING COSTING YOU?",
+      "emotion_lever": "TENSION — le setup s'éteint sous nos yeux pendant que les vérifications s'accumulent.",
+      "cast": {
+        "setup": {
+          "type": "block",
+          "note": "le setup teal qui pâlit"
+        },
+        "checks": {
+          "type": "block",
+          "note": "la pile de vérifications qui monte. le fusil = le temps."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un setup teal, net, clairement formé au centre. Autour de lui, une PILE de vérifications s'empile déjà — timeframes, contrôles, coches. Et le setup, lui, est en train de PÂLIR : il s'éteint pendant qu'on l'examine. Une horloge marque le temps qui passe. La perte est en cours."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : une vérification de plus s'ajoute à la pile, le setup pâlit encore. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le setup qui s'éteint pendant que les vérifications s'empilent, dès la frame 0",
+      "fusil": "le setup qui pâlit — on va voir ce que chaque vérification coûte."
+    },
+    {
+      "id": "s2",
+      "clarity": "Chaque vérification supplémentaire ressemble à du sérieux. Un timeframe de plus, un indicateur de plus, un dernier coup d'œil. Rien de tout ça n'a rendu le setup plus clair.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — la clarté qui ne monte pas. Une jauge 'clarity' est posée à côté du setup. On ajoute une vérification : la jauge ne bouge pas. On en ajoute une deuxième : elle ne bouge toujours pas."
+        },
+        {
+          "t": "1.5-3",
+          "do": "troisième, quatrième : la jauge de clarté reste plate, exactement au même niveau qu'au premier regard. En revanche, une seconde jauge — 'time spent' — monte à chaque ajout. Une seule des deux réagit aux vérifications."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la jauge de clarté plate, la jauge de temps qui continue de monter."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — la clarté mesurée avant/après chaque vérification : elle ne bouge pas",
+      "turn": "la clarté n'a pas bougé. seul le temps a bougé."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce que ça a fait, c'est déplacer la décision plus tard. Et plus tard, c'est là où les setups expirent : le niveau part sans toi.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — le départ sans toi. Le setup est là, on continue de vérifier. Pendant ce temps, le PRIX quitte la zone : le mouvement se déroule, franc, complet."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on superpose les deux timelines : les vérifications d'un côté, le mouvement de l'autre. Le mouvement était en cours PENDANT les vérifications. Quand la dernière coche tombe, le prix est loin, et la zone d'entrée est vide — la position n'a jamais été prise."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le mouvement accompli au loin, la zone d'entrée vide, les coches complètes et inutiles."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — le mouvement qui se déroule pendant les vérifications, sans toi",
+      "turn": "pendant que tu vérifiais, la chose que tu vérifiais s'est produite."
+    },
+    {
+      "id": "s4",
+      "clarity": "Puis vient la seconde facture. Soit tu entres en retard, en chassant, à un pire prix avec un stop plus large. Soit tu n'entres pas et tu appelles ça de la patience.",
+      "note": "LA scene — les deux factures de l'attente, aucune n'est gratuite.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — les deux factures. VOIE A 'chase' : la position entre tard, loin du niveau. Son stop doit être placé BEAUCOUP plus bas (la structure est loin derrière), donc le risque par point est plus gros et le RR s'écrase visiblement."
+        },
+        {
+          "t": "1.5-3",
+          "do": "VOIE B 'skip' : aucune position. Le mouvement se déroule entier, non pris, et une brique FANTÔME creuse se pose dans la colonne des occasions manquées. Les deux voies sont montrées côte à côte : l'une coûte du risque, l'autre coûte l'opportunité. Aucune des deux n'est gratuite."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : le RR écrasé d'un côté, la brique creuse de l'autre."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — les deux sorties de la paralysie : l'entrée tardive (pire prix, stop large) et la non-entrée",
+      "turn": "attendre n'a pas supprimé le coût. il l'a déplacé."
+    },
+    {
+      "id": "s5",
+      "clarity": "Décide à l'avance ce qui rend la lecture COMPLÈTE, et arrête de regarder quand elle l'est. Ne pas décider, c'est décider — ça n'en a juste pas l'air, parce que rien ne s'est passé.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4, le point d'arrêt. Une courte LISTE se pose AVANT la session : ce qui doit être vrai pour que la lecture soit complète. Trois éléments, pas douze. Elle est écrite avant, donc elle n'est pas négociable pendant."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la session tourne : les trois éléments se cochent. Au troisième, le regard S'ARRÊTE — un trait net marque la fin de l'examen — et la décision se prend. Le setup est encore VIF, pas pâli. À côté, la version sans liste est rappelée : vérifications infinies, setup éteint. Même setup, deux issues, une seule différence : le point d'arrêt existait."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la liste cochée, le trait d'arrêt, la position prise sur un setup encore vif. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — la liste de complétude définie avant, le regard qui s'arrête quand elle est cochée",
+      "fusil_decharge": "le setup qui pâlissait en S1 se résout : ce n'était pas l'information qui manquait, c'était le point où l'examen s'arrête — décidé avant, jamais pendant."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"PROFILE\" to find your trader type. Waiting for more information keeps you safe? Waiting is a decision — the one you never priced.\n\nThe move leaves without you, and the “safety” costs you the entry and the edge. Not choosing is choosing; you just never see the bill for it.\n\nTHE LINE — waiting is a position. Price it like one.\n\n#trading #tradingpsychology #decisionmaking #daytrading #forex #tradingeducation #mindset #discipline #patience #trader",
+  "pinned_comment": "Comment \"PROFILE\" and I'll send you the free trader profile test 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : la paralysie d'analyse chiffrée — attendre a DEUX factures (entrée tardive OU occasion manquée). On montre le manque de point d'arrêt, pas le contenu de la liste.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "PROFILE",
+    "cta_spoken_added": "Comment PROFILE, and I'll send you the free trader test."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

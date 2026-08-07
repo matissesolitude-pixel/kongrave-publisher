@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L63 « THE DECISION YOU MADE BY WAITING » — attendre est une décision, celle que tu n'as jamais chiffrée. SANS narrateur.
+       S1 : un setup teal net, une PILE de vérifications qui s'empile ; le setup pâlit. S2 : la clarté qui ne monte pas — jauge
+       CLARITY plate malgré les vérifs, jauge TIME qui grimpe. S3 : le départ sans toi — pendant les coches, le PRIX quitte la zone,
+       le mouvement s'accomplit au loin, l'entrée reste vide. S4 : les deux factures — VOIE A 'chase' (entrée tardive, stop bien plus
+       large, RR écrasé) vs VOIE B 'skip' (brique fantôme creuse dans la colonne des occasions ratées). S5 : le point d'arrêt — une
+       liste posée AVANT, trois coches, un trait net d'arrêt, la position prise sur un setup encore vif + CTA. Doctrine : teal =
+       setup/toi ; gris = temps perdu/facture ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    function gauge(){const g=mk('g',{});const out=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:10},g);const fill=mk('rect',{fill:YOU,rx:6},g);return {g,out,fill};}
+    function setGauge(G,x,y,w,h,frac,col,op){G.out.setAttribute('x',x);G.out.setAttribute('y',y);G.out.setAttribute('width',w);G.out.setAttribute('height',h);
+      const fh=clamp(frac,0,1)*(h-10);G.fill.setAttribute('fill',col);G.fill.setAttribute('x',x+5);G.fill.setAttribute('y',(y+h-5-fh).toFixed(1));G.fill.setAttribute('width',w-10);G.fill.setAttribute('height',fh.toFixed(1));
+      setOp(G.out,op);setOp(G.fill,op);}
+    const GA=gauge(), GB=gauge();
+
+    const setup=mk('rect',{fill:YOU,rx:8,opacity:0});
+    const CHK=[]; for(let i=0;i<8;i++){const g=mk('g',{});mk('polyline',{points:'0,10 8,20 24,-2',fill:'none',stroke:DEAD,'stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},g);CHK.push(g);}
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const zone=mk('rect',{fill:'none',stroke:YOU,'stroke-width':4,'stroke-dasharray':'12 10',rx:8,opacity:0});
+    const lvl=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const entryDot=mk('circle',{r:16,fill:YOU,opacity:0});
+    const stopLine=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-dasharray':'10 8',opacity:0});
+    const rrGood=mk('rect',{fill:YOU,rx:5,opacity:0}), rrBad=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const ghost=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,'stroke-dasharray':'8 8',rx:6,opacity:0});
+    const CBOX=[]; for(let i=0;i<3;i++)CBOX.push(mk('rect',{width:44,height:44,rx:8,fill:'none',stroke:INK,'stroke-width':4,opacity:0}));
+    const CMK=[]; for(let i=0;i<3;i++){const g=mk('g',{});mk('polyline',{points:'0,10 8,20 24,-2',fill:'none',stroke:YOU,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},g);CMK.push(g);}
+    const CLAB=[]; for(let i=0;i<3;i++)CLAB.push(mk('text',{'text-anchor':'start','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':36,opacity:0}));
+    const stopMark=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHAT IS WAITING','COSTING YOU?'];
+    const FS=82,lineH=108,y0=210,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=64, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+
+    function hideDyn(){for(const e of [setup,price,zone,lvl,entryDot,stopLine,rrGood,rrBad,ghost,stopMark,GA.out,GA.fill,GB.out,GB.fill])setOp(e,0);
+      for(const a of [CHK,CBOX,CMK,CLAB])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LE SETUP NET, LA PILE DE VÉRIFICATIONS ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // le setup, net puis qui pâlit à mesure que la pile grossit
+      const fade=lerp(1,0.4,clamp(u/5,0,1));
+      setup.setAttribute('x',CX-120);setup.setAttribute('width',240);setup.setAttribute('y',(940+6*Math.sin(u*1.6)).toFixed(1));setup.setAttribute('height',260);setOp(setup,fade);
+      putCap(capC,'A CLEAN SETUP',CX,930,INK,clamp((u-0.3)/0.5,0,1)*fade);
+      // la pile de vérifications s'empile au-dessus
+      const nChk=Math.min(6,1+Math.floor(u/0.9));
+      for(let i=0;i<6;i++){const shown=i<nChk;const y=880-i*54;place(CHK[i], 760, y+ (shown?3*Math.sin(u*1.4+i):0), shown?0.9:0);}
+      putCap(capB,'WAITING IS A DECISION YOU NEVER PRICED',CX,1320,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LA CLARTÉ PLATE, LE TEMPS QUI MONTE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le setup au centre-gauche
+      setup.setAttribute('x',150);setup.setAttribute('width',220);setup.setAttribute('y',820);setup.setAttribute('height',240);setOp(setup,0.6);
+      // vérifications qui s'ajoutent
+      const nChk=Math.floor(clamp(u/0.7,0,6));
+      for(let i=0;i<6;i++){place(CHK[i], 170+ (i%3)*70, 700 - Math.floor(i/3)*60 + (i<nChk?3*Math.sin(u*1.5+i):0), i<nChk?0.85:0);}
+      // jauge CLARITY plate, jauge TIME qui monte
+      const clarity=0.44+0.01*Math.sin(u*3);
+      const time=lerp(0.15,0.92,clamp(u/3.4,0,1));
+      setGauge(GA,560,700,120,440,clarity,YOU,clamp(u/0.4,0,1));
+      setGauge(GB,800,700,120,440,time,DEAD,clamp(u/0.4,0,1));
+      putCap(capC,'CLARITY',620,1190,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'TIME',860,1190,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capB,'NONE OF IT MADE THE SETUP CLEARER',CX,560,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE DÉPART SANS TOI ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le setup reste posé (ancre visuelle dès la frame 0), la zone d'entrée en pointillés
+      setup.setAttribute('x',200);setup.setAttribute('width',200);setup.setAttribute('y',(900+6*Math.sin(u*1.5)).toFixed(1));setup.setAttribute('height',160);setOp(setup,0.5);
+      zone.setAttribute('x',180);zone.setAttribute('y',880);zone.setAttribute('width',240);zone.setAttribute('height',200);setOp(zone,clamp(u/0.2,0,1));
+      putCap(capC,'ENTRY — EMPTY',300,1150,DEAD,clamp((u-2.4)/0.6,0,1));
+      // le prix quitte la zone pendant qu'on coche (démarre tout de suite)
+      const go=clamp(u/2.6,0.05,1);
+      const pts=[];for(let i=0;i<=40;i++){const f=i/40; if(f>go){break;} const x=300+560*(f/Math.max(go,0.001));const y=980-360*eIn(f/Math.max(go,0.001))+5*Math.sin(f*18+u*2);pts.push(x.toFixed(1)+','+y.toFixed(1));}
+      price.setAttribute('points',pts.join(' '));setOp(price,clamp(u/0.25,0,1));
+      if(go>=1){entryDot.setAttribute('cx',860);entryDot.setAttribute('cy',(620+6*Math.sin(u*1.6)).toFixed(1));setOp(entryDot,1);}
+      // les coches, complètes et inutiles (au moins une dès le départ)
+      const nChk=Math.min(5,1+Math.floor(u/0.5));
+      for(let i=0;i<5;i++){place(CHK[i], 620+i*40, 760 - i*6 + 3*Math.sin(u*1.4+i), i<nChk?0.7:0);}
+      putCap(capB,'THE LEVEL WENT WITHOUT YOU',CX,540,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S4 — LES DEUX FACTURES ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const inA=clamp(u/0.15,0,1);
+      // repères posés dès la frame 0 (jamais d'ouverture vide)
+      putCap(capA,'CHASE',300,760,DEAD,inA);
+      putCap(capF,'SKIP',800,760,DEAD,inA);
+      putCap(capB,'THE SECOND BILL',CX,540,INK,clamp((u-0.1)/0.4,0,1));
+      const targetY=820, entryY=900, stopY=1240;
+      const chase=clamp((u-0.3)/1.4,0,1);
+      // cible juste au-dessus (récompense courte)
+      lvl.setAttribute('x1',200);lvl.setAttribute('x2',440);lvl.setAttribute('y1',targetY);lvl.setAttribute('y2',targetY);lvl.setAttribute('stroke',YOU);setOp(lvl,inA);
+      // entrée tardive (le point)
+      entryDot.setAttribute('cx',320);entryDot.setAttribute('cy',(entryY+4*Math.sin(u*1.6)).toFixed(1));setOp(entryDot,inA);
+      // stop LARGE en dessous
+      const sY=lerp(entryY,stopY,chase);
+      stopLine.setAttribute('x1',200);stopLine.setAttribute('x2',440);stopLine.setAttribute('y1',sY.toFixed(1));stopLine.setAttribute('y2',sY.toFixed(1));setOp(stopLine,clamp((u-0.2)/0.3,0,1));
+      // barres RR : récompense teal COURTE (entry->target) vs risque gris LONG (entry->stop)
+      rrGood.setAttribute('x',400);rrGood.setAttribute('width',40);rrGood.setAttribute('y',targetY.toFixed(1));rrGood.setAttribute('height',(entryY-targetY).toFixed(1));setOp(rrGood,inA);
+      rrBad.setAttribute('x',400);rrBad.setAttribute('width',40);rrBad.setAttribute('y',entryY.toFixed(1));rrBad.setAttribute('height',((sY-entryY)).toFixed(1));setOp(rrBad,clamp((u-0.2)/0.3,0,1));
+      putCap(capC,'RR CRUSHED',300,1330,DEAD,clamp((u-2.0)/0.6,0,1));
+      // VOIE B 'skip' (droite) : brique fantôme creuse (occasion ratée)
+      const gh=clamp((u-0.6)/1.6,0,1);
+      ghost.setAttribute('x',700);ghost.setAttribute('width',200);ghost.setAttribute('y',(1160-320*gh+6*Math.sin(u*1.4)).toFixed(1));ghost.setAttribute('height',(40+280*gh).toFixed(1));setOp(ghost,inA);
+      putCap(capD,'CALLED IT PATIENCE',800,1330,DEAD,clamp((u-2.2)/0.6,0,1));
+    }
+
+    // ═══ S5 — LE POINT D'ARRÊT ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // la liste posée AVANT : trois éléments à cocher
+      const items=['STRUCTURE ALIGNED','LEVEL DEFINED','RISK PRESET'];
+      const nTick=Math.floor(clamp((u-1.0)/0.7,0,3));
+      for(let i=0;i<3;i++){const y=640+i*110;CBOX[i].setAttribute('x',200);CBOX[i].setAttribute('y',y);setOp(CBOX[i],clamp((u-0.3-i*0.1)/0.5,0,1));
+        place(CMK[i], 210, y+8, i<nTick?1:0);
+        CLAB[i].textContent=items[i];CLAB[i].setAttribute('x',270);CLAB[i].setAttribute('y',(y+34).toFixed(1));CLAB[i].setAttribute('fill',INK);setOp(CLAB[i],clamp((u-0.3-i*0.1)/0.5,0,1));}
+      // au 3e, le trait d'arrêt : fin de l'examen
+      const stopped=clamp((u-2.6)/0.5,0,1);
+      stopMark.setAttribute('x1',180);stopMark.setAttribute('x2',900);stopMark.setAttribute('y1',1010);stopMark.setAttribute('y2',1010);setOp(stopMark,stopped);
+      putCap(capC,'STOP LOOKING WHEN IT’S COMPLETE',CX,1070,YOU,stopped);
+      // la position prise sur un setup encore vif
+      const h=lerp(0,240,eOut(clamp((u-3.0)/1.4,0,1)));
+      setup.setAttribute('x',CX-120);setup.setAttribute('width',240);setup.setAttribute('y',(1360-h+6*Math.sin(u*1.5)).toFixed(1));setup.setAttribute('height',h.toFixed(1));setOp(setup,clamp((u-2.9)/0.4,0,1));
+      putCap(capB,'NOT DECIDING IS DECIDING',CX,1320,INK,clamp((u-2.6)/0.7,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
