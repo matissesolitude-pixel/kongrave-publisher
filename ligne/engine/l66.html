@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L66 « THE ANALYSIS THAT NEVER TRADED » — HARENG ROUGE : on croit que l'écart vient de la qualité d'analyse. SANS narrateur.
+       S1 : deux analyses rigoureusement identiques, deux résultats opposés. S2 : on les superpose — identiques au trait, la fausse
+       piste tient. S3 : deux timelines, mêmes marqueurs — le timing n'explique rien non plus. S4 : les deux analyses S'ÉCARTENT comme
+       un rideau — derrière : à gauche une POSITION ouverte, à droite une PAGE publiée dont le compteur de vues monte. L'analyse n'a
+       jamais été la variable. S5 : la prise — séquence 1 (la position s'ouvre) puis 2 (SEULEMENT ENSUITE on publie) + CTA. Doctrine :
+       teal = celui qui a tradé/toi ; gris = analyse/vues/écriture ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // — une analyse (niveau + zone + flèche) dans un groupe, coords locales autour de (0,0) —
+    function analysis(){const g=mk('g',{});
+      mk('rect',{x:-150,y:-34,width:300,height:80,rx:8,fill:'none',stroke:YOU,'stroke-width':4,'stroke-dasharray':'12 10'},g);
+      mk('line',{x1:-150,y1:0,x2:150,y2:0,stroke:INK,'stroke-width':6,'stroke-linecap':'round'},g);
+      mk('line',{x1:-90,y1:70,x2:80,y2:-70,stroke:YOU,'stroke-width':6,'stroke-linecap':'round'},g);
+      mk('polygon',{points:'80,-70 58,-52 92,-44',fill:YOU},g);
+      return g;}
+    const gL=analysis(), gR=analysis();
+    const resL=mk('rect',{fill:YOU,rx:5,opacity:0}), resR=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const mag=mk('circle',{r:70,fill:'none',stroke:INK,'stroke-width':6,opacity:0}), magH=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    // timelines (S3)
+    const tlA=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0}), tlB=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const mA=mk('circle',{r:16,fill:YOU,opacity:0}), mB=mk('circle',{r:16,fill:DEAD,opacity:0});
+    // position (S4/S5)
+    const posBlk=mk('rect',{fill:YOU,'fill-opacity':0.3,rx:8,opacity:0}), posEntry=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0}), posStop=mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0});
+    // page publiée + compteur de vues (S4/S5)
+    const page=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':5,rx:10,opacity:0}); const PAGEL=[]; for(let i=0;i<4;i++)PAGEL.push(mk('line',{stroke:DEAD,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    const views=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':52,opacity:0});
+    // séquence (S5)
+    const seq1=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':64,opacity:0}), seq2=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':64,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME READ.','WHY ONE RESULT?'];
+    const FS=82,lineH=108,y0=210,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=60, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,sc,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(sc||1).toFixed(3)})`);setOp(g,op);}
+
+    function hideDyn(){for(const e of [gL,gR,resL,resR,mag,magH,tlA,tlB,mA,mB,posBlk,posEntry,posStop,page,views,seq1,seq2])setOp(e,0);
+      for(const e of PAGEL)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — DEUX ANALYSES IDENTIQUES, RÉSULTATS OPPOSÉS ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const pulse=1+0.015*Math.sin(u*3);
+      place(gL,290,920,pulse,clamp(u/0.3,0,1)*gf);place(gR,790,920,pulse,clamp(u/0.3,0,1)*gf);
+      putCap(capC,'ANALYST A',290,780,INK,clamp((u-0.3)/0.5,0,1)*gf);putCap(capD,'ANALYST B',790,780,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      // résultats opposés
+      resL.setAttribute('x',250);resL.setAttribute('width',80);resL.setAttribute('y',(1200-160+4*Math.sin(u*1.6)).toFixed(1));resL.setAttribute('height',160);setOp(resL,clamp((u-0.6)/0.5,0,1)*gf);
+      resR.setAttribute('x',750);resR.setAttribute('width',80);resR.setAttribute('y',(1200-24).toFixed(1));resR.setAttribute('height',24);setOp(resR,clamp((u-0.6)/0.5,0,1)*gf);
+      putCap(capB,'IDENTICAL READ — OPPOSITE RESULT',CX,1360,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — SUPERPOSITION : IDENTIQUES AU TRAIT ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const merge=clamp(u/1.6,0,1);
+      const xL=lerp(290,CX,eInOut(merge)), xR=lerp(790,CX,eInOut(merge));
+      const pulse=1+0.015*Math.sin(u*3);
+      place(gL,xL,980,pulse,1);place(gR,xR,980,pulse, merge>0.9?0.5:1);
+      putCap(capC,'THEY COINCIDE — TO THE STROKE',CX,760,DEAD,clamp((u-1.4)/0.6,0,1));
+      // la loupe passe
+      const mx=lerp(320,760,(Math.sin(u*1.2)*0.5+0.5)); mag.setAttribute('cx',mx.toFixed(1));mag.setAttribute('cy',980);setOp(mag,clamp((u-0.4)/0.4,0,1));
+      magH.setAttribute('x1',(mx+50).toFixed(1));magH.setAttribute('y1',1030);magH.setAttribute('x2',(mx+92).toFixed(1));magH.setAttribute('y2',1072);setOp(magH,clamp((u-0.4)/0.4,0,1));
+      putCap(capB,'THE DIFFERENCE IS NOT HERE',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — DEUX TIMELINES, MÊMES MARQUEURS ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const align=clamp((u-1.2)/1.2,0,1);
+      const y1=880, y2=lerp(1120,880,align);   // la 2e timeline monte se superposer
+      tlA.setAttribute('x1',150);tlA.setAttribute('x2',930);tlA.setAttribute('y1',y1);tlA.setAttribute('y2',y1);setOp(tlA,clamp(u/0.3,0,1));
+      tlB.setAttribute('x1',150);tlB.setAttribute('x2',930);tlB.setAttribute('y1',y2);tlB.setAttribute('y2',y2);setOp(tlB,clamp(u/0.3,0,1));
+      const mx=620+4*Math.sin(u*1.6);
+      mA.setAttribute('cx',mx.toFixed(1));mA.setAttribute('cy',y1);setOp(mA,clamp((u-0.3)/0.4,0,1));
+      mB.setAttribute('cx',mx.toFixed(1));mB.setAttribute('cy',y2);setOp(mB,clamp((u-0.3)/0.4,0,1));
+      putCap(capC,'SAME DAY · SAME HOUR · SAME MINUTE',CX, y2+90,DEAD,clamp((u-0.5)/0.5,0,1));
+      putCap(capB,'TIMING EXPLAINS NOTHING EITHER',CX,600,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE RIDEAU S'ÉCARTE : POSITION | PAGE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const part=clamp(u/1.6,0,1);
+      // les deux analyses s'écartent (rideau)
+      place(gL,lerp(CX,-260,eInOut(part)),980,1,(1-part));
+      place(gR,lerp(CX,1340,eInOut(part)),980,1,(1-part));
+      // DERRIÈRE gauche : une position ouverte
+      const rev=clamp((u-0.8)/0.8,0,1);
+      posEntry.setAttribute('x1',150);posEntry.setAttribute('x2',470);posEntry.setAttribute('y1',960);posEntry.setAttribute('y2',960);setOp(posEntry,rev);
+      posBlk.setAttribute('x',180);posBlk.setAttribute('width',260);posBlk.setAttribute('y',(820+6*Math.sin(u*1.4)).toFixed(1));posBlk.setAttribute('height',140);setOp(posBlk,rev);
+      posStop.setAttribute('x1',150);posStop.setAttribute('x2',470);posStop.setAttribute('y1',1080);posStop.setAttribute('y2',1080);setOp(posStop,rev);
+      putCap(capC,'IN THE POSITION',310,760,YOU,rev);
+      // DERRIÈRE droite : une page publiée + compteur de vues
+      page.setAttribute('x',620);page.setAttribute('y',(800+6*Math.sin(u*1.5)).toFixed(1));page.setAttribute('width',300);page.setAttribute('height',280);setOp(page,rev);
+      for(let i=0;i<4;i++){PAGEL[i].setAttribute('x1',650);PAGEL[i].setAttribute('x2',890);PAGEL[i].setAttribute('y1',850+i*34);PAGEL[i].setAttribute('y2',850+i*34);setOp(PAGEL[i],rev*0.8);}
+      const v=Math.floor(lerp(0,4200,clamp((u-1.0)/2.0,0,1)));
+      views.textContent=v.toLocaleString()+' VIEWS';views.setAttribute('x',770);views.setAttribute('y',1030);views.setAttribute('fill',DEAD);setOp(views,rev);
+      putCap(capD,'WRITING ABOUT IT',770,760,DEAD,rev);
+      putCap(capB,'ANALYSIS WAS NEVER THE VARIABLE',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA SÉQUENCE 1→2 + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=9*Math.sin(u*1.4)+5*Math.sin(u*2.5);   // respiration continue
+      // 1 — la position s'ouvre (visible dès la frame 0)
+      seq1.textContent='1';seq1.setAttribute('x',250);seq1.setAttribute('y',720);seq1.setAttribute('fill',YOU);setOp(seq1,clamp(u/0.15,0,1));
+      const hP=lerp(60,300,eOut(clamp(u/1.6,0,1)));
+      posBlk.setAttribute('x',180);posBlk.setAttribute('width',200);posBlk.setAttribute('y',(1160-hP+br).toFixed(1));posBlk.setAttribute('height',hP.toFixed(1));posBlk.setAttribute('fill-opacity',0.4);setOp(posBlk,clamp(u/0.15,0,1));
+      putCap(capC,'POSITION FIRST',280,880,YOU,clamp(u/0.2,0,1));
+      // 2 — SEULEMENT ENSUITE la page se publie, les vues montent
+      seq2.textContent='2';seq2.setAttribute('x',700);seq2.setAttribute('y',720);seq2.setAttribute('fill',DEAD);setOp(seq2,clamp((u-1.4)/0.4,0,1));
+      const hV=lerp(0,240,eOut(clamp((u-1.6)/1.4,0,1)));
+      page.setAttribute('x',620);page.setAttribute('y',(1160-hV+br*0.7).toFixed(1));page.setAttribute('width',200);page.setAttribute('height',hV.toFixed(1));setOp(page, hV>10?clamp((u-1.5)/0.4,0,1):0);
+      putCap(capD,'THEN PUBLISH',700,880,DEAD,clamp((u-1.7)/0.5,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+{
+  "id": "L66",
+  "engine": "l66",
+  "title": "L66 — THE ANALYSIS THAT NEVER TRADED",
+  "_cellule": "SERD (Sniper) · Autorité · Dream/identité · regard=sa communauté · passé · ++ (miroir inversé)",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "Two traders called the same move. One of them made money on it. Here's what separated them.",
+    "It wasn't the read. Both saw the same level, both called it early, both were right.",
+    "It wasn't the timing either. Same day, same hour, same entry zone identified.",
+    "One of them was in the position. The other was writing about the position. That's the whole gap — and it was never about analysis quality.",
+    "The wiring that makes you a great analyst is not the wiring that makes you execute. Comment PROFILE and I'll send you the free trader profile test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "HARENG ROUGE : on installe la fausse piste — l'épisode semble comparer la QUALITÉ des analyses.",
+      "question": "SAME READ. WHY ONE RESULT?",
+      "emotion_lever": "CURIOSITÉ — deux lectures identiques, deux résultats opposés. L'énigme happe.",
+      "cast": {
+        "a1": {
+          "type": "path",
+          "note": "analyse gauche"
+        },
+        "a2": {
+          "type": "path",
+          "note": "analyse droite, identique"
+        },
+        "res": {
+          "type": "gauge",
+          "note": "les deux résultats, opposés"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX analyses côte à côte, rigoureusement identiques — même niveau tracé, même flèche, même zone. Elles se superposeraient parfaitement. Entre les deux, un résultat OPPOSÉ : à gauche une barre de compte qui monte, à droite une barre plate."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : les deux analyses pulsent à l'identique, les deux résultats restent opposés. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux analyses identiques côte à côte, la question posée sur leur qualité — la fausse piste est installée honnêtement",
+      "dispositif_cle": "FAUSSE PISTE installée : on laisse croire que la différence est dans la qualité de lecture. Elle doit être HONNÊTE — c'est un vrai raisonnement répandu."
+    },
+    {
+      "id": "s2",
+      "clarity": "On teste la fausse piste : la qualité du niveau. Elles sont identiques.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On SUPERPOSE les deux analyses. Elles coïncident exactement : même niveau, même zone, même projection. Aucun écart mesurable."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une loupe passe sur les deux : identiques au trait près. La différence n'est PAS là. La fausse piste tient encore — c'est ce qui la rend crédible."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux analyses superposées, indiscernables."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux niveaux superposés au pixel — la fausse piste résiste à l'examen",
+      "turn": "ce n'est pas la lecture. elles sont identiques."
+    },
+    {
+      "id": "s3",
+      "clarity": "On teste la deuxième explication évidente : le timing. Identique aussi.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Deux TIMELINES apparaissent, l'une sous l'autre. Le moment de l'identification est marqué sur chacune : même jour, même heure, à la minute près."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on aligne les deux : les marqueurs se superposent. Le timing non plus n'explique rien. Les deux explications évidentes sont épuisées."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux timelines alignées, les marqueurs superposés."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux timelines alignées — même jour, même heure, même zone identifiée",
+      "turn": "ni la lecture, ni le moment. il reste une seule chose."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RÉVÉLATION : la fausse piste tombe. L'un était DANS la position, l'autre ÉCRIVAIT dessus.",
+      "note": "LA scene — le hareng rouge tombe. Ce n'était jamais la qualité de l'analyse.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "LES DEUX ANALYSES S'ÉCARTENT comme un rideau — elles n'étaient pas le sujet. DERRIÈRE la gauche : une POSITION ouverte, une ligne d'entrée, un stop posé. DERRIÈRE la droite : une PAGE publiée, un compteur de vues qui monte, et la zone d'entrée VIDE."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les deux objets révélés sont montrés à la même échelle. L'analyse était identique parce qu'elle n'a jamais été la variable. Le compteur de vues continue de monter à droite, la barre de compte reste plate."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la position à gauche, la page et son compteur à droite, la zone d'entrée vide en dessous."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux analyses écartées pour révéler ce qu'il y avait derrière : une position ouverte à gauche, une page publiée à droite",
+      "turn": "l'un était dedans. l'autre écrivait dessus."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : une SÉQUENCE se pose, deux étapes numérotées. 1 — la position s'ouvre. 2 — SEULEMENT ENSUITE, la page se publie. Le compteur de vues monte comme avant, mais cette fois la barre de compte monte aussi. L'audience n'a rien perdu. L'exécution a précédé."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA À L'ÉCRAN, zone médiane : « Comment PROFILE » + « free trader profile test ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la séquence 1-2, les deux barres qui montent, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'ordre inversé (position d'abord, publication ensuite) + le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"PROFILE\" to find whether your wiring analyses or executes. Two traders called the same move. Same level, same hour, same entry zone — one made money on it, the other didn't.\n\nIt wasn't the read: the analyses are identical, trait for trait. It wasn't the timing either. One of them was in the position. The other was writing about the position, and the entry zone stayed empty.\n\nTHE LINE — the position opens first, the post comes second.\n\n#trading #tradingpsychology #daytrading #forex #execution #mindset #propfirm #priceaction #discipline #trader",
+  "pinned_comment": "One was in the position. The other was writing about it. Comment \"PROFILE\" for the free trader profile test 👊",
+  "_rules": {
+    "cta_keyword": "PROFILE",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "HARENG ROUGE — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "META",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
