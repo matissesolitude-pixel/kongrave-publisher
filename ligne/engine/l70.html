@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L70 « THE REASON YOU BORROWED » — PRÉSAGE : un FIL fin sort du cadre en S1 (visible, non expliqué), relu ensuite. SANS narrateur.
+       S1 : une position teal nette, mais un fil discret part d'elle et sort du cadre. S2 : rembobinage — on remonte le fil hors du
+       graphe, il mène à une PIÈCE (formes fil-de-fer + bulles) : le setup vient d'un groupe, pas d'un graphe. S3 : deux chemins — HAUT
+       'build it' (long, à étapes, jauge d'effort pleine) vs BAS 'borrow it' (le fil, direct, effort zéro) ; à l'entrée, positions
+       identiques. S4 : la facture — le prix va contre ; la position construite tient (ancre visible sous elle), l'empruntée n'a que le
+       fil qui se tend puis CASSE. S5 : la prise — une raison écrite sous la position, ancrée au graphe ; le fil relégué + CTA.
+       Doctrine : teal = ta position/ta raison ; gris = fil emprunté/vide ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const posT=mk('rect',{fill:YOU,'fill-opacity':0.32,stroke:YOU,'stroke-width':5,rx:8,opacity:0});
+    const posB=mk('rect',{fill:YOU,'fill-opacity':0.32,stroke:YOU,'stroke-width':5,rx:8,opacity:0});
+    const thread=mk('line',{stroke:DEAD,'stroke-width':3,'stroke-linecap':'round',opacity:0});
+    const thread2=mk('line',{stroke:DEAD,'stroke-width':3,'stroke-linecap':'round',opacity:0});   // 2e brin après cassure
+    // la pièce (S2)
+    const ROOM=[]; for(let i=0;i<5;i++)ROOM.push(mk('circle',{r:26,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0}));
+    const BUB=[]; for(let i=0;i<4;i++)BUB.push(mk('circle',{r:8,fill:DEAD,opacity:0}));
+    // chemins + jauges d'effort (S3)
+    const STEP=[]; for(let i=0;i<4;i++)STEP.push(mk('circle',{r:16,fill:'none',stroke:INK,'stroke-width':4,opacity:0}));
+    const pathT=mk('line',{stroke:INK,'stroke-width':4,opacity:0}), pathB=mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0});
+    const efA_o=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:6,opacity:0}), efA_f=mk('rect',{fill:DEAD,rx:4,opacity:0});
+    const efB_o=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:6,opacity:0}), efB_f=mk('rect',{fill:DEAD,rx:4,opacity:0});
+    // ancre + raison (S4/S5)
+    const anchor=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const reason=mk('rect',{fill:'none',stroke:YOU,'stroke-width':4,rx:8,opacity:0}); const RL=[]; for(let i=0;i<2;i++)RL.push(mk('line',{stroke:YOU,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    const against=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0}), against2=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHOSE TRADE','IS THIS?'];
+    const FS=90,lineH=114,y0=215,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+94,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function hideDyn(){for(const e of [price,posT,posB,thread,thread2,pathT,pathB,efA_o,efA_f,efB_o,efB_f,anchor,reason,against,against2])setOp(e,0);
+      for(const a of [ROOM,BUB,STEP,RL])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LA POSITION + LE FIL DISCRET QUI SORT DU CADRE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const pts=[];for(let i=0;i<=30;i++){const f=i/30;pts.push((150+780*f).toFixed(0)+','+(920-60*Math.sin(f*4)-40*f+4*Math.sin(u*2+f*10)).toFixed(1));}
+      price.setAttribute('points',pts.join(' '));setOp(price,clamp(u/0.3,0,1)*gf);
+      const py=980+6*Math.sin(u*1.5);
+      posT.setAttribute('x',CX-90);posT.setAttribute('width',180);posT.setAttribute('y',py.toFixed(1));posT.setAttribute('height',110);setOp(posT,clamp(u/0.3,0,1)*gf);
+      // le fil discret part de la position et sort du cadre à droite
+      thread.setAttribute('x1',(CX+90).toFixed(1));thread.setAttribute('y1',(py+55).toFixed(1));thread.setAttribute('x2',1080);thread.setAttribute('y2',(py+30+8*Math.sin(u*1.2)).toFixed(1));setOp(thread,clamp((u-0.5)/0.5,0,1)*0.7*gf);
+      putCap(capC,'CLEAN ENTRY',CX,1170,INK,clamp((u-0.4)/0.5,0,1)*gf);
+      putCap(capB,'YOU LOOK FOR THE PERSON — NOT THE EXIT',CX,1360,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LE FIL MÈNE À UNE PIÈCE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // graphe + position à droite
+      const pts=[];for(let i=0;i<=20;i++){const f=i/20;pts.push((600+340*f).toFixed(0)+','+(940-50*Math.sin(f*4)+4*Math.sin(u*2+f*10)).toFixed(1));}
+      price.setAttribute('points',pts.join(' '));setOp(price,1);
+      posB.setAttribute('x',720);posB.setAttribute('width',150);posB.setAttribute('y',960);posB.setAttribute('height',96);setOp(posB,1);
+      // la pièce à gauche : formes fil-de-fer + bulles
+      const rc=[[240,880],[340,960],[250,1060],[360,1080],[300,970]];
+      for(let i=0;i<5;i++){ROOM[i].setAttribute('cx',(rc[i][0]+4*Math.sin(u*1.3+i)).toFixed(1));ROOM[i].setAttribute('cy',(rc[i][1]+4*Math.cos(u*1.1+i)).toFixed(1));setOp(ROOM[i],clamp((u-0.6)/0.6,0,1));}
+      for(let i=0;i<4;i++){const ph=(u*0.5+i*0.25)%1;const ax=rc[i][0],ay=rc[i][1],bx=rc[i+1][0],by=rc[i+1][1];BUB[i].setAttribute('cx',lerp(ax,bx,ph).toFixed(1));BUB[i].setAttribute('cy',lerp(ay,by,ph).toFixed(1));setOp(BUB[i],clamp((u-0.8)/0.4,0,1)*(1-Math.abs(ph-0.5)));}
+      // le fil relie la pièce à la position
+      const tr=clamp(u/1.4,0,1);
+      thread.setAttribute('x1',360);thread.setAttribute('y1',990);thread.setAttribute('x2',lerp(360,720,tr).toFixed(1));thread.setAttribute('y2',lerp(990,1010,tr).toFixed(1));setOp(thread,0.8);
+      putCap(capC,'A ROOM — NOT A CHART',300,780,DEAD,clamp((u-1.4)/0.6,0,1));
+      putCap(capB,'IT SAVED YOU A DECISION',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — DEUX CHEMINS : BUILD (effort) vs BORROW (fil) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=7*Math.sin(u*1.3)+4*Math.sin(u*2.4);   // respiration continue
+      // HAUT 'build it' : parcours à étapes + jauge d'effort pleine
+      const prog=clamp(u/2.2,0,1);
+      pathT.setAttribute('x1',180);pathT.setAttribute('x2',(180+560*prog).toFixed(1));pathT.setAttribute('y1',(760+br*0.4).toFixed(1));pathT.setAttribute('y2',(760+br*0.4).toFixed(1));setOp(pathT,clamp(u/0.3,0,1));
+      for(let i=0;i<4;i++){const x=230+i*150;STEP[i].setAttribute('cx',x);STEP[i].setAttribute('cy',(760+br*0.4).toFixed(1));setOp(STEP[i],(prog>i/4)?1:0.2);}
+      posT.setAttribute('x',770);posT.setAttribute('width',150);posT.setAttribute('y',(700+br).toFixed(1));posT.setAttribute('height',120);setOp(posT,clamp((u-0.4)/0.4,0,1));
+      efA_o.setAttribute('x',180);efA_o.setAttribute('y',860);efA_o.setAttribute('width',560);efA_o.setAttribute('height',34);setOp(efA_o,clamp(u/0.4,0,1));
+      efA_f.setAttribute('x',184);efA_f.setAttribute('y',864);efA_f.setAttribute('width',(552*prog).toFixed(1));efA_f.setAttribute('height',26);setOp(efA_f,clamp(u/0.4,0,1));
+      putCap(capC,'BUILD IT — COSTLY',450,940,INK,clamp((u-0.6)/0.5,0,1));
+      // BAS 'borrow it' : le fil direct, effort zéro
+      pathB.setAttribute('x1',180);pathB.setAttribute('x2',730);pathB.setAttribute('y1',1120);pathB.setAttribute('y2',1120);setOp(pathB,clamp(u/0.3,0,1));
+      thread.setAttribute('x1',180);thread.setAttribute('y1',1120);thread.setAttribute('x2',730);thread.setAttribute('y2',1120);thread.setAttribute('stroke',DEAD);setOp(thread,clamp(u/0.3,0,1));
+      posB.setAttribute('x',770);posB.setAttribute('width',150);posB.setAttribute('y',(1060-br).toFixed(1));posB.setAttribute('height',120);setOp(posB,clamp((u-0.4)/0.4,0,1));
+      efB_o.setAttribute('x',180);efB_o.setAttribute('y',1200);efB_o.setAttribute('width',560);efB_o.setAttribute('height',34);setOp(efB_o,clamp(u/0.4,0,1));
+      efB_f.setAttribute('x',184);efB_f.setAttribute('y',1204);efB_f.setAttribute('width',6);efB_f.setAttribute('height',26);setOp(efB_f,clamp(u/0.4,0,1));
+      putCap(capD,'BORROW IT — FREE AT ENTRY',450,1280,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'IDENTICAL POSITIONS AT ENTRY',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LA FACTURE : L'ANCRÉE TIENT, L'EMPRUNTÉE CASSE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=clamp((u-1.8)/1.0,0,1);   // rupture du fil
+      // HAUT (construite) : ancre visible, tient
+      const py1=800+4*Math.sin(u*1.4);
+      posT.setAttribute('x',300);posT.setAttribute('width',150);posT.setAttribute('y',py1.toFixed(1));posT.setAttribute('height',110);setOp(posT,1);
+      anchor.setAttribute('x1',260);anchor.setAttribute('x2',500);anchor.setAttribute('y1',960);anchor.setAttribute('y2',960);setOp(anchor,clamp(u/0.4,0,1));
+      reason.setAttribute('x',290);reason.setAttribute('y',980);reason.setAttribute('width',170);reason.setAttribute('height',54);setOp(reason,clamp((u-0.4)/0.4,0,1));
+      RL[0].setAttribute('x1',310);RL[0].setAttribute('x2',440);RL[0].setAttribute('y1',1007);RL[0].setAttribute('y2',1007);setOp(RL[0],clamp((u-0.5)/0.4,0,1));
+      against.setAttribute('x1',375);against.setAttribute('x2',375);against.setAttribute('y1',760);against.setAttribute('y2',(760-40+80*clamp(u/1.5,0,1)).toFixed(1));setOp(against,clamp(u/0.3,0,1));
+      putCap(capC,'ANCHORED — HOLDS',375,1090,YOU,clamp((u-0.6)/0.5,0,1));
+      // BAS (empruntée) : le vide dessous, le fil qui casse, la position dérive
+      const py2=1120+ (br>0? br*140 : 4*Math.sin(u*1.4));
+      posB.setAttribute('x',630);posB.setAttribute('width',150);posB.setAttribute('y',py2.toFixed(1));posB.setAttribute('height',110);setOp(posB,1-br*0.4);
+      // le fil se tend depuis le haut-droite puis casse en deux
+      if(br<1){thread.setAttribute('x1',705);thread.setAttribute('y1',(py2+ (br>0?0:0)).toFixed(1));thread.setAttribute('x2',960);thread.setAttribute('y2',(760-40*(1-br)).toFixed(1));setOp(thread,(1-br)*0.9+ (br>0?0.9*Math.abs(Math.sin(u*20)):0));}
+      else{ // cassé : deux brins qui s'écartent
+        thread.setAttribute('x1',705);thread.setAttribute('y1',py2.toFixed(1));thread.setAttribute('x2',780);thread.setAttribute('y2',(py2-20).toFixed(1));setOp(thread,0.7);
+        thread2.setAttribute('x1',900);thread2.setAttribute('y1',740);thread2.setAttribute('x2',960);thread2.setAttribute('y2',720);setOp(thread2,0.7);
+      }
+      against2.setAttribute('x1',705);against2.setAttribute('x2',705);against2.setAttribute('y1',1080);against2.setAttribute('y2',(1080-40+80*clamp(u/1.5,0,1)).toFixed(1));setOp(against2,clamp(u/0.3,0,1));
+      putCap(capD,'NOTHING TO HOLD — THREAD SNAPS',700,1360,DEAD,clamp((u-2.2)/0.6,0,1));
+      putCap(capB,'A REASON YOU NEVER OWNED',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA RAISON ÉCRITE, ANCRÉE + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const py=920+4*Math.sin(u*1.4);
+      posB.setAttribute('x',CX-90);posB.setAttribute('width',180);posB.setAttribute('y',py.toFixed(1));posB.setAttribute('height',120);setOp(posB,clamp(u/0.3,0,1));
+      // la raison écrite, ancrée au graphe, sous la position
+      anchor.setAttribute('x1',CX-160);anchor.setAttribute('x2',CX+160);anchor.setAttribute('y1',1090);anchor.setAttribute('y2',1090);setOp(anchor,clamp((u-0.3)/0.4,0,1));
+      reason.setAttribute('x',CX-150);reason.setAttribute('y',1110);reason.setAttribute('width',300);reason.setAttribute('height',70);setOp(reason,clamp((u-0.4)/0.4,0,1));
+      for(let i=0;i<2;i++){RL[i].setAttribute('x1',CX-120);RL[i].setAttribute('x2',CX+120);RL[i].setAttribute('y1',(1140+i*26).toFixed(1));RL[i].setAttribute('y2',(1140+i*26).toFixed(1));setOp(RL[i],clamp((u-0.5-i*0.1)/0.4,0,1));}
+      putCap(capC,'YOUR OWN REASON — ANCHORED',CX,1250,YOU,clamp((u-0.6)/0.5,0,1));
+      // le fil relégué sur le côté, sans rôle
+      thread.setAttribute('x1',900);thread.setAttribute('y1',900);thread.setAttribute('x2',1010);thread.setAttribute('y2',(940+8*Math.sin(u*1.2)).toFixed(1));setOp(thread,clamp((u-1.0)/0.5,0,1)*0.5);
+      // le prix va contre : la position tient
+      against.setAttribute('x1',CX);against.setAttribute('x2',CX);against.setAttribute('y1',880);against.setAttribute('y2',(880-40+80*clamp((u-1.4)/1.5,0,1)).toFixed(1));setOp(against,clamp((u-1.4)/0.4,0,1));
+      putCap(capD,'PRICE GOES AGAINST — IT HOLDS',CX,860,INK,clamp((u-2.2)/0.6,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "PROFILE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE FREE TRADER TEST',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

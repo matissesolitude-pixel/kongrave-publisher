@@ -1,0 +1,151 @@
+{
+  "id": "L70",
+  "engine": "l70",
+  "title": "L70 — THE REASON YOU BORROWED",
+  "_cellule": "SETX (Sniper) · Story · Ease · regard=le groupe · futur · −−",
+  "_dispositif": "PRÉSAGE",
+  "voice": [
+    "A trade goes wrong. And the first thing you look for isn't the exit — it's the person who suggested it.",
+    "Rewind to the entry. The setup arrived from a room, not from a chart. Someone you trust said it, and it saved you a decision.",
+    "That's the shortcut: borrowing conviction is faster than building it. It costs nothing at the entry.",
+    "The bill comes when price moves against you. You can't defend a position whose reason you never owned — so you freeze, or you look for the person again.",
+    "Your wiring decides whose idea you're really trading. Comment PROFILE and I'll send you the free trader profile test."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "PRÉSAGE : un détail discret annonce d'où viendra la perte. On ne le comprend qu'après.",
+      "question": "WHOSE TRADE IS THIS?",
+      "emotion_lever": "TENSION SOURDE — un détail qui ne s'explique pas encore. Le spectateur le remarque et le range.",
+      "cast": {
+        "pos": {
+          "type": "gauge",
+          "note": "la position teal"
+        },
+        "thread": {
+          "type": "path",
+          "note": "LE PRÉSAGE : le fil fin qui sort du cadre. DISCRET en S1 et S2, il ne prend son sens qu'en S3."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : une position teal s'ouvre sur un graphe — geste net, saisi en cours. MAIS un FIL très fin, discret, part de cette position et sort du cadre vers la gauche, vers quelque chose hors du graphe. Il est peu visible, presque décoratif. C'est le PRÉSAGE : le spectateur le voit sans comprendre."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la position s'installe, le fil reste, discret, tendu. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'entrée qui se prend + un FIL fin qui la relie discrètement à une source extérieure au graphe",
+      "dispositif_cle": "PRÉSAGE : le fil doit être VISIBLE mais NON EXPLIQUÉ en S1. Ne pas le souligner, ne pas l'annoter. Il se relit après coup."
+    },
+    {
+      "id": "s2",
+      "clarity": "Rembobinage : le setup est arrivé d'une pièce, pas d'un graphe.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On REMONTE le fil, vers la gauche, hors du graphe. Il traverse le bord du cadre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "de l'autre côté : une PIÈCE — plusieurs formes fil-de-fer regroupées, des bulles qui circulent entre elles. Pas un graphe, pas un niveau : un groupe. Le fil part de l'une d'elles et court jusqu'à la position. L'origine du trade n'est pas technique. Elle est sociale."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la pièce à gauche, le graphe à droite, le fil qui les relie."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'origine du fil révélée : une salle de voix, pas une zone technique",
+      "turn": "le setup n'est pas venu du graphe. il est venu d'une pièce."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le raccourci : emprunter une conviction est plus rapide que la construire. Ça ne coûte rien à l'entrée.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "DEUX chemins vers la même position. HAUT 'build it' : un parcours long, à étapes, chacune coûteuse — lire, vérifier, décider. Une jauge d'effort se remplit."
+        },
+        {
+          "t": "1.5-3",
+          "do": "BAS 'borrow it' : le fil, direct, instantané. La jauge d'effort reste à zéro. À l'ENTRÉE, les deux positions sont rigoureusement identiques : même prix, même taille, même stop. Rien ne les distingue. C'est ça qui rend le raccourci irrésistible."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux chemins, les deux positions identiques, les deux jauges d'effort opposées."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux chemins comparés : construire (long, coûteux) vs emprunter (instantané, gratuit) — à l'entrée seulement",
+      "turn": "à l'entrée, les deux positions sont identiques. c'est plus tard qu'elles diffèrent."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA FACTURE : le prix va contre. La position construite tient. L'empruntée n'a rien à quoi se raccrocher.",
+      "note": "LA scene — le présage prend son sens rétrospectivement.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Le prix descend contre les deux positions. Celle du HAUT (construite) tient : sous elle, sa structure est VISIBLE, ancrée au graphe — un niveau, une raison. Elle a de quoi décider."
+        },
+        {
+          "t": "2-3.5",
+          "do": "celle du BAS (empruntée) n'a rien sous elle : sous la position, le vide. Sa seule attache est LE FIL — qui se TEND, vibre, puis CASSE. La position se met à osciller sans direction : ni sortie, ni maintien. Le présage de S1 vient de se refermer : le fil discret était l'unique support."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la position ancrée en haut, la position sans attache en bas, le fil rompu."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le présage se referme : le fil se TEND puis CASSE, la position empruntée n'a plus de raison, celle construite s'appuie sur sa structure",
+      "turn": "tu ne peux pas défendre une position dont tu n'as jamais possédé la raison."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : avant l'entrée, une LIGNE s'écrit sous la position — sa raison, en une phrase, ancrée au graphe. Le fil venu de la pièce existe TOUJOURS, mais il n'est plus l'attache : il est déplacé sur le côté, étiqueté comme une donnée parmi d'autres. Le groupe devient un indicateur, plus une source."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le prix va contre : la position tient, parce qu'elle a sa propre ancre. ⚠️ CTA À L'ÉCRAN, zone médiane : « Comment PROFILE » + « free trader profile test ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la raison écrite sous la position, le fil relégué sur le côté, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la règle : écrire SA raison avant d'entrer + le groupe rétrogradé en indicateur, et le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"PROFILE\" to find whose idea you're really trading. A trade goes wrong, and the first thing you look for isn't the exit — it's the person who suggested it.\n\nThe setup arrived from a room, not from a chart. Borrowing conviction is faster than building it and costs nothing at the entry: both positions look identical when they open. The bill comes when price moves against you and you can't defend a reason you never owned.\n\nTHE LINE — write your own reason before you enter, and the room becomes an indicator instead of a source.\n\n#trading #tradingpsychology #daytrading #forex #mindset #discipline #propfirm #priceaction #tradingeducation #trader",
+  "pinned_comment": "You can't defend a position whose reason you never owned. Comment \"PROFILE\" for the free trader profile test 👊",
+  "_rules": {
+    "cta_keyword": "PROFILE",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "PRÉSAGE — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "MENTAL",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
