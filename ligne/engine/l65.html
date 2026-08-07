@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L65 « SIXTEEN HUNDRED HOURS » — sur-trading d'ennui l'après-midi. SANS narrateur. IN MEDIAS RES puis REMBOBINAGE.
+       S1 : 16:00, SIX positions en rafale, désordre, compteur '6 / 20 min'. S2 : rembobinage, l'horloge revient à 9:00 — deux
+       trades propres, verts, le plan a marché. S3 : l'horloge avance, l'écran reste VIDE cinq heures ; une bande de temps se remplit,
+       une jauge d'inaction monte en butée. S4 : retour à 16:00 — chaque trade non planifié = spread+commission+slippage ; 18 tuiles
+       grises s'empilent et DÉPASSENT les deux gains du matin. S5 : la prise — un QUOTA de 2 écrit à 9:00, atteint à 11:00, la
+       plateforme se ferme (volet) + CTA. Doctrine : teal = gains/plan ; gris = coût/temps perdu ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // — horloge —
+    const clockFace=mk('circle',{cx:CX,cy:560,r:100,fill:'none',stroke:INK,'stroke-width':7,opacity:0});
+    const hHand=mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    const mHand=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const clockTxt=mk('text',{x:CX,y:720,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':64,opacity:0});
+    function setClock(cx,cy,r,hourF,op){clockFace.setAttribute('cx',cx);clockFace.setAttribute('cy',cy);clockFace.setAttribute('r',r);setOp(clockFace,op);
+      const ha=(hourF%12)/12*2*Math.PI - Math.PI/2, ma=(hourF%1)*2*Math.PI - Math.PI/2;
+      hHand.setAttribute('x1',cx);hHand.setAttribute('y1',cy);hHand.setAttribute('x2',(cx+Math.cos(ha)*r*0.5).toFixed(1));hHand.setAttribute('y2',(cy+Math.sin(ha)*r*0.5).toFixed(1));setOp(hHand,op);
+      mHand.setAttribute('x1',cx);mHand.setAttribute('y1',cy);mHand.setAttribute('x2',(cx+Math.cos(ma)*r*0.8).toFixed(1));mHand.setAttribute('y2',(cy+Math.sin(ma)*r*0.8).toFixed(1));setOp(mHand,op);
+      const hh=Math.floor(hourF), mm=Math.floor((hourF%1)*60);clockTxt.setAttribute('x',cx);clockTxt.setAttribute('y',(cy+r+60).toFixed(1));clockTxt.textContent=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;setOp(clockTxt,op);}
+
+    // — positions (trades) —
+    const POS=[]; for(let i=0;i<7;i++)POS.push(mk('rect',{rx:6,opacity:0}));
+    const CHKp=[]; for(let i=0;i<2;i++){const g=mk('g',{});mk('polyline',{points:'0,10 8,20 24,-2',fill:'none',stroke:YOU,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},g);CHKp.push(g);}
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':60,opacity:0});
+    // — S3 bande de temps + jauge —
+    const band=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,rx:8,opacity:0});
+    const bandFill=mk('rect',{fill:DEAD,'fill-opacity':0.25,rx:6,opacity:0});
+    const gOut=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:10,opacity:0}), gFill=mk('rect',{fill:DEAD,rx:6,opacity:0});
+    // — S4 tuiles de coût + gains —
+    const TILE=[]; for(let i=0;i<18;i++)TILE.push(mk('rect',{fill:DEAD,rx:3,opacity:0}));
+    const GAIN=[]; for(let i=0;i<2;i++)GAIN.push(mk('rect',{fill:YOU,rx:5,opacity:0}));
+    // — S5 quota + volet —
+    const quotaBox=mk('rect',{fill:'none',stroke:YOU,'stroke-width':5,rx:12,opacity:0});
+    const shutter=mk('rect',{fill:DEAD,'fill-opacity':0.85,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['HOW DID YOU','GET HERE?'];
+    const FS=88,lineH=112,y0=210,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=60, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+
+    function hideDyn(){for(const e of [clockFace,hHand,mHand,clockTxt,counter,band,bandFill,gOut,gFill,quotaBox,shutter])setOp(e,0);
+      for(const a of [POS,CHKp,TILE,GAIN])for(const e of a)setOp(e,0);hideCaps();}
+
+    // positions désordonnées (rafale) : décalées de façon déterministe
+    function burst(n,u,op){for(let i=0;i<7;i++){if(i<n){const ox=CX-180+((i*97)%320);const oy=900+((i*61)%260)+4*Math.sin(u*2+i);POS[i].setAttribute('x',ox.toFixed(1));POS[i].setAttribute('y',oy.toFixed(1));POS[i].setAttribute('width',150);POS[i].setAttribute('height',60);POS[i].setAttribute('fill',DEAD);POS[i].setAttribute('fill-opacity',0.6);setOp(POS[i],op);}else setOp(POS[i],0);}}
+
+    // ═══ S1 — 16:00, RAFALE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      setClock(300,880,84,16.0,clamp(u/0.3,0,1)*gf);
+      const n=Math.min(7,4+Math.floor(u/1.2));
+      burst(n,u,clamp(u/0.3,0,1)*gf);
+      counter.textContent=n+' TRADES / 20 MIN';counter.setAttribute('font-size',52);counter.setAttribute('x',CX);counter.setAttribute('y',1300);counter.setAttribute('fill',DEAD);setOp(counter,clamp((u-0.4)/0.5,0,1)*gf);
+    }
+
+    // ═══ S2 — REMBOBINAGE VERS 9:00 ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rew=clamp(u/1.6,0,1);
+      const hour=rew<1 ? lerp(16.0,9.0,eInOut(rew)) : 9.0 + 0.25*(u-1.6);  // l'aiguille continue de tourner
+      setClock(CX,600,100,hour,1);
+      putCap(capC, rew<1?'REWIND':'9:00 — THE PLAN WORKED', CX,800, rew<1?DEAD:YOU, clamp(u/0.3,0,1));
+      if(rew<0.9){ // les positions se referment à l'envers
+        const n=Math.round(lerp(7,2,rew));burst(n,u,1);
+      } else { // à 9:00 : deux trades propres, espacés, verts (respiration continue)
+        for(let i=0;i<2;i++){const x=CX-260+i*360;const y=1000+11*Math.sin(u*1.3+i)+5*Math.sin(u*2.4+i);POS[i].setAttribute('x',x);POS[i].setAttribute('y',y.toFixed(1));POS[i].setAttribute('width',180);POS[i].setAttribute('height',72);POS[i].setAttribute('fill',YOU);POS[i].setAttribute('fill-opacity',0.28);setOp(POS[i],1);
+          place(CHKp[i], x+70, y+16, 1);}
+        for(let i=2;i<7;i++)setOp(POS[i],0);
+      }
+      putCap(capB,'TWO CLEAN TRADES — BOTH GREEN',CX,1200,INK,clamp((u-2.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — CINQ HEURES DE VIDE, LA JAUGE D'INACTION MONTE ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const adv=clamp(u/2.6,0,1);
+      const hour=lerp(9.0,15.0,adv);
+      setClock(280,680,84,hour,1);
+      // la bande de temps se remplit (rien ne se passe) — à gauche, ne touche pas la jauge
+      band.setAttribute('x',150);band.setAttribute('y',1040);band.setAttribute('width',540);band.setAttribute('height',60);setOp(band,clamp(u/0.3,0,1));
+      bandFill.setAttribute('x',153);bandFill.setAttribute('y',1043);bandFill.setAttribute('width',(534*adv).toFixed(1));bandFill.setAttribute('height',54);setOp(bandFill,clamp(u/0.3,0,1));
+      putCap(capC,'NO SETUP — FIVE HOURS',420,1170,DEAD,clamp((u-0.4)/0.5,0,1));
+      // la jauge d'inaction monte en butée — à droite, dégagée
+      const gy=760,gh=380;gOut.setAttribute('x',820);gOut.setAttribute('y',gy);gOut.setAttribute('width',120);gOut.setAttribute('height',gh);setOp(gOut,clamp(u/0.3,0,1));
+      const frac=lerp(0.1,0.98,adv)+0.01*Math.sin(u*3);const fh=frac*(gh-10);
+      gFill.setAttribute('x',825);gFill.setAttribute('y',(gy+gh-5-fh).toFixed(1));gFill.setAttribute('width',110);gFill.setAttribute('height',fh.toFixed(1));setOp(gFill,clamp(u/0.3,0,1));
+      putCap(capD,'PRESSURE OF DOING NOTHING',CX,1330,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE COÛT : 18 TUILES > LES DEUX GAINS ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      setClock(300,560,64,16.0,clamp(u/0.3,0,1));
+      // 18 tuiles grises (spread/commission/slippage × 6) s'empilent en colonne
+      const nTile=Math.min(18,Math.floor(clamp(u/2.2,0,1)*18));
+      const colX=620, tileW=110, tileH=30, gap=6, baseY=1260;
+      for(let i=0;i<18;i++){const shown=i<nTile;const row=i;const y=baseY-row*(tileH+gap);TILE[i].setAttribute('x',colX);TILE[i].setAttribute('y',(y+3*Math.sin(u*1.4+i*0.3)).toFixed(1));TILE[i].setAttribute('width',tileW);TILE[i].setAttribute('height',tileH);setOp(TILE[i],shown?0.8:0);}
+      putCap(capC,'SPREAD · COMMISSION · SLIPPAGE',CX,620,DEAD,clamp((u-0.5)/0.5,0,1));
+      // les deux gains verts du matin, à gauche, DÉPASSÉS
+      const gh=200;for(let i=0;i<2;i++){const x=250+i*80;GAIN[i].setAttribute('x',x);GAIN[i].setAttribute('width',60);GAIN[i].setAttribute('y',(baseY-gh+4*Math.sin(u*1.5+i)).toFixed(1));GAIN[i].setAttribute('height',gh);setOp(GAIN[i],clamp(u/0.4,0,1));}
+      putCap(capA,'MORNING',315,baseY+70,YOU,clamp(u/0.4,0,1));
+      putCap(capB,'THE COST OF BOREDOM IS A LINE ITEM',CX,540,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE QUOTA ATTEINT, LA PLATEFORME SE FERME + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const hour=(u<2.0)? lerp(9.0,11.0,clamp((u-0.4)/1.6,0,1)) : 11.0 + 0.25*(u-2.0);  // l'aiguille continue de tourner
+      setClock(300,600,72,hour,clamp(u/0.3,0,1));
+      // le quota écrit : 2
+      quotaBox.setAttribute('x',620);quotaBox.setAttribute('y',540);quotaBox.setAttribute('width',300);quotaBox.setAttribute('height',150);setOp(quotaBox,clamp(u/0.4,0,1));
+      putCap(capC,'QUOTA: 2',770,635,YOU,clamp((u-0.2)/0.4,0,1));
+      // les deux trades du matin, intacts, AU-DESSUS du volet (respiration continue)
+      for(let i=0;i<2;i++){const x=CX-260+i*360;const y=830+11*Math.sin(u*1.3+i)+5*Math.sin(u*2.4+i);POS[i].setAttribute('x',x);POS[i].setAttribute('y',y.toFixed(1));POS[i].setAttribute('width',180);POS[i].setAttribute('height',72);POS[i].setAttribute('fill',YOU);POS[i].setAttribute('fill-opacity',0.28);setOp(POS[i],clamp(u/0.4,0,1));place(CHKp[i], x+70, y+16, clamp(u/0.4,0,1));}
+      // à 11:00 le volet se ferme sur la zone de trading (sous les gains du matin)
+      const closed=clamp((u-1.8)/1.0,0,1);
+      shutter.setAttribute('x',150);shutter.setAttribute('y',980);shutter.setAttribute('width',780);shutter.setAttribute('height',(240*closed).toFixed(1));setOp(shutter,closed*0.85);
+      putCap(capD,'QUOTA MET — CLOSED',CX,1300,INK,clamp((u-2.4)/0.6,0,1));
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "LINE"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'WHAT THE AFTERNOON REALLY COSTS',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+{
+  "id": "L65",
+  "engine": "l65",
+  "title": "L65 — SIXTEEN HUNDRED HOURS",
+  "_cellule": "OITD (Circuit) · Story · Time delay · regard=sa famille · futur · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "Four in the afternoon. Sixth trade in twenty minutes. None of them were planned.",
+    "Rewind. Nine this morning: two clean trades, both by the book, both green. The plan worked.",
+    "Then nothing happened for five hours. And nothing is the hardest thing this profile does.",
+    "Here's the part nobody counts: those six unplanned trades each paid the spread, the commission, the slippage. The cost of boredom is a line item.",
+    "The trades after your quota aren't trading. They're waiting, wearing a costume. Comment LINE and I'll send you the checklist on what the afternoon really costs."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "IN MEDIAS RES : on ouvre à 16h dans le craquage, sans aucune mise en place.",
+      "question": "HOW DID YOU GET HERE?",
+      "emotion_lever": "CHOC + CONFUSION — on est jeté dans la scène sans contexte. Le spectateur veut comprendre comment on en est arrivé là.",
+      "cast": {
+        "pos": {
+          "type": "block",
+          "note": "les positions empilées en rafale"
+        },
+        "clock": {
+          "type": "gauge",
+          "note": "l'horloge, seul repère"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0, AUCUNE INTRODUCTION : SIX positions s'ouvrent en rafale à l'écran, empilées, désordonnées. Une horloge marque 16:00. Un compteur : '6 trades / 20 min'. On est DÉJÀ dans le désastre. Rien n'a été expliqué."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : une septième position s'ouvre. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0, six positions ouvertes en rafale, une horloge à 16:00, aucune explication",
+      "dispositif_cle": "AUCUNE mise en place. Le contexte viendra en S2 par rembobinage."
+    },
+    {
+      "id": "s2",
+      "clarity": "REMBOBINAGE : 9h du matin. Deux trades propres, dans le plan, verts.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "L'image REMBOBINE visiblement : les positions se referment à l'envers, l'horloge tourne à reculons, 16:00 → 15:00 → 12:00 → 9:00."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à 9:00, l'écran est CALME : deux positions seulement, espacées, chacune avec son stop propre. Une coche verte sur chacune. Le plan a fonctionné. Rien à redire."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux trades propres, l'écran aéré, l'horloge à 9:00."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la timeline qui remonte en arrière jusqu'à 9:00 — deux positions nettes, espacées, conformes",
+      "turn": "le matin n'était pas le problème. le matin était parfait."
+    },
+    {
+      "id": "s3",
+      "clarity": "Puis cinq heures où rien ne se passe. Et ne rien faire est ce que ce profil supporte le moins.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "L'horloge avance : 10:00, 11:00, 12:00... et l'écran reste VIDE. Aucun setup. Une longue bande horizontale se remplit — c'est le temps qui passe, rien d'autre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à côté, une JAUGE monte. Elle ne mesure pas le marché : elle mesure la pression de l'inaction. À 14:00 elle est haute. À 15:00 elle est en butée. Aucun trade n'a eu lieu — c'est précisément ça qui la remplit."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la bande de temps vide, la jauge en butée, l'écran toujours sans setup."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les cinq heures vides matérialisées + la pression qui monte dans une jauge, sans qu'aucun trade n'ait lieu",
+      "turn": "le vide n'est pas neutre. il pousse."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le coût comptable des six trades non planifiés : spread, commission, slippage, à chaque fois.",
+      "note": "LA scene — le coût de l'ennui est un poste comptable.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "On revient à 16:00. Chacun des six trades se DÉCOMPOSE en trois petites tuiles grises : spread, commission, slippage. Trois tuiles × six trades = dix-huit tuiles."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les dix-huit tuiles s'empilent en une colonne grise. À côté, les deux gains verts du matin. La colonne grise DÉPASSE les deux gains. Le matin a été financé par l'après-midi. Aucun chiffre n'est affiché : c'est la MASSE qui parle."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la colonne grise plus haute que les deux gains teal."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les six trades décomposés en trois coûts chacun, empilés — la masse finale face aux deux gains du matin",
+      "turn": "l'ennui a un prix, et il se paie en frais."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : à 9:00, un QUOTA est écrit — deux trades. Un compteur se pose à côté. À 11:00 le quota est atteint : la plateforme se FERME visiblement, un volet encre descend sur l'écran. Les cinq heures passent derrière le volet. La jauge de pression monte, mais elle n'a plus rien à commander."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA À L'ÉCRAN, zone médiane : « Comment LINE » + « checklist: what the afternoon really costs ». La voix le prononce."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le volet fermé, les deux gains du matin intacts, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le quota écrit le matin qui ferme la plateforme + le CTA affiché et prononcé"
+    }
+  ],
+  "total": 62.0,
+  "caption": "Comment \"LINE\" for the checklist on what your afternoon really costs. Four in the afternoon, sixth trade in twenty minutes, none of them planned — and the morning was flawless.\n\nTwo clean trades at nine, both by the book. Then five hours where nothing happened. Those six unplanned trades each paid the spread, the commission and the slippage: the cost of boredom is a line item, and it ate the morning.\n\nTHE LINE — the quota is written at nine, not at four.\n\n#trading #daytrading #overtrading #forex #riskmanagement #tradingcosts #discipline #propfirm #priceaction #trader",
+  "pinned_comment": "The trades after your quota aren't trading. They're waiting, wearing a costume. Comment \"LINE\" for the checklist 👊",
+  "_rules": {
+    "cta_keyword": "LINE",
+    "caption_structure": "MOULE A (LA RÈGLE, verdict 07/08) : ligne 1 = CTA D'ABORD (Comment \"MOT\" + bénéfice), puis l'accroche. Corps 2-3 phrases de valeur, signature THE LINE, ~10 hashtags. Le moule B (caption courte) est ABANDONNÉ : L55 a fait 202 vues contre 756-1369 le même jour.",
+    "cta_dans_la_video": "LOI 07/08 — le CTA est PRONONCÉ par la voix en S5 ET AFFICHÉ à l'écran en S5 (zone haute/médiane, bas 12% vide). Trois points de contact : voix, écran, caption. Motif : max 4 commentaires sur toute la base, le CTA n'était visible nulle part dans la vidéo.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil de Tchekhov (sur-utilisé sur 60 épisodes). Rotation obligatoire, jamais deux épisodes consécutifs sur le même dispositif.",
+    "registre": "MECANIQUE",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Pas de méthode de chasse aux stops. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~62s. Le watch moyen réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
