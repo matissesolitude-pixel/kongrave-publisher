@@ -1,0 +1,151 @@
+{
+  "id": "L61",
+  "engine": "l61",
+  "title": "L61 — THE LEVEL EVERYONE STANDS ON",
+  "_format": "COMMON BELIEF BUSTER — 5 blocs (HOOK / POURQUOI C'EST FAUX / L'APPROCHE JUSTE / LA RÈGLE / PAYOFF). Une preuve visuelle par bloc.",
+  "voice": [
+    "The market took your stop? It went where the stops were parked, and yours was parked with everyone else's.",
+    "A level everyone can see is a level everyone acts on. Same line, same reasoning, so the orders pile up in the same place — and so do the stops behind them.",
+    "That pile is the most predictable thing on the chart. Not because anyone is hunting you, but because a large pool of resting orders is exactly where price finds what it needs to move.",
+    "So the sweep isn't a trap set for you. It's the market doing the only efficient thing available: taking the liquidity that was left sitting there in the open.",
+    "Before you place anything at an obvious level, ask the other question. Not is it going to hold, but who's already positioned here, and where did they leave their stops. Comment MAP, and I'll send you the tool that reads structure live."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le hook : le marché t'a pris ton stop ? Il est allé là où les stops étaient posés, et le tien était posé avec tous les autres.",
+      "question": "THE MARKET TOOK YOUR STOP. WHY THERE?",
+      "emotion_lever": "RECONNAISSANCE DE SOI + CHOC — ton stop était dans le tas, et le tas était évident.",
+      "cast": {
+        "level": {
+          "type": "hline",
+          "note": "le niveau évident"
+        },
+        "pool": {
+          "type": "block",
+          "note": "la bande dense de stops empilés dessous. le fusil = la pile."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : un niveau horizontal évident, net. Juste EN DESSOUS, une bande DENSE de petits traits gris serrés — des dizaines de stops empilés au même endroit. Et le prix qui plonge DÉJÀ dans la bande, en train de la traverser. La densité et la plongée sont visibles avant la première phrase."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE COURTE : le prix finit de traverser la bande, les traits gris s'éteignent un à un sur son passage. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le niveau évident + la bande dense de stops empilés juste dessous, et le prix qui plonge dedans",
+      "fusil": "la pile de stops — on va voir pourquoi elle est là, et pourquoi le prix y va."
+    },
+    {
+      "id": "s2",
+      "clarity": "Un niveau que tout le monde voit est un niveau sur lequel tout le monde agit. Même trait, même raisonnement : les ordres s'empilent au même endroit, et les stops derrière aussi.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 1 — la convergence. Une foule de petits ronds fil-de-fer, tous orientés vers LE MÊME trait. Chacun pose son ordre : les blocs s'empilent exactement au niveau."
+        },
+        {
+          "t": "1.5-3",
+          "do": "puis chacun pose son stop, mécaniquement, juste sous son entrée. Les stops s'accumulent en une bande DENSE, à quelques crans du niveau. Personne ne s'est concerté : le même raisonnement produit le même emplacement. La pile n'est pas un complot, c'est une convergence."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la foule au niveau, la bande de stops dense en dessous, régulière."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 1 — la foule qui regarde le même trait, entre au même endroit, pose ses stops au même endroit",
+      "turn": "même trait, même raisonnement, même endroit. la pile se forme toute seule."
+    },
+    {
+      "id": "s3",
+      "clarity": "Cette pile est la chose la plus prévisible du graphe. Pas parce que quelqu'un te traque, mais parce qu'un grand réservoir d'ordres en attente est exactement ce dont le prix a besoin pour bouger.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 2 — la carte des réservoirs. Le graphe s'affiche avec, sur ses côtés, des zones de densité : quelques zones CLAIRSEMÉES (peu d'ordres en attente) et une zone DENSE (la pile de stops)."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une masse doit être échangée. Elle se dirige vers la zone dense — pas par malveillance, mais parce que c'est le seul endroit où il y a assez de contreparties pour l'absorber. Les zones clairsemées sont ignorées : il n'y a rien à y prendre. AUCUNE intention n'est prêtée à personne : c'est de la mécanique d'exécution."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les zones clairsemées inertes, la zone dense qui attire, la mécanique visible."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 2 — la carte des zones : là où il y a peu d'ordres (rien ne se passe) vs le réservoir dense (le prix y va)",
+      "turn": "le prix va là où il y a de quoi remplir. c'est tout."
+    },
+    {
+      "id": "s4",
+      "clarity": "Donc le balayage n'est pas un piège tendu pour toi. C'est le marché faisant la seule chose efficace disponible : prendre la liquidité laissée à découvert.",
+      "note": "LA scene — les stops exécutés alimentent le mouvement qui repart sans toi.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "PREUVE VISUELLE 3 — le balayage. Le prix descend dans la bande. Les stops s'exécutent un par un, chacun devenant un ordre au marché qui alimente le mouvement. La bande se vide."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une fois la bande VIDE, le mouvement s'arrête net — il n'y a plus rien à prendre — et le prix repart dans l'autre sens, vers le haut. Ta position teal, elle, est restée en bas, sortie, grise. Elle a financé le mouvement qui est reparti sans elle."
+        },
+        {
+          "t": "3-11",
+          "do": "TENUE VIVANTE longue : la bande vidée, le prix reparti au-dessus du niveau, la position grise en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 3 — le balayage vu de l'intérieur : la pile consommée, puis le prix repart, la position sortie pour rien",
+      "turn": "tu n'as pas été visé. tu étais le carburant disponible."
+    },
+    {
+      "id": "s5",
+      "clarity": "Avant de poser quoi que ce soit sur un niveau évident, pose l'autre question. Pas 'est-ce que ça va tenir', mais 'qui est déjà positionné ici, et où sont ses stops'.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DÉCHARGE — PREUVE VISUELLE 4, les deux questions. GAUCHE : 'will it hold?' — la question de la foule. Elle regarde le trait, ne voit que le trait, et se positionne dessus. Une croix la barre."
+        },
+        {
+          "t": "2-3.5",
+          "do": "DROITE : 'who's positioned here, and where are their stops?' — la même zone, mais la lecture RÉVÈLE la bande dense en dessous. La position teal, informée, se place AILLEURS que dans la pile — ou attend que la pile soit consommée avant d'agir. Le niveau n'a pas changé. La lecture, si."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la question barrée à gauche, la question qui révèle la pile à droite, la position hors du tas. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "PREUVE 4 — les deux questions côte à côte, l'une barrée, l'autre qui révèle la pile avant de se positionner",
+      "fusil_decharge": "la pile de S1 se résout : elle n'était pas un piège, c'était une carte — et la seule question utile est de savoir qui est déjà dessus avant de s'y poser."
+    }
+  ],
+  "total": 50.0,
+  "caption": "Comment \"MAP\" for the tool that reads structure live. The market took your stop? It went where the stops were parked — and yours was parked with everyone else’s.\n\nUnder the obvious level sits a shelf of resting orders. The auction fills where the orders are, on purpose or not, then continues. Standing on the crowd’s level is standing on the fuel.\n\nTHE LINE — read where the stops rest; don’t park yours with the crowd.\n\n#trading #liquidity #priceaction #smartmoney #daytrading #forex #tradingeducation #structure #stophunt #trader",
+  "pinned_comment": "Comment \"MAP\" and I'll send you the 3T engine indicator 👊",
+  "_rules": {
+    "doctrine": "COMMON BELIEF BUSTER (OnePeak, adopté 03/08). Structure 5 blocs, durée resserrée ~50s, UNE preuve visuelle par bloc, lisible au premier coup d'œil. Angle : liquidité et clustering. GARDE-FOU STRICT : aucune intention prêtée (pas de 'ils chassent tes stops'), c'est de la MÉCANIQUE d'exécution. Pas de méthode de chasse enseignée.",
+    "caption_structure": "MOULE B (test 03/08) : caption courte (<110 car.) intrigante pointant vers la FIN, hashtags après, CTA UNIQUEMENT en pinned_comment (sec).",
+    "buster": "hook = croyance ET réfutation dans la MÊME phrase, sous 3s.",
+    "interdits": "gris = perte (M-couleur). pas de brun. bas du cadre vide. JAMAIS 'perdre plus que son dépôt'. pas d'intention prêtée aux institutionnels. pas de méthode de chasse aux stops.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~50s (vs 84s historique) — 'get in, bust the myth, prove it, get out'. Tenues vivantes raccourcies.",
+    "circuit": "M24 frames DoD d'abord.",
+    "cta_keyword": "MAP",
+    "cta_spoken_added": "Comment MAP, and I'll send you the tool that reads structure live."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS (décision PO 30/07). Aucun personnage visible. La voix George narre en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

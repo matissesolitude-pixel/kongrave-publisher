@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L61 « THE LEVEL EVERYONE STANDS ON » — ton stop est allé là où TOUS les stops étaient posés. SANS narrateur.
+       S1 : un niveau évident ; juste dessous une bande DENSE de stops gris ; le prix la traverse, les stops s'éteignent un à un.
+       S2 : la convergence — une foule de ronds fil-de-fer vise LE MÊME trait, pose ses ordres au niveau, ses stops en bande dense
+       dessous. S3 : la carte des réservoirs — des zones clairsemées inertes, une zone dense qui attire la masse (pas malveillance,
+       seul endroit avec assez de liquidité). S4 : le balayage — le prix descend, les stops s'exécutent un par un et alimentent le
+       mouvement ; bande vidée → le prix repart dans l'autre sens ; ta position grise en bas. S5 : les deux questions — « will it
+       hold? » (la foule) barrée vs « who's here, where are their stops? » qui RÉVÈLE la pile ; ta position hors du tas + CTA.
+       Doctrine : teal = toi/lecture juste ; gris = foule/stops/perte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const level=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const level2=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const NT=28, TICK=[];                                 // la bande de stops
+    for(let i=0;i<NT;i++)TICK.push(mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+    const TICK2=[]; for(let i=0;i<NT;i++)TICK2.push(mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0})); // S5 révélée
+    const price=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const CROWD=[]; for(let i=0;i<12;i++)CROWD.push(mk('circle',{r:16,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0})); // S2 foule fil-de-fer
+    const ARR=[]; for(let i=0;i<12;i++)ARR.push(mk('line',{stroke:DEAD,'stroke-width':3,'stroke-linecap':'round',opacity:0}));
+    const BANDL=[]; for(let i=0;i<5;i++)BANDL.push(mk('g',{}));   // S3 bandes de densité (groupes)
+    const pos=mk('circle',{r:20,fill:'none',stroke:DEAD,'stroke-width':5,opacity:0});    // ta position (hors du tas)
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':100,opacity:0});
+
+    function pricePts(x0,x1,yTop,dip,u,seg){const o=[];const n=48;for(let i=0;i<=n;i++){const f=i/n;const x=x0+(x1-x0)*f;let y=yTop+ dip*Math.sin(f*Math.PI)*seg + 6*Math.sin(f*20+u*2);o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ── QUESTION (§M15) ──
+    const QLINES=['THE MARKET TOOK YOUR STOP.','WHY THERE?'];
+    const FS=72,lineH=98,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+80,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(40),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=64, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    const strike=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+
+    function hideDyn(){for(const e of [level,level2,price,pos,counter,strike])setOp(e,0);
+      for(const a of [TICK,TICK2,CROWD,ARR])for(const e of a)setOp(e,0);
+      for(const g of BANDL)while(g.firstChild)g.removeChild(g.firstChild);hideCaps();}
+
+    // bande de stops : ticks verticaux serrés sous un niveau, entre x=[a,b]
+    function drawBand(arr,a,b,yTop,activeUntilX,u){
+      for(let i=0;i<NT;i++){const f=i/(NT-1);const x=a+(b-a)*f;const gone=x<activeUntilX;const jig=gone?0:3*Math.sin(u*3+i);
+        arr[i].setAttribute('x1',x.toFixed(1));arr[i].setAttribute('x2',x.toFixed(1));arr[i].setAttribute('y1',(yTop+jig).toFixed(1));arr[i].setAttribute('y2',(yTop+40+jig).toFixed(1));
+        setOp(arr[i],gone?0:0.9);}
+    }
+
+    // ═══ S1 — LE NIVEAU + LA BANDE DE STOPS, LE PRIX TRAVERSE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const LY=920;
+      level.setAttribute('x1',150);level.setAttribute('x2',930);level.setAttribute('y1',LY);level.setAttribute('y2',LY);setOp(level,1);
+      // le prix descend depuis la gauche, traverse la bande
+      const sweepX=lerp(150,930,clamp(u/5,0,1));
+      drawBand(TICK,180,900,LY+18,sweepX,u);
+      price.setAttribute('points',pricePts(150,sweepX,880,120,u,clamp(u/5,0,1)));setOp(price,clamp(u/0.4,0,1));
+      putCap(capB,'YOURS WAS PARKED WITH EVERYONE ELSE’S',CX,LY+150,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LA CONVERGENCE : MÊME TRAIT, ORDRES + STOPS EMPILÉS ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const LY=980;
+      level.setAttribute('x1',150);level.setAttribute('x2',930);level.setAttribute('y1',LY);level.setAttribute('y2',LY);setOp(level,clamp(u/0.4,0,1));
+      putCap(capC,'THE SAME LINE',CX,LY-30,INK,clamp((u-0.2)/0.5,0,1));
+      // la foule fil-de-fer converge vers le niveau
+      const conv=clamp(u/1.6,0,1);
+      for(let i=0;i<12;i++){const bx=180+i*62;const startY=560+((i*47)%120);const cy=lerp(startY,LY-70,eOut(conv));
+        CROWD[i].setAttribute('cx',bx);CROWD[i].setAttribute('cy',cy.toFixed(1));setOp(CROWD[i],clamp(u/0.4,0,1));
+        ARR[i].setAttribute('x1',bx);ARR[i].setAttribute('x2',bx);ARR[i].setAttribute('y1',(cy+18).toFixed(1));ARR[i].setAttribute('y2',(LY-6).toFixed(1));setOp(ARR[i],conv*0.6);}
+      // puis les stops s'accumulent en bande dense sous le niveau
+      const stopsIn=clamp((u-2.0)/1.2,0,1);
+      drawBand(TICK,180,900,LY+22, 150, u);               // tous présents
+      for(let i=0;i<NT;i++)setOp(TICK[i], stopsIn*0.9);
+      putCap(capD,'STOPS PILE IN THE SAME PLACE',CX,LY+130,DEAD,stopsIn);
+      putCap(capB,'SAME REASONING — SAME SPOT',CX,540,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA CARTE DES RÉSERVOIRS : clairsemé inerte vs dense qui attire ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // bandes horizontales de densité variable
+      const bands=[{y:640,n:4},{y:780,n:6},{y:960,n:26},{y:1140,n:5},{y:1280,n:3}]; // la 3e = DENSE
+      bands.forEach((bd,bi)=>{const g=BANDL[bi];const dense=bd.n>=20;
+        for(let i=0;i<bd.n;i++){const x=190+i*(dense?26:120);const jig=3*Math.sin(u*2+i+bi);
+          const ln=document.createElementNS(NS,'line');ln.setAttribute('x1',x);ln.setAttribute('x2',x);ln.setAttribute('y1',(bd.y+jig).toFixed(1));ln.setAttribute('y2',(bd.y+34+jig).toFixed(1));ln.setAttribute('stroke',dense?DEAD:DEAD);ln.setAttribute('stroke-width',6);ln.setAttribute('opacity',(dense?0.9:0.5)*clamp(u/0.5,0,1));g.appendChild(ln);} });
+      // la masse gravite vers la zone dense puis respire (jamais figée)
+      const gy=lerp(660, 960, eOut(clamp((u-1.4)/2.0,0,1)))+9*Math.sin(u*1.5)+5*Math.sin(u*2.6);
+      const gx=920+14*Math.sin(u*1.1);
+      pos.setAttribute('cx',gx.toFixed(1));pos.setAttribute('cy',gy.toFixed(1));pos.setAttribute('r',26);pos.setAttribute('stroke',INK);pos.setAttribute('fill','none');setOp(pos,clamp((u-1.2)/0.5,0,1));
+      counter.textContent='';
+      putCap(capC,'DENSE = ENOUGH TO FILL',CX,930,INK,clamp((u-2.2)/0.6,0,1));
+      putCap(capB,'PRICE GOES WHERE THE ORDERS ARE',CX,520,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE BALAYAGE : bande vidée, le prix repart ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const LY=880;
+      level.setAttribute('x1',150);level.setAttribute('x2',930);level.setAttribute('y1',LY);level.setAttribute('y2',LY);setOp(level,1);
+      const swept=clamp((u-0.4)/2.2,0,1);
+      const sweepX=lerp(180,900,swept);
+      drawBand(TICK,180,900,LY+20,sweepX,u);
+      // le prix plonge dans la bande, la vide, puis repart au-dessus
+      const rebound=clamp((u-2.8)/1.6,0,1);
+      const dipY=LY+70;
+      const px=lerp(180,900,Math.min(swept,1));
+      let pts;
+      if(rebound<=0){ pts=pricePts(180,px,760,150,u,swept); }
+      else { // partie descendante figée + remontée
+        const o=[];for(let i=0;i<=40;i++){const f=i/40;const x=180+720*f; let y; if(f<0.55){y=lerp(760,dipY,f/0.55);} else {y=lerp(dipY,700,eOut((f-0.55)/0.45)*rebound);} o.push(x.toFixed(1)+','+(y+5*Math.sin(f*18+u*2)).toFixed(1));}
+        pts=o.join(' ');
+      }
+      price.setAttribute('points',pts);setOp(price,1);
+      // ta position grise, en bas, hors-jeu
+      pos.setAttribute('cx',260);pos.setAttribute('cy',(1200+6*Math.sin(u*1.6)).toFixed(1));pos.setAttribute('r',22);pos.setAttribute('stroke',DEAD);pos.setAttribute('fill','none');setOp(pos,clamp((u-3.0)/0.6,0,1));
+      putCap(capC,'BAND EMPTY — MOVE STOPS DEAD',CX,LY+150,DEAD,clamp((u-2.6)/0.7,0,1));
+      putCap(capB,'NOT A TRAP — JUST TAKING WHAT WAS LEFT',CX,540,INK,clamp((u-3.6)/0.7,0,1));
+    }
+
+    // ═══ S5 — LES DEUX QUESTIONS ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // GAUCHE : « will it hold? » — ne voit que le trait, barrée
+      const lx=300, LY=1000;
+      level.setAttribute('x1',120);level.setAttribute('x2',480);level.setAttribute('y1',LY);level.setAttribute('y2',LY);setOp(level,clamp(u/0.5,0,1));
+      putCap(capC,'WILL IT HOLD?',lx,760,DEAD,clamp((u-0.3)/0.5,0,1));
+      const st=clamp((u-1.4)/0.5,0,1);strike.setAttribute('x1',lerp(150,150,1));strike.setAttribute('x2',lerp(150,450,st));strike.setAttribute('y1',748);strike.setAttribute('y2',748);setOp(strike,st);
+      // DROITE : la vraie question RÉVÈLE la pile
+      const rx=790;
+      level2.setAttribute('x1',600);level2.setAttribute('x2',960);level2.setAttribute('y1',LY);level2.setAttribute('y2',LY);setOp(level2,clamp(u/0.5,0,1));
+      const rev=clamp((u-1.8)/1.0,0,1);
+      drawBand(TICK2,610,950,LY+20,150,u);for(let i=0;i<NT;i++)setOp(TICK2[i],rev*0.9);
+      putCap(capD,'WHO’S HERE?',rx,760,YOU,clamp((u-0.3)/0.5,0,1));
+      putCap(capA,'WHERE ARE THEIR STOPS?',rx,LY+130,DEAD,rev);
+      // ta position, hors du tas, au-dessus à droite
+      pos.setAttribute('cx',rx);pos.setAttribute('cy',(860+6*Math.sin(u*1.6)).toFixed(1));pos.setAttribute('r',20);pos.setAttribute('stroke',YOU);pos.setAttribute('fill','none');setOp(pos,rev);
+      // CTA À L'ÉCRAN
+      putCap(capE,'COMMENT "MAP"',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'GET THE TOOL THAT READS STRUCTURE',CX,312,INK,clamp((u-3.9)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
