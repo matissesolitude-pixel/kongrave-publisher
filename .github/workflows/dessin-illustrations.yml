@@ -18,6 +18,15 @@ on:
         type: choice
         options: ["", "A", "B"]
         default: ""
+      libre:
+        description: "Exercice hors protocole (repères déduits automatiquement)"
+        required: false
+      style:
+        description: "Style de rendu"
+        required: false
+        type: choice
+        options: ["encre", "couleur"]
+        default: "encre"
       variantes:
         description: "Rendus par exercice (défaut 1)"
         required: false
@@ -56,14 +65,17 @@ jobs:
         run: |
           set -o pipefail
           ARGS=""
-          if [ -n "${{ inputs.exercices }}" ]; then
+          if [ -n "${{ inputs.libre }}" ]; then
+            ARGS="--libre \"${{ inputs.libre }}\""
+          elif [ -n "${{ inputs.exercices }}" ]; then
             ARGS="-e ${{ inputs.exercices }}"
           elif [ -n "${{ inputs.seance }}" ]; then
             ARGS="--seance ${{ inputs.seance }}"
           else
             ARGS="--tout"
           fi
-          python3 dessin/illustrations.py $ARGS \
+          eval python3 dessin/illustrations.py $ARGS \
+            --style "${{ inputs.style }}" \
             --variantes "${{ inputs.variantes }}" \
             --ratio "${{ inputs.ratio }}" \
             --out dessin/illustrations

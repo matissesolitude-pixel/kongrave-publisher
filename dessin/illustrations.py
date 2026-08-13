@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DESSIN — illustrations.py — LES 11 EXERCICES DU PROTOCOLE POSTÉRIEUR.
+DESSIN — illustrations.py — ILLUSTRATIONS D'EXERCICES (n'importe lequel).
 
 Les rigs vectoriels du dossier (`figure.py`, `encre.py`, `athlete.py`) donnent la
 cohérence et le contrôle de pose, jamais la qualité d'une illustration. Ici c'est
@@ -20,11 +20,26 @@ d'environnement d'abord (secret GitHub `GEMINI_API` en CI), `.env.local` en repl
 Elle n'existe PAS dans une session cloud : passer par le workflow
 `.github/workflows/dessin-illustrations.yml`, qui tourne là où le secret vit.
 
+TROIS ENTRÉES
+  · les 11 exercices du PROTOCOLE POSTÉRIEUR, repères écrits à la main d'après le document ;
+  · --libre "n'importe quel exercice" : les repères techniques sont déduits par le modèle
+    de texte AVANT de dessiner, parce qu'un nom d'exercice seul produit une pose qui
+    ressemble à l'exercice, avec ses défauts de forme les plus courants ;
+  · --repere "…" : les repères imposés à la main, quand on sait exactement ce qu'on veut.
+
+DEUX STYLES
+  --style encre (défaut) : noir et blanc, transcrit des illustrations de référence.
+  --style couleur : même construction, aplats deux tons.
+Et `dessin/references/` : toute image déposée là est envoyée comme référence VISUELLE de
+style, ce qui verrouille le trait bien mieux que le prompt seul.
+
 USAGE
   python3 dessin/illustrations.py --liste
   python3 dessin/illustrations.py -e hip-thrust rdl bulgare
   python3 dessin/illustrations.py --seance A
   python3 dessin/illustrations.py --tout --variantes 2
+  python3 dessin/illustrations.py --libre "tirage horizontal poulie basse"
+  python3 dessin/illustrations.py --libre "développé militaire" --style couleur
 """
 from __future__ import annotations
 
@@ -35,6 +50,9 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MODEL_IMG = "gemini-3.1-flash-image"        # même modèle que gen_seg4_narratif.py
+# Modèle de TEXTE, utilisé seulement pour déduire les repères d'un exercice libre.
+# Surchargeable si le nom change : GEMINI_TEXT_MODEL=... python3 dessin/illustrations.py
+MODEL_TXT = os.environ.get("GEMINI_TEXT_MODEL", "gemini-3.1-flash")
 
 
 # ====================================================== LA FEUILLE DE PERSONNAGE
@@ -52,20 +70,45 @@ PERSONNAGE = (
     "white and grey running shoes. "
 )
 
-STYLE = (
-    "Comic book / cartoon vector illustration. Bold clean black outlines of varying "
-    "thickness. Flat cel shading with exactly two tones per material, one light source "
-    "from the upper left, crisp shadow edges. Saturated but limited palette. "
-    "Confident inked linework, anatomy drawn with interior muscle lines (deltoid, "
-    "biceps, abdominals, quadriceps, calves). No gradients, no airbrush, no "
-    "photorealism, no 3D render. "
+# ====================================================== LES STYLES
+# `encre` est transcrit des deux illustrations de référence, trait par trait. Les
+# quatre gestes qui les caractérisent — et qu'aucun prompt vague ne produit :
+#   · TOUT trait est fuselé (il enfle puis meurt en pointe), jamais d'épaisseur constante ;
+#   · le muscle est CREUSÉ par des paquets de traits courts, il n'est pas cerné ;
+#   · cheveux et tissu sont des MASSES NOIRES PLEINES traversées de réserves blanches ;
+#   · les plis RAYONNENT depuis les points de tension du vêtement.
+
+STYLE_ENCRE = (
+    "Black ink illustration on pure white. No grey, no colour, no halftone, no gradient. "
+    "Every single line is a tapered brush stroke that swells in the middle and dies in a "
+    "fine point — never a constant-width outline. Muscle definition is CARVED with "
+    "clusters of short tapered strokes (abdominals, obliques, serratus, deltoid, biceps, "
+    "quadriceps, calves), not drawn as outlines. Hair and clothing are SOLID BLACK "
+    "MASSES with white reserve slashes cutting through them to describe strands, folds "
+    "and highlights. Fabric folds are clusters of thin tapered lines radiating from the "
+    "stress points. Confident vector-inked commercial illustration, very high contrast, "
+    "crisp edges. Stylized athletic female anatomy: broad shoulders, defined abdominals, "
+    "very narrow waist, powerful glutes and thighs. "
 )
+
+STYLE_COULEUR = (
+    STYLE_ENCRE.replace(
+        "Black ink illustration on pure white. No grey, no colour, no halftone, no gradient. ",
+        "Inked colour illustration on pure white. Flat colour fills with exactly two "
+        "tones per material and crisp cel-shaded shadow edges, one light source from the "
+        "upper left. No gradient, no airbrush, no photorealism, no 3D render. ")
+    .replace("Hair and clothing are SOLID BLACK MASSES",
+             "Hair and clothing are SOLID SATURATED MASSES")
+)
+
+STYLES = {"encre": STYLE_ENCRE, "couleur": STYLE_COULEUR}
+STYLE = STYLE_ENCRE
 
 CADRE = (
     "Full body visible from head to shoes, centered, framed so the exercise form is "
-    "unambiguous. Plain white background. Draw ONLY the equipment the exercise "
-    "requires, in the same flat inked style as the figure, and never more. Soft contact "
-    "shadow under the contact points. "
+    "unambiguous. Plain white background, no ground line, no scenery. Draw ONLY the "
+    "equipment the exercise requires, inked in the same style as the figure, and never "
+    "more. "
 )
 
 INTERDITS = (
@@ -173,19 +216,72 @@ def gemini_key() -> str:
              "        secret GEMINI_API est déjà branché.")
 
 
-def prompt_for(nom: str) -> str:
-    return (STYLE + PERSONNAGE + "She is " + EXERCICES[nom][3] + " " + CADRE + INTERDITS)
+def repere_auto(exercice: str) -> str:
+    """N'IMPORTE QUEL EXERCICE. Les 11 du protocole portent leurs repères écrits à la
+    main ; pour tous les autres, on demande d'abord au modèle de TEXTE la description
+    technique du mouvement, puis on la donne au modèle d'image.
+
+    Pourquoi ce détour plutôt que de jeter le nom de l'exercice dans le prompt : sans
+    repères, le modèle dessine une pose qui RESSEMBLE à l'exercice, avec les défauts de
+    forme les plus courants — et une illustration de programme qui montre une exécution
+    fausse enseigne le défaut. Si l'appel échoue, on continue quand même : une consigne
+    générique vaut mieux qu'un plantage."""
+    demande = (
+        f"Describe, in one dense English sentence and nothing else, how to draw a person "
+        f"performing the exercise '{exercice}' with textbook technique, at the position "
+        f"of peak muscular tension. State the camera view, the joint angles, the spine "
+        f"position, the foot and hand placement, and the equipment. Use the technical "
+        f"cues a strength coach would correct. No preamble, no bullet points.")
+    try:
+        from google import genai
+        client = genai.Client(api_key=gemini_key())
+        r = client.models.generate_content(model=MODEL_TXT, contents=[demande])
+        txt = (getattr(r, "text", "") or "").strip().replace("\n", " ")
+        if len(txt) > 40:
+            print(f"    [repères] {txt[:110]}…", flush=True)
+            return txt
+    except Exception as e:                                   # modèle indisponible, quota…
+        print(f"    [repères indisponibles : {type(e).__name__}] "
+              f"consigne générique", flush=True)
+    return (f"performing the exercise '{exercice}' with textbook technique, at the "
+            f"position of peak muscular tension, in the camera view that makes the form "
+            f"unambiguous, with the equipment the exercise requires")
 
 
-def nom_fichier(nom: str, variante: int) -> str:
+def prompt_for(nom: str, libre: str | None = None, repere: str | None = None) -> str:
+    if libre:
+        corps = repere or repere_auto(libre)
+    else:
+        corps = EXERCICES[nom][3]
+    return (STYLE + PERSONNAGE + "She is " + corps + " " + CADRE + INTERDITS)
+
+
+def references() -> list:
+    """Images de style optionnelles (`dessin/references/`). Le prompt seul porte déjà le
+    style ; une référence VISUELLE le verrouille beaucoup plus fermement.
+    N'y mettre que des images qu'on possède ou qu'on a licenciées — le dossier est
+    délibérément vide dans le dépôt."""
+    d = ROOT / "dessin" / "references"
+    if not d.is_dir():
+        return []
+    return sorted(f for f in d.iterdir()
+                  if f.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp"))
+
+
+def nom_fichier(nom: str, variante: int, libre: str | None = None) -> str:
     """Préfixé par le numéro du programme : les fichiers se rangent dans l'ordre des
-    séances, pas dans l'ordre alphabétique."""
-    num, _, _, _ = EXERCICES[nom]
+    séances, pas dans l'ordre alphabétique. Un exercice libre part sans numéro."""
     suffix = "" if variante == 1 else f"-v{variante}"
-    return f"{num:02d}-{nom}{suffix}.png"
+    if libre:
+        slug = "".join(c if c.isalnum() else "-" for c in libre.lower()).strip("-")
+        while "--" in slug:
+            slug = slug.replace("--", "-")
+        return f"{slug}{suffix}.png"
+    return f"{EXERCICES[nom][0]:02d}-{nom}{suffix}.png"
 
 
-def generate(nom: str, out: pathlib.Path, ratio: str, variante: int = 1) -> bool:
+def generate(nom: str, out: pathlib.Path, ratio: str, variante: int = 1,
+             libre: str | None = None, repere: str | None = None) -> bool:
     try:
         from google import genai
         from google.genai import types
@@ -195,13 +291,21 @@ def generate(nom: str, out: pathlib.Path, ratio: str, variante: int = 1) -> bool
     client = genai.Client(api_key=gemini_key())
     cfg = types.GenerateContentConfig(response_modalities=["IMAGE"],
                                       image_config=types.ImageConfig(aspect_ratio=ratio))
-    img = out / nom_fichier(nom, variante)
-    prompt = prompt_for(nom)
+    img = out / nom_fichier(nom, variante, libre)
+    prompt = prompt_for(nom, libre, repere)
     if variante > 1:
         # Varier l'angle SANS toucher au personnage : la feuille reste intacte.
         prompt += f" Alternate camera angle, variation {variante}. "
+    contents = [prompt]
+    for ref in references():          # références de style : elles verrouillent le trait
+        contents.append(types.Part.from_bytes(data=ref.read_bytes(),
+                                              mime_type=f"image/{ref.suffix.lstrip('.').replace('jpg','jpeg')}"))
+    if len(contents) > 1:
+        contents[0] += (f" Match the drawing style of the {len(contents)-1} reference "
+                        f"image(s) provided: same line quality, same rendering of muscle, "
+                        f"hair and fabric. Do not copy their pose or their subject.")
     for attempt in range(4):
-        resp = client.models.generate_content(model=MODEL_IMG, contents=[prompt], config=cfg)
+        resp = client.models.generate_content(model=MODEL_IMG, contents=contents, config=cfg)
         for cand in (resp.candidates or []):
             for part in (getattr(getattr(cand, "content", None), "parts", None) or []):
                 data = getattr(part, "inline_data", None)
@@ -222,16 +326,35 @@ def main() -> None:
     ap.add_argument("--variantes", type=int, default=1, help="rendus par exercice (défaut 1)")
     ap.add_argument("--ratio", default="3:4", help="ratio d'image (défaut 3:4)")
     ap.add_argument("--out", type=pathlib.Path, default=ROOT / "dessin" / "illustrations")
+    ap.add_argument("--libre", nargs="+", metavar="EXERCICE",
+                    help="n'importe quel exercice, hors protocole (repères déduits)")
+    ap.add_argument("--repere", help="repères techniques imposés (avec --libre, un seul)")
+    ap.add_argument("--style", choices=list(STYLES), default="encre",
+                    help="encre (noir et blanc, défaut) ou couleur")
     ap.add_argument("--liste", action="store_true", help="liste les exercices connus")
     ap.add_argument("--prompt", metavar="EXERCICE", help="affiche le prompt sans appeler l'API")
     a = ap.parse_args()
+    global STYLE
+    STYLE = STYLES[a.style]
 
     if a.liste:
         for k, (num, seance, titre, _) in EXERCICES.items():
             print(f"{num:02d}  séance {seance}  {k:24s} {titre}")
         return
     if a.prompt:
-        print(prompt_for(a.prompt)); return
+        print(prompt_for(a.prompt, None if a.prompt in EXERCICES else a.prompt,
+                         a.repere)); return
+
+    if a.libre:
+        gemini_key()
+        a.out.mkdir(parents=True, exist_ok=True)
+        ko = 0
+        for ex in a.libre:
+            for v in range(1, max(1, a.variantes) + 1):
+                if not generate("", a.out, a.ratio, v, libre=ex,
+                                repere=a.repere if len(a.libre) == 1 else None):
+                    ko += 1
+        sys.exit(1 if ko else 0)
 
     if a.seance:
         noms = [k for k, v in EXERCICES.items() if v[1] == a.seance.upper()]
