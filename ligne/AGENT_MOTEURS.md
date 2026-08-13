@@ -53,7 +53,9 @@ coupées · L27/L28 étiquettes collées et texte sur dessin · L04/L24/L29 narr
 - Toi, tu restes responsable du **placement des étiquettes** : avant d'en poser une, demande-toi
   quel objet occupe ce (x, y) et sa bande verticale.
 
-**Vérifie sur des frames RENDUES, jamais sur du raisonnement.**
+**Vérifie sur des frames RENDUES, jamais sur du raisonnement** — `python3 ligne/frames.py lNN`,
+puis on ouvre les PNG. Un chevauchement mobile ne se voit pas sur une frame unique :
+`-s N -n 8` rend huit instants de la scène suspecte.
 
 
 ## LE NARRATEUR MR DOLLAR
@@ -172,13 +174,25 @@ jamais** — il part tel quel sur Instagram.
 plus de 1,5 s sans progression, ou plus de 0,4 s quasi vide (<0,4 % d'encre).
 Un échec = ~10 min de runner perdues et aucun épisode en file.
 
-Si Chromium est disponible dans l'environnement, passer `ligne/preflight.sh lNN LNN.json`
-(il rend des paires de frames à 1/15 s et applique les mêmes seuils). Un point isolé
-sous le seuil est tolérable ; **trois sondes consécutives en défaut ne le sont pas**.
+**Deux contrôles, complémentaires. Les deux avant de pousser :**
 
-Si Chromium n'est pas disponible : relire le moteur scène par scène en se demandant,
-pour chaque tenue longue, *quel objet se déplace réellement à chaque frame*. S'il n'y
-en a aucun, la scène est morte — ajouter un mouvement de position à deux harmoniques.
+```bash
+python3 ligne/frames.py lNN            # L'ŒIL   — storyboard + PLANCHE.png, puis on REGARDE
+ligne/preflight.sh lNN LNN.json        # LE SCAN — vide / absence de progression (mêmes seuils)
+```
+
+- **`frames.py`** rend les frames en PNG et compose une planche-contact de l'épisode
+  (~12 s, zéro dépendance, Chromium trouvé tout seul y compris en conteneur). C'est le
+  seul contrôle qui attrape le **chevauchement**, le **hors-cadre** et la **composition** —
+  et c'est ce que veut dire « vérifie sur des frames rendues ». Une erreur JS s'écrit
+  **dans l'image**, pas dans un PNG blanc. La checklist de l'œil, dans l'ordre de
+  fréquence des défauts payés en live : `.claude/skills/revue-visuelle/SKILL.md`.
+- **`preflight.sh`** mesure ce que l'œil ne quantifie pas : plages sans progression
+  (>1,5 s) et écrans quasi-vides (>0,4 s), constantes identiques au fail-loud du build.
+  Il raisonne en **plages**, pas en points : une sonde isolée sous le seuil est normale.
+
+Le scan mesure des pixels — il sait dire « ça bouge », jamais « c'est lisible ».
+Un moteur qui passe le scan et qu'on n'a pas REGARDÉ n'est pas vérifié.
 
 ## LES SFX « PAR TOUCHE » (à ajouter dans le JSON de chaque nouvel épisode)
 

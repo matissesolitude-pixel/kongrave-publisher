@@ -1,0 +1,104 @@
+name: DESSIN illustrations
+
+# Génère la série d'illustrations d'exercices avec Gemini, PUIS commit les PNG dans
+# dessin/illustrations/. Ce workflow existe parce que la clé n'est PAS accessible depuis
+# une session cloud : le secret GEMINI_API ne vit qu'ici. On amène donc le traitement à
+# la clé plutôt que la clé au traitement — aucun secret ne quitte GitHub.
+# Secret requis : GEMINI_API (déjà utilisé par autoprod.yml).
+
+on:
+  workflow_dispatch:
+    inputs:
+      exercices:
+        description: "Exercices séparés par des espaces (vide = les 11 du protocole)"
+        required: false
+      seance:
+        description: "Une seule séance : A ou B (ignoré si exercices est rempli)"
+        required: false
+        type: choice
+        options: ["", "A", "B"]
+        default: ""
+      libre:
+        description: "Exercice hors protocole (repères déduits automatiquement)"
+        required: false
+      style:
+        description: "Style de rendu"
+        required: false
+        type: choice
+        options: ["couleur", "encre"]
+        default: "couleur"
+      variantes:
+        description: "Rendus par exercice (défaut 1)"
+        required: false
+        default: "1"
+      ratio:
+        description: "Ratio d'image (3:4, 1:1, 9:16)"
+        required: false
+        default: "3:4"
+
+concurrency:
+  group: dessin-illustrations
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  dessiner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Dépendances
+        run: pip install --quiet "google-genai>=0.3"
+
+      - name: Générer
+        run: |
+          set -o pipefail
+          ARGS=""
+          if [ -n "${{ inputs.libre }}" ]; then
+            ARGS="--libre \"${{ inputs.libre }}\""
+          elif [ -n "${{ inputs.exercices }}" ]; then
+            ARGS="-e ${{ inputs.exercices }}"
+          elif [ -n "${{ inputs.seance }}" ]; then
+            ARGS="--seance ${{ inputs.seance }}"
+          else
+            ARGS="--tout"
+          fi
+          eval python3 dessin/illustrations.py $ARGS \
+            --style "${{ inputs.style }}" \
+            --variantes "${{ inputs.variantes }}" \
+            --ratio "${{ inputs.ratio }}" \
+            --out dessin/illustrations
+
+      - name: Commit des images
+        run: |
+          git config user.name  "kongrave-bot"
+          git config user.email "bot@kongrave.local"
+          git add dessin/illustrations
+          if git diff --cached --quiet; then
+            echo "Aucune image nouvelle."; exit 0
+          fi
+          git commit -m "Illustrations du protocole postérieur (Gemini)"
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((2 ** i))
+          done
+          echo "push impossible"; exit 1
+
+      - name: Artefact (même si le commit échoue)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: illustrations
+          path: dessin/illustrations/*.png
+          if-no-files-found: warn
