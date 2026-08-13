@@ -1,7 +1,0 @@
-Comment "MAP" for the tool that reads structure live. Your indicator gave you a signal — after the move already happened.
-
-Every one of these tools calculates on candles that already closed, so the line describes what price DID, never what it’s doing. The moment it turns, the move is already spent: you enter on the confirmation, and the confirmation is the top of the leg — right where the crowd enters, right before the pullback.
-
-THE LINE — read the structure that’s forming, not the line that’s reporting.
-
-#trading #priceaction #indicators #daytrading #forex #tradingeducation #structure #scalping #technicalanalysis #trader

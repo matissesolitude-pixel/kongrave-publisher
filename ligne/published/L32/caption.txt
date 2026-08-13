@@ -1,7 +1,0 @@
-Comment "MAP" for the free beta of my indicator. Most trades die in the exact middle of the chart — and the middle is where movement looks cleanest.
-
-At the edges, someone is defending a level: if it breaks, you learn something. In the middle, nobody is defending anything. Your entry has no level behind it, your stop has nothing protecting it. That smoothness you read as opportunity is just the absence of any obstacle.
-
-THE LINE — before you enter, ask what is defending this level.
-
-#trading #trader #priceaction #range #liquidity #daytrading #forex #tradingeducation #smartmoney #levels

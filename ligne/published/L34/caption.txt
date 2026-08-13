@@ -1,7 +1,0 @@
-Comment "LINE" for the checklist on what your stop can't protect. Your stop can be skipped without ever being touched.
-
-A stop assumes price walks through the level. But markets close, and while they're closed things happen. At the reopen, the first price can be far from the last — a jump, not a walk. Your stop sat in that empty space with nothing to trigger it, and filled at the first price on the other side.
-
-THE LINE — across a close, a stop is an intention, not a guarantee.
-
-#trading #trader #stoploss #gap #riskmanagement #daytrading #forex #tradingeducation #weekendrisk #slippage

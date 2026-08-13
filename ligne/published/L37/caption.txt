@@ -1,7 +1,0 @@
-Comment "MAP" for the free beta of my indicator. A level can break spectacularly and change absolutely nothing.
-
-A break is one event. Structure is a sequence: each push going further, each pullback stopping short. Breaks are visually loud — a line, then a move straight through it. The sequence is quiet, a shape spread across time. So the loud thing gets your attention and the quiet thing gets your money.
-
-THE LINE — a break is an event. A turn is a change in the sequence.
-
-#trading #trader #priceaction #marketstructure #breakout #daytrading #forex #tradingeducation #smartmoney #levels

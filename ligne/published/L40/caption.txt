@@ -1,7 +1,0 @@
-Comment "PROFILE" to find your trader type. Ten trades can tell you absolutely nothing about whether a strategy works.
-
-A real edge still loses often — losing six out of ten is ordinary. And a strategy with no edge at all can produce eight wins by chance, which you'd keep and scale. So traders cycle through systems forever, selecting not for edge but for whichever one happened to run hot during its short audition.
-
-THE LINE — until the sample is big enough, you're reading noise and calling it a verdict.
-
-#trading #trader #edge #backtesting #variance #daytrading #forex #tradingeducation #process #mindset
