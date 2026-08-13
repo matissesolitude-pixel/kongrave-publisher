@@ -10,3 +10,10 @@ __pycache__/
 
 # NOTE : en mode GitHub Actions, les vidéos de inbox/ ET schedule.json SONT versionnés
 # (le runner en a besoin pour l'upload resumable). Ils ne sont donc plus ignorés ici.
+
+# MASTERS PUBLIÉS — plus versionnés (3,3 Go d'historique pour des fichiers déjà en ligne).
+# Le master vit sur Instagram ; le dépôt ne garde que la trace.
+# ⚠ NE PAS ignorer le dossier lui-même : ligne/autoprod_ligne.py:85 teste l'EXISTENCE de
+# ligne/published/LNN/ pour savoir qu'un épisode est déjà fait. Un dossier absent du clone
+# = épisode refabriqué et REPUBLIÉ. C'est caption.txt qui maintient le dossier en vie.
+ligne/published/**/*.mp4
