@@ -52,6 +52,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Le dépôt traîne des masters vidéo : un clone complet a coûté 2 min 16 s pour
+          # 16 s de génération. On ne récupère qu'un commit et que le dossier utile.
+          fetch-depth: 1
+          sparse-checkout: dessin
 
       - name: Python
         uses: actions/setup-python@v5

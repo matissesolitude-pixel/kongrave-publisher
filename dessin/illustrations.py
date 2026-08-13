@@ -150,16 +150,25 @@ INTERDITS = (
 # qu'une absence d'illustration : elle enseigne le défaut. Les repères qui décident du
 # résultat (tibias verticaux, bassin en rétroversion, pointes vers l'extérieur, hanche
 # en légère extension) sont donc écrits explicitement dans le prompt.
+# ÉCRIRE LA GÉOMÉTRIE, PAS LA NOMENCLATURE. Le nom d'un mouvement ne suffit pas : le
+# modèle connaît mal les mouvements peu photographiés. Nommer « hip thrust au verrouillage »
+# a produit une femme ASSISE PAR TERRE. Il faut décrire ce qui touche le sol, ce qui est en
+# l'air, et les angles — « pont horizontal en l'air, seuls le haut du dos et les pieds
+# touchent quelque chose, tibias verticaux ».
 # Format : slug -> (numéro, séance, titre FR, description EN)
 
 EXERCICES = {
     "hip-thrust": (
         1, "A", "Hip thrust barre",
-        "performing a barbell hip thrust at the top lockout, side view: upper back "
-        "resting on a flat bench, a loaded barbell with a thick pad across the hips, "
-        "hips fully extended so the torso and thighs form one straight horizontal line, "
-        "shins strictly vertical with the feet flat, chin tucked, ribs down, pelvis "
-        "posteriorly tilted with no lower-back arch, a resistance band around the knees."),
+        "at the TOP LOCKOUT of a barbell hip thrust, seen from the side. She is NOT "
+        "sitting on the floor. Her shoulder blades rest on the edge of a low flat bench "
+        "that is at knee height; her body forms a HORIZONTAL BRIDGE IN THE AIR, torso and "
+        "thighs making one straight horizontal line, hips at the same height as the knees "
+        "and well clear of the ground. Only two things touch anything: her upper back on "
+        "the bench, and her feet flat on the floor. Shins strictly vertical, knees bent "
+        "ninety degrees. A loaded barbell with a thick pad rests across the fold of her "
+        "hips, held with both hands. Chin tucked toward the chest, ribs down, no arch in "
+        "the lower back. A resistance band around her knees."),
     "traineau": (
         2, "A", "Traîneau lesté",
         "pushing a weighted sled across the floor, side view: both arms extended onto "
@@ -193,10 +202,13 @@ EXERCICES = {
         "extension, pelvis level."),
     "hip-thrust-unilateral": (
         7, "B", "Hip thrust unilatéral",
-        "performing a single-leg hip thrust at the top position, side view: upper back "
-        "on a flat bench, one foot planted with the shin vertical, the other leg lifted "
-        "and held with the knee bent, hips fully extended, shoulder line perfectly "
-        "horizontal, chin tucked, ribs down, no lower-back arch."),
+        "at the TOP LOCKOUT of a single-leg hip thrust, seen from the side. She is NOT "
+        "sitting on the floor. Her shoulder blades rest on the edge of a low flat bench "
+        "at knee height; her body forms a HORIZONTAL BRIDGE IN THE AIR from shoulders to "
+        "knees, hips well clear of the ground. ONE foot is flat on the floor with the "
+        "shin strictly vertical; the OTHER leg is lifted free in the air, knee bent, "
+        "nothing supporting it. Shoulder line perfectly horizontal, chin tucked, ribs "
+        "down, no arch in the lower back. No barbell."),
     "extension-45": (
         8, "B", "Extension banc 45°",
         "performing a forty-five degree back extension at the top position, side view: "
@@ -319,8 +331,17 @@ def generate(nom: str, out: pathlib.Path, ratio: str, variante: int = 1,
     img = out / nom_fichier(nom, variante, libre)
     prompt = prompt_for(nom, libre, repere)
     if variante > 1:
-        # Varier l'angle SANS toucher au personnage : la feuille reste intacte.
-        prompt += f" Alternate camera angle, variation {variante}. "
+        # Varier l'ANGLE DE CAMÉRA, rien d'autre. « Alternate camera angle » tout court
+        # laissait le modèle changer le MOUVEMENT : la variante 2 du hip thrust est
+        # revenue en soulevé de terre debout. La consigne doit donc borner explicitement
+        # ce qui a le droit de bouger.
+        angles = {2: "a slightly higher and more frontal three-quarter angle",
+                  3: "a lower angle, closer to floor level",
+                  4: "the opposite side, mirrored"}
+        prompt += (f" VARIATION: keep the exact same exercise, the same body position and "
+                   f"the same technique. Only the camera moves — render it from "
+                   f"{angles.get(variante, 'a different three-quarter angle')}. Do not "
+                   f"change the movement, the equipment or the pose. ")
     contents = [prompt]
     for ref in references():          # références de style : elles verrouillent le trait
         contents.append(types.Part.from_bytes(data=ref.read_bytes(),
