@@ -80,9 +80,27 @@ def is_ready_episode(p: Path) -> bool:
     return (LIGNE / "engine" / f"{eng}.html").exists()
 
 
+def published_from_journal() -> set[str]:
+    """Épisodes RÉELLEMENT publiés, d'après `ligne/publish_log.json`.
+
+    Le dossier `published/` est un ARTEFACT : il peut être élagué (les masters pèsent
+    3,3 Go et sont déjà en ligne sur Instagram). Le journal, lui, est la trace qui ne
+    s'efface pas. Se fier au seul dossier, c'est republier tout l'historique le jour où
+    on nettoie — git ne versionne même pas un dossier vide."""
+    p = LIGNE / "publish_log.json"
+    if not p.is_file():
+        return set()
+    try:
+        log = json.loads(p.read_text()) or []
+    except Exception:
+        return set()          # journal illisible : on retombe sur les dossiers, jamais sur "rien fait"
+    return {e["episode"] for e in log
+            if isinstance(e, dict) and e.get("status") == "success" and e.get("episode")}
+
+
 def already_made(eid: str) -> bool:
     n = folder_name(eid)
-    return (QUEUE / n).exists() or (PUBLISHED / n).exists()
+    return n in published_from_journal() or (QUEUE / n).exists() or (PUBLISHED / n).exists()
 
 
 def _engine_path(eid: str) -> Path | None:

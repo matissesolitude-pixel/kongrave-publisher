@@ -321,6 +321,35 @@ def _try_publish(mp4: Path, caption: str, dry_run: bool):
     return None, last_exc
 
 
+def _prune_published(keep: str) -> None:
+    """Ne garder QUE le dernier épisode publié dans `ligne/published/`.
+
+    Les masters pèsent ~25 Mo pièce : 71 épisodes faisaient 3,3 Go que chaque clone et
+    chaque run de workflow retéléchargeait, pour des fichiers déjà en ligne sur Instagram.
+
+    Ce qui remplace l'archive, c'est la TRACE : `publish_log.json` et la liste lisible
+    `ligne/PUBLICATIONS.md`. C'est elle qui dit ce qui est passé et ce qui a été refusé.
+
+    ⚠ Sûr uniquement parce que `autoprod_ligne.already_made()` lit désormais le JOURNAL
+    et plus la seule présence du dossier. Sans cela, élaguer ici ferait refabriquer puis
+    REPUBLIER tout l'historique au run suivant. Ne jamais rétablir l'un sans l'autre.
+
+    Best-effort : un échec d'élagage ne doit jamais faire échouer une publication réussie.
+    """
+    try:
+        publies = {e.get("episode") for e in _load_log()
+                   if isinstance(e, dict) and e.get("status") == "success"}
+        for d in PUBLISHED_DIR.iterdir():
+            if not d.is_dir() or d.name == keep:
+                continue
+            # garde-fou : on n'élague qu'un épisode dont le SUCCÈS est au journal
+            if d.name.split("_")[0] not in publies:
+                continue
+            shutil.rmtree(d, ignore_errors=True)
+    except Exception as exc:                       # noqa: BLE001
+        print(f"[ligne] élagage published/ ignoré : {exc}", file=sys.stderr)
+
+
 def _post_cta_comment(name: str, media_id: str) -> None:
     """Poste le CTA (pinned_comment du JSON) en commentaire sous le Reel publié.
     Best-effort : toute erreur est loggée mais n'interrompt PAS la publication."""
@@ -456,6 +485,7 @@ def run(dry_run: bool = False, force: bool = False) -> int:
                 "media_id": pub["media_id"], "container_id": pub["container_id"],
                 "published_at": _iso(now), "logged_at": _iso(now),
             })
+            _prune_published(keep=name)
             # CTA EN COMMENTAIRE (best-effort : n'échoue jamais la publication).
             _post_cta_comment(name, pub["media_id"])
             notify.send(f"✅ LIGNE {name} publié sur @kongrave_.\nmedia_id : {pub['media_id']}")
