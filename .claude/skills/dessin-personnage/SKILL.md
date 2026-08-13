@@ -10,15 +10,16 @@ personnage, c'est un autre métier — un corps, un poids, une pose, une silhoue
 
 ## CHOISIR L'OUTIL — et le dire avant de dessiner
 
-| | `dessin/figure.py` | `dessin/personnage.py` | modèle d'image |
-|---|---|---|---|
-| Style | manga / comics | cartoon gros-nez | tout |
-| Proportions | **7 têtes** | 3 têtes | libres |
-| Formes du corps | **galbe, taille, hanches** | aucune (tubes) | oui |
-| Cohérence sur 30 dessins | garantie | garantie | dérive |
-| Contrôle de la pose | exact | exact | approximatif |
-| Charme du trait à la main | non | non | **oui** |
-| Dépendances | aucune | aucune | clé d'API |
+| | `dessin/encre.py` | `dessin/figure.py` | `dessin/personnage.py` | modèle d'image |
+|---|---|---|---|---|
+| Style | line art N&B | manga / comics | cartoon gros-nez | tout |
+| Proportions | 7 têtes | 7 têtes | 3 têtes | libres |
+| Formes du corps | galbe + anatomie | galbe | aucune (tubes) | oui |
+| Rendu | trait fuselé, aplats noirs | aplat + ombre | aplat | tout |
+| Cohérence sur 30 dessins | garantie | garantie | garantie | dérive |
+| Contrôle de la pose | exact | exact | exact | approximatif |
+| Niveau d'une illustration pro | **non** | non | non | **oui** |
+| Dépendances | aucune | aucune | aucune | clé d'API |
 
 **Par défaut, `figure.py`.** `personnage.py` ne sert que si un gag cartoon est
 explicitement demandé — sa tête d'un tiers et ses membres d'épaisseur constante ne
@@ -120,6 +121,25 @@ les membres lointains sont assombris.
 
 **Gros-nez** (`personnage.py`) — l'inverse exact : tête énorme, nez qui DÉPASSE du crâne,
 œil bien à l'intérieur, expression dans deux traits.
+
+## LE PLAFOND DES RIGS — à dire avant de commencer, pas après
+
+Les trois rigs produisent des figures justes, cohérentes et corrigeables. **Aucun
+n'atteint le niveau d'une illustration professionnelle**, et l'écart n'est pas un
+problème de réglage, il est structurel :
+
+- les illustrations de référence sont en **3/4 ou de face** — le rig est un squelette 2D
+  de profil ; passer en 3/4 demande une projection et un modelé, pas un décalage ;
+- leur anatomie est **dessinée** (deltoïde, pectoral, obliques, insertions des quadriceps),
+  pas déduite d'un os ;
+- les **cheveux sont mèche par mèche**, les **mains saisissent** des objets.
+
+**La bonne architecture, et c'est celle des studios : le rig pour la POSE, le modèle
+d'image pour le RENDU.** Un rendu du rig est une excellente référence de pose (c'est
+exactement ce que consomme un conditionnement par squelette), les images de référence
+donnent le style, la feuille de personnage garantit que c'est la même personne. On obtient
+alors la cohérence ET le trait. Sans clé d'API, cette route est fermée — le dire, et
+proposer le rig comme repli, jamais l'inverse.
 
 ## CE QUE LES RIGS NE SAVENT PAS FAIRE
 
