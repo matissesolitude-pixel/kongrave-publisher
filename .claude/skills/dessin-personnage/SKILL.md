@@ -31,9 +31,11 @@ Ne jamais promettre un trait à la main et livrer du vectoriel.
 ## LE RIG FIGURE
 
 ```bash
-python3 dessin/figure.py                  # planche des poses
+python3 dessin/figure.py                  # planche des poses, ENCRÉE
 python3 dessin/figure.py -p SQUAT
 python3 dessin/figure.py --style comics   # trait plus épais, palette contrastée
+python3 dessin/figure.py --hachures       # tramage dans les ombres
+python3 dessin/figure.py --plat           # aplat vectoriel (à éviter : ce n'est pas de la BD)
 python3 dessin/figure.py --svg SQUAT      # le SVG, pour retoucher ailleurs
 ```
 
@@ -66,6 +68,26 @@ une figure.
    Habiller le torse d'un seul aplat annule tout le point 3. Même logique sur la jambe :
    elle se dessine en CHAIR entière, le short ne couvre que le haut de cuisse — un aplat
    sombre du bassin à la cheville transforme la jambe en masse et efface le genou.
+
+## L'ENCRAGE — ce qui sépare un aplat d'une planche de BD
+
+Un aplat vectoriel, aussi juste soit-il d'anatomie, reste une découpe. Quatre gestes le
+font basculer, dans cet ordre d'importance :
+
+1. **L'OMBRE EN TACHE FRANCHE**, du côté opposé à la lumière. UNE source (haut-avant),
+   jamais deux. **Le décalage de l'ombre est PROPORTIONNEL au rayon du volume** — un
+   décalage constant met un bras fin entièrement dans l'ombre pendant qu'une cuisse reste
+   à peine modelée. L'ombre est un croissant le long d'un bord, jamais une teinte globale.
+2. **LE CONTOUR REPASSÉ CÔTÉ OMBRE.** L'encreur charge le trait là où la forme se détourne
+   de la lumière ; un contour d'épaisseur constante est une signature d'ordinateur.
+   **Se fait en repassant le contour RÉEL** (un `stroke` masqué) — surtout pas en
+   grossissant la forme : les coutures entre capsules ressortent alors en pointes noires.
+3. **L'OMBRE AU SOL.** Sans elle la figure flotte, quelle que soit la qualité du dessin.
+4. **UN reflet dans les cheveux**, une seule bande. Deux reflets = deux sources = faux.
+
+**Les hachures ne sont PAS l'encrage** (`--hachures`, désactivé par défaut). Un tramage à
+45° appliqué uniformément lit comme du velours côtelé plaqué sur le corps, pas comme du
+dessin. L'ombre de BD est une tache.
 
 ## LES FAUTES QUI TUENT UNE FIGURE
 

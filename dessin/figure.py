@@ -19,11 +19,20 @@ CE QUI CHANGE ICI, ET POURQUOI
      épaules→bassin.
   4. TENUE BRASSIÈRE + SHORT. Le ventre reste nu : c'est ce qui rend la taille visible.
      Habiller le torse d'un seul aplat annule tout le travail du point 3.
+  5. ENCRAGE. Un aplat vectoriel n'est pas de la BD. Quatre gestes le séparent d'une
+     planche encrée, tous appliqués ici : l'OMBRE en tache franche du côté opposé à la
+     lumière (proportionnelle au volume, jamais un décalage constant) ; le CONTOUR
+     REPASSÉ côté ombre, qui charge le trait là où la forme se détourne de la lumière ;
+     l'OMBRE AU SOL, sans laquelle la figure flotte ; le REFLET unique dans les cheveux.
+     Les hachures restent une option (--hachures) : l'ombre de BD est une tache, pas
+     un tramage.
 
 USAGE
-  python3 dessin/figure.py                    # planche des poses
+  python3 dessin/figure.py                    # planche des poses, encrée
   python3 dessin/figure.py -p SQUAT
   python3 dessin/figure.py --style comics     # trait plus épais, palette contrastée
+  python3 dessin/figure.py --hachures         # tramage dans les ombres
+  python3 dessin/figure.py --plat             # aplat vectoriel, sans encrage
   python3 dessin/figure.py --svg SQUAT > squat.svg
 """
 from __future__ import annotations
@@ -41,22 +50,24 @@ GROUND = 898
 STYLES = {
     "manga": dict(
         ink="#15151C", contour=9,
-        skin="#F7D3B6", skin_far="#DDB394",
-        hair="#26262F", hair_far="#181820",
-        bra="#E24A63", bra_far="#B93A50",
-        short="#303B58", short_far="#232B42",
-        shoe="#FAFAF7", shoe_far="#DAD9D4",
+        skin="#F7D3B6", skin_far="#DDB394", skin_sh="#DBAA88", skin_far_sh="#C0906F",
+        hair="#26262F", hair_far="#181820", hair_sh="#15151C", hair_hi="#4A4A5C",
+        bra="#E24A63", bra_far="#B93A50", bra_sh="#B23349",
+        short="#303B58", short_far="#232B42", short_sh="#1F2740",
+        shoe="#FAFAF7", shoe_far="#DAD9D4", shoe_sh="#D5D3CC",
         paper="#F7F4EE", eye_white="#FFFFFF"),
     "comics": dict(
         ink="#101014", contour=13,
-        skin="#F2BE96", skin_far="#D29B74",
-        hair="#3A1F14", hair_far="#28150E",
-        bra="#D62828", bra_far="#A81E1E",
-        short="#1D3557", short_far="#142640",
-        shoe="#F1FAEE", shoe_far="#CBD4C8",
+        skin="#F2BE96", skin_far="#D29B74", skin_sh="#C98F63", skin_far_sh="#AE744C",
+        hair="#3A1F14", hair_far="#28150E", hair_sh="#1C0D07", hair_hi="#5E3722",
+        bra="#D62828", bra_far="#A81E1E", bra_sh="#9C1B1B",
+        short="#1D3557", short_far="#142640", short_sh="#0F1D33",
+        shoe="#F1FAEE", shoe_far="#CBD4C8", shoe_sh="#C3CCC0",
         paper="#F4EFE4", eye_white="#FFFFFF"),
 }
 S = STYLES["manga"]
+INKED = [True]      # False = aplat vectoriel (option --plat)
+HATCH = [False]     # hachures : une option de style (--hachures), pas la règle
 
 # --- rayons de chair par articulation (c'est ici que vit le galbe) -----------
 R = dict(hip=40, knee=26, ankle=15, shoulder=25, elbow=17, wrist=11, neck=17)
@@ -92,43 +103,116 @@ def capsule(p0, r0, p1, r1):
             f'L {s1[0]:.1f} {s1[1]:.1f} A {r0} {r0} 0 0 0 {s0[0]:.1f} {s0[1]:.1f} Z')
 
 
-def chain(joints, radii, color, grow=0):
-    """Un membre entier en UNE passe de couleur. Les capsules se recouvrent aux
-    articulations : même couleur, donc aucune couture visible. On appelle deux fois —
-    une passe encre élargie, une passe chair — pour obtenir le contour."""
+def chain_d(joints, radii, grow=0):
+    """Le CONTOUR d'un membre entier, en un seul `d`. Les capsules se recouvrent aux
+    articulations : rempli d'une seule couleur, aucune couture n'apparaît."""
     d = "".join(capsule(joints[i], radii[i] + grow, joints[i + 1], radii[i + 1] + grow)
                 for i in range(len(joints) - 1))
     for c, r in zip(joints, radii):
         d += (f'M {c[0]-r-grow:.1f} {c[1]:.1f} a {r+grow} {r+grow} 0 1 0 {2*(r+grow)} 0 '
               f'a {r+grow} {r+grow} 0 1 0 {-2*(r+grow)} 0 Z')
-    return f'<path d="{d}" fill="{color}" fill-rule="nonzero"/>'
+    return d
 
 
-def limb(joints, radii, color):
+def chain(joints, radii, color, grow=0):
+    return f'<path d="{chain_d(joints, radii, grow)}" fill="{color}" fill-rule="nonzero"/>'
+
+
+# ============================================================== L'ENCRAGE
+# Ce qui sépare un aplat vectoriel d'une planche de BD n'est pas la couleur : c'est
+# l'ENCRAGE. Trois gestes, tous appliqués ici, aucun décoratif :
+#   · l'OMBRE PORTÉE sur chaque volume — un croissant du côté opposé à la lumière.
+#     C'est elle qui donne le relief ; sans elle une jambe reste une découpe ;
+#   · le TRAIT LOURD SOUS LA FORME — l'encreur épaissit le contour là où la forme se
+#     détourne de la lumière. Un contour d'épaisseur constante est une signature
+#     d'ordinateur ;
+#   · les HACHURES dans l'ombre — la texture qui dit « c'est dessiné ».
+
+LIGHT = (0.44, -0.90)      # la lumière vient du haut-avant. UNE source, jamais deux.
+SHADE = 34                 # profondeur du croissant d'ombre
+_uid = [0]
+
+
+def _mask_away(d, shift=SHADE, extra=""):
+    """Masque = tout SAUF la forme décalée VERS la lumière. Ce qui reste est le
+    croissant du côté ombre. C'est le geste central de l'encrage."""
+    _uid[0] += 1
+    uid = f"sh{_uid[0]}"
+    vx, vy = LIGHT[0] * shift, LIGHT[1] * shift
+    return uid, (f'<mask id="{uid}" maskUnits="userSpaceOnUse" x="-600" y="-600" '
+                 f'width="3200" height="3200">'
+                 f'<rect x="-600" y="-600" width="3200" height="3200" fill="#fff"/>'
+                 f'<path d="{d}" transform="translate({vx:.1f},{vy:.1f})" fill="#000"/>'
+                 f'{extra}</mask>')
+
+
+def _hatch(d, uid_clip, span=(0, 1200, 300, 960), step=17):
+    """Hachures à 45°, bornées à la forme (clip) et à l'ombre (mask)."""
+    _uid[0] += 1
+    cid = f"cl{_uid[0]}"
+    x0, x1, y0, y1 = span
+    lines = "".join(
+        f'M {k} {y0} L {k - (y1 - y0)} {y1} '
+        for k in range(int(x0), int(x1 + (y1 - y0)), step))
+    return (f'<clipPath id="{cid}" clipPathUnits="userSpaceOnUse">'
+            f'<path d="{d}"/></clipPath>'
+            f'<g clip-path="url(#{cid})" mask="url(#{uid_clip})">'
+            f'<path d="{lines}" fill="none" stroke="{S["ink"]}" stroke-width="2.4" '
+            f'opacity="0.30"/></g>')
+
+
+def inked(d, color, shadow, hatch=False, shift=SHADE):
+    """Un volume encré : contour, trait lourd côté ombre, aplat, ombre portée, hachures."""
+    if not INKED[0]:
+        return (f'<path d="{d}" fill="{color}"/>')
+    uid_h, mask_h = _mask_away(d, shift * 0.72)          # ombre serrée pour le trait
+    uid_s, mask_s = _mask_away(d, shift)
+    out = [mask_h, mask_s,
+           f'<path d="{d}" fill="{color}"/>',
+           f'<path d="{d}" fill="{shadow}" mask="url(#{uid_s})"/>',
+           f'<path d="{d}" fill="none" stroke="{S["ink"]}" '
+           f'stroke-width="{S["contour"]*1.15:.1f}" stroke-linejoin="round" '
+           f'mask="url(#{uid_h})"/>']
+    if hatch and HATCH[0]:
+        out.append(_hatch(d, uid_s))
+    return "".join(out)
+
+
+def limb(joints, radii, color, shadow=None, hatch=False):
+    """Le décalage d'ombre est PROPORTIONNEL au rayon du volume. Un décalage constant
+    met un bras fin entièrement dans l'ombre pendant qu'une cuisse reste à peine
+    modelée — l'ombre doit être un croissant le long d'un bord, jamais une teinte."""
+    d = chain_d(joints, radii)
+    r = sum(radii) / len(radii)
     return (chain(joints, radii, S["ink"], grow=S["contour"])
-            + chain(joints, radii, color))
+            + inked(d, color, shadow or S["ink"], hatch, shift=r * 0.85))
 
 
 def _lerp(a, b, k):
     return (a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k)
 
 
-def leg(hip, knee, ankle, skin, short):
+def leg(hip, knee, ankle, skin, short, skin_sh, short_sh):
     """La jambe se dessine en CHAIR entière, puis le short par-dessus sur le haut de
     cuisse seulement. Habiller toute la jambe d'un aplat sombre la transforme en masse :
     genou et mollet disparaissent, et le galbe avec eux."""
-    return (limb([hip, knee, ankle], [R["hip"], R["knee"], R["ankle"]], skin)
-            + limb([hip, _lerp(hip, knee, 0.52)],
-                   [R["hip"] + 2, R["hip"] * 0.78], short))
+    out = (limb([hip, knee, ankle], [R["hip"], R["knee"], R["ankle"]], skin, skin_sh, hatch=True)
+           + limb([hip, _lerp(hip, knee, 0.52)],
+                  [R["hip"] + 2, R["hip"] * 0.78], short, short_sh))
+    if INKED[0]:      # pli de l'aine : un trait court, jamais un contour complet
+        a, b = _lerp(hip, knee, 0.30), _lerp(hip, knee, 0.46)
+        out += (f'<path d="M {a[0]:.1f} {a[1]:.1f} L {b[0]:.1f} {b[1]:.1f}" fill="none" '
+                f'stroke="{S["ink"]}" stroke-width="4" stroke-linecap="round" opacity="0.45"/>')
+    return out
 
 
-def hand(wrist, elbow, skin):
+def hand(wrist, elbow, skin, skin_sh):
     """Sans main, un bras se termine en moignon arrondi. Une mitaine suffit : la
     direction vient de l'avant-bras, jamais d'un angle écrit à la main."""
     dx, dy = wrist[0] - elbow[0], wrist[1] - elbow[1]
     n = math.hypot(dx, dy) or 1.0
     tip = (wrist[0] + dx / n * 20, wrist[1] + dy / n * 20)
-    return limb([wrist, tip], [R["wrist"] + 3, R["wrist"] + 1], skin)
+    return limb([wrist, tip], [R["wrist"] + 3, R["wrist"] + 1], skin, skin_sh)
 
 
 def blob(d, fill, sw=None):
@@ -195,7 +279,8 @@ def head(J, ang=0.0):
            "Q 20 -43 -4 -39 Q -30 -35 -33 -2 Z")
     bang = "M 42 -32 Q 30 -20 35 -8 Q 27 -22 18 -28 Z"
     g = [blob(tail, S["hair_far"]),
-         blob(skull, S["skin"]),
+         blob(skull, S["skin"]), inked(skull, S["skin"], S["skin_sh"], shift=20),
+         blob(skull, "none"),
          f'<path d="M 13 -17 Q 26 -24 37 -11 Q 26 -6 15 -9 Z" fill="{S["eye_white"]}" '
          f'stroke="{ink}" stroke-width="{sw*0.62:.1f}" stroke-linejoin="round"/>',
          f'<circle cx="30" cy="-12" r="5.6" fill="{ink}"/>',
@@ -204,7 +289,11 @@ def head(J, ang=0.0):
          f'stroke-width="{sw*0.72:.1f}" stroke-linecap="round"/>',
          f'<path d="M 34 23 L 41 24" fill="none" stroke="{ink}" '
          f'stroke-width="{sw*0.6:.1f}" stroke-linecap="round"/>',
-         blob(cap, S["hair"]), blob(bang, S["hair"])]
+         inked(cap, S["hair"], S["hair_sh"], shift=18), blob(cap, "none"),
+         blob(bang, S["hair"]),
+         # bande de lumière : le seul reflet autorisé, il dit la rondeur du crâne
+         (f'<path d="M -30 -44 Q 2 -52 30 -34 Q 0 -40 -26 -32 Z" fill="{S["hair_hi"]}"/>'
+          if INKED[0] else "")]
     return (f'<g transform="translate({hx:.1f},{hy:.1f}) rotate({ang})">'
             f'{"".join(g)}</g>')
 
@@ -251,28 +340,33 @@ def figure(J):
     p = []
     # --- membres lointains ---
     p.append(shoe(J["ankleL"], J["footL"], far=True))
-    p.append(leg(J["hipL"], J["kneeL"], J["ankleL"], S["skin_far"], S["short_far"]))
+    p.append(leg(J["hipL"], J["kneeL"], J["ankleL"], S["skin_far"], S["short_far"],
+                 S["skin_far_sh"], S["short_sh"]))
     p.append(limb([J["shoulderL"], J["elbowL"], J["wristL"]],
-                  [R["shoulder"], R["elbow"], R["wrist"]], S["skin_far"]))
-    p.append(hand(J["wristL"], J["elbowL"], S["skin_far"]))
+                  [R["shoulder"], R["elbow"], R["wrist"]], S["skin_far"], S["skin_far_sh"]))
+    p.append(hand(J["wristL"], J["elbowL"], S["skin_far"], S["skin_far_sh"]))
 
     # --- cou avant le torse : il sort des épaules, il ne se pose pas dessus ---
-    p.append(limb([J["shoulder"], J["neck"]], [R["neck"] + 3, R["neck"]], S["skin"]))
+    p.append(limb([J["shoulder"], J["neck"]], [R["neck"] + 3, R["neck"]],
+                  S["skin"], S["skin_sh"]))
 
     # --- torse : chair d'abord, vêtements ensuite (le ventre reste nu) ---
     sh, hp = J["shoulder"], J["hip"]
-    p.append(blob(torso_outline(sh, hp), S["skin"]))
-    p.append(f'<path d="{torso_outline(sh, hp, 0.10, 0.46, inset=-1)}" fill="{S["bra"]}"/>')
-    p.append(f'<path d="{torso_outline(sh, hp, 0.78, 1.18, inset=-1)}" fill="{S["short"]}"/>')
-    p.append(blob(torso_outline(sh, hp), "none"))          # le contour repasse par-dessus
+    dt = torso_outline(sh, hp)
+    p.append(inked(dt, S["skin"], S["skin_sh"], hatch=True, shift=24))
+    p.append(inked(torso_outline(sh, hp, 0.10, 0.46, inset=-1), S["bra"], S["bra_sh"], shift=20))
+    p.append(inked(torso_outline(sh, hp, 0.78, 1.18, inset=-1), S["short"], S["short_sh"], shift=22))
+    p.append(f'<path d="{dt}" fill="none" stroke="{S["ink"]}" '
+             f'stroke-width="{S["contour"]}" stroke-linejoin="round"/>')
 
     # --- membres proches ---
     p.append(shoe(J["ankleR"], J["footR"]))
-    p.append(leg(J["hipR"], J["kneeR"], J["ankleR"], S["skin"], S["short"]))
+    p.append(leg(J["hipR"], J["kneeR"], J["ankleR"], S["skin"], S["short"],
+                 S["skin_sh"], S["short_sh"]))
     p.append(head(J, J.get("headAng", 0)))
     p.append(limb([J["shoulderR"], J["elbowR"], J["wristR"]],
-                  [R["shoulder"], R["elbow"], R["wrist"]], S["skin"]))
-    p.append(hand(J["wristR"], J["elbowR"], S["skin"]))
+                  [R["shoulder"], R["elbow"], R["wrist"]], S["skin"], S["skin_sh"], hatch=True))
+    p.append(hand(J["wristR"], J["elbowR"], S["skin"], S["skin_sh"]))
     return "".join(p)
 
 
@@ -305,6 +399,16 @@ POSES = {
 }
 
 
+def ground_shadow(J):
+    """Une figure sans ombre au sol flotte, quelle que soit la qualité du dessin."""
+    if not INKED[0]:
+        return ""
+    xs = [J[k][0] for k in ("ankleR", "ankleL", "wristR", "hip")]
+    cx, half = (min(xs) + max(xs)) / 2, max(60.0, (max(xs) - min(xs)) / 2 + 40)
+    return (f'<ellipse cx="{cx:.0f}" cy="{GROUND+6}" rx="{half:.0f}" ry="16" '
+            f'fill="{S["ink"]}" opacity="0.16"/>')
+
+
 def svg_of(name, J=None):
     J = J or POSES[name]
     x, y, w, h = J.get("vb", (110, 320, 620, 620))
@@ -313,7 +417,7 @@ def svg_of(name, J=None):
             f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{S["paper"]}"/>'
             f'<path d="M {x+18} {GROUND} L {x+w-18} {GROUND}" stroke="{S["ink"]}" '
             f'stroke-width="7" stroke-linecap="round" opacity="0.25"/>'
-            f'{figure(J)}</svg>')
+            f'{ground_shadow(J)}{figure(J)}</svg>')
 
 
 def sheet_html(names, h=620):
@@ -338,8 +442,12 @@ def main():
     ap.add_argument("-s", "--style", choices=list(STYLES), default="manga")
     ap.add_argument("-o", "--out", type=pathlib.Path, default=pathlib.Path("/tmp/dessin/figure.png"))
     ap.add_argument("--svg", metavar="POSE")
+    ap.add_argument("--plat", action="store_true", help="aplat vectoriel, sans encrage")
+    ap.add_argument("--hachures", action="store_true", help="ajoute un tramage dans les ombres")
     args = ap.parse_args()
     S = STYLES[args.style]
+    INKED[0] = not args.plat
+    HATCH[0] = args.hachures
 
     if args.svg:
         print(svg_of(args.svg)); return
