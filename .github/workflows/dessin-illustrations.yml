@@ -10,8 +10,14 @@ on:
   workflow_dispatch:
     inputs:
       exercices:
-        description: "Exercices séparés par des espaces (vide = toute la série)"
+        description: "Exercices séparés par des espaces (vide = les 11 du protocole)"
         required: false
+      seance:
+        description: "Une seule séance : A ou B (ignoré si exercices est rempli)"
+        required: false
+        type: choice
+        options: ["", "A", "B"]
+        default: ""
       variantes:
         description: "Rendus par exercice (défaut 1)"
         required: false
@@ -52,6 +58,8 @@ jobs:
           ARGS=""
           if [ -n "${{ inputs.exercices }}" ]; then
             ARGS="-e ${{ inputs.exercices }}"
+          elif [ -n "${{ inputs.seance }}" ]; then
+            ARGS="--seance ${{ inputs.seance }}"
           else
             ARGS="--tout"
           fi
@@ -68,7 +76,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Aucune image nouvelle."; exit 0
           fi
-          git commit -m "Illustrations d'exercices (Gemini)"
+          git commit -m "Illustrations du protocole postérieur (Gemini)"
           for i in 1 2 3 4; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             sleep $((2 ** i))
