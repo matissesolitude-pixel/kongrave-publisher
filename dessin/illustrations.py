@@ -27,9 +27,11 @@ TROIS ENTRÉES
     ressemble à l'exercice, avec ses défauts de forme les plus courants ;
   · --repere "…" : les repères imposés à la main, quand on sait exactement ce qu'on veut.
 
-DEUX STYLES
-  --style encre (défaut) : noir et blanc, transcrit des illustrations de référence.
-  --style couleur : même construction, aplats deux tons.
+DEUX STYLES — même dessin, deux finitions
+  --style couleur (défaut) : l'encrage complet, avec des aplats deux tons SOUS le trait.
+  --style encre : le noir et blanc pur des illustrations de référence.
+  La règle qui décide de tout : la couleur passe sous le trait, jamais à sa place. Si
+  l'encrage disparaît au profit d'un modelé doux, on est retombé sur l'aplat vectoriel.
 Et `dessin/references/` : toute image déposée là est envoyée comme référence VISUELLE de
 style, ce qui verrouille le trait bien mieux que le prompt seul.
 
@@ -39,7 +41,7 @@ USAGE
   python3 dessin/illustrations.py --seance A
   python3 dessin/illustrations.py --tout --variantes 2
   python3 dessin/illustrations.py --libre "tirage horizontal poulie basse"
-  python3 dessin/illustrations.py --libre "développé militaire" --style couleur
+  python3 dessin/illustrations.py --libre "développé militaire" --style encre
 """
 from __future__ import annotations
 
@@ -68,6 +70,11 @@ PERSONNAGE = (
     "the movement. Confident focused expression, no smile. "
     "Outfit, always identical: a charcoal grey sports bra, high-waisted navy leggings, "
     "white and grey running shoes. "
+    # La couleur est un axe de dérive de plus : nommée exercice par exercice, elle
+    # bouge d'une image à l'autre. On la fige ici, avec la même précision que la tenue.
+    "Fixed palette, identical in every image: warm golden-tan skin, dark chocolate brown "
+    "hair, charcoal grey bra, deep navy blue leggings, off-white shoes with grey panels, "
+    "matte black equipment with red weight plates. "
 )
 
 # ====================================================== LES STYLES
@@ -91,18 +98,36 @@ STYLE_ENCRE = (
     "very narrow waist, powerful glutes and thighs. "
 )
 
+# `couleur` = LE MÊME DESSIN, mis en couleur. La règle qui décide de tout : en
+# illustration encrée, la couleur passe SOUS le trait, jamais à sa place. Tout
+# l'encrage noir survit intact — sinon on retombe sur l'aplat vectoriel, c'est-à-dire
+# exactement ce qu'on cherchait à quitter. Les fautes à interdire nommément :
+#   · un contour coloré au lieu du trait noir ;
+#   · un modelé doux qui remplace les traits courts du muscle ;
+#   · un dégradé ou un aérographe à la place de l'ombre à bord franc.
+
 STYLE_COULEUR = (
-    STYLE_ENCRE.replace(
-        "Black ink illustration on pure white. No grey, no colour, no halftone, no gradient. ",
-        "Inked colour illustration on pure white. Flat colour fills with exactly two "
-        "tones per material and crisp cel-shaded shadow edges, one light source from the "
-        "upper left. No gradient, no airbrush, no photorealism, no 3D render. ")
-    .replace("Hair and clothing are SOLID BLACK MASSES",
-             "Hair and clothing are SOLID SATURATED MASSES")
+    "Inked colour illustration on pure white: the SAME drawing as a black-ink plate, "
+    "with flat colour laid UNDER the line and never instead of it. "
+    "The complete black ink linework is preserved. Every single line is a tapered brush "
+    "stroke that swells in the middle and dies in a fine point — never a constant-width "
+    "outline. Muscle definition stays CARVED with clusters of short BLACK tapered strokes "
+    "(abdominals, obliques, serratus, deltoid, biceps, quadriceps, calves) and is never "
+    "replaced by soft shading. Fabric folds stay clusters of thin tapered black lines "
+    "radiating from the stress points. Hair keeps its solid dark mass with white reserve "
+    "slashes cutting through it for the strands. "
+    "Colour is flat, exactly two tones per material: a base tone and one darker "
+    "cel-shaded tone with a crisp hard edge, single light source from the upper left. "
+    "The ink stays pure black — never tinted, never replaced by a coloured outline. "
+    "No gradient, no airbrush, no soft blending, no photorealism, no 3D render. "
+    "Confident vector-inked commercial illustration, very high contrast, crisp edges. "
+    "Stylized athletic female anatomy: broad shoulders, defined abdominals, very narrow "
+    "waist, powerful glutes and thighs. "
 )
 
-STYLES = {"encre": STYLE_ENCRE, "couleur": STYLE_COULEUR}
-STYLE = STYLE_ENCRE
+# La couleur est le défaut : c'est ce qui est demandé pour le programme.
+STYLES = {"couleur": STYLE_COULEUR, "encre": STYLE_ENCRE}
+STYLE = STYLE_COULEUR
 
 CADRE = (
     "Full body visible from head to shoes, centered, framed so the exercise form is "
@@ -329,8 +354,8 @@ def main() -> None:
     ap.add_argument("--libre", nargs="+", metavar="EXERCICE",
                     help="n'importe quel exercice, hors protocole (repères déduits)")
     ap.add_argument("--repere", help="repères techniques imposés (avec --libre, un seul)")
-    ap.add_argument("--style", choices=list(STYLES), default="encre",
-                    help="encre (noir et blanc, défaut) ou couleur")
+    ap.add_argument("--style", choices=list(STYLES), default="couleur",
+                    help="couleur (défaut) ou encre (noir et blanc)")
     ap.add_argument("--liste", action="store_true", help="liste les exercices connus")
     ap.add_argument("--prompt", metavar="EXERCICE", help="affiche le prompt sans appeler l'API")
     a = ap.parse_args()

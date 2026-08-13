@@ -25,8 +25,8 @@ on:
         description: "Style de rendu"
         required: false
         type: choice
-        options: ["encre", "couleur"]
-        default: "encre"
+        options: ["couleur", "encre"]
+        default: "couleur"
       variantes:
         description: "Rendus par exercice (défaut 1)"
         required: false
