@@ -1,7 +1,7 @@
 # DOCTRINE CONTENU — PROP FIRM
 
 Le moteur éditorial de la prop firm, transposé de LA LIGNE.
-Objectifs des posts : **awareness · education · authority**.
+Objectifs des posts : **awareness · education · authority · preuve**.
 Ratio de publication : **3 reels pour 1 carrousel**.
 
 > `[FIRM]` = le nom de marque, à substituer partout par le PO.
@@ -65,10 +65,10 @@ s'effondre et une réputation qu'aucune ad ne rachète.
 
 ---
 
-## 2. LES TROIS OBJECTIFS — DÉFINITION OPÉRATIONNELLE
+## 2. LES QUATRE OBJECTIFS — DÉFINITION OPÉRATIONNELLE
 
 **Un post = UN objectif dominant.** Jamais deux. Un post qui essaie de
-faire les trois ne fait rien.
+faire les quatre ne fait rien.
 
 ### AWARENESS — être vu par ceux qui ne nous suivent pas
 - **Cible** : le trader qui n'a jamais entendu parler de [FIRM].
@@ -100,9 +100,22 @@ faire les trois ne fait rien.
   été confirmée **[PO]**. Un chiffre faux ici détruit tout le reste.
 - **KPI** : visites de profil, clics lien, DM entrants qualifiés.
 
-**Répartition cible sur 12 posts** : awareness 4-5 · education 4-5 ·
-authority 3. L'awareness et l'éducation portent le volume, l'autorité
-porte la conversion.
+### PREUVE — être choisi
+- **Cible** : le trader qui hésite entre nous et trois autres.
+- **Matière** : les passages de challenge et les payouts **réels** —
+  racontés par leur mécanisme, jamais par leur montant seul.
+- **Ce qui la distingue de l'authority** : l'authority parle de la firme
+  (nous sommes crédibles), la preuve parle d'un trader (c'est arrivé à
+  quelqu'un comme toi). Producteur différent, chaîne différente, risque
+  juridique différent — d'où son pilier et ses lois propres (§8).
+- **KPI** : DM entrants, clics vers la page challenge, taux de conversion
+  sur les 72h qui suivent.
+
+**Répartition cible sur 12 posts** : awareness 4 · education 4 ·
+preuve 2 · authority 2. La preuve peut monter à 3 quand le flux de
+payouts le permet — elle prend alors sur l'awareness, jamais sur
+l'éducation. **Au-delà de 3 sur 12, le feed devient indistinguable de
+celui des concurrents qu'on veut battre.**
 
 ---
 
@@ -110,7 +123,7 @@ porte la conversion.
 
 **Cycle atomique = 4 posts** : 1 carrousel + 3 reels.
 **Rotation = 3 cycles = 12 posts**, l'unité sur laquelle on équilibre les
-trois objectifs et on juge la performance.
+quatre objectifs et on juge la performance.
 
 ### La grille (le détail qui compte)
 La grille Instagram fait 3 colonnes. Un carrousel tous les 6 posts tient
@@ -144,7 +157,7 @@ Ce ne sont pas deux emballages du même contenu. Ils font deux métiers.
 | | REEL | CARROUSEL |
 |---|---|---|
 | Ce qu'il achète | de l'**attention** (reach froid) | de la **confiance** (save, relecture) |
-| Objectif dominant | awareness | education / authority |
+| Objectif dominant | awareness, preuve narrative | education, authority, preuve déconstruite |
 | Unité | une seule idée, une seule image forte | une progression en étapes |
 | Ce qu'on y met | l'émotion, le choc, le paradoxe | le mécanisme, le tableau, la checklist |
 | KPI | watch time, partages | **saves**, temps par slide |
@@ -251,8 +264,10 @@ setter.
 | **LIMIT** | Le simulateur de drawdown — on entre son solde, on voit où la ligne se trouve aujourd'hui et où elle sera demain | education technique / awareness sur le drawdown |
 | **PLAN** | Le plan de pré-challenge — sizing, stop journalier, session, la checklist qui évite de rater sur une règle | awareness → conversion |
 
-Les posts **authority** ne portent pas de lead magnet : leur CTA est le
-profil ou l'offre, sobrement. Vendre après avoir prouvé, pas pendant.
+Les posts **authority** et **preuve** ne portent pas de lead magnet :
+leur CTA est le profil ou l'offre, sobrement. Vendre après avoir prouvé,
+pas pendant. C'est le seul endroit du système où le CTA vend directement
+— il ne le mérite que parce que le post, lui, ne vend rien.
 
 **Structure de caption (moule LIGNE, vérifié en vrai) :**
 1. **Ligne 1 = le CTA EN PREMIER, avant l'accroche.** Instagram tronque ;
@@ -269,7 +284,125 @@ lecture de la caption, et il amorce la section commentaires.
 
 ---
 
-## 8. LES GARDE-FOUS — NON NÉGOCIABLES
+## 8. LA PREUVE — PASSAGES DE CHALLENGE ET PAYOUTS
+
+C'est la monnaie de la catégorie, et c'est aussi ce qui l'a rendue
+irrespirable : un mur de captures d'écran que personne ne croit plus,
+parce que n'importe qui peut en fabriquer une en dix minutes.
+
+**Notre écart tient en une phrase :** tout le monde publie le montant,
+personne ne publie le **chemin**. Un montant est copiable et invérifiable.
+Le récit exact d'un passage — la journée où le compte a failli sauter, la
+marge qu'il restait sur le plancher, la taille qu'il n'a pas augmentée —
+n'est ni copiable ni fabricable. C'est la même mécanique que le reste du
+moteur : **le mécanisme, pas le chiffre.**
+
+### Les dix lois de la preuve
+
+**P1 — LE CHIFFRE N'EST JAMAIS LE POST.** Le montant est la porte, le
+mécanisme est la pièce. Tout post de preuve répond à **comment**, pas
+seulement à combien. Test : retirer le montant du post — s'il ne reste
+rien, le post n'existait pas.
+
+**P2 — VÉRIFIABLE OU INEXISTANTE.** Un post de preuve ne part pas sans
+trois choses au dossier : l'identité du trader (prénom + handle, avec son
+accord), la date, et une **référence vérifiable** (identifiant de
+certificat, confirmation de payout). Pas les trois → pas de post.
+
+**P3 — CONSENTEMENT ÉCRIT, ARCHIVÉ, AVANT.** Une autorisation signée par
+le trader, conservée, couvrant l'usage image + chiffres + durée. **[PO]** :
+faire rédiger le formulaire une fois. Publier sans lui expose la firme
+bien plus que le post ne rapporte.
+
+**P4 — ON MONTRE AUSSI CE QUI RATE.** **Un post de preuve sur trois
+raconte un échec, un reset, ou un passage arraché de justesse.** Ce n'est
+pas de la modestie, c'est de la crédibilité : un feed qui ne montre que
+des gagnants se lit comme un feed truqué, et il attire exactement les
+traders qui vont sauter. C'est le seul contenu de la catégorie que les
+concurrents ne copieront pas — leur promesse le leur interdit.
+
+**P5 — LA MÉDIANE, PAS LE MAXIMUM.** Quand on publie des chiffres
+agrégés, on publie la **médiane** et le nombre de traders payés. Le plus
+gros payout du mois est le chiffre le moins informatif du secteur et tout
+le monde ne publie que celui-là. Publier la médiane est un acte
+d'autorité que personne n'ose. **[PO]** : trancher si on s'y engage — une
+fois commencé, arrêter serait pire que ne jamais avoir commencé.
+
+**P6 — AUCUNE PROMESSE, EXPLICITE OU IMPLICITE.** Jamais "tu peux être le
+prochain", jamais de projection, jamais de moyenne présentée comme une
+attente. Une **formule fixe** accompagne chaque post de preuve, identique
+partout, écrite une fois **[PO]** : résultat individuel d'un trader, ni
+typique ni garanti.
+
+**P7 — LA PREUVE EST REDESSINÉE, JAMAIS COLLÉE BRUTE.** Une capture
+d'écran brute se lit comme falsifiable ; une courbe redessinée dans la
+grammaire [FIRM], avec sa référence de vérification, se lit comme
+institutionnelle. L'original reste au dossier, disponible sur demande —
+c'est lui, la preuve ; le post, c'est sa mise en forme.
+
+**P8 — RIEN DE JOUABLE À L'ÉCRAN.** Courbe d'equity, marge au plancher,
+nombre de jours, taille relative : oui. Paire, date de trade, direction,
+niveau d'entrée : jamais. (Garde-fou hérité de LA LIGNE, il vaut ici
+aussi.)
+
+**P9 — LA RÉPÉTITION BAT LE MONTANT.** Un trader qui a été payé trois
+fois vaut plus que le plus gros payout du trimestre. On construit la
+preuve sur la **durée** — c'est aussi ce qui est vrai commercialement :
+un trader qui dure est notre modèle économique (§ carrousel P-C03).
+
+**P10 — LA PREUVE NE SE BOOSTE PAS.** Les posts de preuve restent
+**organiques**. C'est la catégorie la plus exposée aux refus et aux
+restrictions de compte publicitaire (revenus, résultats financiers). Les
+ads amplifient les posts awareness et education, jamais la preuve.
+
+### Les trois formats récurrents
+
+**1. LA CARTE DE PASSAGE** (reel ou slide unique, ~1 par semaine)
+Un gabarit visuel unique et reconnaissable, décliné à l'identique à
+chaque passage : prénom + handle, durée du passage, la journée la plus
+serrée, la référence de vérification. La répétition du gabarit **est** le
+message — on n'en montre pas un, on en montre une série.
+
+**2. LA DÉCONSTRUCTION** (carrousel 8 slides, ~1 par rotation)
+Le format le plus fort du pilier, et celui que personne ne fait. On prend
+un passage réel et on le déroule : la courbe, le pire jour, la marge
+qu'il restait sur le plancher, ce qu'il a changé après ce jour-là, le
+délai de payout réel. C'est simultanément de la preuve **et** de
+l'éducation — donc saveable, donc durable. (Voir `ROTATION_01.md`, P-CP01.)
+
+**3. LE MUR DES PAYOUTS** (mensuel, carrousel ou slide)
+Le récapitulatif du mois : nombre de traders payés, **médiane**, nombre
+de nouveaux financés, et — loi P4 — le taux de passage réel. Un rendez-vous
+daté, à la même période chaque mois : c'est le rendez-vous qui construit
+la confiance, pas le chiffre.
+
+### La chaîne d'approvisionnement (sinon le pilier s'assèche en trois semaines)
+
+Ce pilier meurt si la matière se collecte à la main quand on en a besoin.
+Il se ramasse **automatiquement, au moment où ça arrive** :
+
+1. **Déclencheur payout** — chaque payout validé envoie automatiquement au
+   trader un message unique : autorisation de publication + trois
+   questions (le jour où tu as failli sauter · ce que tu as changé après ·
+   ce que tu dirais à celui qui commence). Ses mots bruts sont la matière.
+2. **Déclencheur passage** — même chose à chaque challenge validé, pour
+   alimenter les cartes de passage.
+3. **Le stock** — un dossier par trader : autorisation, référence de
+   vérification, courbe, réponses. Un post de preuve ne s'écrit que
+   depuis un dossier complet.
+4. **La règle de fraîcheur** — aucune preuve republiée au-delà de 6 mois
+   sans être re-datée explicitement. Une vieille preuve présentée comme
+   récente est un mensonge, même involontaire.
+5. **Le highlight permanent** — une story à la une "PAYOUTS" qui accumule
+   tout. Le feed n'a pas à porter le volume ; il porte les meilleures.
+
+**[PO]** — les deux déclencheurs (1 et 2) sont à brancher sur le back-office
+avant le premier post de preuve. C'est le seul chantier technique de cette
+doctrine.
+
+---
+
+## 9. LES GARDE-FOUS — NON NÉGOCIABLES
 
 Une prop firm est plus exposée qu'un compte d'éducation. Ces règles
 priment sur toute considération de performance.
@@ -284,9 +417,10 @@ priment sur toute considération de performance.
 **Spécifique prop firm :**
 - **Aucune promesse de gain, aucun claim de revenu**, ni en image, ni en
   voix, ni en caption. Pas de "devenez funded", pas de montant projeté.
-- **Aucune capture de payout comme appât.** Une preuve de payout n'existe
-  que dans un post authority, contextualisée, avec le mécanisme expliqué
-  — et validée **[PO]**.
+- **Aucune capture de payout nue, en appât.** La preuve est un pilier à
+  part entière (§8) et elle obéit à ses dix lois : vérifiable,
+  consentie, redessinée, accompagnée de son mécanisme. Un montant seul
+  n'est pas une preuve, c'est une affiche.
 - **Dire ce que l'environnement est vraiment** (simulé / démo / capital
   réel) partout où la question se pose. **[PO]** : arrêter la formulation
   exacte une fois pour toutes, elle sera reprise à l'identique dans tous
@@ -308,7 +442,7 @@ retail pourrait-il écrire exactement ça ?"* Si oui → on réécrit.
 
 ---
 
-## 9. LE PIPELINE — COMMENT ÇA SE PUBLIE
+## 10. LE PIPELINE — COMMENT ÇA SE PUBLIE
 
 Le repo publie déjà des reels et des carrousels sur @kongrave_ ; le
 contenu [FIRM] réutilise la même mécanique sur un **autre compte**.
@@ -348,7 +482,7 @@ créée, pas avant.
 
 ---
 
-## 10. LA BOUCLE D'APPRENTISSAGE
+## 11. LA BOUCLE D'APPRENTISSAGE
 
 On juge par **rotation de 12 posts**, jamais post par post.
 
@@ -358,6 +492,7 @@ On juge par **rotation de 12 posts**, jamais post par post.
 | Reel education | watch through, saves | le copy (on resserre), pas l'animation |
 | Carrousel | **saves**, drop entre slide 1 et 2 | slide 1 (loi C1) ou dette du swipe (C2) |
 | Authority | visites de profil, DM entrants | la preuve : trop vague, ou pas assez concrète |
+| Preuve | DM entrants, clics challenge à 72h | le **mécanisme** raconté (loi P1), jamais le montant montré |
 
 **Une variable changée à la fois.** Le narratif de LA LIGNE a été prouvé
 comme ça : on ne modifie que `voice[0]`, le reste intact. Deux changements
@@ -369,7 +504,7 @@ post.
 
 ---
 
-## 11. CE QUI RESTE À TRANCHER — [PO]
+## 12. CE QUI RESTE À TRANCHER — [PO]
 
 1. **Le nom et le compte** [FIRM] (le doc est écrit avec un placeholder).
 2. **Le fait produit** : règles exactes (drawdown trailing ou statique,
@@ -381,6 +516,16 @@ post.
 5. **Grille en diagonale (3:1, recommandé) ou en colonne (2:1)** — §3.
 6. **Les trois lead magnets** : lesquels existent déjà, lesquels sont à
    produire (RULES est le plus urgent — c'est le pilier éducation).
+7. **Le formulaire d'autorisation** trader (loi P3) — à faire rédiger
+   avant le premier post de preuve. C'est bloquant.
+8. **La formule fixe** de mention "résultat individuel" (loi P6), écrite
+   une fois, reprise à l'identique partout.
+9. **Publier la médiane des payouts, oui ou non** (loi P5). Décision
+   irréversible en pratique : commencer puis arrêter serait lu comme un
+   aveu.
+10. **Les deux déclencheurs back-office** (payout validé → demande
+    d'autorisation, challenge validé → carte de passage). Seul chantier
+    technique de la doctrine, et le pilier preuve s'assèche sans lui.
 
 ---
 
