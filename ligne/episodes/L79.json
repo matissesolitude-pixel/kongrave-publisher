@@ -1,0 +1,156 @@
+{
+  "id": "L79",
+  "engine": "l79",
+  "title": "L79 — THE LOSS THAT WASN'T THE PROBLEM",
+  "_cellule": "OETD (Assaillant) · Miroir · Nightmare · regard=les collègues · présent · −−",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "Two traders take the exact same loss. One is trading normally an hour later. The other isn't back for three days.",
+    "It isn't the size. Both lost the same percentage, both within their limit, both survivable.",
+    "It isn't the setup either. Same entry, same invalidation, both stopped out the way the plan said they would.",
+    "One of them took the loss alone. The other took it in front of people — and now there's a second loss to recover from, and it has nothing to do with money.",
+    "A private loss costs one thing. A public one costs two. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "HARENG ROUGE : on installe la fausse piste — l'épisode semble parler de la TAILLE de la perte.",
+      "question": "SAME LOSS. WHY THREE DAYS?",
+      "emotion_lever": "CURIOSITÉ — deux pertes identiques, deux conséquences opposées.",
+      "cast": {
+        "l1": {
+          "type": "block",
+          "note": "perte gauche"
+        },
+        "l2": {
+          "type": "block",
+          "note": "perte droite, identique"
+        },
+        "back": {
+          "type": "path",
+          "note": "les frises de retour, opposées"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX pertes grises, rigoureusement de la même taille, côte à côte. Sous chacune, une frise de RETOUR : à gauche, un retour très court, presque immédiat. À droite, une frise qui s'étire longuement, encore vide. Même perte, deux durées."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la frise de droite s'allonge encore. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux pertes identiques, deux temps de retour opposés",
+      "dispositif_cle": "FAUSSE PISTE : on laisse croire que la taille ou le setup expliquent l'écart. Raisonnement crédible et répandu."
+    },
+    {
+      "id": "s2",
+      "clarity": "On teste la fausse piste : la taille. Elles sont identiques et toutes deux dans la limite.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une LIMITE horizontale se pose au-dessus des deux pertes. Les deux sont DESSOUS, largement."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on les superpose : même hauteur au pixel. Aucune des deux n'est une perte anormale. La fausse piste ne tient pas — et elle est honnête, parce que c'est la première chose que tout le monde regarde."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux pertes superposées sous la limite."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux pertes mesurées contre la même limite — aucune n'est anormale",
+      "turn": "ce n'est pas la taille. les deux étaient dans le cadre."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce n'est pas le setup non plus. Même entrée, même invalidation, sortie conforme au plan.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux SETUPS s'affichent et se superposent : même entrée, même niveau d'invalidation, même stop."
+        },
+        {
+          "t": "1.5-3",
+          "do": "les deux stops se déclenchent au même endroit, exactement comme le plan le prévoyait. Ce sont deux pertes CORRECTES — le système a fonctionné des deux côtés. La deuxième explication évidente tombe."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux setups superposés, les deux stops déclenchés conformément."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux setups superposés + les deux stops déclenchés exactement comme prévu",
+      "turn": "ni la taille, ni le setup. les deux pertes étaient bien exécutées."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RÉVÉLATION : l'une a été prise seule. L'autre devant des gens.",
+      "note": "LA scene — le hareng rouge tombe : la variable est l'exposition, pas la perte.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "ZOOM ARRIÈRE. Autour de la perte de GAUCHE : rien. Un espace vide, la perte et le trader. Autour de la perte de DROITE : des FORMES fil-de-fer, tournées vers elle. Des regards. La perte a été publique."
+        },
+        {
+          "t": "2-3.5",
+          "do": "et une SECONDE perte apparaît à droite, d'une autre nature : elle n'est pas grise comme la première, elle n'a pas de montant, elle ne rentre pas sous la limite — parce que la limite ne la mesure pas. Elle grandit sous les regards. Le trader n'a plus une perte à absorber, il en a deux, et la seconde n'a aucun stop."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la perte seule à gauche, la double perte sous les regards à droite."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le zoom arrière révèle des regards autour de la perte de droite — et une SECONDE perte, non financière",
+      "turn": "la limite couvrait la première perte. rien ne couvre la seconde."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : un DÉLAI se pose entre la perte et toute publication — la perte est encaissée d'abord, seule, et n'est partagée qu'après clôture de la séance, si elle l'est. Les regards ne disparaissent pas : ils sont simplement placés APRÈS. La seconde perte ne se forme pas. La frise de retour de droite se raccourcit jusqu'à celle de gauche."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la perte encaissée seule, les regards déplacés après, les deux frises de retour égales, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le délai entre la perte et sa publication + les deux frises de retour redevenues égales, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders take the exact same loss. One is trading normally an hour later. The other isn't back for three days.\n\nIt isn't the size — both were inside the limit. It isn't the setup either: same entry, same invalidation, both stopped out exactly as planned. One took the loss alone. The other took it in front of people, and now there's a second loss to recover from. It has no amount, no limit and no stop, because nothing was built to measure it.\n\nTHE LINE — a private loss costs one thing. A public one costs two.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #discipline #riskmanagement #propfirm #priceaction #mindset #trader",
+  "pinned_comment": "The limit covered the first loss. Nothing covers the second. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MECANIQUE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "HARENG ROUGE — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

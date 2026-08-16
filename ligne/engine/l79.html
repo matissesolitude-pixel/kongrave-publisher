@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L79 « THE LOSS THAT WASN'T THE PROBLEM » — MECANIQUE, HARENG ROUGE puis révélation. TOFU. Même perte, l'un revient en 1h, l'autre en 3 jours.
+       S1 : deux pertes grises identiques ; frises de retour dessous, gauche courte / droite longue. S2 : fausse piste TAILLE — une limite
+       au-dessus, les deux perte largement dessous, superposées identiques. S3 : ni le SETUP — mêmes entrée/invalidation/stop, sorties
+       conformes. S4 : révélation — autour de gauche rien ; autour de droite des REGARDS + une SECONDE perte (publique, sans montant).
+       S5 : un DÉLAI entre la perte et toute publication — encaissée seule d'abord + CTA @kongrave_. Doctrine : teal = retour/sain ;
+       gris = perte/regards ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const lossL=mk('rect',{fill:DEAD,rx:5,opacity:0}), lossR=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const friseL=mk('line',{stroke:YOU,'stroke-width':10,'stroke-linecap':'round',opacity:0}), friseR=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const limit=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'12 8',opacity:0});
+    const entry=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}), inval=mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0});
+    const stopMk=mk('circle',{r:14,fill:DEAD,opacity:0});
+    const EYE=[]; for(let i=0;i<5;i++)EYE.push(mk('circle',{r:22,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0}));
+    const pubLoss=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',rx:6,opacity:0});
+    const delay=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const trader=mk('circle',{r:24,fill:YOU,'fill-opacity':0.5,stroke:YOU,'stroke-width':5,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME LOSS.','WHY THREE DAYS?'];
+    const FS=86,lineH=110,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [lossL,lossR,friseL,friseR,limit,entry,inval,stopMk,pubLoss,delay,trader])setOp(e,0);for(const e of EYE)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — DEUX PERTES ÉGALES, RETOURS INÉGAUX ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const br=6*Math.sin(u*1.4);
+      lossL.setAttribute('x',230);lossL.setAttribute('y',(820+br).toFixed(1));lossL.setAttribute('width',150);lossL.setAttribute('height',180);setOp(lossL,clamp(u/0.3,0,1)*gf);
+      lossR.setAttribute('x',700);lossR.setAttribute('y',(820-br).toFixed(1));lossR.setAttribute('width',150);lossR.setAttribute('height',180);setOp(lossR,clamp(u/0.3,0,1)*gf);
+      // frises de retour : gauche courte, droite longue (grandit)
+      friseL.setAttribute('x1',230);friseL.setAttribute('x2',330);friseL.setAttribute('y1',1080);friseL.setAttribute('y2',1080);setOp(friseL,clamp((u-0.4)/0.4,0,1)*gf);
+      friseR.setAttribute('x1',700);friseR.setAttribute('x2',(700+lerp(60,240,clamp(u/4,0,1))).toFixed(1));friseR.setAttribute('y1',1080);friseR.setAttribute('y2',1080);setOp(friseR,clamp((u-0.4)/0.4,0,1)*gf);
+      putCap(capC,'BACK IN AN HOUR',300,1140,YOU,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capD,'BACK IN THREE DAYS',770,1140,DEAD,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capB,'SAME LOSS — DIFFERENT RETURN',CX,1300,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — FAUSSE PISTE : LA TAILLE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const merge=clamp((u-1.0)/1.2,0,1);
+      const xl=lerp(280,CX,merge), xr=lerp(720,CX,merge);
+      const br=5*Math.sin(u*1.4);
+      lossL.setAttribute('x',xl-75);lossL.setAttribute('y',(900+br).toFixed(1));lossL.setAttribute('width',150);lossL.setAttribute('height',180);setOp(lossL,1);
+      lossR.setAttribute('x',xr-75);lossR.setAttribute('y',(900+br).toFixed(1));lossR.setAttribute('width',150);lossR.setAttribute('height',180);setOp(lossR, merge>0.9?0.5:1);
+      limit.setAttribute('x1',150);limit.setAttribute('x2',930);limit.setAttribute('y1',860);limit.setAttribute('y2',860);setOp(limit,clamp(u/0.4,0,1));
+      putCap(capC,'THE LIMIT',CX,830,INK,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'BOTH WELL WITHIN — SAME SIZE',CX,1140,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'IT ISN’T THE SIZE',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — NI LE SETUP ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      entry.setAttribute('x1',200);entry.setAttribute('x2',880);entry.setAttribute('y1',(880+br).toFixed(1));entry.setAttribute('y2',(880+br).toFixed(1));setOp(entry,clamp(u/0.3,0,1));
+      inval.setAttribute('x1',200);inval.setAttribute('x2',880);inval.setAttribute('y1',(1040+br).toFixed(1));inval.setAttribute('y2',(1040+br).toFixed(1));setOp(inval,clamp(u/0.3,0,1));
+      const trig=clamp((u-1.4)/0.8,0,1);
+      stopMk.setAttribute('cx',lerp(540,540,1));stopMk.setAttribute('cy',(1040+br).toFixed(1));setOp(stopMk,trig);
+      putCap(capC,'SAME ENTRY',300,840,INK,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'SAME INVALIDATION',760,1120,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capA,'STOPPED — AS PLANNED',CX,1200,DEAD,clamp((u-1.8)/0.5,0,1));
+      putCap(capB,'TWO CORRECT LOSSES',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — RÉVÉLATION : SEUL vs DEVANT DES GENS ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rev=clamp(u/1.4,0,1);
+      const br=6*Math.sin(u*1.4);
+      // GAUCHE : la perte seule, un espace vide
+      lossL.setAttribute('x',230);lossL.setAttribute('y',(880+br).toFixed(1));lossL.setAttribute('width',150);lossL.setAttribute('height',170);setOp(lossL,clamp(u/0.15,0,1));
+      putCap(capC,'ALONE',300,1120,YOU,clamp((u-0.4)/0.5,0,1));
+      // DROITE : la perte + des regards + une seconde perte publique
+      lossR.setAttribute('x',700);lossR.setAttribute('y',(880-br).toFixed(1));lossR.setAttribute('width',150);lossR.setAttribute('height',170);setOp(lossR,clamp(u/0.15,0,1));
+      for(let i=0;i<5;i++){const a=Math.PI*(0.15+i*0.17);const cx=775+Math.cos(a)*170,cy=760+Math.sin(a)*40;EYE[i].setAttribute('cx',cx.toFixed(1));EYE[i].setAttribute('cy',(cy+4*Math.sin(u*1.3+i)).toFixed(1));setOp(EYE[i],rev);}
+      pubLoss.setAttribute('x',700);pubLoss.setAttribute('y',(1080-40*clamp((u-1.4)/0.6,0,1)).toFixed(1));pubLoss.setAttribute('width',150);pubLoss.setAttribute('height',(40*clamp((u-1.4)/0.6,0,1)).toFixed(1));setOp(pubLoss,clamp((u-1.4)/0.4,0,1));
+      putCap(capD,'IN FRONT OF PEOPLE — A SECOND LOSS',CX,1180,DEAD,clamp((u-1.8)/0.6,0,1));
+      putCap(capB,'IT HAS NOTHING TO DO WITH MONEY',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE DÉLAI AVANT PUBLICATION + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      // la perte encaissée seule d'abord
+      lossL.setAttribute('x',260);lossL.setAttribute('y',(860+br).toFixed(1));lossL.setAttribute('width',150);lossL.setAttribute('height',170);setOp(lossL,clamp(u/0.15,0,1));
+      trader.setAttribute('cx',335);trader.setAttribute('cy',(770+br).toFixed(1));setOp(trader,clamp(u/0.15,0,1));
+      // un délai puis les regards, déplacés APRÈS
+      const d=clamp((u-0.6)/1.0,0,1);
+      delay.setAttribute('x1',420);delay.setAttribute('x2',(420+320*d).toFixed(1));delay.setAttribute('y1',945);delay.setAttribute('y2',945);setOp(delay,clamp(u/0.3,0,1));
+      for(let i=0;i<4;i++){const cx=760+i*50;EYE[i].setAttribute('cx',cx);EYE[i].setAttribute('cy',(900+4*Math.sin(u*1.3+i)).toFixed(1));setOp(EYE[i], d>0.6?clamp((u-1.4)/0.4,0,1):0);}
+      putCap(capC,'ABSORBED ALONE — SHARED ONLY AFTER',CX,860,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'A PRIVATE LOSS COSTS ONE — A PUBLIC ONE, TWO',CX,1200,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
