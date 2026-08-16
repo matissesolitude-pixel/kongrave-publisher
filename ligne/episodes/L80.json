@@ -1,0 +1,152 @@
+{
+  "id": "L80",
+  "engine": "l80",
+  "title": "L80 — THE NUMBER EVERYONE PICKED",
+  "_cellule": "SIRD (Glacier) · Éducation · Likelihood · regard=le marché-ennemi · futur · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders place an order. One picks a round number. The other picks a level the chart actually made.",
+    "The round number wasn't chosen by price. It was chosen by a habit — and by thousands of people with the same habit.",
+    "So orders pile at the round figure while the structural level sits a few points away, almost empty.",
+    "Price runs the crowded side first. Not to hunt anyone — that's simply where there's enough resting volume to fill.",
+    "A level the chart never made is a level the chart owes you nothing at. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux ordres posés en parallèle : l'un sur un nombre rond, l'autre sur un niveau réel.",
+      "question": "WHO CHOSE THAT LEVEL?",
+      "emotion_lever": "CONTRASTE DE DENSITÉ — la foule d'un côté, le vide de l'autre.",
+      "cast": {
+        "round": {
+          "type": "hline",
+          "note": "le chiffre rond, saturé"
+        },
+        "struct": {
+          "type": "hline",
+          "note": "le niveau structurel, désert"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX BANDES horizontales, le même graphe. HAUT : un ordre se pose sur un trait étiqueté d'un chiffre rond — et une NAPPE dense de petits ronds fil-de-fer s'y agglutine déjà. BAS : un ordre se pose sur un niveau que le prix a réellement dessiné — presque personne autour."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la nappe du haut s'épaissit encore. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux bandes simultanées : à gauche une nappe dense sur le chiffre rond, à droite un niveau structurel presque vide",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux bandes avancent toujours ensemble."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le nombre rond n'a pas été choisi par le prix. Il a été choisi par une habitude.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On remonte l'origine de chaque niveau. BAS : le prix lui-même l'a créé — une réaction visible, un rejet, une trace laissée par le mouvement."
+        },
+        {
+          "t": "1.5-3",
+          "do": "HAUT : rien dans le tracé ne le désigne. Il est apparu parce qu'il est FACILE À RETENIR. On montre son unique justification : la commodité. Le prix n'y a jamais rien fait."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le niveau tracé par le prix en bas, le niveau posé sans trace en haut."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'origine des deux niveaux : l'un tracé par le prix, l'autre posé par commodité mentale",
+      "turn": "l'un est une trace. l'autre est une commodité."
+    },
+    {
+      "id": "s3",
+      "clarity": "Les ordres s'empilent sur le chiffre rond. Le niveau structurel reste presque vide.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une barre de DENSITÉ se pose sous chaque niveau. Celle du chiffre rond monte haut, très haut."
+        },
+        {
+          "t": "1.5-3",
+          "do": "celle du niveau structurel reste basse. Et sous chaque ordre, les stops s'ajoutent au même endroit : la densité du haut double encore. On ne prête aucune intention à personne — c'est une convergence d'habitudes."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux barres de densité, l'écart flagrant."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la mesure de densité des deux zones — un réservoir contre une flaque",
+      "turn": "même habitude, même endroit, même pile."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le prix parcourt d'abord le côté dense. Pas pour chasser — parce que c'est là qu'il y a de quoi remplir.",
+      "note": "LA scene — la densité attire l'exécution, pas la malveillance.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Une masse doit être échangée. Elle se dirige vers la zone DENSE — pas par malveillance : c'est le seul endroit avec assez de contrepartie. Elle traverse la nappe, les stops s'exécutent un à un et alimentent le mouvement."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la nappe vidée, le mouvement s'arrête net et repart en sens inverse. La position du HAUT est sortie, grise, restée derrière. Celle du BAS, posée hors du réservoir, n'a pas été touchée : le mouvement est passé à côté d'elle."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la nappe consommée, le prix reparti, une position grise et une position teal intacte."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le mouvement qui traverse la nappe dense, la consomme, puis repart — la position du haut sortie, celle du bas intacte",
+      "turn": "tu n'as pas été visé. tu étais dans le réservoir."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : avant de poser un ordre, une VÉRIFICATION en un geste — le niveau a-t-il été DESSINÉ par le prix, ou seulement retenu par commodité ? Une lentille passe : si aucune trace, l'ordre se décale hors de la nappe. La position se place là où le réservoir n'est pas."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la vérification 'ce niveau a-t-il une trace' + l'ordre décalé hors de la nappe, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders place an order. One picks a round number, the other picks a level the chart actually made — and only one of them is standing in a reservoir.\n\nThe round figure wasn't chosen by price. It was chosen by a habit, shared by thousands of people with the same habit, so orders and stops pile in the same place. Price runs the crowded side first: not to hunt anyone, simply because that's where there's enough resting volume to fill.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #priceaction #daytrading #forex #liquidity #marketstructure #propfirm #discipline #tradingeducation #trader",
+  "pinned_comment": "A level the chart never made is a level the chart owes you nothing at. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

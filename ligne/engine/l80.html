@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L80 « THE NUMBER EVERYONE PICKED » — STRUCTURE, MONTAGE PARALLÈLE. TOFU. Nombre rond vs niveau que le graphe a réellement fait.
+       S1 : deux bandes ; HAUT un ordre sur un chiffre rond + une nappe d'ordres qui s'épaissit ; BAS un ordre sur un niveau réel. S2 :
+       origine — BAS le prix l'a créé (réaction/rejet), HAUT rien ne le désigne (juste 'facile à retenir'). S3 : barre de DENSITÉ sous
+       chaque niveau — le rond très haute, le structurel basse. S4 : la masse va vers la zone DENSE (seul endroit avec de quoi remplir),
+       la vide, repart ; position du HAUT sortie grise, celle du BAS teal intacte. S5 : la prise — DESSINÉ par le prix ou seulement
+       retenu ? + CTA @kongrave_. Doctrine : teal = niveau réel/toi ; gris = nombre rond/foule/perte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, TY=760, BY=1160, X0=150, X1=930;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const lvlT=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}), lvlB=mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const NT=24, TK=[]; for(let i=0;i<NT;i++)TK.push(mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0}));  // nappe (haut)
+    const ordB=mk('rect',{fill:YOU,rx:5,opacity:0});   // ordre unique (bas)
+    const react=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});  // réaction du prix (S2 bas)
+    const densT=mk('rect',{fill:DEAD,rx:5,opacity:0}), densB=mk('rect',{fill:YOU,rx:5,opacity:0});
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const posT=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,rx:5,opacity:0}), posB=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':4,rx:5,opacity:0});
+    const chkA=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':40,opacity:0}), chkB=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':40,opacity:0});
+    const num=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':44,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHO CHOSE','THAT LEVEL?'];
+    const FS=88,lineH=112,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [lvlT,lvlB,ordB,react,densT,densB,price,posT,posB,chkA,chkB,num])setOp(e,0);for(const e of TK)setOp(e,0);hideCaps();}
+    function nappe(y,activeUntil,u,op){for(let i=0;i<NT;i++){const f=i/(NT-1);const x=180+(750-180)*f;const gone=x<activeUntil;TK[i].setAttribute('x1',x.toFixed(1));TK[i].setAttribute('x2',x.toFixed(1));TK[i].setAttribute('y1',(y+ (gone?0:3*Math.sin(u*3+i))).toFixed(1));TK[i].setAttribute('y2',(y+38).toFixed(1));setOp(TK[i],gone?0:op*0.9);}}
+
+    // ═══ S1 — DEUX ORDRES : ROND (nappe) vs RÉEL ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const br=6*Math.sin(u*1.4);
+      lvlT.setAttribute('x1',X0);lvlT.setAttribute('x2',X1);lvlT.setAttribute('y1',(TY+br).toFixed(1));lvlT.setAttribute('y2',(TY+br).toFixed(1));setOp(lvlT,clamp(u/0.3,0,1)*gf);
+      lvlB.setAttribute('x1',X0);lvlB.setAttribute('x2',X1);lvlB.setAttribute('y1',(BY-br).toFixed(1));lvlB.setAttribute('y2',(BY-br).toFixed(1));setOp(lvlB,clamp(u/0.3,0,1)*gf);
+      num.textContent='1.2000';num.setAttribute('x',CX);num.setAttribute('y',(TY-20+br).toFixed(1));num.setAttribute('fill',DEAD);setOp(num,clamp((u-0.3)/0.4,0,1)*gf);
+      nappe(TY+18+br, X0-10, u, clamp((u-0.4)/0.5,0,1)*gf);   // la nappe qui s'épaissit
+      ordB.setAttribute('x',CX-70);ordB.setAttribute('y',(BY-52-br).toFixed(1));ordB.setAttribute('width',140);ordB.setAttribute('height',30);setOp(ordB,clamp((u-0.4)/0.5,0,1)*gf);
+      putCap(capC,'A ROUND NUMBER',300,TY-90,DEAD,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capD,'A LEVEL THE CHART MADE',760,BY+90,YOU,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'ONE WAS CHOSEN BY HABIT',CX,1400,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — L'ORIGINE : PRIX vs HABITUDE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      // BAS : le prix a créé le niveau (réaction/rejet)
+      lvlB.setAttribute('x1',X0);lvlB.setAttribute('x2',X1);lvlB.setAttribute('y1',(BY-br).toFixed(1));lvlB.setAttribute('y2',(BY-br).toFixed(1));setOp(lvlB,1);
+      const pts=[];for(let i=0;i<=24;i++){const f=i/24;const x=200+520*f;let y=BY-br - 90*Math.exp(-Math.pow((f-0.5)*5,2))*clamp(u/1.4,0,1);pts.push(x.toFixed(1)+','+y.toFixed(1));}
+      react.setAttribute('points',pts.join(' '));setOp(react,clamp(u/0.4,0,1));
+      putCap(capD,'PRICE DREW IT — A REJECTION',CX,BY+120,YOU,clamp((u-1.0)/0.5,0,1));
+      // HAUT : rien ne le désigne, juste facile à retenir
+      lvlT.setAttribute('x1',X0);lvlT.setAttribute('x2',X1);lvlT.setAttribute('y1',(TY+br).toFixed(1));lvlT.setAttribute('y2',(TY+br).toFixed(1));setOp(lvlT,0.9);
+      num.textContent='1.2000';num.setAttribute('x',CX);num.setAttribute('y',(TY-20+br).toFixed(1));num.setAttribute('fill',DEAD);setOp(num,1);
+      putCap(capC,'EASY TO REMEMBER — NO TRACE',CX,TY-90,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'PRICE NEVER CHOSE IT',CX,540,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA DENSITÉ ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const grow=clamp(u/2.0,0,1);
+      lvlT.setAttribute('x1',X0);lvlT.setAttribute('x2',X1);lvlT.setAttribute('y1',760);lvlT.setAttribute('y2',760);setOp(lvlT,0.7);
+      lvlB.setAttribute('x1',X0);lvlB.setAttribute('x2',X1);lvlB.setAttribute('y1',1160);lvlB.setAttribute('y2',1160);setOp(lvlB,0.7);
+      const hT=lerp(0,300,grow)+3*Math.sin(u*1.5);densT.setAttribute('x',CX-40);densT.setAttribute('width',80);densT.setAttribute('y',(780).toFixed(1));densT.setAttribute('height',hT.toFixed(1));setOp(densT,clamp(u/0.4,0,1));
+      const hB=lerp(0,70,grow)+3*Math.sin(u*1.5);densB.setAttribute('x',CX-40);densB.setAttribute('width',80);densB.setAttribute('y',(1180).toFixed(1));densB.setAttribute('height',hB.toFixed(1));setOp(densB,clamp(u/0.4,0,1));
+      putCap(capC,'ORDERS + STOPS PILE HERE',CX,760-30,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capD,'ALMOST EMPTY',CX,1160-30,YOU,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'THE ROUND FIGURE IS CROWDED',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE PRIX PARCOURT LE CÔTÉ DENSE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      lvlT.setAttribute('x1',X0);lvlT.setAttribute('x2',X1);lvlT.setAttribute('y1',(TY+br).toFixed(1));lvlT.setAttribute('y2',(TY+br).toFixed(1));setOp(lvlT,0.8);
+      const swept=clamp((u-0.4)/1.6,0,1);
+      nappe(TY+18+br, lerp(180,750,swept), u, 1);
+      // le prix plonge dans la nappe, la vide, repart
+      const reb=clamp((u-2.0)/1.2,0,1);
+      const pp=[];for(let i=0;i<=30;i++){const f=i/30;const x=180+570*f;let y; if(f<0.5)y=lerp(600,TY+30,f/0.5); else y=lerp(TY+30,560,eOut((f-0.5)/0.5)*reb);pp.push(x.toFixed(1)+','+(y+br).toFixed(1));}
+      price.setAttribute('points',pp.join(' '));setOp(price,clamp(u/0.3,0,1));
+      // positions : haut grise sortie, bas teal intacte
+      posT.setAttribute('x',760);posT.setAttribute('y',(TY+70+br).toFixed(1));posT.setAttribute('width',120);posT.setAttribute('height',70);setOp(posT,clamp((u-2.4)/0.5,0,1));
+      posB.setAttribute('x',760);posB.setAttribute('y',(BY-40-br).toFixed(1));posB.setAttribute('width',120);posB.setAttribute('height',70);setOp(posB,clamp((u-0.4)/0.5,0,1));
+      lvlB.setAttribute('x1',X0);lvlB.setAttribute('x2',X1);lvlB.setAttribute('y1',(BY-br).toFixed(1));lvlB.setAttribute('y2',(BY-br).toFixed(1));setOp(lvlB,0.8);
+      putCap(capC,'ENOUGH VOLUME TO FILL — NOT A HUNT',CX,TY-90,DEAD,clamp((u-2.6)/0.6,0,1));
+      putCap(capB,'PRICE RUNS THE CROWDED SIDE FIRST',CX,560,INK,clamp((u-3.2)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA VÉRIFICATION + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      lvlB.setAttribute('x1',260);lvlB.setAttribute('x2',820);lvlB.setAttribute('y1',(960+br).toFixed(1));lvlB.setAttribute('y2',(960+br).toFixed(1));setOp(lvlB,clamp(u/0.3,0,1));
+      const pts=[];for(let i=0;i<=24;i++){const f=i/24;const x=260+560*f;let y=960+br - 80*Math.exp(-Math.pow((f-0.5)*5,2));pts.push(x.toFixed(1)+','+y.toFixed(1));}
+      react.setAttribute('points',pts.join(' '));setOp(react,clamp((u-0.4)/0.4,0,1));
+      putCap(capC,'DRAWN BY PRICE?',CX,900,YOU,clamp((u-0.4)/0.5,0,1));
+      chkA.textContent='✓';chkA.setAttribute('x',CX);chkA.setAttribute('y',(1110+br).toFixed(1));chkA.setAttribute('fill',YOU);setOp(chkA,clamp((u-1.4)/0.5,0,1));
+      putCap(capD,'OR ONLY REMEMBERED? — THE CHART OWES YOU NOTHING',CX,1240,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
