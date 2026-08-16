@@ -1,0 +1,152 @@
+{
+  "id": "L86",
+  "engine": "l86",
+  "title": "L86 — THE SCOREBOARD THAT ISN'T YOURS",
+  "_cellule": "SETX (Sniper) · Autorité · Dream/identité · regard=les autres traders · passé · −−",
+  "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
+  "voice": [
+    "You're running your race while watching someone else's scoreboard.",
+    "Different starting capital, different hours, different risk per trade, different years in. None of it is on the board.",
+    "The board shows one number, and it's the one number that hides every difference between you.",
+    "So you speed up to close a gap that was never measurable — and speeding up is the only thing you actually changed.",
+    "A comparison you can't see the terms of isn't a comparison. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MÉTAPHORE PORTÉE SEULE : un coureur sur sa piste, les yeux sur le tableau d'un autre couloir.",
+      "question": "WHOSE RACE ARE YOU RUNNING?",
+      "emotion_lever": "RECONNAISSANCE — courir en regardant ailleurs. Universellement lisible.",
+      "cast": {
+        "track": {
+          "type": "path",
+          "note": "sa piste"
+        },
+        "board": {
+          "type": "block",
+          "note": "le tableau de l'autre couloir. LA MÉTAPHORE."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : une PISTE teal, un coureur en forme fil-de-fer dessus. Sa tête est TOURNÉE vers le côté, vers un TABLEAU D'AFFICHAGE qui n'appartient pas à sa piste — il est planté dans un autre couloir. Sa foulée, elle, est de travers, désaxée. L'image dit tout sans un mot."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la foulée se désaxe encore, le regard reste sur le tableau. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : une piste, un coureur, et son regard tourné vers un tableau d'affichage extérieur",
+      "dispositif_cle": "MÉTAPHORE SEULE : pas d'objet à décharger. La posture du coureur porte tout."
+    },
+    {
+      "id": "s2",
+      "clarity": "Capital de départ, horaires, risque par trade, années de pratique. Rien de tout ça n'est au tableau.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Sous chaque couloir, quatre CONDITIONS se déplient : capital de départ, temps disponible, risque par trade, ancienneté."
+        },
+        {
+          "t": "1.5-3",
+          "do": "les valeurs diffèrent nettement d'un couloir à l'autre — les deux coureurs ne courent pas la même distance ni depuis le même point. Et AUCUNE de ces quatre lignes n'apparaît sur le tableau d'affichage. Elles existent, elles décident tout, elles sont hors champ du seul chiffre regardé."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les quatre conditions différentes, le tableau qui n'en montre aucune."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les quatre conditions de course affichées pour les deux couloirs — toutes différentes, toutes hors tableau",
+      "turn": "ce qui décide n'est pas affiché."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le tableau montre un seul chiffre — celui qui masque toutes les différences.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le TABLEAU s'agrandit : il ne porte qu'UN chiffre, gros, net, comparable."
+        },
+        {
+          "t": "1.5-3",
+          "do": "les quatre conditions passent DERRIÈRE lui et disparaissent de la vue. Le chiffre est le seul élément commun aux deux couloirs — donc le seul comparable — et c'est précisément celui qui ne dit rien des conditions. Comparable et vide de sens en même temps."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le chiffre seul, les conditions cachées derrière."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le chiffre unique du tableau, et les quatre conditions qui s'effacent derrière lui",
+      "turn": "le seul chiffre comparable est celui qui n'explique rien."
+    },
+    {
+      "id": "s4",
+      "clarity": "Alors tu accélères pour combler un écart jamais mesurable — et l'accélération est la seule chose que tu as vraiment changée.",
+      "note": "LA scene — accélérer ne touche que la variable dangereuse.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Le coureur ACCÉLÈRE. Sa foulée, déjà désaxée, se dégrade : les appuis sont moins nets, la trajectoire s'écarte de son couloir."
+        },
+        {
+          "t": "2-3.5",
+          "do": "une seule de ses quatre conditions se met à bouger : le RISQUE PAR TRADE, qui monte. Les trois autres sont hors de sa portée immédiate. Et l'écart au tableau ne bouge pas — il n'a jamais dépendu de sa vitesse. Il a modifié la seule variable dangereuse, pour rien."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la foulée dégradée, le risque monté, l'écart identique."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le coureur qui accélère : la foulée se dégrade, le risque par trade monte, l'écart reste inchangé",
+      "turn": "tu n'as pas réduit l'écart. tu as augmenté ton risque."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : le tableau extérieur SORT du cadre. À sa place, un tableau posé sur SA piste, qui n'affiche que ses quatre conditions à lui et leur évolution dans le temps. Le regard revient devant, la foulée se réaligne. La comparaison n'est pas supprimée : elle est ramenée à la seule qui ait des termes lisibles — lui contre lui-même, un mois plus tôt."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le tableau extérieur retiré + la comparaison ramenée à soi dans le temps, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "You're running your race while watching someone else's scoreboard.\n\nDifferent starting capital, different hours, different risk per trade, different years in — none of it is on the board. The board shows one number, and it's the one number that hides every difference between you. So you speed up to close a gap that was never measurable, and the only variable you actually moved was the dangerous one.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #comparison #mindset #propfirm #discipline #priceaction #trader",
+  "pinned_comment": "A comparison you can't see the terms of isn't a comparison. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}
