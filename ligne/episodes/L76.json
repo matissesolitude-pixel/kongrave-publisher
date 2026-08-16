@@ -1,0 +1,152 @@
+{
+  "id": "L76",
+  "engine": "l76",
+  "title": "L76 — FOUR VOICES, ONE CHART",
+  "_cellule": "SITX (Glacier) · Éducation · Effort · regard=le prospect · présent · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders open the same chart. One hears four voices. The other hears one.",
+    "Four sources, four timeframes, four opinions — all reasonable, all contradicting each other on the same candle.",
+    "Every extra source doesn't add clarity. It adds a tie to break, and there's no rule for breaking it.",
+    "So one of them ends the session with no trade and no reason, while the other ends it with a trade and a reason he can check.",
+    "Confusion isn't a lack of information. It's a lack of hierarchy. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MONTAGE PARALLÈLE : deux traders, même graphe, deux quantités de sources.",
+      "question": "SAME CHART. HOW MANY VOICES?",
+      "emotion_lever": "SURCHARGE — quatre flux qui arrivent en même temps, la saturation est visible.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "bande haute, 4 flux"
+        },
+        "lane2": {
+          "type": "path",
+          "note": "bande basse, 1 flux"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX BANDES horizontales, le MÊME graphe au centre de chacune. En HAUT, QUATRE flèches entrent depuis les bords, chacune apportant un flux. En BAS, UNE SEULE flèche entre. Les deux bandes avancent déjà en parallèle."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : les flux continuent d'arriver, quatre en haut, un en bas. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux bandes lancées ensemble : quatre flux entrants en haut, un seul en bas",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux bandes progressent TOUJOURS ensemble."
+    },
+    {
+      "id": "s2",
+      "clarity": "Quatre sources, quatre timeframes, quatre avis — tous raisonnables, tous contradictoires.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Sur la bande haute, les quatre flux déposent leur verdict sur LA MÊME bougie : deux flèches vers le haut, une vers le bas, une plate."
+        },
+        {
+          "t": "1.5-3",
+          "do": "aucun n'est absurde : chacun s'appuie sur quelque chose de visible. On les met côte à côte, également défendables. En bas, le flux unique dépose UN verdict, sans concurrent."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les quatre verdicts contradictoires en haut, le verdict unique en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les quatre avis affichés sur la même bougie : deux haussiers, un baissier, un neutre",
+      "turn": "aucun avis n'est faux. c'est ça, le problème."
+    },
+    {
+      "id": "s3",
+      "clarity": "Chaque source ajoutée n'ajoute pas de clarté. Elle ajoute une égalité à départager.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Deux jauges se posent sur la bande haute : 'clarity' et 'ties to break'. On ajoute un cinquième flux."
+        },
+        {
+          "t": "1.5-3",
+          "do": "la jauge de clarté ne bouge pas d'un pixel. La jauge d'égalités à trancher, elle, monte d'un cran. On répète : sixième flux, même résultat. Sur la bande basse, une seule règle tranche, la jauge d'égalités reste à zéro."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : clarté plate, égalités qui montent, en bas rien à trancher."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la mesure de clarté qui STAGNE pendant que le nombre d'égalités à trancher grandit",
+      "turn": "ajouter une source n'éclaire pas. ça crée un arbitrage de plus, sans arbitre."
+    },
+    {
+      "id": "s4",
+      "clarity": "L'un finit la séance sans trade et sans raison. L'autre avec un trade et une raison vérifiable.",
+      "note": "LA scene — le verdict du montage parallèle : l'un produit une donnée, l'autre produit du bruit.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Fin de séance sur les deux bandes. HAUT : les quatre verdicts sont toujours là, aucun n'a été départagé, la zone d'entrée est VIDE. Aucune position, et surtout aucune ligne à relire demain."
+        },
+        {
+          "t": "2-3.5",
+          "do": "BAS : une position existe, et sous elle une LIGNE écrite — la raison, vérifiable, réfutable. Elle sera peut-être fausse ; elle est au moins CONTRÔLABLE. On souligne : le trader du haut n'a pas été prudent, il n'a rien produit de vérifiable."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la zone vide et les quatre verdicts en haut, la position et sa raison en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux fins de séance : en haut le blocage total, en bas une position et sa raison écrite",
+      "turn": "quatre avis n'ont produit aucune décision."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : sur la bande haute, les quatre flux sont HIÉRARCHISÉS — un seul est déclaré prioritaire, un trait le désigne, les trois autres passent en second rang, visibles mais non décisionnaires. Une règle écrite tranche à l'avance. Le blocage disparaît : une décision sort, avec sa raison."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la hiérarchie posée, la décision sortie, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la hiérarchie des sources décidée à l'avance + la décision qui redevient possible, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders open the same chart. One hears four voices, the other hears one — and only one of them ends the session with something to check tomorrow.\n\nFour sources, four timeframes, four verdicts on the same candle, none of them absurd. Every extra source doesn't add clarity: it adds a tie to break, with no rule for breaking it. One ends with no trade and no reason. The other ends with a trade and a reason that can be proven wrong.\n\nTHE LINE — confusion isn't a lack of information, it's a lack of hierarchy.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #priceaction #daytrading #forex #analysisparalysis #tradingstrategy #propfirm #discipline #marketstructure #trader",
+  "pinned_comment": "Four opinions produced no decision at all. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MECANIQUE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}
