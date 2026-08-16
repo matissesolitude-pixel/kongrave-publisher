@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L74 « THE SECOND SIGNATURE » — MÉTAPHORE PORTÉE SEULE : ta décision attend une seconde signature qui n'est jamais la tienne.
+       TOFU (abonnement). S1 : un document rempli, net ; deux cases de signature, la 1re signée, la 2e VIDE. S2 : le travail est fini
+       (rows cochés, jauge 'work done' 100%) — il ne manque pas une info, il manque une AUTORISATION. S3 : le document circule devant
+       des formes extérieures, une barre de délai grandit. S4 : il revient signé, mais le prix a bougé de l'exacte longueur du délai —
+       valide et périmé à la fois. S5 : la prise — on SUPPRIME la 2e case, une seule signature (la tienne), une liste de conditions +
+       CTA @kongrave_. Doctrine : teal = ta décision/toi ; gris = délai/aval extérieur ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // — le document (groupe déplaçable) —
+    const doc=mk('g',{});
+    const docRect=mk('rect',{x:-200,y:-210,width:400,height:420,rx:14,fill:YOU,'fill-opacity':0.14,stroke:YOU,'stroke-width':5},doc);
+    const ROW=[],RCHK=[];
+    for(let i=0;i<4;i++){mk('line',{x1:-160,y1:-150+i*54,x2:100,y2:-150+i*54,stroke:DEAD,'stroke-width':3,'stroke-dasharray':'6 8'},doc);
+      const g=mk('g',{});mk('polyline',{points:'0,8 7,17 21,-3',fill:'none',stroke:YOU,'stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},g);g.setAttribute('transform','translate(120 '+(-162+i*54)+')');doc.appendChild(g);RCHK.push(g);}
+    const sig1=mk('rect',{x:-170,y:120,width:150,height:70,rx:8,fill:'none',stroke:INK,'stroke-width':3},doc);
+    const sig1m=mk('path',{d:'M -150 175 q 20 -34 42 -6 q 14 18 34 -8',fill:'none',stroke:YOU,'stroke-width':4,'stroke-linecap':'round'},doc);
+    const sig2=mk('rect',{x:30,y:120,width:150,height:70,rx:8,fill:'none',stroke:DEAD,'stroke-width':3,'stroke-dasharray':'10 8'},doc);
+    const sig2m=mk('path',{d:'M 50 175 q 20 -34 42 -6 q 14 18 34 -8',fill:'none',stroke:DEAD,'stroke-width':4,'stroke-linecap':'round',opacity:0},doc);
+    const l1=mk('text',{x:-95,y:210,'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':22,fill:INK},doc);l1.textContent='YOU';
+    const l2=mk('text',{x:105,y:210,'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':22,fill:DEAD},doc);l2.textContent='?';
+    const hand=mk('polygon',{fill:INK,opacity:0});
+    function placeDoc(x,y,sc,op){doc.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(sc||1).toFixed(3)})`);setOp(doc,op);}
+
+    const gOut=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:10,opacity:0}), gFill=mk('rect',{fill:YOU,rx:6,opacity:0});
+    const EXT=[]; for(let i=0;i<4;i++)EXT.push(mk('circle',{r:34,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0}));
+    const delay=mk('rect',{fill:DEAD,'fill-opacity':0.5,rx:5,opacity:0}), delayTrack=mk('line',{stroke:INK,'stroke-width':3,opacity:0});
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const wrote=mk('circle',{r:14,fill:'none',stroke:YOU,'stroke-width':5,opacity:0}), nowdot=mk('circle',{r:14,fill:INK,opacity:0});
+    const gap=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const COND=[]; for(let i=0;i<3;i++)COND.push(mk('line',{stroke:YOU,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHY DOESN’T YOUR','SIGNATURE COUNT?'];
+    const FS=76,lineH=102,y0=205,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+86,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function handAt(x,y,op){hand.setAttribute('points',`${x},${y} ${x-16},${y-28} ${x+16},${y-28}`);setOp(hand,op);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function showRows(n){for(let i=0;i<4;i++)setOp(RCHK[i], i<n?1:0);}
+    function hideDyn(){setOp(doc,0);setOp(hand,0);for(const e of [gOut,gFill,delay,delayTrack,price,wrote,nowdot,gap])setOp(e,0);for(const a of [EXT,COND])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — LE DOCUMENT, UNE CASE VIDE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      placeDoc(CX, 980+6*Math.sin(u*1.4), 1, clamp(u/0.3,0,1)*gf); showRows(4); setOp(sig2m,0);
+      // case vide qui clignote + main
+      setOp(sig2, (0.5+0.5*Math.abs(Math.sin(u*3)))*clamp(u/0.3,0,1)*gf);
+      handAt(CX+105, 980-40+8*Math.sin(u*2), clamp((u-0.4)/0.4,0,1)*gf);
+      putCap(capB,'A SECOND SIGNATURE — NEVER YOURS',CX,1420,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — LE TRAVAIL EST FINI, IL MANQUE UNE AUTORISATION ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      placeDoc(430, 980, 1, 1); const n=Math.floor(clamp(u/1.6,0,1)*4); showRows(n); setOp(sig2m,0);
+      setOp(sig2,0.9);
+      // jauge work done -> 100%
+      const gy=790,gh=380;gOut.setAttribute('x',760);gOut.setAttribute('y',gy);gOut.setAttribute('width',90);gOut.setAttribute('height',gh);setOp(gOut,clamp(u/0.4,0,1));
+      const frac=clamp(u/1.8,0,1)+0.01*Math.sin(u*3);const fh=frac*(gh-10);
+      gFill.setAttribute('x',765);gFill.setAttribute('y',(gy+gh-5-fh).toFixed(1));gFill.setAttribute('width',80);gFill.setAttribute('height',fh.toFixed(1));setOp(gFill,clamp(u/0.4,0,1));
+      putCap(capC,'WORK DONE — 100%',805,gy+gh+50,YOU,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'WHAT’S MISSING IS PERMISSION',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA CIRCULATION, LA BARRE DE DÉLAI ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const travel=clamp(u/2.6,0,1);
+      const dx=lerp(300,880,travel);
+      placeDoc(dx, 900, 0.7, 1); showRows(4); setOp(sig2m,0); setOp(sig2,0.9);
+      // les formes extérieures qui l'examinent
+      for(let i=0;i<4;i++){const x=260+i*180;EXT[i].setAttribute('cx',x);EXT[i].setAttribute('cy',(700+8*Math.sin(u*1.3+i)).toFixed(1));setOp(EXT[i], dx>x-60?0.9:clamp(u/0.4,0,1)*0.5);}
+      // la barre de délai grandit
+      delayTrack.setAttribute('x1',150);delayTrack.setAttribute('x2',930);delayTrack.setAttribute('y1',1180);delayTrack.setAttribute('y2',1180);setOp(delayTrack,clamp(u/0.4,0,1));
+      delay.setAttribute('x',150);delay.setAttribute('y',1156);delay.setAttribute('width',(780*travel).toFixed(1));delay.setAttribute('height',48);setOp(delay,clamp(u/0.4,0,1));
+      putCap(capC,'DELAY',CX,1260,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'GROUP · MENTOR · A POSTED SCREENSHOT',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — IL REVIENT SIGNÉ MAIS PÉRIMÉ ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // le prix a bougé pendant la circulation
+      const move=clamp((u-0.4)/1.6,0,1);
+      const pts=[];for(let i=0;i<=24;i++){const f=i/24;pts.push((200+560*f).toFixed(0)+','+(1120-260*eIn(f)*move+4*Math.sin(f*12+u*2)).toFixed(1));}
+      price.setAttribute('points',pts.join(' '));setOp(price,clamp(u/0.3,0,1));
+      wrote.setAttribute('cx',210);wrote.setAttribute('cy',(1116+4*Math.sin(u*1.5)).toFixed(1));setOp(wrote,clamp(u/0.3,0,1));
+      const nx=lerp(210,760,move),ny=1120-260*eIn(1)*move;nowdot.setAttribute('cx',nx.toFixed(1));nowdot.setAttribute('cy',ny.toFixed(1));setOp(nowdot,clamp((u-0.4)/0.4,0,1));
+      gap.setAttribute('x1',210);gap.setAttribute('x2',nx.toFixed(1));gap.setAttribute('y1',1250);gap.setAttribute('y2',1250);setOp(gap,move);
+      // le document revient, 2e case signée
+      placeDoc(300, 760, 0.6, 1); showRows(4); setOp(sig2m, move); setOp(sig2,0.9);
+      putCap(capC,'SIGNED — BUT MOVED = THE DELAY',CX,1320,DEAD,clamp((u-2.2)/0.6,0,1));
+      putCap(capB,'VALID AND EXPIRED AT ONCE',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — UNE SEULE SIGNATURE + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      placeDoc(CX, 980+6*Math.sin(u*1.4), 1, 1); showRows(4);
+      // la 2e case supprimée : on ne garde que la sienne
+      const gone=clamp((u-0.6)/0.6,0,1);
+      setOp(sig2, (1-gone)*0.6); setOp(sig2m,0); setOp(l2,(1-gone));
+      handAt(CX-95, 980-40, 0);
+      putCap(capC,'ONE SIGNATURE — YOURS',CX,760,YOU,clamp((u-0.4)/0.5,0,1));
+      // une liste de conditions posée à la place
+      for(let i=0;i<3;i++){const y=1230+i*40;COND[i].setAttribute('x1',CX-150);COND[i].setAttribute('x2',(CX-150+280*clamp((u-1.0-i*0.2)/0.5,0,1)).toFixed(1));COND[i].setAttribute('y1',y);COND[i].setAttribute('y2',y);setOp(COND[i],clamp((u-1.0-i*0.2)/0.4,0,1)*0.9);}
+      putCap(capD,'CONDITIONS SET BEFORE — NOT APPROVAL AFTER',CX,1380,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

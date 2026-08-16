@@ -1,0 +1,152 @@
+{
+  "id": "L74",
+  "engine": "l74",
+  "title": "L74 — THE SECOND SIGNATURE",
+  "_cellule": "SETD (Sniper) · Miroir · Ease · regard=les autres traders · présent · −−",
+  "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
+  "voice": [
+    "Every decision you make needs a second signature. And that signature is never yours.",
+    "The read is done. The level is marked, the risk is set. The work is finished — and the page still isn't signed.",
+    "So you take it somewhere to be countersigned. A group, a mentor, a screenshot posted to see who agrees.",
+    "By the time it comes back, the price has moved, and the document is worth less than when you wrote it.",
+    "A decision that needs approval isn't slower. It's a different decision. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MÉTAPHORE PORTÉE SEULE : le document prêt, une case de signature vide qui attend un tiers.",
+      "question": "WHY DOESN'T YOUR SIGNATURE COUNT?",
+      "emotion_lever": "RECONNAISSANCE — le travail est fait et on ne s'autorise pas à conclure.",
+      "cast": {
+        "doc": {
+          "type": "block",
+          "note": "le document = la décision de trade"
+        },
+        "sign2": {
+          "type": "block",
+          "note": "la seconde case de signature, vide. LA MÉTAPHORE."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : un DOCUMENT teal, entièrement rempli, net. En bas, DEUX cases de signature. La première est signée. La seconde est VIDE. Une main tient le document et le TEND vers l'extérieur du cadre — geste saisi en cours — au lieu de signer la seconde case."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : le document reste tendu, la case vide clignote doucement. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : un document complet, une seule case vide, et une main qui tend le document ailleurs au lieu de signer",
+      "dispositif_cle": "MÉTAPHORE SEULE : aucune trajectoire d'objet à décharger. L'image doit être lisible sans un mot dès S1."
+    },
+    {
+      "id": "s2",
+      "clarity": "La lecture est faite. Le niveau est marqué, le risque est posé. Le travail est fini.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le document se déplie : niveau marqué, taille calculée, stop posé, cible définie. Chaque ligne reçoit une coche teal."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une jauge 'work done' monte à 100%. Rien ne manque techniquement. Le seul élément absent n'est pas une information — c'est une autorisation."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le document complet, la jauge pleine, la case vide."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'inventaire du document : tout est rempli, rien ne manque — sauf l'autorisation",
+      "turn": "il ne manque aucune information. il manque une permission."
+    },
+    {
+      "id": "s3",
+      "clarity": "Alors tu l'emmènes se faire contresigner. Un groupe, un mentor, une capture postée.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le document QUITTE le cadre et circule : il passe devant plusieurs formes fil-de-fer extérieures. Chacune l'examine."
+        },
+        {
+          "t": "1.5-3",
+          "do": "chaque passage ajoute un SEGMENT à une barre de délai qui grandit sous le document. Certaines formes signent, d'autres non — et une contradiction fait repartir le document vers une troisième. La barre de délai s'allonge encore."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le document en circulation, la barre de délai longue."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le document qui circule vers plusieurs signataires extérieurs, chacun ajoutant du délai",
+      "turn": "chaque avis ajoute du temps, pas de la certitude."
+    },
+    {
+      "id": "s4",
+      "clarity": "Quand il revient, le prix a bougé. Le document vaut moins qu'à l'écriture.",
+      "note": "LA scene — l'autorisation coûte exactement la distance parcourue.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Le document REVIENT, la seconde case enfin remplie. Il est posé sur le graphe. Mais le PRIX n'est plus là où il était quand le document a été écrit : le niveau d'entrée noté dessus est loin derrière."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on mesure : la distance parcourue pendant la circulation est exactement la barre de délai de S3. Le document est valide et périmé en même temps. Deux issues seulement : entrer loin avec un stop élargi, ou ne pas entrer. On les montre côte à côte, aucune n'est celle qui avait été préparée."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : le document signé, le prix parti, les deux issues dégradées."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le document revenu signé, confronté au prix qui a parcouru la distance — la valeur périmée",
+      "turn": "tu as obtenu l'accord. tu as perdu le trade préparé."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : la SECONDE CASE est supprimée du document — il n'en reste qu'une, la sienne. À la place, une courte LISTE de conditions se pose : quand elles sont cochées, le document est valide, point. L'avis extérieur existe toujours mais il est déplacé APRÈS l'exécution, dans une case 'review', jamais avant."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le document à signature unique, la case review reléguée après, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la seconde case supprimée + l'avis extérieur déplacé APRÈS l'exécution, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Every decision you make needs a second signature — and that signature is never yours.\n\nThe read is done, the level marked, the risk set. Nothing is missing except permission. So the decision goes out to be countersigned: a group, a mentor, a screenshot posted to see who agrees. By the time it comes back the price has moved exactly as far as the delay lasted, and both remaining options are worse than the one you prepared.\n\nTHE LINE — a decision that needs approval isn't slower, it's a different decision.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #discipline #confidence #propfirm #priceaction #mindset #trader",
+  "pinned_comment": "You got the approval. You lost the trade you had prepared. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}
