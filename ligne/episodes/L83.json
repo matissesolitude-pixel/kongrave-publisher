@@ -1,0 +1,152 @@
+{
+  "id": "L83",
+  "engine": "l83",
+  "title": "L83 — THE PART YOU THOUGHT YOU CONTROLLED",
+  "_cellule": "OERX (Assaillant) · Story · Nightmare · regard=sa famille · futur · −−",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "Two traders run the same week. One ends it calm, the other wrecked. Same results, by the way.",
+    "It isn't the P&L. Both finished the week down by an identical amount, both inside their limit.",
+    "It isn't the number of losses either. Same count, same sizes, same days.",
+    "One of them measured his week by what he decided. The other measured it by what the market did — and he was never in charge of that.",
+    "You control the entry, the size, the stop and the exit. That's the whole list. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "HARENG ROUGE : on installe la fausse piste — l'épisode semble comparer les RÉSULTATS.",
+      "question": "SAME WEEK. WHY WRECKED?",
+      "emotion_lever": "CURIOSITÉ — résultats identiques, états opposés.",
+      "cast": {
+        "w1": {
+          "type": "block",
+          "note": "semaine gauche"
+        },
+        "w2": {
+          "type": "block",
+          "note": "semaine droite, identique"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX semaines de résultats côte à côte, rigoureusement identiques — même série de blocs, même solde final. Mais sous chacune, un ÉTAT : à gauche une forme stable, posée. À droite une forme instable, agitée, comme secouée. Même semaine, deux états."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la forme de droite s'agite encore. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux semaines identiques en résultat, deux états opposés en fin de course",
+      "dispositif_cle": "FAUSSE PISTE : on laisse croire que le P&L ou le nombre de pertes expliquent l'écart."
+    },
+    {
+      "id": "s2",
+      "clarity": "On teste la fausse piste : le résultat. Ils sont identiques et dans la limite.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux soldes se superposent : même valeur au pixel. Une LIMITE se pose au-dessus : les deux sont dessous."
+        },
+        {
+          "t": "1.5-3",
+          "do": "aucune des deux semaines n'est anormale. La fausse piste est honnête : c'est la première chose que tout le monde regarderait."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux soldes superposés sous la limite."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux soldes superposés + la limite — aucune anomalie",
+      "turn": "ce n'est pas le résultat. il est le même."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce n'est pas le nombre de pertes non plus. Même compte, mêmes tailles, mêmes jours.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux séries de pertes s'alignent : même nombre, mêmes tailles, mêmes emplacements dans la semaine."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on les superpose : indiscernables. La deuxième explication évidente tombe. Il ne reste rien de mesurable dans les résultats pour expliquer l'écart d'état."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux séries superposées."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux séries de pertes alignées, indiscernables",
+      "turn": "rien dans les résultats n'explique l'écart."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RÉVÉLATION : l'un mesurait sa semaine par ses DÉCISIONS. L'autre par ce que le marché a fait.",
+      "note": "LA scene — le hareng rouge tombe : la variable est l'objet de la mesure.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Les deux semaines s'écartent comme un rideau, révélant DERRIÈRE le tableau de bord de chacun. À GAUCHE : une liste de DÉCISIONS — entrée respectée, taille respectée, stop tenu, sortie conforme. Chaque ligne est cochable, et toutes sont cochées."
+        },
+        {
+          "t": "2-3.5",
+          "do": "à DROITE : une liste d'ISSUES — le marché a-t-il bougé dans mon sens, la journée a-t-elle été bonne, ai-je gagné. Aucune de ces lignes n'est actionnable, aucune ne dépend de lui. Il a noté sa semaine sur un examen dont il ne tenait pas le stylo. Les deux ont fait le même travail ; un seul l'a mesuré."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la liste cochée à gauche, la liste incontrôlable à droite."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux tableaux de bord révélés : à gauche des décisions cochables, à droite des issues incontrôlables",
+      "turn": "il s'est noté sur ce qu'il ne décidait pas."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : la liste de droite est REMPLACÉE par celle de gauche — quatre lignes seulement, toutes actionnables : l'entrée, la taille, le stop, la sortie. Le résultat de la semaine reste affiché, inchangé, mais il sort du tableau de notation : il devient une conséquence, plus un jugement. La forme instable se stabilise."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la notation déplacée sur les 4 décisions actionnables, le résultat sorti du jugement, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders run the same week — identical results, identical losses, identical sizes — and one ends it calm while the other ends it wrecked.\n\nIt isn't the P&L and it isn't the count. One measured his week by what he decided: entry, size, stop, exit, four lines he could actually tick. The other measured it by what the market did, and graded himself on an exam he wasn't holding the pen for.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #riskmanagement #control #propfirm #mindset #discipline #trader",
+  "pinned_comment": "You control the entry, the size, the stop and the exit. That's the whole list. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "HARENG ROUGE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

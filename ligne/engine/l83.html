@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L83 « THE PART YOU THOUGHT YOU CONTROLLED » — MENTAL, HARENG ROUGE + révélation. TOFU. Même semaine, l'un calme, l'autre détruit, mêmes résultats.
+       S1 : deux semaines de résultats identiques, dessous une forme calme vs agitée. S2 : fausse piste P&L — soldes superposés sous la
+       limite. S3 : ni le nombre de pertes — séries superposées, indiscernables. S4 : révélation — les semaines s'écartent, DERRIÈRE le
+       tableau de bord : gauche une liste de DÉCISIONS (contrôlables, cochées), droite une liste d'ISSUES (incontrôlables). S5 : la prise
+       — la liste de droite remplacée par celle de gauche : entrée/taille/stop/sortie + CTA @kongrave_. Doctrine : teal = décidé/contrôlable ;
+       gris = issue/incontrôlable ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, TY=780, BY=1120;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const WA=[]; for(let i=0;i<6;i++)WA.push(mk('rect',{rx:5,opacity:0}));
+    const WB=[]; for(let i=0;i<6;i++)WB.push(mk('rect',{rx:5,opacity:0}));
+    const calm=mk('line',{stroke:YOU,'stroke-width':5,'stroke-linecap':'round',opacity:0}), agit=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':5,'stroke-linejoin':'round',opacity:0});
+    const balA=mk('rect',{fill:DEAD,rx:5,opacity:0}), balB=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const limit=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'12 8',opacity:0});
+    const curtainL=mk('rect',{fill:PAPER,opacity:0}), curtainR=mk('rect',{fill:PAPER,opacity:0});
+    // listes (décisions / issues)
+    const DBOX=[]; const DCHK=[]; const DLAB=[];
+    for(let i=0;i<8;i++){DBOX.push(mk('rect',{width:40,height:40,rx:7,fill:'none','stroke-width':3,opacity:0}));
+      const g=mk('g',{});mk('polyline',{points:'0,9 7,18 21,-4',fill:'none','stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},g);DCHK.push(g);
+      DLAB.push(mk('text',{'text-anchor':'start','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':32,opacity:0}));}
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME WEEK.','WHY WRECKED?'];
+    const FS=88,lineH=112,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [calm,agit,balA,balB,limit,curtainL,curtainR])setOp(e,0);for(const a of [WA,WB,DBOX,DCHK,DLAB])for(const e of a)setOp(e,0);hideCaps();}
+    const seed=[1,0,1,1,0,1];
+    function week(arr,y,u,op){for(let i=0;i<6;i++){const x=200+i*110;arr[i].setAttribute('x',x);arr[i].setAttribute('y',(y+3*Math.sin(u*2+i)).toFixed(1));arr[i].setAttribute('width',80);arr[i].setAttribute('height',60);arr[i].setAttribute('fill',seed[i]?YOU:DEAD);arr[i].setAttribute('fill-opacity',0.7);setOp(arr[i],op);}}
+    function listRow(i,x,y,label,checked,col,op){
+      DBOX[i].setAttribute('x',x);DBOX[i].setAttribute('y',y);DBOX[i].setAttribute('stroke',col);setOp(DBOX[i],op);
+      place(DCHK[i], x+8, y+8, checked?op:0); DCHK[i].querySelector('polyline').setAttribute('stroke',col);
+      DLAB[i].textContent=label;DLAB[i].setAttribute('x',x+60);DLAB[i].setAttribute('y',y+31);DLAB[i].setAttribute('fill',col===YOU?INK:DEAD);setOp(DLAB[i],op);}
+
+    // ═══ S1 — DEUX SEMAINES IDENTIQUES, CALME vs AGITÉ ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      week(WA,TY,u,clamp(u/0.3,0,1)*gf);week(WB,BY,u,clamp(u/0.3,0,1)*gf);
+      calm.setAttribute('x1',200);calm.setAttribute('x2',860);calm.setAttribute('y1',TY+120);calm.setAttribute('y2',TY+120);setOp(calm,clamp((u-0.4)/0.4,0,1)*gf);
+      const ag=[];for(let i=0;i<=30;i++){const f=i/30;ag.push((200+660*f).toFixed(1)+','+(BY+120+40*Math.sin(f*30+u*3)).toFixed(1));}
+      agit.setAttribute('points',ag.join(' '));setOp(agit,clamp((u-0.4)/0.4,0,1)*gf);
+      putCap(capC,'CALM',530,TY+180,YOU,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capD,'WRECKED',530,BY+200,DEAD,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capB,'SAME RESULTS — BY THE WAY',CX,1400,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — FAUSSE PISTE : LE P&L ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=5*Math.sin(u*1.4);
+      limit.setAttribute('x1',150);limit.setAttribute('x2',930);limit.setAttribute('y1',820);limit.setAttribute('y2',820);setOp(limit,clamp(u/0.4,0,1));
+      putCap(capC,'THE LIMIT',CX,790,INK,clamp((u-0.4)/0.5,0,1));
+      balA.setAttribute('x',CX-140);balA.setAttribute('y',(900+br).toFixed(1));balA.setAttribute('width',120);balA.setAttribute('height',180);balA.setAttribute('fill',DEAD);setOp(balA,1);
+      balB.setAttribute('x',CX+20);balB.setAttribute('y',(900+br).toFixed(1));balB.setAttribute('width',120);balB.setAttribute('height',180);balB.setAttribute('fill',DEAD);setOp(balB,1);
+      putCap(capD,'SAME DRAWDOWN — BOTH WITHIN',CX,1150,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'IT ISN’T THE P&L',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — NI LE NOMBRE DE PERTES ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const merge=clamp((u-1.0)/1.2,0,1);
+      week(WA, lerp(TY,960,merge), u, 1);
+      for(let i=0;i<6;i++){WB[i].setAttribute('x',200+i*110);WB[i].setAttribute('y',(lerp(BY,960,merge)+3*Math.sin(u*2+i)).toFixed(1));WB[i].setAttribute('width',80);WB[i].setAttribute('height',60);WB[i].setAttribute('fill',seed[i]?YOU:DEAD);WB[i].setAttribute('fill-opacity',0.7);setOp(WB[i], merge>0.9?0.5:1);}
+      putCap(capC,'SAME COUNT · SAME SIZES · SAME DAYS',CX,1120,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'IT ISN’T THE NUMBER OF LOSSES',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — RÉVÉLATION : DÉCISIONS vs ISSUES ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.3)+3*Math.sin(u*2.4);
+      // GAUCHE : décisions (contrôlables, cochées)
+      const dec=['ENTRY','SIZE','STOP','EXIT'];
+      for(let i=0;i<4;i++){const y=780+i*100+br;listRow(i, 160, y, dec[i], true, YOU, clamp((u-i*0.1)/0.35,0,1));}
+      putCap(capC,'DECISIONS',290,730,YOU,clamp(u/0.3,0,1));
+      // DROITE : issues (incontrôlables)
+      const out=['MARKET MOVED?','GOOD DAY?','I WON?','LUCKY?'];
+      for(let i=0;i<4;i++){const y=780+i*100-br;listRow(4+i, 600, y, out[i], false, DEAD, clamp((u-0.3-i*0.1)/0.35,0,1));}
+      putCap(capD,'OUTCOMES',740,730,DEAD,clamp((u-0.3)/0.5,0,1));
+      putCap(capB,'ONE MEASURED DECISIONS — ONE MEASURED THE MARKET',CX,1300,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — QUATRE LIGNES ACTIONNABLES + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.3)+3*Math.sin(u*2.4);
+      const dec=['ENTRY','SIZE','STOP','EXIT'];
+      for(let i=0;i<4;i++){const y=800+i*100+br;const shown=clamp((u-0.2-i*0.12)/0.4,0,1);listRow(i, CX-200, y, dec[i], clamp((u-0.8-i*0.15)/0.4,0,1)>0.5, YOU, shown);}
+      putCap(capC,'THE WHOLE LIST — ALL ACTIONABLE',CX,750,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'MEASURE THE WEEK BY WHAT YOU DECIDED',CX,1300,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
