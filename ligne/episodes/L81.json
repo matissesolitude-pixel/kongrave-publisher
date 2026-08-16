@@ -1,0 +1,156 @@
+{
+  "id": "L81",
+  "engine": "l81",
+  "title": "L81 — THE HOURS ALREADY SPENT",
+  "_cellule": "OITD (Circuit) · Éducation · Risk · regard=les autres traders · présent · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "Six hours into a position that stopped making sense at hour two.",
+    "Rewind. At hour two, the reason you entered was already gone — the level broke, the structure changed.",
+    "You didn't stay because the trade improved. You stayed because leaving would waste the six hours.",
+    "But the hours are gone either way. They're not in the position — they're behind you, and nothing you do next brings them back.",
+    "The only question a position answers is: would I open this now, at this price? Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "IN MEDIAS RES : six heures dans une position qui n'a plus de sens.",
+      "question": "WHY IS THIS STILL OPEN?",
+      "emotion_lever": "MALAISE — la position vit alors que sa raison est morte.",
+      "cast": {
+        "pos": {
+          "type": "gauge",
+          "note": "la position"
+        },
+        "reason": {
+          "type": "block",
+          "note": "la raison, éteinte"
+        },
+        "hours": {
+          "type": "gauge",
+          "note": "le compteur d'heures"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0, SANS INTRO : une position teal, tenue, avec un COMPTEUR d'heures affichant 6. Sous elle, sa raison d'entrée — mais elle est GRISE, éteinte, périmée. La position tient encore ; ce qui la justifiait n'existe plus."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : le compteur passe à 6h20, la raison reste éteinte. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : une position tenue depuis longtemps, un compteur d'heures élevé, la raison d'entrée éteinte",
+      "dispositif_cle": "IN MEDIAS RES : entrer par la situation absurde, reconstruire ensuite."
+    },
+    {
+      "id": "s2",
+      "clarity": "REMBOBINAGE : à la deuxième heure, la raison était déjà partie.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "REMBOBINAGE visible : le compteur redescend, 6h, 5h, 4h, 3h, 2h."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à 2h, on voit l'instant précis : le niveau cède, la structure change, la raison d'entrée passe de teal à gris. À cette seconde-là, le trade était terminé. Il restait quatre heures à tenir quelque chose de mort."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le curseur planté à 2h, la raison qui s'éteint."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la timeline qui recule jusqu'au moment exact où la raison s'est éteinte",
+      "turn": "le trade s'est terminé à la deuxième heure. personne ne l'a fermé."
+    },
+    {
+      "id": "s3",
+      "clarity": "Tu n'es pas resté parce que le trade s'améliorait. Tu es resté pour ne pas gâcher les six heures.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une BALANCE. Sur un plateau : ce que dit le graphe MAINTENANT — la raison éteinte, rien de plus. Le plateau est quasi vide."
+        },
+        {
+          "t": "1.5-3",
+          "do": "sur l'autre : les SIX HEURES, empilées en blocs lourds. Le plateau s'effondre de ce côté. C'est ce poids-là qui tient la position, pas l'analyse. On nomme la mécanique sans jargon : ce qui pèse, c'est le déjà-dépensé."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la balance déséquilibrée par les heures."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux poids comparés : ce que dit le graphe (rien) contre ce que pèsent les heures investies",
+      "turn": "ce n'est pas le graphe qui tient la position. c'est ce que tu as déjà dépensé."
+    },
+    {
+      "id": "s4",
+      "clarity": "Mais les heures sont parties de toute façon. Elles ne sont pas dans la position.",
+      "note": "LA scene — le coût déjà engagé n'est pas dans la position.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Les six heures sont RETIRÉES du plateau et déplacées derrière la position, sur l'axe du temps — là où elles sont réellement. Le plateau se vide. La balance se rééquilibre : il n'y a plus que le graphe, presque vide."
+        },
+        {
+          "t": "2-3.5",
+          "do": "on teste les deux issues : fermer maintenant → les six heures restent derrière. Tenir encore → les six heures restent derrière AUSSI, et une septième s'ajoute. Aucune décision ne les récupère. Elles ne sont pas un actif de la position, elles sont un fait du passé."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les heures derrière, la balance ne pesant plus que le graphe."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les six heures retirées du plateau et posées DERRIÈRE — elles n'ont jamais été dans le trade",
+      "turn": "aucune décision ne rachète les heures. elles sont derrière, dans les deux cas."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : une SEULE question se pose sur la position, à intervalle régulier — 'est-ce que j'ouvrirais ça maintenant, à ce prix ?'. Si non, la position se ferme. Le compteur d'heures est retiré de l'écran : il n'entre pas dans la réponse. Ce qui reste à l'écran est uniquement ce qui existe maintenant."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la question 'l'ouvrirais-je maintenant' + le compteur d'heures retiré du cadre, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Six hours into a position that stopped making sense at hour two — and the hours are the only thing still holding it open.\n\nThe level broke early, the structure changed, and the reason to be there died long before the position did. What kept it alive wasn't the chart, it was the weight of what had already been spent. But those hours sit behind you either way: closing now doesn't waste them, and holding doesn't recover them.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #sunkcost #discipline #riskmanagement #propfirm #mindset #trader",
+  "pinned_comment": "No decision buys those hours back. They're behind you in both cases. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L81 « THE HOURS ALREADY SPENT » — MENTAL, IN MEDIAS RES + REMBOBINAGE + BALANCE. TOFU. Coût irrécupérable.
+       S1 : une position teal tenue, compteur 6h, sa raison d'entrée ÉTEINTE (grise). S2 : rembobinage 6h→2h ; à 2h la raison passe de
+       teal à gris (le niveau cède). S3 : une BALANCE — plateau 'now' quasi vide (la raison éteinte) vs plateau '6 hours' lourd ; c'est
+       le poids des heures qui tient la position. S4 : les heures sont RETIRÉES du plateau et remises DERRIÈRE la position sur l'axe du
+       temps ; fermer ou tenir, elles restent derrière. S5 : la prise — une seule question, 'l'ouvrirais-je maintenant à ce prix ?' +
+       CTA @kongrave_. Doctrine : teal = raison vive/toi ; gris = heures perdues/raison éteinte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const posR=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':5,rx:8,opacity:0});
+    const reason=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':100,opacity:0});
+    const brk=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const cursor=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'8 8',opacity:0});
+    // balance
+    const fulcrum=mk('polygon',{fill:INK,opacity:0});
+    const beam=mk('line',{stroke:INK,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const panL=mk('circle',{r:16,fill:'none',stroke:INK,'stroke-width':4,opacity:0}), panR=mk('circle',{r:16,fill:'none',stroke:INK,'stroke-width':4,opacity:0});
+    const HB=[]; for(let i=0;i<6;i++)HB.push(mk('rect',{fill:DEAD,rx:4,opacity:0}));  // blocs d'heures
+    const nowMk=mk('rect',{fill:DEAD,rx:4,opacity:0});
+    const axis=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    const qmark=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':46,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHY IS THIS','STILL OPEN?'];
+    const FS=88,lineH=112,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [posR,reason,counter,brk,cursor,fulcrum,beam,panL,panR,nowMk,axis,qmark])setOp(e,0);for(const e of HB)setOp(e,0);hideCaps();}
+    // balance : beam pivote autour de (fx,fy) d'un angle a (rad)
+    function balance(fx,fy,len,a,op){
+      fulcrum.setAttribute('points',`${fx},${fy} ${fx-30},${fy+50} ${fx+30},${fy+50}`);setOp(fulcrum,op);
+      const lx=fx-Math.cos(a)*len, ly=fy-Math.sin(a)*len, rx=fx+Math.cos(a)*len, ry=fy+Math.sin(a)*len;
+      beam.setAttribute('x1',lx.toFixed(1));beam.setAttribute('y1',ly.toFixed(1));beam.setAttribute('x2',rx.toFixed(1));beam.setAttribute('y2',ry.toFixed(1));setOp(beam,op);
+      return [lx,ly,rx,ry];
+    }
+
+    // ═══ S1 — 6H, RAISON ÉTEINTE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const br=6*Math.sin(u*1.4);
+      posR.setAttribute('x',CX-120);posR.setAttribute('y',(880+br).toFixed(1));posR.setAttribute('width',240);posR.setAttribute('height',150);setOp(posR,clamp(u/0.3,0,1)*gf);
+      counter.textContent=(u<3?'6h':'6h20');counter.setAttribute('x',CX);counter.setAttribute('y',(830+br).toFixed(1));counter.setAttribute('fill',INK);setOp(counter,clamp((u-0.3)/0.4,0,1)*gf);
+      reason.setAttribute('x1',CX-140);reason.setAttribute('x2',CX+140);reason.setAttribute('y1',(1100+br).toFixed(1));reason.setAttribute('y2',(1100+br).toFixed(1));reason.setAttribute('stroke',DEAD);setOp(reason,clamp((u-0.5)/0.4,0,1)*gf);
+      putCap(capC,'THE REASON — GONE',CX,1170,DEAD,clamp((u-0.6)/0.5,0,1)*gf);
+      putCap(capB,'STOPPED MAKING SENSE AT HOUR TWO',CX,1330,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — REMBOBINAGE VERS 2H ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rew=clamp(u/1.6,0,1);
+      const h=lerp(6,2,eInOut(rew));
+      counter.textContent=Math.round(h)+'h';counter.setAttribute('x',CX);counter.setAttribute('y',760);counter.setAttribute('fill',INK);counter.setAttribute('font-size',96);setOp(counter,1);
+      // la structure qui change à 2h
+      const pts=[];for(let i=0;i<=24;i++){const f=i/24;const x=200+520*f;let y=960 - (f>0.5? 80*(f-0.5)*2*clamp((u-1.4)/0.8,0,1) : 0)+4*Math.sin(f*10+u*2);pts.push(x.toFixed(1)+','+y.toFixed(1));}
+      brk.setAttribute('points',pts.join(' '));setOp(brk,clamp(u/0.4,0,1));
+      cursor.setAttribute('x1',460);cursor.setAttribute('x2',460);cursor.setAttribute('y1',880);cursor.setAttribute('y2',1080);setOp(cursor,clamp((u-1.4)/0.4,0,1));
+      reason.setAttribute('x1',CX-140);reason.setAttribute('x2',CX+140);reason.setAttribute('y1',1160);reason.setAttribute('y2',1160);reason.setAttribute('stroke', rew>0.85?DEAD:YOU);setOp(reason,1);
+      putCap(capC,'THE LEVEL BROKE — REASON GONE',CX,1240,DEAD,clamp((u-1.8)/0.5,0,1));
+      putCap(capB,'IT WAS ALREADY GONE AT HOUR TWO',CX,560,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA BALANCE : LES HEURES TIENNENT LA POSITION ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const tilt=clamp((u-0.6)/1.6,0,1);
+      const a=lerp(0,0.32,tilt);   // penche à droite (les heures)
+      const [lx,ly,rx,ry]=balance(CX,940,300,a,clamp(u/0.4,0,1));
+      panL.setAttribute('cx',lx.toFixed(1));panL.setAttribute('cy',(ly+30).toFixed(1));setOp(panL,clamp(u/0.4,0,1));
+      panR.setAttribute('cx',rx.toFixed(1));panR.setAttribute('cy',(ry+30).toFixed(1));setOp(panR,clamp(u/0.4,0,1));
+      // plateau gauche : la raison éteinte (léger)
+      nowMk.setAttribute('x',(lx-30).toFixed(1));nowMk.setAttribute('y',(ly+50).toFixed(1));nowMk.setAttribute('width',60);nowMk.setAttribute('height',20);setOp(nowMk,clamp((u-0.5)/0.4,0,1));
+      // plateau droit : les 6 heures, lourdes
+      for(let i=0;i<6;i++){const shown=clamp((u-0.6-i*0.15)/0.4,0,1);HB[i].setAttribute('x',(rx-50).toFixed(1));HB[i].setAttribute('y',(ry+50+i*30).toFixed(1));HB[i].setAttribute('width',100);HB[i].setAttribute('height',26);setOp(HB[i],shown);}
+      putCap(capC,'NOW — NEARLY EMPTY',lx,ly-30,DEAD,clamp((u-0.5)/0.5,0,1));
+      putCap(capD,'SIX HOURS',rx,ry-30,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'THE HOURS HOLD THE POSITION',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LES HEURES DERRIÈRE, SUR L'AXE DU TEMPS ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const move=clamp(u/1.6,0,1);
+      // l'axe du temps
+      axis.setAttribute('x1',150);axis.setAttribute('x2',930);axis.setAttribute('y1',1080);axis.setAttribute('y2',1080);setOp(axis,clamp(u/0.3,0,1));
+      // la position (présent)
+      posR.setAttribute('x',700);posR.setAttribute('y',(940+6*Math.sin(u*1.4)).toFixed(1));posR.setAttribute('width',160);posR.setAttribute('height',110);setOp(posR,clamp(u/0.3,0,1));
+      // les heures déplacées DERRIÈRE (à gauche sur l'axe)
+      for(let i=0;i<6;i++){const x=lerp(560,190+i*60,move);HB[i].setAttribute('x',x.toFixed(1));HB[i].setAttribute('y',(1030+3*Math.sin(u*1.4+i)).toFixed(1));HB[i].setAttribute('width',48);HB[i].setAttribute('height',44);setOp(HB[i],clamp(u/0.3,0,1));}
+      putCap(capC,'BEHIND YOU — NOT IN THE POSITION',CX,1160,DEAD,clamp((u-1.0)/0.5,0,1));
+      putCap(capB,'CLOSE OR HOLD — THE HOURS STAY GONE',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA SEULE QUESTION + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      posR.setAttribute('x',CX-120);posR.setAttribute('y',(900+br).toFixed(1));posR.setAttribute('width',240);posR.setAttribute('height',140);setOp(posR,clamp(u/0.3,0,1));
+      // la question qui revient à intervalle
+      const pulse=0.6+0.4*Math.abs(Math.sin(u*1.6));
+      qmark.textContent='OPEN THIS NOW, AT THIS PRICE?';qmark.setAttribute('x',CX);qmark.setAttribute('y',(830+br).toFixed(1));qmark.setAttribute('fill',YOU);setOp(qmark,clamp((u-0.4)/0.5,0,1)*pulse);
+      reason.setAttribute('x1',CX-140);reason.setAttribute('x2',CX+140);reason.setAttribute('y1',(1110+br).toFixed(1));reason.setAttribute('y2',(1110+br).toFixed(1));reason.setAttribute('stroke',YOU);setOp(reason,clamp((u-1.0)/0.5,0,1));
+      putCap(capC,'THE ONLY QUESTION A POSITION ANSWERS',CX,1230,YOU,clamp((u-1.4)/0.5,0,1));
+      putCap(capD,'NOT “HOW LONG HAVE I HELD IT”',CX,1320,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
