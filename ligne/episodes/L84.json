@@ -1,0 +1,152 @@
+{
+  "id": "L84",
+  "engine": "l84",
+  "title": "L84 — THE PLAN THAT FIT PERFECTLY",
+  "_cellule": "SIRX (Glacier) · Miroir · Ease · regard=un pair extérieur · passé · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two plans are built on the same year of data. One has four rules. The other has fourteen.",
+    "On that year, the fourteen-rule plan looks flawless. Almost every loss has been ruled out by a condition.",
+    "But each condition was added after seeing the loss it removes. The plan didn't predict the year — it memorised it.",
+    "Run both on a year neither has seen. The simple plan performs about the same. The perfect one falls apart.",
+    "A plan with a rule for every past loss has no rule for the next one. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux plans construits sur la même année, en parallèle.",
+      "question": "WHICH PLAN IS BETTER?",
+      "emotion_lever": "ASYMÉTRIE — quatre règles contre quatorze, l'écart intrigue.",
+      "cast": {
+        "p4": {
+          "type": "block",
+          "note": "plan simple, bande haute"
+        },
+        "p14": {
+          "type": "block",
+          "note": "plan chargé, bande basse"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX BANDES horizontales, la MÊME année de données au centre de chacune. HAUT : un plan de QUATRE règles, court, aéré. BAS : un plan de QUATORZE règles, dense, empilé. Les deux bandes tournent déjà sur la même année."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : une quinzième règle s'ajoute en bas. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux bandes : un plan à 4 règles, un plan à 14, sur les mêmes données",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux bandes tournent toujours ensemble sur les mêmes données."
+    },
+    {
+      "id": "s2",
+      "clarity": "Sur cette année, le plan à quatorze règles paraît irréprochable.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux plans tournent sur l'année. Les résultats s'affichent : le plan à 4 règles laisse passer des pertes, visibles, grises."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le plan à 14 règles n'en laisse presque aucune : chaque perte a été écartée par une condition. Sa courbe est nettement plus belle. Sur cette année-là, il gagne, et il gagne franchement."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la courbe chargée nettement au-dessus."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux résultats sur l'année connue : le plan chargé écrase le simple",
+      "turn": "sur cette année, le plan chargé gagne. sans discussion."
+    },
+    {
+      "id": "s3",
+      "clarity": "Mais chaque condition a été ajoutée APRÈS avoir vu la perte qu'elle supprime.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On tire un FIL depuis chaque règle du plan chargé. Chaque fil aboutit à UNE perte précise de l'année."
+        },
+        {
+          "t": "1.5-3",
+          "do": "et une frise chronologique montre l'ordre : la perte D'ABORD, la règle ENSUITE. Quatorze fois. Le plan n'a pas prévu l'année, il l'a apprise par cœur. Le plan simple, lui, n'a que quatre fils, posés avant."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les quatorze fils règle→perte, la chronologie inversée visible."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "chaque règle reliée à la perte précise qu'elle écarte — la chronologie inversée révélée",
+      "turn": "il n'a rien prédit. il a mémorisé."
+    },
+    {
+      "id": "s4",
+      "clarity": "Sur une année qu'aucun des deux n'a vue, le simple tient. Le parfait s'effondre.",
+      "note": "LA scene — la performance apprise ne survit pas au neuf.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Une ANNÉE NEUVE se charge sur les deux bandes — aucun des deux plans ne l'a vue. Ils tournent en parallèle."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le plan à 4 règles produit une courbe comparable à avant : ni miracle, ni effondrement. Le plan à 14 règles DÉCROCHE : ses conditions ne correspondent à rien de ce qui se présente, elles bloquent des entrées valides et laissent passer des pertes qu'elles n'avaient pas prévu de connaître. La belle courbe n'existait que sur l'année apprise."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les deux courbes sur l'année neuve, la simple stable, la chargée effondrée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux plans lancés sur une année neuve : la courbe simple stable, la chargée qui décroche",
+      "turn": "la perfection ne portait que sur ce qu'il avait déjà vu."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : une RÈGLE sur les règles se pose — une condition ne peut être ajoutée que si elle est décidée AVANT de voir les données qu'elle filtre, et le plan est plafonné à un petit nombre. Une portion de l'année est mise de côté, jamais regardée, réservée à la vérification. Les deux courbes se rejoignent : plus modestes, et vraies."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la règle décidée avant les données + la portion d'année jamais regardée, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two plans are built on the same year of data. One has four rules, the other has fourteen — and on that year, fourteen looks flawless.\n\nAlmost every loss has been ruled out by a condition. But each condition was added after seeing the loss it removes: the plan didn't predict the year, it memorised it. Run both on a year neither has seen and the simple plan performs about the same, while the perfect one falls apart.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingstrategy #daytrading #forex #backtesting #overfitting #propfirm #discipline #priceaction #trader",
+  "pinned_comment": "A plan with a rule for every past loss has no rule for the next one. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MECANIQUE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

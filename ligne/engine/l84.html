@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L84 « THE PLAN THAT FIT PERFECTLY » — MECANIQUE, MONTAGE PARALLÈLE (sur-ajustement). TOFU. 4 règles vs 14, même année de données.
+       S1 : deux bandes, HAUT 4 règles, BAS 14. S2 : sur l'année, le plan 4-règles laisse passer des pertes ; le 14-règles n'en laisse
+       presque aucune, courbe bien meilleure. S3 : un FIL depuis chaque règle du plan chargé aboutit à UNE perte précise ; la chronologie
+       montre perte D'ABORD, règle ENSUITE — il a mémorisé, pas prévu. S4 : une année NEUVE — le simple tient, le parfait DÉCROCHE. S5 :
+       la prise — une condition ne s'ajoute que si décidée AVANT de voir les données + CTA @kongrave_. Doctrine : teal = plan simple/robuste ;
+       gris = règles surajustées/perte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, TY=740, BY=1140, X0=150, X1=930;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const R4=[]; for(let i=0;i<4;i++)R4.push(mk('rect',{fill:YOU,rx:6,opacity:0}));
+    const R14=[]; for(let i=0;i<14;i++)R14.push(mk('rect',{fill:DEAD,rx:4,opacity:0}));
+    const axT=mk('line',{stroke:INK,'stroke-width':3,opacity:0}), axB=mk('line',{stroke:INK,'stroke-width':3,opacity:0});
+    const curT=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const curB=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const LOSS=[]; for(let i=0;i<6;i++)LOSS.push(mk('circle',{r:9,fill:DEAD,opacity:0}));   // pertes laissées par le plan simple
+    const THREAD=[]; for(let i=0;i<8;i++)THREAD.push(mk('line',{stroke:DEAD,'stroke-width':2,'stroke-linecap':'round',opacity:0}));
+    const lossPt=[]; for(let i=0;i<8;i++)lossPt.push(mk('circle',{r:8,fill:DEAD,opacity:0}));
+    const ruleCard=mk('rect',{fill:'none',stroke:YOU,'stroke-width':5,rx:12,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHICH PLAN','IS BETTER?'];
+    const FS=90,lineH=114,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+94,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [axT,axB,curT,curB,ruleCard])setOp(e,0);for(const a of [R4,R14,LOSS,THREAD,lossPt])for(const e of a)setOp(e,0);hideCaps();}
+    function equity(x0,x1,y0,vol,seedNoise,u){const o=[];const n=30;for(let i=0;i<=n;i++){const f=i/n;let y=y0-90*f + vol*(Math.sin(f*13+seedNoise)+0.5*Math.sin(f*27+seedNoise*2));o.push((x0+(x1-x0)*f).toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+    function collapse(x0,x1,y0,u){const o=[];const n=30;for(let i=0;i<=n;i++){const f=i/n;let y=y0 + (f>0.4? 180*(f-0.4) : -20*f)+8*Math.sin(f*20+u*2);o.push((x0+(x1-x0)*f).toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ═══ S1 — 4 RÈGLES vs 14 ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const br=6*Math.sin(u*1.4);
+      // HAUT : 4 règles aérées
+      for(let i=0;i<4;i++){const x=250+i*130;R4[i].setAttribute('x',x);R4[i].setAttribute('y',(TY-30+br).toFixed(1));R4[i].setAttribute('width',100);R4[i].setAttribute('height',60);R4[i].setAttribute('fill-opacity',0.4);setOp(R4[i],clamp((u-0.2-i*0.1)/0.4,0,1)*gf);}
+      // BAS : 14 règles serrées (une 15e menace)
+      const n14=Math.min(14,10+Math.floor(u*1.5));
+      for(let i=0;i<14;i++){const c=i%7,r=Math.floor(i/7);R14[i].setAttribute('x',210+c*90);R14[i].setAttribute('y',(BY-30+r*46-br).toFixed(1));R14[i].setAttribute('width',72);R14[i].setAttribute('height',36);setOp(R14[i], i<n14?clamp((u-0.2)/0.4,0,1)*gf:0);}
+      putCap(capC,'FOUR RULES',CX,TY-70,YOU,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capD,'FOURTEEN RULES',CX,BY+140,DEAD,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'SAME YEAR OF DATA',CX,1400,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — SUR L'ANNÉE : LE CHARGÉ PARAÎT PARFAIT ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axT.setAttribute('x1',X0);axT.setAttribute('x2',X1);axT.setAttribute('y1',TY+120);axT.setAttribute('y2',TY+120);setOp(axT,clamp(u/0.3,0,1));
+      axB.setAttribute('x1',X0);axB.setAttribute('x2',X1);axB.setAttribute('y1',BY+120);axB.setAttribute('y2',BY+120);setOp(axB,clamp(u/0.3,0,1));
+      const grow=clamp(u/2.0,0,1);
+      const br=7*Math.sin(u*1.3)+4*Math.sin(u*2.4);   // respiration continue
+      curT.setAttribute('points',equity(X0,lerp(X0,X1,grow),TY+120+br,26,1,u));setOp(curT,clamp(u/0.3,0,1));
+      curB.setAttribute('points',equity(X0,lerp(X0,X1,grow),BY+120-br,8,3,u));curB.setAttribute('stroke',DEAD);setOp(curB,clamp(u/0.3,0,1));
+      // pertes laissées par le simple
+      for(let i=0;i<5;i++){const x=X0+120+i*140;LOSS[i].setAttribute('cx',x);LOSS[i].setAttribute('cy',(TY+120-20+18*Math.sin(x*0.03)).toFixed(1));setOp(LOSS[i], x<lerp(X0,X1,grow)?1:0);}
+      putCap(capC,'SIMPLE — SOME LOSSES SLIP',CX,TY-30,YOU,clamp((u-1.0)/0.5,0,1));
+      putCap(capD,'LOADED — ALMOST NONE',CX,BY-30,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'ON THIS YEAR, THE 14 LOOKS FLAWLESS',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — CHAQUE RÈGLE POINTE UNE PERTE (PERTE D'ABORD) ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axB.setAttribute('x1',X0);axB.setAttribute('x2',X1);axB.setAttribute('y1',1180);axB.setAttribute('y2',1180);setOp(axB,clamp(u/0.15,0,1));
+      // règles (haut) reliées à des pertes précises (sur l'axe)
+      const n=Math.min(8,2+Math.floor(u/0.28));
+      for(let i=0;i<8;i++){const rx=200+i*80, ry=780;const lx=210+i*88, ly=1180;
+        R14[i].setAttribute('x',rx-30);R14[i].setAttribute('y',(ry-18-3*Math.sin(u*1.5+i)).toFixed(1));R14[i].setAttribute('width',56);R14[i].setAttribute('height',36);setOp(R14[i], i<n?1:0);
+        lossPt[i].setAttribute('cx',lx);lossPt[i].setAttribute('cy',(1180+4*Math.sin(u*1.3+i)).toFixed(1));setOp(lossPt[i], i<n?1:0);
+        THREAD[i].setAttribute('x1',rx);THREAD[i].setAttribute('y1',(ry+18).toFixed(1));THREAD[i].setAttribute('x2',lx);THREAD[i].setAttribute('y2',1170);setOp(THREAD[i], i<n?0.7:0);}
+      putCap(capC,'LOSS FIRST — RULE AFTER · ×14',CX,1260,DEAD,clamp((u-1.0)/0.5,0,1));
+      putCap(capB,'IT MEMORISED THE YEAR — DIDN’T PREDICT IT',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — ANNÉE NEUVE : LE PARFAIT S'EFFONDRE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      axT.setAttribute('x1',X0);axT.setAttribute('x2',X1);axT.setAttribute('y1',TY+140);axT.setAttribute('y2',TY+140);setOp(axT,clamp(u/0.3,0,1));
+      axB.setAttribute('x1',X0);axB.setAttribute('x2',X1);axB.setAttribute('y1',BY+140);axB.setAttribute('y2',BY+140);setOp(axB,clamp(u/0.3,0,1));
+      const grow=clamp((u-0.4)/2.0,0,1);
+      curT.setAttribute('points',equity(X0,lerp(X0,X1,grow),TY+140,26,7,u));setOp(curT,clamp(u/0.3,0,1));
+      curB.setAttribute('points',collapse(X0,lerp(X0,X1,grow),BY+60,u));curB.setAttribute('stroke',DEAD);setOp(curB,clamp(u/0.3,0,1));
+      putCap(capC,'SIMPLE — HOLDS',CX,TY-10,YOU,clamp((u-1.0)/0.5,0,1));
+      putCap(capD,'PERFECT — FALLS APART',CX,BY+230,DEAD,clamp((u-2.0)/0.5,0,1));
+      putCap(capB,'A YEAR NEITHER PLAN HAD SEEN',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA RÈGLE SUR LES RÈGLES + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      ruleCard.setAttribute('x',240);ruleCard.setAttribute('y',(860+br).toFixed(1));ruleCard.setAttribute('width',600);ruleCard.setAttribute('height',180);setOp(ruleCard,clamp(u/0.4,0,1));
+      for(let i=0;i<4;i++){const x=300+i*130;R4[i].setAttribute('x',x);R4[i].setAttribute('y',(900+br).toFixed(1));R4[i].setAttribute('width',90);R4[i].setAttribute('height',100);R4[i].setAttribute('fill-opacity',0.35);setOp(R4[i],clamp((u-0.6-i*0.1)/0.4,0,1));}
+      putCap(capC,'A CONDITION — DECIDED BEFORE THE DATA',CX,830,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'A RULE FOR EVERY PAST LOSS HAS NONE FOR THE NEXT',CX,1280,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
