@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L85 « THE MOVE WAS ALREADY DONE » — STRUCTURE, IN MEDIAS RES + REMBOBINAGE. TOFU. Entrée parfaite, mais la distance du jour est déjà consommée.
+       S1 : une entrée teal sur un setup net, MAIS une jauge de distance parcourue déjà haute. S2 : rembobinage à l'ouverture — une
+       ENVELOPPE (bande d'amplitude typique) autour du prix, dès l'ouverture. S3 : le prix parcourt, la jauge se remplit ; le setup
+       apparaît TARD, la réserve restante dans l'enveloppe est petite. S4 : le même setup TÔT (grande réserve, bon RR) vs TARD (réserve
+       minuscule, RR écrasé). S5 : la prise — lire la RÉSERVE avant d'entrer + CTA @kongrave_. Doctrine : teal = réserve/entrée saine ;
+       gris = distance consommée/RR écrasé ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, X0=160, X1=880;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const env=mk('rect',{fill:DEAD,'fill-opacity':0.12,rx:12,opacity:0});   // enveloppe du jour
+    const envTop=mk('line',{stroke:DEAD,'stroke-width':3,'stroke-dasharray':'12 8',opacity:0}), envBot=mk('line',{stroke:DEAD,'stroke-width':3,'stroke-dasharray':'12 8',opacity:0});
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const lvl=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const entry=mk('circle',{r:16,fill:YOU,opacity:0});
+    const gOut=mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:8,opacity:0}), gFill=mk('rect',{fill:DEAD,rx:5,opacity:0}), gRes=mk('rect',{fill:YOU,rx:5,opacity:0});
+    // S4 RR
+    const rrGoodE=mk('rect',{fill:YOU,rx:5,opacity:0}), rrRiskE=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const rrGoodL=mk('rect',{fill:YOU,rx:5,opacity:0}), rrRiskL=mk('rect',{fill:DEAD,rx:5,opacity:0});
+    const eE=mk('circle',{r:13,fill:YOU,opacity:0}), eL=mk('circle',{r:13,fill:YOU,opacity:0});
+    const targetE=mk('line',{stroke:YOU,'stroke-width':3,'stroke-dasharray':'8 6',opacity:0}), targetL=mk('line',{stroke:YOU,'stroke-width':3,'stroke-dasharray':'8 6',opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['PERFECT ENTRY.','HOW MUCH ROOM?'];
+    const FS=80,lineH=106,y0v=210,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':144,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [env,envTop,envBot,price,lvl,entry,gOut,gFill,gRes,rrGoodE,rrRiskE,rrGoodL,rrRiskL,eE,eL,targetE,targetL])setOp(e,0);hideCaps();}
+    function pricePath(x0,x1,yOpen,prog,u){const o=[];const n=30;const r=clamp(prog,0.02,1);for(let i=0;i<=n;i++){const f=i/n;if(f>r)break;const x=x0+(x1-x0)*f;const y=yOpen - 220*eOut(f)*(f/r>0.9?1:f/r) + 8*Math.sin(f*12+u*2);o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ═══ S1 — ENTRÉE PARFAITE, JAUGE DÉJÀ HAUTE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const br=6*Math.sin(u*1.4);
+      lvl.setAttribute('x1',180);lvl.setAttribute('x2',760);lvl.setAttribute('y1',(1000+br).toFixed(1));lvl.setAttribute('y2',(1000+br).toFixed(1));setOp(lvl,clamp(u/0.3,0,1)*gf);
+      price.setAttribute('points',pricePath(180,720,1080,1,u));setOp(price,clamp(u/0.3,0,1)*gf);
+      entry.setAttribute('cx',700);entry.setAttribute('cy',(870+br).toFixed(1));setOp(entry,clamp((u-0.3)/0.4,0,1)*gf);
+      // jauge distance parcourue, déjà haute
+      const gy=760,gh=360;gOut.setAttribute('x',820);gOut.setAttribute('y',gy);gOut.setAttribute('width',90);gOut.setAttribute('height',gh);setOp(gOut,clamp(u/0.4,0,1)*gf);
+      const frac=lerp(0.75,0.9,clamp(u/5,0,1));const fh=frac*(gh-10);gFill.setAttribute('x',825);gFill.setAttribute('y',(gy+gh-5-fh).toFixed(1));gFill.setAttribute('width',80);gFill.setAttribute('height',fh.toFixed(1));setOp(gFill,clamp(u/0.4,0,1)*gf);
+      putCap(capC,'DISTANCE DONE',865,gy+gh+50,DEAD,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capB,'THE PROBLEM IS WHAT TIME IT IS',CX,1300,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — REMBOBINAGE : L'ENVELOPPE À L'OUVERTURE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rew=clamp(u/1.4,0,1);
+      // le prix se rétracte vers l'ouverture
+      price.setAttribute('points',pricePath(180,720,1080,1-rew*0.7,u));setOp(price,1);
+      // l'enveloppe (bande floue) apparaît autour du prix, dès l'ouverture
+      const eop=clamp(u/0.2,0,1);
+      env.setAttribute('x',160);env.setAttribute('y',780);env.setAttribute('width',720);env.setAttribute('height',320);setOp(env,eop);
+      envTop.setAttribute('x1',160);envTop.setAttribute('x2',880);envTop.setAttribute('y1',780);envTop.setAttribute('y2',780);setOp(envTop,eop);
+      envBot.setAttribute('x1',160);envBot.setAttribute('x2',880);envBot.setAttribute('y1',1100);envBot.setAttribute('y2',1100);setOp(envBot,eop);
+      putCap(capA,'REWIND TO THE OPEN',CX,750,DEAD,clamp(u/0.2,0,1)*(1-clamp((u-1.4)/0.4,0,1)));
+      putCap(capC,'THE DAY’S TYPICAL RANGE',CX,760,DEAD,clamp((u-1.6)/0.5,0,1));
+      putCap(capB,'THE DAY HAD A SIZE FROM THE OPEN',CX,600,INK,clamp((u-2.6)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE PRIX PARCOURT, LE SETUP ARRIVE TARD ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      env.setAttribute('x',160);env.setAttribute('y',780);env.setAttribute('width',720);env.setAttribute('height',320);setOp(env,0.9);
+      envTop.setAttribute('x1',160);envTop.setAttribute('x2',880);envTop.setAttribute('y1',780);envTop.setAttribute('y2',780);setOp(envTop,0.7);
+      envBot.setAttribute('x1',160);envBot.setAttribute('x2',880);envBot.setAttribute('y1',1100);envBot.setAttribute('y2',1100);setOp(envBot,0.7);
+      const prog=clamp(u/2.4,0,1);
+      price.setAttribute('points',pricePath(180,lerp(340,760,prog),1090,1,u));setOp(price,1);
+      putCap(capA,'HOUR BY HOUR',CX,750,DEAD,clamp(u/0.2,0,1)*(1-clamp((u-1.6)/0.4,0,1)));
+      // setup tardif : marqueur près du haut de l'enveloppe
+      if(prog>0.7){const sx=lerp(200,760,prog);entry.setAttribute('cx',sx.toFixed(1));entry.setAttribute('cy',830);setOp(entry,clamp((prog-0.7)/0.2,0,1));
+        // la réserve restante (petite) : du prix au haut de l'enveloppe
+        gRes.setAttribute('x',(sx+20).toFixed(1));gRes.setAttribute('y',790);gRes.setAttribute('width',24);gRes.setAttribute('height',40);setOp(gRes,clamp((prog-0.75)/0.2,0,1));}
+      putCap(capC,'SETUP APPEARS LATE — LITTLE LEFT',CX,1180,DEAD,clamp((u-1.8)/0.5,0,1));
+      putCap(capB,'THE MOVE WASN’T STARTING — FINISHING',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — MÊME SETUP : TÔT vs TARD ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=5*Math.sin(u*1.4);
+      const grow=clamp((u-0.6)/1.4,0,1);
+      // TÔT (gauche) : grande réserve = bon RR
+      const structY=1160;
+      eE.setAttribute('cx',300);eE.setAttribute('cy',(structY-40+br).toFixed(1));setOp(eE,clamp(u/0.3,0,1));
+      rrGoodE.setAttribute('x',360);rrGoodE.setAttribute('width',44);rrGoodE.setAttribute('y',(structY-40-260*grow+br).toFixed(1));rrGoodE.setAttribute('height',(260*grow).toFixed(1));setOp(rrGoodE,clamp(u/0.3,0,1));
+      rrRiskE.setAttribute('x',360);rrRiskE.setAttribute('width',44);rrRiskE.setAttribute('y',(structY-40+br).toFixed(1));rrRiskE.setAttribute('height',80);setOp(rrRiskE,clamp(u/0.3,0,1));
+      putCap(capC,'EARLY: ROOM',290,structY+180,YOU,clamp((u-0.6)/0.5,0,1));
+      // TARD (droite) : réserve minuscule = RR écrasé
+      eL.setAttribute('cx',720);eL.setAttribute('cy',(structY-40-br).toFixed(1));setOp(eL,clamp(u/0.3,0,1));
+      rrGoodL.setAttribute('x',780);rrGoodL.setAttribute('width',44);rrGoodL.setAttribute('y',(structY-40-60*grow-br).toFixed(1));rrGoodL.setAttribute('height',(60*grow).toFixed(1));setOp(rrGoodL,clamp(u/0.3,0,1));
+      rrRiskL.setAttribute('x',780);rrRiskL.setAttribute('width',44);rrRiskL.setAttribute('y',(structY-40-br).toFixed(1));rrRiskL.setAttribute('height',80);setOp(rrRiskL,clamp(u/0.3,0,1));
+      putCap(capD,'LATE: NONE',740,structY+180,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'SAME SETUP, FOUR HOURS APART',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LIRE LA RÉSERVE + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.3)+3*Math.sin(u*2.4);
+      env.setAttribute('x',220);env.setAttribute('y',(900+br).toFixed(1));env.setAttribute('width',600);env.setAttribute('height',220);setOp(env,clamp(u/0.15,0,1));
+      envTop.setAttribute('x1',220);envTop.setAttribute('x2',820);envTop.setAttribute('y1',(900+br).toFixed(1));envTop.setAttribute('y2',(900+br).toFixed(1));setOp(envTop,clamp(u/0.15,0,1));
+      envBot.setAttribute('x1',220);envBot.setAttribute('x2',820);envBot.setAttribute('y1',(1120+br).toFixed(1));envBot.setAttribute('y2',(1120+br).toFixed(1));setOp(envBot,clamp(u/0.15,0,1));
+      lvl.setAttribute('x1',220);lvl.setAttribute('x2',820);lvl.setAttribute('y1',(1120+br).toFixed(1));lvl.setAttribute('y2',(1120+br).toFixed(1));setOp(lvl,clamp(u/0.15,0,1));
+      const px=lerp(260,540,clamp((u-0.4)/1.2,0,1));
+      entry.setAttribute('cx',px.toFixed(1));entry.setAttribute('cy',(1010+br).toFixed(1));setOp(entry,clamp(u/0.15,0,1));
+      // la réserve restante lue en un geste
+      gRes.setAttribute('x',(px+20).toFixed(1));gRes.setAttribute('y',(910+br).toFixed(1));gRes.setAttribute('width',(820-px-40).toFixed(1));gRes.setAttribute('height',30);setOp(gRes,clamp((u-1.0)/0.5,0,1));
+      putCap(capC,'READ THE RESERVE BEFORE ENTERING',CX,860,YOU,clamp(u/0.2,0,1));
+      putCap(capD,'A SETUP CAN’T TELL YOU THE DISTANCE LEFT — THE DAY DOES',CX,1240,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

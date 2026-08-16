@@ -1,0 +1,152 @@
+{
+  "id": "L85",
+  "engine": "l85",
+  "title": "L85 — THE MOVE WAS ALREADY DONE",
+  "_cellule": "OIRD (Circuit) · Éducation · Time delay · regard=le prospect · présent · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "You entered at the perfect place. The problem is what time it was.",
+    "Rewind to the open. From that moment, the day had a size — not a fixed number, but a range it rarely exceeds.",
+    "By the time your setup appeared, most of that range had already been travelled. The move wasn't starting. It was finishing.",
+    "So the entry was clean and the room left was not. Same setup, four hours earlier, is a different trade entirely.",
+    "A setup doesn't tell you how much distance is left. Only the day does. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "IN MEDIAS RES : l'entrée est parfaite, et le mouvement est déjà consommé.",
+      "question": "PERFECT ENTRY. HOW MUCH ROOM?",
+      "emotion_lever": "TENSION — la qualité de l'entrée et la pauvreté de la réserve se contredisent.",
+      "cast": {
+        "entry": {
+          "type": "gauge",
+          "note": "l'entrée, impeccable"
+        },
+        "range": {
+          "type": "gauge",
+          "note": "la distance déjà parcourue"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0, SANS INTRO : une entrée teal se pose sur un setup irréprochable — niveau net, structure propre. MAIS sur le côté, une JAUGE de distance parcourue est déjà remplie aux trois quarts. L'entrée est belle, la réserve est vide. Les deux sont visibles en même temps."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la jauge se remplit encore un peu. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : une entrée nette sur un beau setup, et une jauge de distance quasi épuisée",
+      "dispositif_cle": "IN MEDIAS RES : entrer par la contradiction, expliquer ensuite."
+    },
+    {
+      "id": "s2",
+      "clarity": "REMBOBINAGE à l'ouverture : la journée avait une taille.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "REMBOBINAGE jusqu'à l'ouverture. À ce moment, une ENVELOPPE se dessine autour du prix : la distance que la journée parcourt habituellement — plus large certains jours, plus étroite d'autres, mais bornée."
+        },
+        {
+          "t": "1.5-3",
+          "do": "ce n'est pas un nombre gravé : c'est une zone d'amplitude typique, montrée comme une bande floue. Elle existe dès l'ouverture, avant tout setup."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : l'enveloppe posée autour du prix, dès l'ouverture."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'amplitude typique posée dès l'ouverture — une enveloppe, pas un nombre fixe",
+      "turn": "la journée a une taille. elle est là avant ton setup."
+    },
+    {
+      "id": "s3",
+      "clarity": "Quand ton setup est apparu, l'essentiel de cette distance était déjà parcouru.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On avance : le prix parcourt son trajet, heure après heure. La jauge de distance se remplit progressivement."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le setup apparaît TARD. À cet instant, on mesure ce qui reste dans l'enveloppe : une portion réduite. Le mouvement n'était pas en train de commencer — il était en train de finir. Le setup, lui, ne portait aucune information là-dessus."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le trajet accompli, la petite réserve restante surlignée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le trajet accompli avant l'entrée, mesuré contre l'enveloppe — la réserve restante minuscule",
+      "turn": "le setup ne savait pas quelle heure il était."
+    },
+    {
+      "id": "s4",
+      "clarity": "L'entrée était propre, la place restante ne l'était pas. Le même setup quatre heures plus tôt est un autre trade.",
+      "note": "LA scene — la qualité du setup est indépendante de la place restante.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "LE MÊME setup est rejoué à deux moments. TÔT : l'entrée est identique, la structure identique — mais la réserve devant elle est large. La cible tient dedans."
+        },
+        {
+          "t": "2-3.5",
+          "do": "TARD : entrée identique, structure identique, réserve minuscule. La même cible dépasse l'enveloppe : elle demande à la journée plus que ce qu'elle donne habituellement. Deux barres de RR se posent côte à côte : l'écart est énorme, pour EXACTEMENT le même signal. Ce n'est pas le setup qui a changé, c'est l'heure."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les deux RR côte à côte, le même setup, l'écart flagrant."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le même setup joué tôt et tard : même entrée, deux réserves, deux RR opposés",
+      "turn": "le même signal ne vaut pas la même chose selon l'heure."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : avant toute entrée, la RÉSERVE est lue en un geste — combien de l'enveloppe du jour reste devant. Si la cible n'y tient pas, l'entrée est refusée quelle que soit la beauté du setup. Une petite barre 'room left' se pose à côté de chaque signal, au même rang que le stop et la cible."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la réserve du jour lue avant l'entrée + la cible qui doit y tenir, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "You entered at the perfect place. The problem is what time it was.\n\nFrom the open, the day has a size — not a fixed number, but a range it rarely exceeds. By the time the setup appeared, most of it had already been travelled, so the move wasn't starting, it was finishing. Same signal four hours earlier is a completely different trade, and nothing in the setup itself tells you which one you're taking.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #priceaction #daytrading #forex #volatility #marketstructure #propfirm #discipline #tradingeducation #trader",
+  "pinned_comment": "A setup doesn't tell you how much distance is left. Only the day does. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}
