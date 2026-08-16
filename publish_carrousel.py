@@ -104,6 +104,13 @@ def append_journal(entry):
         fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
+def _is_bofu(path):
+    # nom de file = "NN-<ID>.json" (ou "<ID>.json") ; le BOFU a un ID en B*.
+    import re
+    stem = re.sub(r"^\d+-", "", path.stem)
+    return stem[:1].upper() == "B"
+
+
 def pick_from_queue():
     if not QUEUE_DIR.is_dir():
         skip(f"pas de file ({QUEUE_DIR})")
@@ -111,9 +118,28 @@ def pick_from_queue():
     if not manifests:
         skip("file vide — aucun carrousel en attente")
     # ORDRE ALPHABÉTIQUE du nom de fichier, pas de l'ID : on préfixe donc les fichiers
-    # de file (01-C5.json, 02-C3.json) pour imposer l'ordre éditorial de la LOI 3
-    # (alternance occidental/japonais), qui ne suit pas la numérotation des carrousels.
-    return manifests[0]
+    # de file (01-C5.json, 02-C3.json) pour imposer l'ordre éditorial de la LOI 3.
+    # RÈGLE JOUR (doctrine BOFU) : les BOFU (B*) ne sortent que LUNDI ou JEUDI, et jamais
+    # un autre jour. Ces jours-là on les préfère ; s'il n'y en a pas en file, on retombe
+    # sur un MOFU pour ne pas laisser de trou dans la grille.
+    try:
+        from zoneinfo import ZoneInfo
+        wd = datetime.now(ZoneInfo("Europe/Paris")).weekday()
+    except Exception:
+        wd = datetime.now(timezone.utc).weekday()
+    bofu = [m for m in manifests if _is_bofu(m)]
+    mofu = [m for m in manifests if not _is_bofu(m)]
+    if wd in (0, 3):                       # lundi=0, jeudi=3
+        if bofu:
+            return bofu[0]
+        if mofu:
+            log("[carrousel] jour BOFU (lun/jeu) mais aucun BOFU en file — repli sur MOFU")
+            return mofu[0]
+        skip("file vide")
+    else:
+        if mofu:
+            return mofu[0]
+        skip("aucun MOFU en file — les BOFU restants n'ouvrent que lundi/jeudi")
 
 
 def check_gates(force):
