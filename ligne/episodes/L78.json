@@ -1,0 +1,152 @@
+{
+  "id": "L78",
+  "engine": "l78",
+  "title": "L78 — THE MAP AND THE MILES",
+  "_cellule": "SERX (Sniper) · Curiosité · Dream/identité · regard=les autres traders · passé · −−",
+  "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
+  "voice": [
+    "You called the move. You have the map to prove it. You just never walked it.",
+    "The direction was right. It's still right. And a correct direction pays exactly nothing on its own.",
+    "Because the market doesn't settle on where price went. It settles on where your position was while it went there.",
+    "So the accurate trader and the paid trader are two different jobs — and only one of them has a stop, a size and an exit.",
+    "Being right is a map. The account only records the miles. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MÉTAPHORE PORTÉE SEULE : la carte tracée et le chemin jamais parcouru.",
+      "question": "YOU CALLED IT. WHERE WERE YOU?",
+      "emotion_lever": "MALAISE — la justesse est là et ne sert à rien. L'écart carte/terrain est immédiat.",
+      "cast": {
+        "map": {
+          "type": "block",
+          "note": "la carte = la prédiction juste"
+        },
+        "ground": {
+          "type": "path",
+          "note": "le terrain = l'exécution réelle. LA MÉTAPHORE."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : une CARTE teal, avec un itinéraire tracé d'un trait net et confiant, du point A au point B. Juste à côté, le TERRAIN réel : le même parcours, mais VIERGE — aucune trace de pas, aucun passage. La carte est parfaite, le sol est intact."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la carte pulse doucement, le terrain reste vierge. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : une carte avec un itinéraire tracé net, et le chemin réel vierge à côté",
+      "dispositif_cle": "MÉTAPHORE SEULE : pas d'objet à décharger. L'écart carte/terrain doit se lire sans un mot dès S1."
+    },
+    {
+      "id": "s2",
+      "clarity": "La direction était juste. Elle l'est toujours. Et une direction juste ne paie rien.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On SUPERPOSE l'itinéraire de la carte sur le mouvement de prix réellement survenu. Ils coïncident exactement — la prédiction était bonne."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à côté, la barre de compte : elle ne bouge PAS d'un cran. La justesse et le résultat sont deux objets séparés, et rien ne les relie automatiquement. On souligne le vide entre les deux."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la coïncidence parfaite en haut, la barre de compte plate en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la superposition carte/mouvement réel : ils coïncident parfaitement, le compte ne bouge pas",
+      "turn": "la prédiction est juste. le compte n'en sait rien."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le marché ne règle pas sur où le prix est allé. Il règle sur où était ta position pendant ce temps.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une LIGNE DE RÈGLEMENT traverse l'écran. Elle balaie d'abord la carte : elle la traverse sans rien y prendre, la carte n'a pas de valeur pour elle."
+        },
+        {
+          "t": "1.5-3",
+          "do": "elle balaie ensuite le terrain : là, elle cherche des TRACES de passage — une position, une durée, une taille. Elle n'en trouve aucune. Le règlement est nul. On montre à côté un terrain AVEC traces : la même ligne y prélève quelque chose."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la ligne qui traverse la carte sans effet, et qui prélève sur le terrain marqué."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la ligne de règlement : elle ne lit pas la carte, elle lit la présence sur le terrain",
+      "turn": "le règlement ne lit pas ce que tu avais compris. il lit où tu étais."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le trader juste et le trader payé sont deux métiers. Un seul a un stop, une taille et une sortie.",
+      "note": "LA scene — la justesse est un quart du métier, pas le métier.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "DEUX colonnes d'outils. 'ACCURATE' : un seul outil, la lecture. Elle est là, elle est bonne, la colonne est courte."
+        },
+        {
+          "t": "2-3.5",
+          "do": "'PAID' : la même lecture EN PREMIER — mais suivie de trois outils supplémentaires : une taille, un stop, une sortie. La colonne est bien plus longue. On souligne que la lecture est COMMUNE aux deux : elle ne suffit simplement pas. Le trader juste possède un quart de l'outillage et croit posséder l'essentiel."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : la colonne courte et la colonne longue, la lecture commune surlignée dans les deux."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux métiers décomposés : la carte demande une lecture, le terrain demande trois décisions de plus",
+      "turn": "tu as l'outil le plus visible. il te manque les trois qui règlent."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : une RÈGLE se pose sur la carte — aucune prédiction n'est publiée ni consignée sans les trois autres outils attachés : taille, stop, sortie. La carte cesse d'exister seule. Le terrain, cette fois, reçoit des traces de passage, et la ligne de règlement y prélève quelque chose."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la carte avec ses trois outils attachés, les traces sur le terrain, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la prédiction jamais séparée de taille/stop/sortie + les traces sur le terrain, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "You called the move. You have the map to prove it. You just never walked it.\n\nThe direction was right and it's still right — and a correct direction pays exactly nothing on its own, because the market doesn't settle on where price went. It settles on where your position was while it went there. Accuracy is one tool. Getting paid needs three more: a size, a stop, an exit.\n\nTHE LINE — being right is a map. The account only records the miles.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #priceaction #daytrading #forex #execution #tradingstrategy #propfirm #discipline #marketstructure #trader",
+  "pinned_comment": "The settlement doesn't read what you understood. It reads where you were. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

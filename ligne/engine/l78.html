@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L78 « THE MAP AND THE MILES » — STRUCTURE, MÉTAPHORE SEULE. TOFU. Avoir raison = une carte ; le compte n'enregistre que les miles.
+       S1 : une carte teal avec un itinéraire net A→B ; à côté le TERRAIN vierge (jamais parcouru). S2 : on superpose l'itinéraire sur
+       le mouvement de prix réel — ils coïncident (prédiction juste) ; la barre de compte ne bouge PAS. S3 : une ligne de RÈGLEMENT
+       balaie la carte (rien à prélever) puis le terrain (elle cherche des traces de passage : position/durée/taille). S4 : deux
+       colonnes d'outils — ACCURATE (1 : la lecture) vs PAID (lecture + taille + stop + sortie). S5 : la prise — aucune prédiction sans
+       les trois outils attachés + CTA @kongrave_. Doctrine : teal = lecture/carte ; gris = terrain non parcouru/manque ; pas de brun. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const mapR=mk('rect',{fill:YOU,'fill-opacity':0.12,stroke:YOU,'stroke-width':4,rx:12,opacity:0});
+    const route=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':'2 0',opacity:0});
+    const ptA=mk('circle',{r:12,fill:YOU,opacity:0}), ptB=mk('circle',{r:12,fill:YOU,opacity:0});
+    const terrR=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,rx:12,opacity:0});
+    const price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const acctO=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:6,opacity:0}), acctF=mk('rect',{fill:YOU,rx:5,opacity:0});
+    const settle=mk('line',{stroke:INK,'stroke-width':6,'stroke-dasharray':'4 10',opacity:0});
+    const trace=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':4,rx:6,opacity:0});
+    // outils (S4/S5)
+    const TOOL=[]; const TOOLt=[];
+    const toolNames=['READ','SIZE','STOP','EXIT'];
+    for(let i=0;i<8;i++){TOOL.push(mk('rect',{rx:8,opacity:0}));TOOLt.push(mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':30,opacity:0}));}
+
+    // ── QUESTION (§M15) ──
+    const QL=['YOU CALLED IT.','WHERE WERE YOU?'];
+    const FS=82,lineH=108,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [mapR,route,ptA,ptB,terrR,price,acctO,acctF,settle,trace])setOp(e,0);for(const e of TOOL)setOp(e,0);for(const e of TOOLt)setOp(e,0);hideCaps();}
+    // route/price : même forme (pour la coïncidence S2)
+    function routePts(x0,y0,x1,rise){const o=[];for(let i=0;i<=20;i++){const f=i/20;const x=x0+(x1-x0)*f;const y=y0 - 180*eIn(f)*rise - 30*Math.sin(f*6)*rise;o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+    function tool(i,x,y,w,name,col,op){TOOL[i].setAttribute('x',x);TOOL[i].setAttribute('y',y);TOOL[i].setAttribute('width',w);TOOL[i].setAttribute('height',56);TOOL[i].setAttribute('fill',col===YOU?YOU:'none');TOOL[i].setAttribute('fill-opacity',col===YOU?0.25:1);TOOL[i].setAttribute('stroke',col);TOOL[i].setAttribute('stroke-width',3);setOp(TOOL[i],op);
+      TOOLt[i].textContent=name;TOOLt[i].setAttribute('x',x+w/2);TOOLt[i].setAttribute('y',y+37);TOOLt[i].setAttribute('fill',col===YOU?YOU:INK);setOp(TOOLt[i],op);}
+
+    // ═══ S1 — LA CARTE ET LE TERRAIN VIERGE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const br=6*Math.sin(u*1.4);
+      mapR.setAttribute('x',150);mapR.setAttribute('y',(780+br).toFixed(1));mapR.setAttribute('width',340);mapR.setAttribute('height',340);setOp(mapR,clamp(u/0.3,0,1)*gf);
+      route.setAttribute('points',routePts(190,1080+br,450,clamp(u/1.2,0,1)));setOp(route,clamp(u/0.3,0,1)*gf);
+      ptA.setAttribute('cx',190);ptA.setAttribute('cy',(1080+br).toFixed(1));setOp(ptA,clamp(u/0.3,0,1)*gf);
+      ptB.setAttribute('cx',450);ptB.setAttribute('cy',(1080+br-180*clamp(u/1.2,0,1)-30*Math.sin(6)).toFixed(1));setOp(ptB,clamp((u-1.0)/0.4,0,1)*gf);
+      terrR.setAttribute('x',600);terrR.setAttribute('y',(780+br).toFixed(1));terrR.setAttribute('width',330);terrR.setAttribute('height',340);setOp(terrR,clamp(u/0.3,0,1)*gf);
+      putCap(capC,'THE MAP',310,760,YOU,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capD,'THE TERRAIN',760,760,DEAD,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'RIGHT DIRECTION — NEVER WALKED',CX,1250,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — COÏNCIDENCE PARFAITE, COMPTE PLAT ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=5*Math.sin(u*1.4);
+      route.setAttribute('points',routePts(240,1000+br,790,1));route.setAttribute('stroke',YOU);setOp(route,1);
+      price.setAttribute('points',routePts(240,1000+br,790,1));setOp(price, u>1.0?0.5:clamp(u/0.4,0,1));
+      putCap(capC,'PREDICTION = PRICE — EXACTLY',CX,720,YOU,clamp((u-1.0)/0.5,0,1));
+      // barre de compte plate
+      acctO.setAttribute('x',240);acctO.setAttribute('y',1120);acctO.setAttribute('width',560);acctO.setAttribute('height',54);setOp(acctO,clamp(u/0.4,0,1));
+      acctF.setAttribute('x',244);acctF.setAttribute('y',1124);acctF.setAttribute('width',(50+6*Math.sin(u*3)).toFixed(1));acctF.setAttribute('height',46);setOp(acctF,clamp(u/0.4,0,1));
+      putCap(capD,'THE ACCOUNT — FLAT',CX,1230,DEAD,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'A CORRECT DIRECTION PAYS NOTHING',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA LIGNE DE RÈGLEMENT ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      mapR.setAttribute('x',150);mapR.setAttribute('y',(800+br).toFixed(1));mapR.setAttribute('width',340);mapR.setAttribute('height',300);setOp(mapR,0.9);
+      route.setAttribute('points',routePts(190,1080+br,450,1));route.setAttribute('stroke',YOU);setOp(route,0.9);
+      terrR.setAttribute('x',600);terrR.setAttribute('y',(800+br).toFixed(1));terrR.setAttribute('width',330);terrR.setAttribute('height',300);setOp(terrR,0.9);
+      trace.setAttribute('x',680);trace.setAttribute('y',(900+br).toFixed(1));trace.setAttribute('width',170);trace.setAttribute('height',110);setOp(trace,clamp((u-1.6)/0.5,0,1));
+      // la ligne de règlement balaie
+      const sx=lerp(150,930,clamp(u/2.6,0,1));
+      settle.setAttribute('x1',sx.toFixed(1));settle.setAttribute('x2',sx.toFixed(1));settle.setAttribute('y1',760);settle.setAttribute('y2',1160);setOp(settle,clamp(u/0.3,0,1));
+      putCap(capC,'MAP — NOTHING',290,1200,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capD,'SETTLES ON YOU',770,1200,YOU,clamp((u-1.8)/0.5,0,1));
+      putCap(capB,'NOT WHERE PRICE WENT — WHERE YOU WERE',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — DEUX MÉTIERS : ACCURATE vs PAID ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=7*Math.sin(u*1.3)+4*Math.sin(u*2.4);
+      // ACCURATE : 1 outil
+      tool(0, 200, 900+br, 180, 'READ', YOU, clamp(u/0.4,0,1));
+      putCap(capC,'ACCURATE',290,860,DEAD,clamp((u-0.3)/0.5,0,1));
+      // PAID : READ + SIZE + STOP + EXIT
+      const names=['READ','SIZE','STOP','EXIT'];
+      for(let i=0;i<4;i++){const y=760+i*84-br;const shown=clamp((u-0.6-i*0.3)/0.4,0,1);tool(1+i, 640, y, 240, names[i], i===0?YOU:INK, shown);}
+      putCap(capD,'PAID',760,720,YOU,clamp((u-0.3)/0.5,0,1));
+      putCap(capB,'ONLY ONE HAS SIZE, STOP AND EXIT',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LES TROIS OUTILS ATTACHÉS + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      mapR.setAttribute('x',300);mapR.setAttribute('y',(760+br).toFixed(1));mapR.setAttribute('width',300);mapR.setAttribute('height',240);setOp(mapR,clamp(u/0.3,0,1));
+      route.setAttribute('points',routePts(340,980+br,570,1));route.setAttribute('stroke',YOU);setOp(route,clamp(u/0.3,0,1));
+      putCap(capC,'THE READ — WITH THREE TOOLS ATTACHED',CX,740,YOU,clamp((u-0.4)/0.5,0,1));
+      // trois outils attachés sous la carte
+      const names=['SIZE','STOP','EXIT'];
+      for(let i=0;i<3;i++){const x=210+i*230;const shown=clamp((u-0.8-i*0.25)/0.4,0,1);tool(1+i, x, 1080+br, 200, names[i], INK, shown);}
+      putCap(capD,'THE ACCOUNT RECORDS THE MILES',CX,1300,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
