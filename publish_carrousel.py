@@ -20,7 +20,7 @@ Contraintes Meta appliquées : JPEG uniquement (le PNG est refusé), 2 à 10 ima
 ratio entre 4:5 et 1.91:1 (nos slides 1080x1350 = 4:5 pile).
 
 --- LES DEUX BARRIÈRES DU MODE FILE ----------------------------------------------
-1. ESPACEMENT : 5 posts depuis le dernier carrousel, mesuré SUR INSTAGRAM (pas sur un
+1. ESPACEMENT : 2 posts depuis le dernier carrousel, mesuré SUR INSTAGRAM (pas sur un
    compteur local). C'est LA règle. Cycle de 6 = 1 carrousel + 5 reels ; 6 est multiple
    de 3, donc les carrousels tiennent la colonne de gauche de la grille.
 2. CADENCE : jamais deux carrousels à moins de 20h d'intervalle (anti double-clic du cron).
@@ -45,7 +45,7 @@ QUEUE_DIR = CARROUSEL_DIR / "queue"
 PUBLISHED_DIR = CARROUSEL_DIR / "published"
 JOURNAL = CARROUSEL_DIR / "journal.jsonl"
 
-MIN_SPACING = 5                 # posts depuis le dernier carrousel — LA règle
+MIN_SPACING = 2                 # posts depuis le dernier carrousel — LA règle
 CADENCE_HOURS = 20              # entre deux carrousels (anti double-déclenchement)
 
 POLL_INTERVAL = 4
@@ -149,7 +149,7 @@ def check_gates(force):
         if (since + 1) % 3 != 0:
             # Diagnostic, PAS un blocage : la règle est « tous les 5 posts », point.
             # Mais la grille fait 3 colonnes, donc le carrousel ne retombe à gauche que si
-            # le CYCLE (espacement + 1) est un multiple de 3. Un écart de 5 le garantit ;
+            # le CYCLE (espacement + 1) est un multiple de 3. Un écart de 2 le garantit (cycle 3 = 1 carrousel + 2 reels/jour) ;
             # un écart plus grand veut dire que des reels sont sortis en paquet entre deux
             # passages du cron — c'est la cadence des reels qu'il faut regarder, pas ce gate.
             log(f"[carrousel] ⚠ GRILLE DÉCALÉE — {since} posts d'écart au lieu de "
