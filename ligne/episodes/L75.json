@@ -1,0 +1,152 @@
+{
+  "id": "L75",
+  "engine": "l75",
+  "title": "L75 — THE TRADER NOBODY WARNS",
+  "_cellule": "OERD (Assaillant) · Autorité · Likelihood · regard=sa communauté · présent · ++ (miroir inversé)",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "Two traders are slipping. One gets told within a week. The other doesn't hear a thing for six months.",
+    "It isn't skill. The one nobody warns is the better trader — that's exactly why nobody warns him.",
+    "It isn't the numbers either. Both accounts show the same slow drift, and both are visible to anyone who looks.",
+    "The difference is what surrounds them. One is around people who point at problems. The other is around people who congratulate.",
+    "The better you get, the fewer people will tell you when you're drifting. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "HARENG ROUGE : on installe la fausse piste — l'épisode semble comparer le NIVEAU des deux traders.",
+      "question": "SAME DRIFT. ONE WARNING.",
+      "emotion_lever": "CURIOSITÉ — deux situations identiques, un traitement opposé. L'énigme happe.",
+      "cast": {
+        "c1": {
+          "type": "path",
+          "note": "courbe gauche, alerte tôt"
+        },
+        "c2": {
+          "type": "path",
+          "note": "courbe droite, aucune alerte"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX courbes de résultat qui dérivent vers le bas, de façon rigoureusement identique. Sur la gauche, une ALERTE s'allume très tôt sur la courbe. Sur la droite, la courbe dérive sans qu'aucune alerte n'apparaisse. Même dérive, un seul signal."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : les deux dérives continuent, une seule alerte allumée. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux traders qui dérivent identiquement, mais l'un est averti tôt et l'autre jamais",
+      "dispositif_cle": "FAUSSE PISTE : on laisse croire que la différence est le NIVEAU du trader. Elle doit être crédible — c'est un raisonnement répandu."
+    },
+    {
+      "id": "s2",
+      "clarity": "On teste la fausse piste : le niveau. Et c'est le MEILLEUR qui n'est pas averti.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Deux barres de niveau se posent sous chaque courbe : discipline, régularité, exécution. On les remplit."
+        },
+        {
+          "t": "1.5-3",
+          "do": "celle du trader NON AVERTI est nettement PLUS HAUTE. C'est le meilleur des deux. La fausse piste ne tient pas — et elle s'inverse : si le niveau expliquait quelque chose, ce serait l'inverse de ce qu'on observe."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la barre de niveau haute côté non-averti, l'alerte toujours absente."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux niveaux mesurés — le non-averti est objectivement au-dessus, la fausse piste s'inverse",
+      "turn": "ce n'est pas le niveau. le meilleur des deux est celui que personne ne prévient."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce ne sont pas les chiffres non plus. La dérive est visible chez les deux.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On SUPERPOSE les deux courbes de dérive : elles coïncident. Même pente, même amplitude, même durée."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une loupe passe : la dérive est détectable dans les deux cas, par n'importe qui qui regarde. L'information EXISTE des deux côtés. La deuxième explication évidente tombe."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux courbes superposées, également lisibles."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux dérives superposées — parfaitement lisibles, également détectables",
+      "turn": "l'information est là des deux côtés. quelqu'un ne la dit pas."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RÉVÉLATION : la fausse piste tombe. Ce n'est pas le trader — c'est ce qui l'entoure.",
+      "note": "LA scene — le hareng rouge tombe : la variable est l'ENTOURAGE, pas le trader.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "ZOOM ARRIÈRE. Autour de chaque courbe apparaît ce qu'on n'avait pas vu : un ENTOURAGE. À GAUCHE, des formes fil-de-fer tournées vers la courbe, une flèche pointant la dérive — elles signalent."
+        },
+        {
+          "t": "2-3.5",
+          "do": "à DROITE, des formes tournées vers le trader lui-même, pas vers sa courbe : elles applaudissent. La dérive est derrière elles, hors de leur regard. Personne ne ment, personne ne trahit — l'entourage regarde simplement la réputation au lieu du résultat. Plus le trader est bon, plus l'entourage le félicite, moins il regarde la courbe."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les deux entourages, l'un tourné vers la courbe, l'autre vers le trader."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le zoom arrière révèle l'entourage : des formes qui pointent à gauche, des formes qui applaudissent à droite",
+      "turn": "ta réputation a remplacé ton contrôle qualité."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : un capteur IMPERSONNEL se pose sur la courbe de droite — un seuil chiffré, sans opinion, qui ne félicite ni ne juge. La dérive l'atteint, l'alerte se déclenche, exactement comme à gauche. L'entourage n'a pas changé ; il a été REMPLACÉ pour cette fonction précise."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le capteur impersonnel, l'alerte allumée des deux côtés, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le capteur impersonnel qui remplace l'entourage pour la détection, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders are slipping at exactly the same rate. One gets told within a week. The other doesn't hear a thing for six months.\n\nIt isn't skill — the one nobody warns is the better trader. It isn't the numbers either: both drifts are equally visible to anyone who looks. The difference is the room. One is surrounded by people who point at problems, the other by people who congratulate, and congratulation looks at you instead of your curve.\n\nTHE LINE — the better you get, the fewer people will tell you when you're drifting.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #discipline #performance #propfirm #priceaction #mindset #trader",
+  "pinned_comment": "Your reputation replaced your quality control. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "META",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "HARENG ROUGE — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

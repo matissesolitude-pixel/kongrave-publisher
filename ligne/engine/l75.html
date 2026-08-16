@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L75 « THE TRADER NOBODY WARNS » — META, HARENG ROUGE (le niveau) puis révélation (l'entourage). TOFU (abonnement).
+       S1 : deux dérives identiques ; à gauche une alerte s'allume tôt, à droite rien. S2 : fausse piste du NIVEAU — le non-averti est
+       le MEILLEUR (barre de niveau plus haute), la piste s'inverse. S3 : ni les chiffres — on superpose les deux dérives, également
+       lisibles. S4 : révélation — zoom arrière, un ENTOURAGE ; à gauche tourné vers la COURBE (montre les problèmes), à droite tourné
+       vers le TRADER (applaudit, dérive hors de leur vue). S5 : un capteur IMPERSONNEL sur la courbe de droite, sans opinion, la dérive
+       l'allume + CTA @kongrave_. Doctrine : teal = lecture juste/capteur ; gris = dérive/entourage complaisant ; pas de brun. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const curveL=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const curveR=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const alertL=mk('circle',{r:24,fill:'none',stroke:DEAD,'stroke-width':6,opacity:0}), alertR=mk('circle',{r:24,fill:'none',stroke:DEAD,'stroke-width':6,opacity:0});
+    const LV=[]; for(let i=0;i<6;i++)LV.push(mk('rect',{rx:5,opacity:0}));   // barres de niveau (3 par côté)
+    const lens=mk('circle',{r:64,fill:'none',stroke:INK,'stroke-width':6,opacity:0}), lensH=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const ENT=[]; const ENTp=[]; for(let i=0;i<10;i++){ENT.push(mk('circle',{r:22,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0}));ENTp.push(mk('line',{stroke:DEAD,'stroke-width':3,'stroke-linecap':'round',opacity:0}));}
+    const trader=mk('circle',{r:26,fill:YOU,'fill-opacity':0.5,stroke:YOU,'stroke-width':5,opacity:0});
+    const sensor=mk('rect',{fill:'none',stroke:YOU,'stroke-width':5,rx:8,opacity:0});
+
+    function driftPts(x0,x1,y0,drift,u){const o=[];const n=28;for(let i=0;i<=n;i++){const f=i/n;const y=y0 + drift*eIn(f)*120 + 5*Math.sin(f*10+u*2);o.push((x0+(x1-x0)*f).toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME DRIFT.','ONE WARNING.'];
+    const FS=88,lineH=112,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [curveL,curveR,alertL,alertR,lens,lensH,trader,sensor])setOp(e,0);for(const a of [LV,ENT,ENTp])for(const e of a)setOp(e,0);hideCaps();}
+
+    // ═══ S1 — DEUX DÉRIVES, UNE SEULE ALERTE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const dr=clamp(u/5,0,1);
+      curveL.setAttribute('points',driftPts(150,470,800,dr,u));setOp(curveL,clamp(u/0.3,0,1)*gf);
+      curveR.setAttribute('points',driftPts(610,930,800,dr,u));setOp(curveR,clamp(u/0.3,0,1)*gf);
+      alertL.setAttribute('cx',175);alertL.setAttribute('cy',830);alertL.setAttribute('fill',DEAD);alertL.setAttribute('fill-opacity',(0.5+0.5*Math.abs(Math.sin(u*4))).toFixed(2));setOp(alertL,clamp((u-0.6)/0.4,0,1)*gf);
+      setOp(alertR,0);
+      putCap(capC,'WARNED',300,1080,DEAD,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capD,'SILENCE',760,1080,DEAD,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'ONE HEARS IT IN A WEEK — ONE IN SIX MONTHS',CX,1360,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — FAUSSE PISTE : LE NON-AVERTI EST LE MEILLEUR ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      curveL.setAttribute('points',driftPts(150,470,780,1,u));setOp(curveL,0.5);
+      curveR.setAttribute('points',driftPts(610,930,780,1,u));setOp(curveR,0.5);
+      const fill=clamp(u/1.8,0,1);
+      // barres de niveau (3 par côté) — droite (non-averti) plus haute
+      const hL=[70,60,80], hR=[120,110,130];
+      for(let i=0;i<3;i++){const x=200+i*70;const h=hL[i]*fill;LV[i].setAttribute('x',x);LV[i].setAttribute('width',48);LV[i].setAttribute('y',(1200-h).toFixed(1));LV[i].setAttribute('height',h.toFixed(1));LV[i].setAttribute('fill',DEAD);setOp(LV[i],clamp(u/0.4,0,1));}
+      for(let i=0;i<3;i++){const x=640+i*70;const h=hR[i]*fill;LV[3+i].setAttribute('x',x);LV[3+i].setAttribute('width',48);LV[3+i].setAttribute('y',(1200-h).toFixed(1));LV[3+i].setAttribute('height',h.toFixed(1));LV[3+i].setAttribute('fill',YOU);setOp(LV[3+i],clamp(u/0.4,0,1));}
+      putCap(capC,'LEVEL',300,1250,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'HIGHER — THE BETTER TRADER',760,1250,YOU,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'THE BEST GET WARNED THE LEAST',CX,540,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — NI LES CHIFFRES : DÉRIVES SUPERPOSÉES, ÉGALEMENT LISIBLES ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const merge=clamp(u/1.6,0,1);
+      curveL.setAttribute('points',driftPts(lerp(150,290,merge),lerp(470,790,merge),880,1,u));setOp(curveL,1);
+      curveR.setAttribute('points',driftPts(lerp(610,290,merge),lerp(930,790,merge),880,1,u));setOp(curveR,merge>0.9?0.5:1);
+      const lx=lerp(320,760,(Math.sin(u*1.1)*0.5+0.5));lens.setAttribute('cx',lx.toFixed(1));lens.setAttribute('cy',960);setOp(lens,clamp(u/0.15,0,1));
+      lensH.setAttribute('x1',(lx+46).toFixed(1));lensH.setAttribute('y1',1006);lensH.setAttribute('x2',(lx+84).toFixed(1));lensH.setAttribute('y2',1044);setOp(lensH,clamp(u/0.15,0,1));
+      putCap(capC,'DETECTABLE BY ANYONE WHO LOOKS',CX,760,DEAD,clamp((u-0.2)/0.5,0,1));
+      putCap(capB,'THE INFORMATION EXISTS ON BOTH SIDES',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — RÉVÉLATION : L'ENTOURAGE ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rev=clamp(u/1.4,0,1);
+      curveL.setAttribute('points',driftPts(150,430,820,1,u));setOp(curveL,clamp(u/0.15,0,1)*0.8);
+      curveR.setAttribute('points',driftPts(650,930,820,1,u));setOp(curveR,clamp(u/0.15,0,1)*0.8);
+      putCap(capA,'ZOOM OUT',CX,700,DEAD,clamp(u/0.2,0,1)*(1-clamp((u-1.4)/0.4,0,1)));
+      // GAUCHE : entourage tourné VERS LA COURBE
+      for(let i=0;i<5;i++){const a=Math.PI*(0.2+i*0.15);const cx=290+Math.cos(a)*180,cy=980+Math.sin(a)*150;
+        ENT[i].setAttribute('cx',cx.toFixed(1));ENT[i].setAttribute('cy',(cy+4*Math.sin(u*1.3+i)).toFixed(1));setOp(ENT[i],rev);
+        // pointeur vers la courbe (vers ~290,900)
+        const tx=290,ty=900;const ux=(tx-cx),uy=(ty-cy),d=Math.hypot(ux,uy);
+        ENTp[i].setAttribute('x1',cx.toFixed(1));ENTp[i].setAttribute('y1',cy.toFixed(1));ENTp[i].setAttribute('x2',(cx+ux/d*30).toFixed(1));ENTp[i].setAttribute('y2',(cy+uy/d*30).toFixed(1));setOp(ENTp[i],rev*0.8);}
+      putCap(capC,'FACING THE CURVE',300,1230,YOU,clamp((u-1.6)/0.5,0,1));
+      // DROITE : entourage tourné VERS LE TRADER (applaudit), la dérive hors de leur vue
+      trader.setAttribute('cx',790);trader.setAttribute('cy',(760+6*Math.sin(u*1.4)).toFixed(1));setOp(trader,rev);
+      for(let i=0;i<5;i++){const a=Math.PI*(0.2+i*0.15);const cx=790+Math.cos(a)*180,cy=980+Math.sin(a)*150;
+        ENT[5+i].setAttribute('cx',cx.toFixed(1));ENT[5+i].setAttribute('cy',(cy+4*Math.sin(u*1.3+i)).toFixed(1));setOp(ENT[5+i],rev);
+        const tx=790,ty=760;const ux=(tx-cx),uy=(ty-cy),d=Math.hypot(ux,uy);
+        ENTp[5+i].setAttribute('x1',cx.toFixed(1));ENTp[5+i].setAttribute('y1',cy.toFixed(1));ENTp[5+i].setAttribute('x2',(cx+ux/d*30).toFixed(1));ENTp[5+i].setAttribute('y2',(cy+uy/d*30).toFixed(1));setOp(ENTp[5+i],rev*0.8);}
+      putCap(capD,'FACING THE TRADER',790,1230,DEAD,clamp((u-1.6)/0.5,0,1));
+      putCap(capB,'IT’S NOT HIM — IT’S WHAT SURROUNDS HIM',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE CAPTEUR IMPERSONNEL + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      curveR.setAttribute('points',driftPts(360,760,860,1,u));setOp(curveR,1);
+      // le capteur impersonnel, sans opinion
+      sensor.setAttribute('x',700);sensor.setAttribute('y',900);sensor.setAttribute('width',120);sensor.setAttribute('height',80);setOp(sensor,clamp(u/0.4,0,1));
+      putCap(capC,'IMPERSONAL — NO OPINION',CX,860,YOU,clamp((u-0.4)/0.5,0,1));
+      // la dérive l'allume : l'alerte s'allume enfin de ce côté
+      const fired=clamp((u-1.6)/0.6,0,1);
+      alertR.setAttribute('cx',760);alertR.setAttribute('cy',(940+4*Math.sin(u*2)).toFixed(1));alertR.setAttribute('fill',YOU);alertR.setAttribute('fill-opacity',(fired*(0.5+0.5*Math.abs(Math.sin(u*4)))).toFixed(2));alertR.setAttribute('stroke',YOU);setOp(alertR,fired);
+      putCap(capD,'THE DRIFT LIGHTS IT — NO ONE HAD TO',CX,1300,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
