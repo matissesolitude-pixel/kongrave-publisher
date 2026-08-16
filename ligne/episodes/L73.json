@@ -1,0 +1,152 @@
+{
+  "id": "L73",
+  "engine": "l73",
+  "title": "L73 — THE GOOD MONTH YOU CAN'T EXPLAIN",
+  "_cellule": "OIRX (Circuit) · Curiosité · Likelihood · regard=le prospect · présent · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "Green month. Now answer one question: which part of it was the edge?",
+    "You can't. Not because you're careless — because nothing was ever recorded next to the result.",
+    "So the account went up and the reason stayed invisible. Which means you can't repeat it on purpose.",
+    "And when the market changes, you won't feel it coming. You'll just notice the same actions stopped working, weeks after they did.",
+    "An unexplained win is a loss you haven't been billed for yet. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "IN MEDIAS RES : on ouvre sur un mois vert, et la question tombe immédiatement.",
+      "question": "WHICH PART WAS THE EDGE?",
+      "emotion_lever": "MALAISE — tout va bien et pourtant une case reste vide. Le succès sans explication inquiète.",
+      "cast": {
+        "grid": {
+          "type": "block",
+          "note": "le mois de résultats, majoritairement teal"
+        },
+        "void": {
+          "type": "block",
+          "note": "la zone d'explication, encadrée et VIDE"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0, SANS INTRODUCTION : un MOIS entier de résultats s'affiche déjà — une grille de blocs, largement teal, une barre de compte nettement montée. Le succès est établi avant qu'un mot soit dit. Et une zone VIDE, encadrée, attend à côté : elle est étiquetée mais rien ne la remplit."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : la grille pulse, la zone vide reste vide. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0, un mois entier de résultats verts et une question qui n'a pas de réponse à l'écran",
+      "dispositif_cle": "IN MEDIAS RES : on entre par le RÉSULTAT, pas par la mise en place. Le contexte se reconstruit ensuite."
+    },
+    {
+      "id": "s2",
+      "clarity": "Tu ne peux pas répondre. Rien n'a été enregistré à côté du résultat.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Un bloc teal de la grille se RETOURNE. Son verso devrait porter la raison de l'entrée. Il est VIERGE."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on en retourne cinq, dix, vingt : tous vierges. Les résultats sont enregistrés, les raisons ne le sont nulle part. Le mois entier est une suite de faits sans causes."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la grille à moitié retournée, une mer de versos vides."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "chaque bloc retourné révèle son verso vide — le résultat existe, la raison non",
+      "turn": "tu as gardé les résultats. tu n'as gardé aucune cause."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le compte est monté et la raison est restée invisible. Donc tu ne peux pas la refaire exprès.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On tente de REPRODUIRE le mois. Une flèche part du mois vert vers un mois vierge à droite : 'do it again'."
+        },
+        {
+          "t": "1.5-3",
+          "do": "mais la flèche n'a rien à transporter — les versos étaient vides. À la place, des DÉS se posent sur le mois à venir. Sans cause identifiée, répéter n'est pas répéter : c'est retirer. Le mois vert et le mois à venir ne sont pas reliés."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le mois vert à gauche, les dés à droite, la flèche vide entre les deux."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la tentative de reproduction : sans raison enregistrée, le geste répété est un tirage au hasard",
+      "turn": "on ne répète pas ce qu'on n'a pas identifié."
+    },
+    {
+      "id": "s4",
+      "clarity": "Et quand le marché change, tu ne le sentiras pas venir. Tu verras juste que ça ne marche plus, des semaines après.",
+      "note": "LA scene — le coût réel n'est pas le mois vert, c'est le retard de détection.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Un RÉGIME bascule — une bande de fond passe d'une texture à une autre, discrètement. Les gestes du trader, eux, ne changent PAS : mêmes entrées, même cadence."
+        },
+        {
+          "t": "2-3.5",
+          "do": "les résultats, eux, virent au gris, semaine après semaine. Un curseur 'moment du changement' est planté au basculement. Un second curseur 'moment où il s'en aperçoit' se pose BEAUCOUP plus loin. Entre les deux, un long segment surligné : les semaines payées pour rien. Sans raisons enregistrées, il n'y avait aucun capteur pour voir la bascule."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les deux curseurs et le long segment entre eux."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le régime qui bascule, les mêmes gestes qui produisent du gris, et le retard de détection matérialisé",
+      "turn": "tu n'as pas perdu ton edge. tu as perdu des semaines à ne pas savoir qu'il était parti."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : à côté de CHAQUE bloc de résultat, une LIGNE se remplit maintenant — la raison de l'entrée, écrite AVANT le résultat. La grille se reconstitue avec ses versos pleins. Cette fois, quand le régime bascule, la ligne cesse de correspondre : l'écart devient VISIBLE immédiatement, un signal s'allume au bon moment."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la grille avec ses raisons, le signal qui s'allume à temps, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "chaque résultat accompagné de sa raison écrite AVANT + la détection qui devient immédiate, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Green month. Now answer one question: which part of it was the edge? Most traders can't — and that's the expensive part.\n\nNothing was recorded next to the result, so the account went up while the reason stayed invisible. You can't repeat on purpose what you never identified. And when the regime changes, there's no sensor: you notice the same actions stopped working weeks after they did.\n\nTHE LINE — an unexplained win is a loss you haven't been billed for yet.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #priceaction #daytrading #forex #tradingjournal #edge #propfirm #marketstructure #discipline #trader",
+  "pinned_comment": "You didn't lose the edge. You lost weeks not knowing it had gone. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

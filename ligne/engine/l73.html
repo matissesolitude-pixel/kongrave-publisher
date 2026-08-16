@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L73 « THE GOOD MONTH YOU CAN'T EXPLAIN » — STRUCTURE, IN MEDIAS RES. TOFU (abonnement). Un mois vert dont la raison est nulle
+       part. S1 : une grille de résultats déjà là, largement teal, compte monté — la question tombe. S2 : les blocs se RETOURNENT,
+       leurs versos (la raison) sont VIERGES. S3 : « do it again » — la flèche n'a rien à transporter, des DÉS se posent sur le mois à
+       venir. S4 : un RÉGIME bascule (texture de fond), mêmes gestes, résultats qui grisent ; deux curseurs (changement / moment où tu
+       le remarques) et le long écart. S5 : la prise — une raison écrite À CÔTÉ de chaque bloc, AVANT le résultat + CTA @kongrave_.
+       Doctrine : teal = gain/raison écrite ; gris = résultat sans cause/perte ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const COLS=5, ROWS=4, N=COLS*ROWS, BW=96, GAP=16;
+    const GX=CX-(COLS*BW+(COLS-1)*GAP)/2, GY=780;
+    const seed=[1,1,1,0,1, 1,1,1,1,0, 1,0,1,1,1, 1,1,1,0,1]; // mostly teal
+    const CELL=[]; for(let i=0;i<N;i++)CELL.push(mk('rect',{rx:6,opacity:0}));
+    const RLINE=[]; for(let i=0;i<N;i++)RLINE.push(mk('line',{stroke:YOU,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    function cellXY(i){const r=Math.floor(i/COLS),c=i%COLS;return [GX+c*(BW+GAP), GY+r*(BW+GAP)];}
+    const acct=mk('rect',{fill:YOU,rx:6,opacity:0}), acctTrack=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    // S3
+    const arrow=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0}), arrowH=mk('polygon',{fill:DEAD,opacity:0});
+    const DIE=[]; for(let i=0;i<4;i++){const g=mk('g',{});mk('rect',{width:52,height:52,rx:10,fill:'none',stroke:DEAD,'stroke-width':4},g);[[14,14],[38,38],[26,26]].forEach(q=>mk('circle',{cx:q[0],cy:q[1],r:5,fill:DEAD},g));DIE.push(g);}
+    // S4
+    const regime=mk('rect',{fill:DEAD,'fill-opacity':0.12,opacity:0});
+    const curA=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'8 8',opacity:0}), curB=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'8 8',opacity:0});
+    const gap=mk('line',{stroke:DEAD,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const signal=mk('circle',{r:22,fill:'none',stroke:YOU,'stroke-width':6,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['WHICH PART','WAS THE EDGE?'];
+    const FS=88,lineH=112,y0=215,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [acct,acctTrack,arrow,arrowH,regime,curA,curB,gap,signal])setOp(e,0);
+      for(const a of [CELL,RLINE,DIE])for(const e of a)setOp(e,0);hideCaps();}
+
+    // dessine la grille (mode: 'front' teal/gris, 'flip' versos vides selon nFlip, 'grey' résultats grisés)
+    function grid(u,op,flipN,greyMode,brY){
+      for(let i=0;i<N;i++){const [x,y]=cellXY(i);const yy=y+(brY||0);
+        const flipped=(flipN!=null && i<flipN);
+        let fill,stroke,sw='0';
+        if(flipped){fill=PAPER;stroke=DEAD;sw='4';}
+        else if(greyMode && seed[i]){fill=DEAD;}     // vire au gris (régime)
+        else {fill=seed[i]?YOU:DEAD;}
+        CELL[i].setAttribute('x',x);CELL[i].setAttribute('y',yy.toFixed(1));CELL[i].setAttribute('width',BW);CELL[i].setAttribute('height',BW);
+        CELL[i].setAttribute('fill',fill);CELL[i].setAttribute('fill-opacity',flipped?1:0.85);CELL[i].setAttribute('stroke',stroke||'none');CELL[i].setAttribute('stroke-width',sw);
+        setOp(CELL[i], op*clamp((u-i*0.015),0,1));}
+    }
+
+    // ═══ S1 — LE MOIS VERT DÉJÀ LÀ ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const brY=4*Math.sin(u*1.5);
+      grid(u,gf,null,false,brY);
+      // barre de compte montée
+      acctTrack.setAttribute('x1',GX);acctTrack.setAttribute('x2',GX+540);acctTrack.setAttribute('y1',1300);acctTrack.setAttribute('y2',1300);setOp(acctTrack,clamp(u/0.4,0,1)*gf);
+      acct.setAttribute('x',GX);acct.setAttribute('y',(1264+brY).toFixed(1));acct.setAttribute('width',lerp(0,470,eOut(clamp(u/2,0,1))).toFixed(1));acct.setAttribute('height',30);setOp(acct,clamp(u/0.4,0,1)*gf);
+      putCap(capC,'GREEN MONTH',CX,1360,YOU,clamp((u-0.5)/0.5,0,1)*gf);
+    }
+
+    // ═══ S2 — LES VERSOS VIERGES ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const flipN=Math.floor(clamp(u/2.4,0,1)*N);
+      grid(u,1,flipN,false,4*Math.sin(u*1.4));
+      putCap(capC,'THE REASON — BLANK',CX,1330,DEAD,clamp((u-1.0)/0.5,0,1));
+      putCap(capB,'NOTHING RECORDED NEXT TO THE RESULT',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — DO IT AGAIN : LA FLÈCHE VIDE, LES DÉS ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // mini-grille verte à gauche
+      const sc=0.5;const g2x=150,g2y=820;
+      for(let i=0;i<N;i++){const r=Math.floor(i/COLS),c=i%COLS;const x=g2x+c*(BW*sc+8),y=g2y+r*(BW*sc+8)+3*Math.sin(u*1.4+i*0.1);
+        CELL[i].setAttribute('x',x);CELL[i].setAttribute('y',y.toFixed(1));CELL[i].setAttribute('width',BW*sc);CELL[i].setAttribute('height',BW*sc);CELL[i].setAttribute('fill',seed[i]?YOU:DEAD);CELL[i].setAttribute('fill-opacity',0.85);CELL[i].setAttribute('stroke','none');setOp(CELL[i],clamp(u/0.4,0,1));}
+      // flèche 'do it again' vers la droite
+      arrow.setAttribute('x1',450);arrow.setAttribute('x2',640);arrow.setAttribute('y1',960);arrow.setAttribute('y2',960);setOp(arrow,clamp(u/0.4,0,1));
+      arrowH.setAttribute('points','640,960 616,946 616,974');setOp(arrowH,clamp(u/0.4,0,1));
+      putCap(capC,'DO IT AGAIN',545,930,DEAD,clamp((u-0.3)/0.5,0,1));
+      // les dés se posent sur le mois à venir (rien à transporter)
+      const nDie=Math.floor(clamp((u-1.0)/1.6,0,1)*4);
+      for(let i=0;i<4;i++){place(DIE[i], 700+(i%2)*120, 860+Math.floor(i/2)*120 + (i<nDie?4*Math.sin(u*2+i):0), i<nDie?1:0);}
+      putCap(capD,'CHANCE — NOT A CAUSE',790,1140,DEAD,clamp((u-1.6)/0.5,0,1));
+      putCap(capB,'YOU CAN’T REPEAT IT ON PURPOSE',CX,620,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE RÉGIME BASCULE, TU LE REMARQUES TROP TARD ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const flip=clamp((u-0.6)/0.6,0,1);
+      // bande de régime : texture qui change (largeur de la zone grise)
+      regime.setAttribute('x',(GX-20+ (540+40)*(1-flip)).toFixed(1));regime.setAttribute('y',GY-20);regime.setAttribute('width',((540+40)*flip).toFixed(1));regime.setAttribute('height',ROWS*(BW+GAP)+20);setOp(regime,clamp(u/0.4,0,1));
+      // mêmes gestes (grille), mais résultats grisent après le basculement
+      const greyProg=clamp((u-1.2)/2.0,0,1);
+      grid(u,1,null, greyProg>0.3, 4*Math.sin(u*1.4));
+      // deux curseurs + long écart
+      const xChange=GX+180, xNotice=GX+440;
+      curA.setAttribute('x1',xChange);curA.setAttribute('x2',xChange);curA.setAttribute('y1',GY-40);curA.setAttribute('y2',GY+ROWS*(BW+GAP));setOp(curA,clamp((u-0.4)/0.4,0,1));
+      curB.setAttribute('x1',xNotice);curB.setAttribute('x2',xNotice);curB.setAttribute('y1',GY-40);curB.setAttribute('y2',GY+ROWS*(BW+GAP));setOp(curB,clamp((u-2.0)/0.4,0,1));
+      gap.setAttribute('x1',xChange);gap.setAttribute('x2',xNotice);gap.setAttribute('y1',GY-70);gap.setAttribute('y2',GY-70);setOp(gap,clamp((u-2.2)/0.4,0,1));
+      putCap(capC,'REGIME CHANGED',xChange,GY-90,INK,clamp((u-0.6)/0.5,0,1));
+      putCap(capD,'YOU NOTICED',xNotice,1320,DEAD,clamp((u-2.2)/0.5,0,1));
+      putCap(capB,'WEEKS AFTER IT STOPPED WORKING',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA RAISON ÉCRITE À CÔTÉ DE CHAQUE BLOC + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const write=clamp((u-0.4)/2.0,0,1);
+      grid(u,1,null,false,4*Math.sin(u*1.4));
+      // une ligne (la raison) se remplit à côté de chaque bloc
+      for(let i=0;i<N;i++){const [x,y]=cellXY(i);const f=clamp(write*N-i,0,1);RLINE[i].setAttribute('x1',x+8);RLINE[i].setAttribute('x2',(x+8+(BW-16)*f).toFixed(1));RLINE[i].setAttribute('y1',y+BW-14+4*Math.sin(u*1.4));RLINE[i].setAttribute('y2',y+BW-14+4*Math.sin(u*1.4));setOp(RLINE[i], f>0.02?0.9:0);}
+      putCap(capC,'THE REASON — WRITTEN BEFORE',CX,GY-40,YOU,clamp((u-0.4)/0.5,0,1));
+      // le signal qui s'allume à temps
+      signal.setAttribute('cx',GX+540+40);signal.setAttribute('cy',(GY+120+6*Math.sin(u*2)).toFixed(1));setOp(signal,clamp((u-2.2)/0.5,0,1));
+      putCap(capB,'NOW YOU CAN REPEAT IT — AND FEEL CHANGE',CX,1330,INK,clamp((u-2.6)/0.7,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
