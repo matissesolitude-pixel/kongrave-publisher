@@ -1,0 +1,152 @@
+{
+  "id": "L82",
+  "engine": "l82",
+  "title": "L82 — THE ONES WHO CAME BACK",
+  "_cellule": "SERD (Sniper) · Curiosité · Likelihood · regard=les autres traders · passé · −−",
+  "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
+  "voice": [
+    "Every trader you follow made it back. That's the only reason you can see them.",
+    "The ones who took the same route and didn't return don't post. They don't teach. They aren't on your feed.",
+    "So the advice you're absorbing comes entirely from the survivors — including the ones who survived by luck.",
+    "You can't tell the two apart from the outside. Both look identical: the account, the confidence, the story that fits.",
+    "A method proven by the people it worked for isn't proven. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MÉTAPHORE PORTÉE SEULE : un port avec les bateaux revenus — et le large, vide.",
+      "question": "WHERE ARE THE OTHERS?",
+      "emotion_lever": "INQUIÉTUDE SOURDE — le vide au large est plus troublant que les bateaux au port.",
+      "cast": {
+        "port": {
+          "type": "block",
+          "note": "le port = ce qui est visible"
+        },
+        "open": {
+          "type": "block",
+          "note": "le large = ce qui ne revient pas. LA MÉTAPHORE."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : un PORT dessiné à l'encre, avec plusieurs BATEAUX amarrés, nets, comptables, alignés. Au-delà du port, le LARGE : entièrement vide, uniforme. On voit ce qui est revenu. On ne voit rien d'autre. L'image est lisible sans un mot."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : un bateau de plus entre au port, le large reste vide. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : des bateaux amarrés bien visibles au port, et un large vide au-delà",
+      "dispositif_cle": "MÉTAPHORE SEULE : aucun objet à décharger. Le contraste port/large porte tout."
+    },
+    {
+      "id": "s2",
+      "clarity": "Ceux qui ont pris la même route et ne sont pas revenus ne publient pas.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Au large, des silhouettes de bateaux apparaissent en POINTILLÉ — bien plus nombreuses que celles du port."
+        },
+        {
+          "t": "1.5-3",
+          "do": "elles s'effacent aussitôt : elles n'ont laissé aucune trace, aucun message, aucun cours. On compare les deux quantités une seconde : le port est minoritaire. Puis le large redevient vide, comme il l'est toujours."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le port net, le large vide où l'on sait maintenant qu'il y avait quelque chose."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les silhouettes des bateaux non revenus apparaissent au large, en pointillé — puis disparaissent",
+      "turn": "l'absence ne laisse pas de trace. c'est ce qui la rend invisible."
+    },
+    {
+      "id": "s3",
+      "clarity": "Donc les conseils que tu absorbes viennent entièrement des revenus — y compris ceux revenus par chance.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une LOUPE passe sur les bateaux du port. Chacun porte le tracé de sa route, affiché sur sa coque."
+        },
+        {
+          "t": "1.5-3",
+          "do": "deux routes sont mises côte à côte : l'une prudente, l'autre traversant une zone où la plupart ont disparu. Les deux bateaux sont AU PORT, également intacts, également crédibles. Rien sur la coque ne dit lequel a été maîtrisé et lequel a eu de la chance."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux routes affichées, indiscernables en résultat."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les bateaux du port examinés : impossible de distinguer route maîtrisée et route chanceuse",
+      "turn": "le retour ne prouve pas la route."
+    },
+    {
+      "id": "s4",
+      "clarity": "De l'extérieur, on ne peut pas les distinguer. Le compte, l'assurance, l'histoire qui colle.",
+      "note": "LA scene — la donnée qui trancherait est structurellement absente.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Trois signaux se posent sous chaque bateau : le compte, l'assurance, le récit. Ils sont RIGOUREUSEMENT identiques d'un bateau à l'autre."
+        },
+        {
+          "t": "2-3.5",
+          "do": "le seul écart réel — le nombre de bateaux partis sur la même route et jamais revenus — est au LARGE, hors du port, invisible depuis le quai. On tente de le mesurer depuis le port : impossible. C'est la donnée qui manque, et c'est la seule qui trancherait."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les trois signaux identiques, le large vide, la donnée manquante surlignée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les trois signaux visibles (compte, assurance, récit) identiques pour les deux — le seul écart est invisible",
+      "turn": "ce qui manque n'est pas caché. c'est ce qui ne revient jamais."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : une question se pose avant d'adopter une route — 'combien sont partis par là, et combien sont revenus ?'. Faute de réponse depuis le quai, la route est évaluée sur ce qui est observable EN MER : le risque pris à chaque étape, pas le port d'arrivée. Un bateau se met à afficher son risque par segment, et non plus seulement son retour."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la route évaluée sur le risque pris, pas sur l'arrivée, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Every trader you follow made it back. That's the only reason you can see them.\n\nThe ones who took the same route and didn't return don't post, don't teach and aren't on your feed — so the advice you absorb comes entirely from survivors, including the ones who survived on luck. From the quay the two look identical: same account, same confidence, same story that fits. The number that would separate them is out at sea, and it never comes back.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingeducation #daytrading #forex #survivorshipbias #mindset #propfirm #priceaction #discipline #trader",
+  "pinned_comment": "A method proven by the people it worked for isn't proven. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "META",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}
