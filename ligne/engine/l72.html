@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L72 « THE ORDER THAT WAS NEVER SENT » — MONTAGE PARALLÈLE : deux bandes qui avancent ENSEMBLE. TOFU (abonnement, pas de mot-clé).
+       S1 : deux bandes, même setup, même seconde, une main suspendue sur SEND. S2 : les deux tickets se remplissent à l'identique
+       (size/stop/target). S3 : HAUT la main envoie → la position suit le prix ; BAS la main hésite, le prix part sans elle. S4 : fin de
+       séance — HAUT un résultat mesurable ; BAS le ticket jamais envoyé GRISE, périmé, rien à analyser. S5 : la prise — un compte à
+       rebours décidé AVANT (envoyé ou annulé à zéro) + CTA ABONNEMENT @kongrave_. Doctrine : teal = décision aboutie ; gris = ticket
+       mort/non-décidé ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, TY=780, BY=1140;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    function ticket(){const g=mk('g',{});mk('rect',{width:220,height:150,rx:10,fill:'none',stroke:INK,'stroke-width':4},g);
+      const rows=[];for(let i=0;i<3;i++){mk('line',{x1:20,y1:44+i*38,x2:200,y2:44+i*38,stroke:DEAD,'stroke-width':3,'stroke-dasharray':'6 8'},g);
+        rows.push(mk('rect',{x:120,y:30+i*38,width:0,height:22,rx:3,fill:YOU},g));}
+      g.__rows=rows;return g;}
+    const tkT=ticket(), tkB=ticket();
+    function fillTicket(g,frac,gray){for(let i=0;i<3;i++){const f=clamp(frac*3-i,0,1);g.__rows[i].setAttribute('width',(70*f).toFixed(1));g.__rows[i].setAttribute('fill',gray?DEAD:YOU);}}
+    const sendT=mk('rect',{rx:10,fill:'none',stroke:YOU,'stroke-width':4,opacity:0}), sendB=mk('rect',{rx:10,fill:'none',stroke:YOU,'stroke-width':4,opacity:0});
+    const handT=mk('polygon',{fill:INK,opacity:0}), handB=mk('polygon',{fill:INK,opacity:0});
+    const priceT=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const priceB=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const posT=mk('circle',{r:16,fill:YOU,opacity:0});
+    const resT=mk('rect',{rx:6,opacity:0});
+    const setupT=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':4,rx:6,opacity:0}), setupB=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':4,rx:6,opacity:0});
+    const countdown=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':70,opacity:0});
+    const outSent=mk('rect',{rx:8,fill:'none',stroke:YOU,'stroke-width':4,opacity:0}), outCancel=mk('rect',{rx:8,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0});
+    function handAt(el,x,y,op){el.setAttribute('points',`${x},${y} ${x-16},${y-28} ${x+16},${y-28}`);setOp(el,op);}
+    function pricePts(x0,y0,x1,run,u,dip){const o=[];const n=30;const r=clamp(run,0.02,1);for(let i=0;i<=n;i++){const f=i/n;if(f>r)break;const g=f/r;const x=x0+(x1-x0)*g;const y=y0 - dip*Math.sin(g*2.2) - 40*g + 4*Math.sin(g*14+u*2);o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME SETUP.','SAME SECOND.'];
+    const FS=88,lineH=112,y0=215,qY=QL.map((s,li)=>y0+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+
+    function ctaTOFU(u){ // clôture abonnement commune
+      putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));
+      putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));
+    }
+    function hideDyn(){for(const e of [tkT,tkB,sendT,sendB,handT,handB,priceT,priceB,posT,resT,setupT,setupB,countdown,outSent,outCancel])setOp(e,0);hideCaps();}
+
+    // ═══ S1 — DEUX BANDES, MÊME SETUP, MAIN SUSPENDUE ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      band(TY,'A',0.15,u,true,gf);band(BY,'B',0.15,u,true,gf);
+      putCap(capC,'TRADER A',250,TY-120,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capD,'TRADER B',250,BY-120,INK,clamp((u-0.3)/0.5,0,1)*gf);
+      putCap(capB,'ONE HAND HOVERS',CX,1360,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+    // dessine une bande à centerY ; fill = remplissage ticket ; sentTop décide si la main a appuyé
+    function band(cy,which,fill,u,vib,op){
+      const tk=which==='A'?tkT:tkB, sd=which==='A'?sendT:sendB, hd=which==='A'?handT:handB, su=which==='A'?setupT:setupB;
+      su.setAttribute('x',150);su.setAttribute('y',cy-40);su.setAttribute('width',110);su.setAttribute('height',80);setOp(su,op);
+      place(tk, 300, cy-75, op); fillTicket(tk, fill, false);
+      sd.setAttribute('x',560);sd.setAttribute('y',cy-34);sd.setAttribute('width',130);sd.setAttribute('height',68);setOp(sd,op);
+      const hx=625+(vib? (14*Math.sin(u*7)+8*Math.sin(u*11)) : 0), hy=cy-46+(vib?6*Math.sin(u*5):0);
+      handAt(hd, hx, hy, op);
+    }
+
+    // ═══ S2 — LES TICKETS SE REMPLISSENT À L'IDENTIQUE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const fill=clamp(u/2.0,0,1);
+      band(TY,'A',fill,u,true,1);band(BY,'B',fill,u,true,1);
+      putCap(capC,'SIZE · STOP · TARGET',CX,TY+130,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capB,'IDENTICAL — NOTHING SEPARATES THEM',CX,1360,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — HAUT ENVOIE / BAS HÉSITE ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // HAUT : la main appuie, la position suit le prix
+      band(TY,'A',1,u,false,1);
+      const pressed=clamp(u/0.6,0,1);handAt(handT,625,TY-46+10*pressed,1);sendT.setAttribute('fill',YOU);sendT.setAttribute('fill-opacity',(0.25*pressed).toFixed(2));
+      const run=clamp((u-0.4)/2.2,0,1);
+      priceT.setAttribute('points',pricePts(720,TY+20,960,run,u,90));setOp(priceT,clamp(u/0.3,0,1));
+      const px=lerp(720,960,run),py=TY+20-90*Math.sin(run*2.2)-40*run;posT.setAttribute('cx',px.toFixed(1));posT.setAttribute('cy',py.toFixed(1));setOp(posT,clamp((u-0.4)/0.4,0,1));
+      putCap(capC,'SENT — IN THE MOVE',300,TY-120,YOU,clamp((u-0.4)/0.5,0,1));
+      // BAS : la main hésite, le prix part sans elle
+      band(BY,'B',1,u,true,1);
+      priceB.setAttribute('points',pricePts(720,BY+20,960,run,u,90));setOp(priceB,clamp(u/0.3,0,1));
+      putCap(capD,'HOVERING — PRICE LEAVES',300,BY+150,DEAD,clamp((u-1.0)/0.5,0,1));
+    }
+
+    // ═══ S4 — HAUT RÉSULTAT MESURABLE / BAS TICKET GRISÉ ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      // HAUT : la position close, un résultat existe
+      band(TY,'A',1,u,false,0.5);
+      const rh=lerp(0,120,eOut(clamp(u/1.4,0,1)));resT.setAttribute('x',640);resT.setAttribute('width',90);resT.setAttribute('y',(TY+40-rh+4*Math.sin(u*1.5)).toFixed(1));resT.setAttribute('height',rh.toFixed(1));resT.setAttribute('fill',YOU);setOp(resT,clamp(u/0.4,0,1));
+      putCap(capC,'A RESULT — MEASURABLE',CX,TY+130,YOU,clamp((u-0.6)/0.5,0,1));
+      // BAS : le ticket jamais envoyé grise, périmé
+      const gray=clamp((u-1.4)/1.0,0,1);
+      place(tkB, 300, BY-75, 1); fillTicket(tkB, 1, gray>0.4);
+      tkB.querySelector('rect').setAttribute('stroke', gray>0.4?DEAD:INK);
+      setupB.setAttribute('x',150);setupB.setAttribute('y',BY-40);setupB.setAttribute('width',110);setupB.setAttribute('height',80);setOp(setupB,1-gray*0.5);
+      handAt(handB,625,BY-46+6*Math.sin(u*1.4),1-gray*0.5);
+      sendB.setAttribute('x',560);sendB.setAttribute('y',BY-34);sendB.setAttribute('width',130);sendB.setAttribute('height',68);sendB.setAttribute('stroke',DEAD);setOp(sendB,1-gray*0.3);
+      putCap(capD,'NEVER SENT — EXPIRED',CX,BY+150,DEAD,clamp((u-2.0)/0.6,0,1));
+      putCap(capB,'THE MARKET CLOSED THE DECISION',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LE COMPTE À REBOURS + CTA ABONNEMENT ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      place(tkB, CX-110, 820, 1); fillTicket(tkB, 1, false); tkB.querySelector('rect').setAttribute('stroke',INK);
+      // le compte à rebours décidé AVANT
+      const n=Math.max(0,3-Math.floor(clamp((u-0.6)/0.7,0,3)));
+      countdown.textContent=n>0? n+'s' : '0';countdown.setAttribute('x',CX);countdown.setAttribute('y',(1010+6*Math.sin(u*2)).toFixed(1));countdown.setAttribute('fill', n>0?INK:YOU);setOp(countdown,clamp((u-0.3)/0.4,0,1));
+      putCap(capC,'DECIDED BEFORE THE SESSION',CX,760,YOU,clamp((u-0.4)/0.5,0,1));
+      // à zéro : deux issues seulement
+      const done=clamp((u-2.6)/0.6,0,1);
+      outSent.setAttribute('x',300);outSent.setAttribute('y',1090);outSent.setAttribute('width',200);outSent.setAttribute('height',80);setOp(outSent,done);
+      outCancel.setAttribute('x',580);outCancel.setAttribute('y',1090);outCancel.setAttribute('width',200);outCancel.setAttribute('height',80);setOp(outCancel,done);
+      putCap(capA,'SENT',400,1140,YOU,done);putCap(capD,'CANCELLED',680,1140,DEAD,done);
+      putCap(capB,'TWO OUTCOMES — NEVER A LIMBO',CX,1260,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>

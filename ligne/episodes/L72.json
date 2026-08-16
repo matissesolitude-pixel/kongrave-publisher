@@ -1,0 +1,156 @@
+{
+  "id": "L72",
+  "engine": "l72",
+  "title": "L72 — THE ORDER THAT WAS NEVER SENT",
+  "_cellule": "SITD (Glacier) · Miroir · Effort · regard=le prospect · présent · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders see the same setup at the same second. Watch what each hand does.",
+    "Both fill the ticket. Size, stop, target — identical. Up to here, nothing separates them.",
+    "One hand sends it. The other hovers, and keeps hovering, while the price does what it was always going to do.",
+    "The second trader didn't decide against the trade. He just never finished deciding — and the market closed the decision for him.",
+    "Not sending is a position. It's the one that pays nothing and still costs the day. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders, même setup, même seconde — l'écran divisé en deux bandes.",
+      "question": "SAME SETUP. SAME SECOND.",
+      "emotion_lever": "SYMÉTRIE + ATTENTE — deux mains suspendues, on attend de voir laquelle bouge.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "bande haute"
+        },
+        "lane2": {
+          "type": "path",
+          "note": "bande basse"
+        },
+        "hand": {
+          "type": "block",
+          "note": "la main au-dessus du ticket, sur chaque bande"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : écran divisé en DEUX BANDES horizontales, même setup teal au centre de chacune, même instant marqué. Sur chaque bande, une forme de MAIN suspendue au-dessus d'un ticket d'ordre. Les deux bandes avancent DÉJÀ ensemble."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : les deux bandes progressent d'un cran, les deux mains toujours suspendues. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux bandes lancées ensemble dès la frame 0, deux mains au-dessus du même ticket",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux bandes avancent TOUJOURS simultanément. Jamais l'une puis l'autre."
+    },
+    {
+      "id": "s2",
+      "clarity": "Les deux tickets sont remplis à l'identique. Rien ne les sépare encore.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Sur chaque bande, le TICKET se remplit ligne à ligne : taille, stop, cible. Les deux se remplissent EN MÊME TEMPS, valeur pour valeur."
+        },
+        {
+          "t": "1.5-3",
+          "do": "on superpose les deux tickets : ils coïncident exactement. Aucun écart de préparation. La différence à venir n'est PAS dans l'analyse."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux tickets complets, identiques, les mains toujours suspendues."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux tickets remplis ligne par ligne, superposables — l'identité prouvée",
+      "turn": "la préparation est identique. tout est prêt des deux côtés."
+    },
+    {
+      "id": "s3",
+      "clarity": "Une main envoie. L'autre reste suspendue pendant que le prix fait ce qu'il devait faire.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "BANDE HAUTE : la main appuie. L'ordre part, la position s'ouvre, elle est DANS le mouvement qui démarre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "BANDE BASSE : la main ne bouge pas. Elle vibre, elle s'approche, elle recule. Pendant ce temps, sur la MÊME timeline, le prix parcourt exactement la même distance qu'en haut. Le mouvement ne l'attend pas."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : en haut la position qui suit le prix, en bas la main suspendue et le prix parti."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "la bande haute qui envoie et suit le mouvement, la bande basse dont la main reste immobile",
+      "turn": "le marché n'a pas attendu que la main se décide."
+    },
+    {
+      "id": "s4",
+      "clarity": "Il n'a pas décidé contre le trade. Il n'a jamais fini de décider — et le marché a clos la décision pour lui.",
+      "note": "LA scene — le montage parallèle livre son verdict : ce n'est pas le résultat qui diverge, c'est l'EXISTENCE d'un résultat.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Fin de séance sur les deux bandes. HAUT : la position s'est clôturée, un résultat existe — bon ou mauvais, il existe et il est mesurable."
+        },
+        {
+          "t": "2-3.5",
+          "do": "BAS : le ticket est TOUJOURS OUVERT à l'écran, rempli, jamais envoyé. Il se GRISE — périmé. Aucun résultat. Rien à analyser, rien à corriger, rien à répéter. La journée n'a produit aucune donnée. On souligne : le trader du bas n'a pas évité une perte, il a évité de savoir."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : le résultat mesurable en haut, le ticket gris et vide de sens en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux résultats : une position clôturée en haut, un ticket toujours ouvert et périmé en bas",
+      "turn": "l'un a une donnée. l'autre a une journée blanche."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : sur la bande basse, un COMPTE À REBOURS court se pose sur le ticket — un délai décidé AVANT la séance. Quand il atteint zéro, deux issues seulement : envoyé, ou annulé volontairement. Pas de troisième état. Le ticket ne peut plus rester suspendu."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : le compte à rebours, les deux issues possibles, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le délai décidé avant + les deux issues (envoyé/annulé), et le CTA abonnement affiché et prononcé"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders see the same setup at the same second — and only one of them ends the day with anything to learn from.\n\nBoth fill the ticket: size, stop, target, identical. One hand sends it. The other hovers while price does what it was always going to do. The second trader didn't decide against the trade, he never finished deciding — and the session closed the decision for him.\n\nTHE LINE — not sending is a position. It pays nothing and still costs the day.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #discipline #hesitation #propfirm #priceaction #mindset #trader",
+  "pinned_comment": "He didn't avoid a loss. He avoided knowing. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}
