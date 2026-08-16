@@ -1,0 +1,152 @@
+{
+  "id": "L87",
+  "engine": "l87",
+  "title": "L87 — THE CALL THAT WASN'T ABOUT THE LOSS",
+  "_cellule": "OETX (Assaillant) · Miroir · Speed · regard=les collègues · présent · −−",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "Two accounts take the same drawdown. One keeps trading. The other gets closed by the broker.",
+    "It isn't the loss. Both are down the same percentage, on the same instrument, in the same session.",
+    "It isn't the direction either. Both were wrong in exactly the same way, at the same moment.",
+    "One of them was using a fraction of the available leverage. The other was using most of it — so the same move ate a different share of what was holding the account open.",
+    "The market moved once. Only one account had room for it. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "HARENG ROUGE : on installe la fausse piste — l'épisode semble parler de la PERTE.",
+      "question": "SAME DRAWDOWN. ONE CLOSED.",
+      "emotion_lever": "CURIOSITÉ + MENACE — le verrou est brutal et inexpliqué.",
+      "cast": {
+        "a1": {
+          "type": "gauge",
+          "note": "compte gauche, ouvert"
+        },
+        "a2": {
+          "type": "gauge",
+          "note": "compte droite, verrouillé"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 : DEUX comptes côte à côte, chacun subissant une baisse identique — même pourcentage, même forme. À gauche, le compte continue de fonctionner. À droite, un VERROU se referme dessus : il est fermé d'office. Même perte, un seul verrou."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : le verrou reste fermé à droite, le compte de gauche continue. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux comptes, même perte en pourcentage, une seule fermeture forcée",
+      "dispositif_cle": "FAUSSE PISTE : on laisse croire que la taille de la perte explique la fermeture."
+    },
+    {
+      "id": "s2",
+      "clarity": "On teste la fausse piste : la perte. Identique, même instrument, même séance.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux baisses se superposent : même pourcentage, même instrument, même séance, même durée."
+        },
+        {
+          "t": "1.5-3",
+          "do": "aucun écart mesurable. La fausse piste tient encore — c'est la première explication de tout le monde, et elle est fausse."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux baisses superposées."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux baisses superposées — indiscernables",
+      "turn": "ce n'est pas la perte. elle est la même."
+    },
+    {
+      "id": "s3",
+      "clarity": "Ce n'est pas la direction non plus. Les deux se sont trompés pareil, au même instant.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les deux positions s'affichent : même sens, même entrée, même instant."
+        },
+        {
+          "t": "1.5-3",
+          "do": "les deux se sont trompées exactement de la même façon. La qualité de l'analyse est hors de cause des deux côtés. Il ne reste rien de visible dans le trade pour expliquer le verrou."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : les deux positions alignées, identiques."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les deux positions alignées : même sens, même erreur, même seconde",
+      "turn": "même erreur, même seconde. le verrou vient d'ailleurs."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RÉVÉLATION : l'un utilisait une fraction du levier disponible. L'autre presque tout.",
+      "note": "LA scene — le hareng rouge tombe : la variable est le coussin, pas la perte.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "ZOOM ARRIÈRE. Sous chaque compte apparaît ce qu'on ne voyait pas : un COUSSIN — la marge qui maintient la position ouverte. À GAUCHE il est épais. À DROITE il est mince, parce que la position occupait presque tout l'espace disponible."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la MÊME baisse, en pourcentage identique, est rejouée sur les deux : à gauche elle entame le coussin sans le traverser. À droite elle le TRAVERSE entièrement — et le verrou se referme, mécaniquement, sans qu'aucune décision humaine intervienne. La perte n'a pas changé ; ce qu'elle avait à traverser, si."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les deux coussins, la même baisse, un seul traversé."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le zoom révèle le coussin sous chaque compte : large à gauche, minuscule à droite — la même perte le traverse",
+      "turn": "le marché a bougé une fois. un seul compte avait la place."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : avant l'entrée, le COUSSIN est mesuré — combien de mouvement adverse la position peut absorber avant que le verrou ne se referme. Une bande de mouvement typique est posée à côté : si elle ne tient pas dans le coussin, la taille se réduit jusqu'à ce qu'elle y tienne. Le coussin devient un chiffre lu avant, pas découvert après."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la prise et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le coussin mesuré avant l'entrée + la taille réduite jusqu'à ce que le mouvement typique y tienne, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two accounts take the same drawdown, on the same instrument, in the same session. One keeps trading. The other gets closed by the broker.\n\nIt isn't the loss and it isn't the direction — both were wrong in exactly the same way at the same moment. What differed was underneath: how much cushion was left holding the position open. One was using a fraction of the available leverage, the other almost all of it, so the same move ate a different share of what kept the account alive.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #riskmanagement #daytrading #forex #leverage #margincall #propfirm #discipline #tradingpsychology #trader",
+  "pinned_comment": "The market moved once. Only one account had room for it. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MECANIQUE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "HARENG ROUGE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

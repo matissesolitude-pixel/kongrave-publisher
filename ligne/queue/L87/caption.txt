@@ -1,0 +1,7 @@
+Two accounts take the same drawdown, on the same instrument, in the same session. One keeps trading. The other gets closed by the broker.
+
+It isn't the loss and it isn't the direction — both were wrong in exactly the same way at the same moment. What differed was underneath: how much cushion was left holding the position open. One was using a fraction of the available leverage, the other almost all of it, so the same move ate a different share of what kept the account alive.
+
+Follow @kongrave_ — the mechanics nobody explains.
+
+#trading #riskmanagement #daytrading #forex #leverage #margincall #propfirm #discipline #tradingpsychology #trader

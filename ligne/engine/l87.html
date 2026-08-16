@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L87 « THE CALL THAT WASN'T ABOUT THE LOSS » — MECANIQUE, HARENG ROUGE + révélation. TOFU. Même drawdown, un compte fermé par le broker.
+       S1 : deux comptes, même baisse ; gauche continue, droite VERROUILLÉE. S2 : fausse piste PERTE — baisses superposées, identiques.
+       S3 : ni la direction — mêmes positions, même erreur, même instant. S4 : révélation — sous chaque compte un COUSSIN (marge) ; à
+       gauche épais (la baisse l'entame sans le traverser), à droite mince (la même baisse le traverse → verrou). S5 : la prise — mesurer
+       le COUSSIN avant l'entrée + CTA @kongrave_. Doctrine : teal = compte sain/coussin ; gris = perte/verrou ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const dropL=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const dropR=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    // verrou (padlock)
+    const lock=mk('g',{});
+    mk('rect',{x:-34,y:0,width:68,height:56,rx:8,fill:DEAD},lock);
+    mk('path',{d:'M -22 0 v -18 a 22 22 0 0 1 44 0 v 18',fill:'none',stroke:DEAD,'stroke-width':8},lock);
+    setOp(lock,0);
+    // positions
+    const posL=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':4,rx:6,opacity:0}), posR=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':4,rx:6,opacity:0});
+    const entryL=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}), entryR=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    // coussins (marge)
+    const cushL=mk('rect',{fill:YOU,'fill-opacity':0.4,rx:6,opacity:0}), cushR=mk('rect',{fill:YOU,'fill-opacity':0.4,rx:6,opacity:0});
+    const dentL=mk('rect',{fill:DEAD,rx:6,opacity:0}), dentR=mk('rect',{fill:DEAD,rx:6,opacity:0});
+    const cushO_L=mk('rect',{fill:'none',stroke:INK,'stroke-width':3,rx:6,opacity:0}), cushO_R=mk('rect',{fill:'none',stroke:INK,'stroke-width':3,rx:6,opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['SAME DRAWDOWN.','ONE CLOSED.'];
+    const FS=86,lineH=110,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function place(g,x,y,op){g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);setOp(g,op);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [dropL,dropR,lock,posL,posR,entryL,entryR,cushL,cushR,dentL,dentR,cushO_L,cushO_R])setOp(e,0);hideCaps();}
+    function dropPts(x0,x1,y0,prog,u){const o=[];const n=24;const r=clamp(prog,0.02,1);for(let i=0;i<=n;i++){const f=i/n;if(f>r)break;const x=x0+(x1-x0)*f;const y=y0 + 180*eIn(f)*(f/r) + 4*Math.sin(f*12+u*2);o.push(x.toFixed(1)+','+y.toFixed(1));}return o.join(' ');}
+
+    // ═══ S1 — DEUX COMPTES, UN VERROUILLÉ ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const prog=clamp(u/2.2,0,1);
+      dropL.setAttribute('points',dropPts(180,470,860,prog,u));setOp(dropL,clamp(u/0.3,0,1)*gf);
+      dropR.setAttribute('points',dropPts(610,900,860,prog,u));setOp(dropR,clamp(u/0.3,0,1)*gf);
+      place(lock, 760, 1120, clamp((u-1.4)/0.5,0,1)*gf);
+      putCap(capC,'STILL TRADING',300,1180,YOU,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capD,'CLOSED BY THE BROKER',760,1250,DEAD,clamp((u-1.4)/0.5,0,1)*gf);
+      putCap(capB,'SAME DROP — ONE ACCOUNT SURVIVES',CX,1380,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — FAUSSE PISTE : LA PERTE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const merge=clamp((u-1.0)/1.2,0,1);
+      dropL.setAttribute('points',dropPts(lerp(180,290,merge),lerp(470,790,merge),840,1,u));setOp(dropL,1);
+      dropR.setAttribute('points',dropPts(lerp(610,290,merge),lerp(900,790,merge),840,1,u));setOp(dropR, merge>0.9?0.5:1);
+      putCap(capA,'THE SAME DROP',CX,760,DEAD,clamp(u/0.2,0,1)*(1-clamp((u-1.4)/0.4,0,1)));
+      putCap(capC,'SAME % · SAME INSTRUMENT · SAME SESSION',CX,760,DEAD,clamp((u-1.6)/0.5,0,1));
+      putCap(capB,'IT ISN’T THE LOSS',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S3 — NI LA DIRECTION ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=5*Math.sin(u*1.4);
+      entryL.setAttribute('x1',200);entryL.setAttribute('x2',880);entryL.setAttribute('y1',(880+br).toFixed(1));entryL.setAttribute('y2',(880+br).toFixed(1));setOp(entryL,clamp(u/0.15,0,1));
+      posL.setAttribute('x',CX-90);posL.setAttribute('y',(900+br).toFixed(1));posL.setAttribute('width',180);posL.setAttribute('height',120);setOp(posL,clamp(u/0.15,0,1));
+      posR.setAttribute('x',CX-90);posR.setAttribute('y',(900+br).toFixed(1));posR.setAttribute('width',180);posR.setAttribute('height',120);posR.setAttribute('stroke',DEAD);posR.setAttribute('fill','none');setOp(posR,clamp((u-0.4)/0.4,0,1)*0.6);
+      putCap(capC,'SAME DIRECTION · SAME ENTRY · SAME MOMENT',CX,1120,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capB,'WRONG IN EXACTLY THE SAME WAY',CX,560,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — RÉVÉLATION : LE COUSSIN ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rev=clamp(u/1.2,0,1);
+      const baseY=1200;
+      // GAUCHE : gros coussin (dent sans traverser)
+      const cLh=340;cushL.setAttribute('x',210);cushL.setAttribute('y',(baseY-cLh).toFixed(1));cushL.setAttribute('width',150);cushL.setAttribute('height',cLh);setOp(cushL,rev);
+      cushO_L.setAttribute('x',210);cushO_L.setAttribute('y',(baseY-cLh).toFixed(1));cushO_L.setAttribute('width',150);cushO_L.setAttribute('height',cLh);setOp(cushO_L,rev);
+      const dent=lerp(0,180,clamp((u-1.2)/1.2,0,1));dentL.setAttribute('x',210);dentL.setAttribute('y',(baseY-dent).toFixed(1));dentL.setAttribute('width',150);dentL.setAttribute('height',dent.toFixed(1));setOp(dentL,clamp((u-1.2)/0.4,0,1));
+      putCap(capC,'LOW LEVERAGE — ROOM',290,baseY+70,YOU,clamp((u-0.5)/0.5,0,1));
+      // DROITE : coussin mince (traversé -> verrou)
+      const cRh=150;cushR.setAttribute('x',720);cushR.setAttribute('y',(baseY-cRh).toFixed(1));cushR.setAttribute('width',150);cushR.setAttribute('height',cRh);setOp(cushR,rev);
+      cushO_R.setAttribute('x',720);cushO_R.setAttribute('y',(baseY-cRh).toFixed(1));cushO_R.setAttribute('width',150);cushO_R.setAttribute('height',cRh);setOp(cushO_R,rev);
+      const dentR2=lerp(0,180,clamp((u-1.2)/1.2,0,1));dentR.setAttribute('x',720);dentR.setAttribute('y',(baseY-dentR2).toFixed(1));dentR.setAttribute('width',150);dentR.setAttribute('height',dentR2.toFixed(1));setOp(dentR,clamp((u-1.2)/0.4,0,1));
+      if(dentR2>cRh){place(lock, 795, baseY-cRh-90+6*Math.sin(u*3), 1);}
+      putCap(capD,'MAXED — CROSSED',795,baseY+70,DEAD,clamp((u-0.5)/0.5,0,1));
+      putCap(capB,'SAME MOVE — A DIFFERENT SHARE EATEN',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — MESURER LE COUSSIN + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=6*Math.sin(u*1.4);
+      const baseY=1180;
+      cushL.setAttribute('x',CX-90);cushL.setAttribute('y',(baseY-320+br).toFixed(1));cushL.setAttribute('width',180);cushL.setAttribute('height',320);setOp(cushL,clamp(u/0.15,0,1));
+      cushO_L.setAttribute('x',CX-90);cushO_L.setAttribute('y',(baseY-320+br).toFixed(1));cushO_L.setAttribute('width',180);cushO_L.setAttribute('height',320);setOp(cushO_L,clamp(u/0.15,0,1));
+      // combien de mouvement adverse absorbable, mesuré avant
+      const mark=lerp(0,200,clamp((u-0.6)/1.4,0,1));dentL.setAttribute('x',CX-90);dentL.setAttribute('y',(baseY-mark+br).toFixed(1));dentL.setAttribute('width',180);dentL.setAttribute('height',mark.toFixed(1));dentL.setAttribute('fill-opacity',0.5);setOp(dentL,clamp((u-0.6)/0.4,0,1));
+      putCap(capC,'MEASURE THE CUSHION BEFORE ENTERING',CX,780,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'THE MARKET MOVED ONCE — ONE HAD ROOM',CX,1300,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
