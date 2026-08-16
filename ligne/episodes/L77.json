@@ -1,0 +1,152 @@
+{
+  "id": "L77",
+  "engine": "l77",
+  "title": "L77 — THIRTY-ONE",
+  "_cellule": "OITX (Circuit) · Story · Nightmare · regard=le prospect · présent · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "Thirty-one trades today. Not one of them was planned before the session opened.",
+    "Rewind to the first. It had a level, a reason, a stop. It was a real trade.",
+    "The second came four minutes later, from nothing. And after that, the session stopped being a series of decisions.",
+    "Here's what thirty-one costs before the market even moves: thirty-one spreads, thirty-one commissions, thirty-one slippages. The account is eaten from underneath.",
+    "There's no plan that survives being executed thirty-one times. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "IN MEDIAS RES : on ouvre à 31 trades, sans mise en place.",
+      "question": "HOW MANY WERE PLANNED?",
+      "emotion_lever": "SATURATION — l'écran est illisible. Le chaos est immédiat, physique.",
+      "cast": {
+        "stack": {
+          "type": "block",
+          "note": "les positions superposées, illisibles"
+        },
+        "count": {
+          "type": "gauge",
+          "note": "le compteur"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0, AUCUNE INTRODUCTION : l'écran est SATURÉ. Des dizaines de positions superposées, entremêlées, sans ordre. Un compteur affiche '31'. Aucune ne se distingue des autres. On est déjà à la fin du désastre."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : une 32e position s'ajoute au tas. le ? fade."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "dès la frame 0 : un compteur à 31 et un écran saturé de positions superposées",
+      "dispositif_cle": "IN MEDIAS RES : entrer par la saturation, reconstruire ensuite."
+    },
+    {
+      "id": "s2",
+      "clarity": "REMBOBINAGE : le premier trade. Un niveau, une raison, un stop. Un vrai trade.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "L'image REMBOBINE : les positions se retirent du tas une à une, le compteur redescend, 31, 20, 10, 5, 1."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à 1, l'écran est PROPRE : une seule position, un niveau marqué sous elle, un stop posé, une raison écrite. Elle est irréprochable. Le premier trade n'était pas le problème."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la position unique, propre, documentée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le tas qui se défait à l'envers jusqu'à une position unique, nette, documentée",
+      "turn": "le premier trade était bon. c'est le deuxième qui change tout."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le deuxième arrive quatre minutes plus tard, sans rien. Après, ce n'est plus une suite de décisions.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Une DEUXIÈME position s'ouvre. On cherche son niveau : il n'y en a pas. Sa raison : la ligne est vide. Elle est arrivée quatre minutes après la première."
+        },
+        {
+          "t": "1.5-3",
+          "do": "une frise mesure l'INTERVALLE entre chaque trade. Il se réduit : 4 minutes, 3, 2, 1, quelques secondes. Passé un certain point, l'intervalle est trop court pour qu'une décision ait pu être prise. Ce ne sont plus des décisions, ce sont des réflexes."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : la frise des intervalles qui s'effondre."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le second trade sans niveau ni raison + l'intervalle entre trades qui s'effondre",
+      "turn": "sous un certain intervalle, il n'y a plus de décision possible."
+    },
+    {
+      "id": "s4",
+      "clarity": "Ce que coûtent 31 trades avant même que le marché bouge.",
+      "note": "LA scene — la fréquence est le coût, pas le trade.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "Chacun des 31 trades se DÉCOMPOSE en trois tuiles grises : spread, commission, slippage. 93 tuiles apparaissent."
+        },
+        {
+          "t": "2-3.5",
+          "do": "elles s'empilent SOUS la barre du compte et la poussent vers le bas — le compte est mangé par en dessous, sans qu'aucun mouvement de marché soit intervenu. On rappelle le trade n°1, seul, avec ses trois tuiles : minuscules. Ce n'est pas le coût unitaire le problème, c'est la RÉPÉTITION. Aucun chiffre affiché : la masse parle."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : les 93 tuiles empilées, la barre de compte poussée vers le bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "les 31 trades décomposés en trois frais chacun, la masse qui ronge le compte par en dessous",
+      "turn": "le marché n'a rien pris. la fréquence a suffi."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + LE CTA DANS LA VIDÉO.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : un INTERVALLE MINIMUM se pose entre deux trades — un délai fixe, écrit avant la séance, matérialisé par un segment infranchissable sur la frise. Un trade ne peut pas s'ouvrir tant que le segment n'est pas parcouru. Le compteur de la journée retombe à un nombre lisible, et chaque position récupère une ligne de raison."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé — LINE/MAP/PROFILE sont réservés au MOFU/BOFU."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : l'intervalle minimum, le compteur bas, les positions documentées, le CTA tenu. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "l'intervalle minimum imposé + le compteur qui retombe, et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Thirty-one trades today. Not one of them was planned before the session opened — and the first one was perfect.\n\nIt had a level, a reason, a stop. The second arrived four minutes later with none of those, and the interval between trades kept shrinking until it was too short for a decision to physically fit inside it. Thirty-one trades cost thirty-one spreads, thirty-one commissions, thirty-one slippages: the account is eaten from underneath before the market moves at all.\n\nTHE LINE — no plan survives being executed thirty-one times.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #overtrading #daytrading #forex #riskmanagement #tradingcosts #discipline #propfirm #tradingpsychology #trader",
+  "pinned_comment": "The market took nothing. The frequency was enough. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte PLUS de mot-clé. CTA unique : @kongrave_, prononcé ET affiché en S5. Motif : un reel à 1798 vues obtient 1 commentaire, un carrousel à 52 de portée en obtient 3. Le mot-clé se brûle sur l'audience froide.",
+    "caption_structure": "MOULE A révisé : caption LONGUE + ~10 hashtags (verdict L55 : la caption courte tue la distribution). Ligne 1 = LE HOOK (le mot-clé ayant disparu, elle n'a plus à porter un CTA). Le CTA abonnement ferme, avant les hashtags.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil de Tchekhov. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Le watch réel plafonne à 18-22s : la valeur doit être dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF, le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
+}

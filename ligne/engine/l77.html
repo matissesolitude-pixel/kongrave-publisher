@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L77 « THIRTY-ONE » — MENTAL, IN MEDIAS RES + REMBOBINAGE. TOFU. 31 trades, aucun planifié.
+       S1 : écran saturé de positions, compteur 31. S2 : rembobinage 31→1 ; à 1, une position propre (niveau/stop/raison). S3 : le 2e
+       arrive sans niveau ni raison ; la frise des INTERVALLES entre trades s'effondre (4min→secondes). S4 : chaque trade = 3 tuiles
+       (spread/commission/slippage) = 93 tuiles qui s'empilent SOUS la barre de compte et la poussent vers le bas. S5 : la prise — un
+       INTERVALLE MINIMUM fixe écrit avant la séance + CTA @kongrave_. Doctrine : teal = trade documenté ; gris = tas/coût ; pas de brun. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const POS=[]; for(let i=0;i<28;i++)POS.push(mk('rect',{rx:5,opacity:0}));
+    const counter=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':120,opacity:0});
+    // position propre (S2)
+    const clean=mk('rect',{fill:YOU,'fill-opacity':0.3,stroke:YOU,'stroke-width':5,rx:8,opacity:0});
+    const lvl=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const stop=mk('line',{stroke:DEAD,'stroke-width':4,'stroke-dasharray':'10 8',opacity:0});
+    const reason=mk('line',{stroke:YOU,'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    // frise des intervalles (S3)
+    const friseAx=mk('line',{stroke:INK,'stroke-width':4,opacity:0});
+    const TICK=[]; for(let i=0;i<12;i++)TICK.push(mk('line',{stroke:DEAD,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    // tuiles de coût (S4)
+    const TILE=[]; for(let i=0;i<30;i++)TILE.push(mk('rect',{fill:DEAD,rx:3,opacity:0}));
+    const acctO=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:6,opacity:0}), acctF=mk('rect',{fill:YOU,rx:5,opacity:0});
+    // intervalle minimum (S5)
+    const minSeg=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+
+    // ── QUESTION (§M15) ──
+    const QL=['HOW MANY','WERE PLANNED?'];
+    const FS=88,lineH=112,y0v=215,qY=QL.map((s,li)=>y0v+li*lineH);
+    const qEls=QL.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0v+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,900/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(46),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=56, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom); let w=el.getComputedTextLength()||0; if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    function ctaTOFU(u){putCap(capE,'@kongrave_',CX,250,YOU,clamp((u-3.6)/0.8,0,1));putCap(capF,'THE MECHANICS NOBODY EXPLAINS',CX,306,INK,clamp((u-3.9)/0.8,0,1));}
+    function hideDyn(){for(const e of [counter,clean,lvl,stop,reason,friseAx,acctO,acctF,minSeg])setOp(e,0);for(const a of [POS,TICK,TILE])for(const e of a)setOp(e,0);hideCaps();}
+
+    function pile(n,u,op){for(let i=0;i<28;i++){if(i<n){const ox=CX-260+((i*127)%520);const oy=820+((i*83)%320)+3*Math.sin(u*2+i);POS[i].setAttribute('x',ox.toFixed(1));POS[i].setAttribute('y',oy.toFixed(1));POS[i].setAttribute('width',130);POS[i].setAttribute('height',48);POS[i].setAttribute('fill',DEAD);POS[i].setAttribute('fill-opacity',0.55);setOp(POS[i],op);}else setOp(POS[i],0);}}
+
+    // ═══ S1 — SATURATION, COMPTEUR 31 ═══
+    function s1(lf,t,s){
+      const u=t-s; hideDyn();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const n=Math.min(28,20+Math.floor(u*1.2));
+      pile(n,u,clamp(u/0.3,0,1)*gf);
+      counter.textContent=Math.min(32,31+Math.floor(u/3));counter.setAttribute('x',CX);counter.setAttribute('y',700);counter.setAttribute('fill',DEAD);setOp(counter,clamp((u-0.3)/0.4,0,1)*gf);
+      putCap(capC,'TRADES TODAY',CX,760,DEAD,clamp((u-0.4)/0.5,0,1)*gf);
+      putCap(capB,'NOT ONE PLANNED BEFORE THE OPEN',CX,1300,INK,clamp((u-3.0)/0.8,0,1)*gf);
+    }
+
+    // ═══ S2 — REMBOBINAGE VERS 1, UNE POSITION PROPRE ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const rew=clamp(u/1.6,0,1);
+      const cnt=Math.round(lerp(31,1,eInOut(rew)));
+      counter.textContent=cnt;counter.setAttribute('x',CX);counter.setAttribute('y',680);counter.setAttribute('fill', cnt<=1?YOU:DEAD);counter.setAttribute('font-size',110);setOp(counter,1);
+      if(rew<0.9){ pile(cnt,u,1); }
+      else { // à 1 : position propre, documentée
+        clean.setAttribute('x',CX-100);clean.setAttribute('y',(900+6*Math.sin(u*1.4)).toFixed(1));clean.setAttribute('width',200);clean.setAttribute('height',120);setOp(clean,1);
+        lvl.setAttribute('x1',CX-160);lvl.setAttribute('x2',CX+160);lvl.setAttribute('y1',900);lvl.setAttribute('y2',900);setOp(lvl,1);
+        stop.setAttribute('x1',CX-160);stop.setAttribute('x2',CX+160);stop.setAttribute('y1',1040);stop.setAttribute('y2',1040);setOp(stop,1);
+        reason.setAttribute('x1',CX-120);reason.setAttribute('x2',(CX-120+240*clamp((u-2.0)/0.6,0,1)).toFixed(1));reason.setAttribute('y1',1120);reason.setAttribute('y2',1120);setOp(reason,clamp((u-2.0)/0.4,0,1));
+      }
+      putCap(capB,'LEVEL · REASON · STOP — A REAL TRADE',CX,1230,INK,clamp((u-2.2)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE 2e SANS RIEN, LES INTERVALLES S'EFFONDRENT ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const br=7*Math.sin(u*1.3)+4*Math.sin(u*2.4);
+      // 1re position documentée (gauche), 2e position SANS rien (droite)
+      clean.setAttribute('x',180);clean.setAttribute('y',(760+br).toFixed(1));clean.setAttribute('width',180);clean.setAttribute('height',110);setOp(clean,clamp(u/0.15,0,1));
+      lvl.setAttribute('x1',160);lvl.setAttribute('x2',380);lvl.setAttribute('y1',(760+br).toFixed(1));lvl.setAttribute('y2',(760+br).toFixed(1));setOp(lvl,clamp(u/0.15,0,1));
+      POS[0].setAttribute('x',720);POS[0].setAttribute('y',(760-br).toFixed(1));POS[0].setAttribute('width',180);POS[0].setAttribute('height',110);POS[0].setAttribute('fill',DEAD);POS[0].setAttribute('fill-opacity',0.5);setOp(POS[0],clamp((u-0.3)/0.4,0,1));
+      putCap(capA,'DOCUMENTED',270,750,YOU,clamp(u/0.2,0,1));
+      putCap(capD,'FROM NOTHING',810,750,DEAD,clamp((u-0.4)/0.4,0,1));
+      // frise des intervalles : ticks de plus en plus serrés
+      friseAx.setAttribute('x1',150);friseAx.setAttribute('x2',930);friseAx.setAttribute('y1',1080);friseAx.setAttribute('y2',1080);setOp(friseAx,clamp(u/0.2,0,1));
+      const collapse=clamp(u/2.6,0,1);
+      let x=150;
+      for(let i=0;i<12;i++){const gapw=lerp(90,10,collapse)*(1-i*0.03);x+=gapw;
+        const show=x<930 && i<Math.floor(3+collapse*9);
+        TICK[i].setAttribute('x1',x.toFixed(1));TICK[i].setAttribute('x2',x.toFixed(1));TICK[i].setAttribute('y1',(1080-26+3*Math.sin(u*2+i)).toFixed(1));TICK[i].setAttribute('y2',(1080+26).toFixed(1));setOp(TICK[i],show?0.9:0);}
+      putCap(capC,'INTERVAL: 4 MIN → SECONDS',CX,1180,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'IT STOPPED BEING DECISIONS',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+    }
+
+    // ═══ S4 — 93 TUILES, LE COMPTE MANGÉ PAR EN DESSOUS ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      const grow=clamp(u/2.4,0,1);
+      // la barre de compte, poussée vers le bas
+      const push=lerp(0,260,grow);
+      acctO.setAttribute('x',180);acctO.setAttribute('y',(700+push).toFixed(1));acctO.setAttribute('width',720);acctO.setAttribute('height',60);setOp(acctO,clamp(u/0.4,0,1));
+      acctF.setAttribute('x',184);acctF.setAttribute('y',(704+push).toFixed(1));acctF.setAttribute('width',712);acctF.setAttribute('height',52);setOp(acctF,clamp(u/0.4,0,1));
+      // les tuiles s'empilent SOUS la barre
+      const nTile=Math.min(30,Math.floor(grow*30));
+      const cols=10, tw=64, th=22, gapx=6, gapy=6, x0=205, baseY=800;
+      for(let i=0;i<30;i++){const shown=i<nTile;const c=i%cols,r=Math.floor(i/cols);TILE[i].setAttribute('x',(x0+c*(tw+gapx)).toFixed(1));TILE[i].setAttribute('y',(baseY+push+r*(th+gapy)+3*Math.sin(u*1.4+i*0.2)).toFixed(1));TILE[i].setAttribute('width',tw);TILE[i].setAttribute('height',th);setOp(TILE[i],shown?0.8:0);}
+      putCap(capC,'93 = SPREAD · COMMISSION · SLIPPAGE ×31',CX,1240,DEAD,clamp((u-1.0)/0.6,0,1));
+      putCap(capB,'EATEN FROM UNDERNEATH — NO MOVE NEEDED',CX,600,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — L'INTERVALLE MINIMUM + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideDyn();
+      friseAx.setAttribute('x1',150);friseAx.setAttribute('x2',930);friseAx.setAttribute('y1',980);friseAx.setAttribute('y2',980);setOp(friseAx,clamp(u/0.15,0,1));
+      // la position documentée, posée dès l'ouverture (au-dessus de la frise)
+      const cy=760+6*Math.sin(u*1.4);
+      clean.setAttribute('x',CX-100);clean.setAttribute('y',cy.toFixed(1));clean.setAttribute('width',200);clean.setAttribute('height',110);setOp(clean,clamp(u/0.15,0,1));
+      lvl.setAttribute('x1',CX-160);lvl.setAttribute('x2',CX+160);lvl.setAttribute('y1',cy.toFixed(1));lvl.setAttribute('y2',cy.toFixed(1));setOp(lvl,clamp(u/0.15,0,1));
+      // deux trades espacés d'un intervalle MINIMUM fixe
+      const set=clamp((u-0.4)/0.6,0,1);
+      const x1v=360, x2v=720;
+      TICK[0].setAttribute('x1',x1v);TICK[0].setAttribute('x2',x1v);TICK[0].setAttribute('y1',954);TICK[0].setAttribute('y2',1006);TICK[0].setAttribute('stroke',YOU);setOp(TICK[0],1);
+      TICK[1].setAttribute('x1',x2v);TICK[1].setAttribute('x2',x2v);TICK[1].setAttribute('y1',954);TICK[1].setAttribute('y2',1006);TICK[1].setAttribute('stroke',YOU);setOp(TICK[1],set);
+      minSeg.setAttribute('x1',x1v);minSeg.setAttribute('x2',(lerp(x1v,x2v,set)).toFixed(1));minSeg.setAttribute('y1',980);minSeg.setAttribute('y2',980);setOp(minSeg,clamp(u/0.4,0,1));
+      putCap(capC,'A MINIMUM INTERVAL — WRITTEN BEFORE',CX,1080,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'NO PLAN SURVIVES 31 EXECUTIONS',CX,1300,INK,clamp((u-2.2)/0.6,0,1));
+      ctaTOFU(u);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
