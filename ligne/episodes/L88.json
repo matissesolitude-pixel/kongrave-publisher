@@ -1,0 +1,159 @@
+{
+  "id": "L88",
+  "engine": "l88",
+  "title": "L88 — THE STOP THAT KEPT MOVING",
+  "_cellule": "SIRD (Glacier) · Curiosité · Likelihood/Risk · regard=le prospect · futur · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders take the same trade. Watch what each one does when price walks into the stop.",
+    "The first one lets it close. The loss is exactly the size that was decided before the entry.",
+    "The other drags the stop lower. The position is still open — and nothing about the trade got better.",
+    "A stop is the price where the idea is proven wrong. Move it, and the idea is still wrong. You have only removed the number that was measuring it.",
+    "One of them knew the cost before the trade. The other finds out after. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "MONTAGE PARALLÈLE : deux traders, même trade, même seconde. Le prix marche déjà vers le stop des deux côtés.",
+      "question": "SAME TRADE. ONE STOP MOVES.",
+      "emotion_lever": "TENSION + RECONNAISSANCE DE SOI — l'instant juste avant que le stop soit touché. Tout trader a vécu cette seconde-là. Elle est déjà en cours dès la frame 0, on n'attend pas qu'elle s'installe.",
+      "cast": {
+        "p1": {
+          "type": "path",
+          "note": "bande HAUTE : un tracé de prix qui descend, DÉJÀ en mouvement"
+        },
+        "st1": {
+          "type": "line",
+          "note": "bande HAUTE : le trait de stop, posé sous le prix"
+        },
+        "p2": {
+          "type": "path",
+          "note": "bande BASSE : le MÊME tracé, à la même abscisse, même vitesse"
+        },
+        "st2": {
+          "type": "line",
+          "note": "bande BASSE : le MÊME trait de stop, à la même hauteur"
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "FRAME 0 À TENSION MAX : écran divisé en DEUX BANDES HORIZONTALES. Dans chacune, un tracé de prix DESCEND DÉJÀ vers un trait de stop posé juste en dessous — l'écart est de quelques pixels, le contact est imminent. Les deux bandes sont RIGOUREUSEMENT identiques et avancent ENSEMBLE. Rien ne se construit : les quatre objets sont pleins et en mouvement dès la première frame."
+        },
+        {
+          "t": "0.5-1.5",
+          "do": "le ? POP par-dessus, 200px, dans la gouttière entre les deux bandes."
+        },
+        {
+          "t": "1.5-8",
+          "do": "TENUE VIVANTE : les deux prix continuent de descendre à la même vitesse, la distance au stop se réduit dans les deux bandes. le ? fade. Aucun des deux stops n'a encore bougé."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux bandes identiques, deux prix qui descendent vers deux stops identiques, tout déjà en mouvement",
+      "dispositif_cle": "MONTAGE PARALLÈLE : la divergence n'est pas encore là, elle est ANNONCÉE. Le spectateur reste pour voir laquelle des deux bandes va bouger."
+    },
+    {
+      "id": "s2",
+      "clarity": "La bande du HAUT : le stop tient, le prix le touche, la position se ferme.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "BANDE HAUTE : le prix atteint le trait de stop et le TOUCHE. La position se ferme net. Un bloc de perte se dessine, avec un COUVERCLE franc sur le dessus — sa hauteur est bornée, visiblement finie."
+        },
+        {
+          "t": "1.5-3",
+          "do": "à côté du bloc, une marque montre que cette hauteur était DÉJÀ posée avant l'entrée : le bloc s'arrête exactement là où la marque était. Rien n'a été découvert."
+        },
+        {
+          "t": "3-9",
+          "do": "TENUE VIVANTE : dans la bande BASSE, le prix continue de descendre et arrive au contact de son propre stop — le mouvement ne s'arrête jamais à l'écran. Dans la bande HAUTE, le bloc fermé reste posé."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "un bloc de perte avec un couvercle, de la hauteur exacte marquée avant l'entrée",
+      "turn": "la perte a la taille qui avait été décidée."
+    },
+    {
+      "id": "s3",
+      "clarity": "La bande du BAS : le stop est traîné vers le bas. La position reste ouverte.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "BANDE BASSE : au moment où le prix va toucher le trait de stop, le TRAIT SE DÉPLACE vers le bas pour lui laisser la place. Le contact n'a pas lieu. La position reste ouverte."
+        },
+        {
+          "t": "1.5-3",
+          "do": "le prix continue de descendre ; le trait recule encore. Le bloc de perte, lui, GRANDIT — et il n'a plus de couvercle : son bord haut est ouvert. Rien dans le trade ne s'est amélioré : c'est le même tracé, à la même seconde, que dans la bande du haut."
+        },
+        {
+          "t": "3-10",
+          "do": "TENUE VIVANTE : le prix descend, le trait recule, le bloc monte. Trois mouvements simultanés, aucun temps mort."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le trait de stop qui recule devant le prix, et un bloc de perte sans couvercle qui grandit",
+      "turn": "la position est toujours ouverte. la perte, elle, n'est plus mesurée."
+    },
+    {
+      "id": "s4",
+      "clarity": "LA RÉVÉLATION : le stop n'était pas ce qui coûtait. C'était ce qui MESURAIT.",
+      "note": "LA scène — les deux bandes sont remises côte à côte pour que le spectateur voie que l'idée était fausse des deux côtés.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "ZOOM ARRIÈRE sur les deux bandes ensemble. Le même tracé de prix les traverse toutes les deux, identique. L'idée de départ était FAUSSE des deux côtés — la bande du haut ne s'est pas trompée moins que celle du bas."
+        },
+        {
+          "t": "2-3.5",
+          "do": "la seule différence apparaît en clair : à gauche, un bloc borné par un couvercle ; à droite, le même bloc sans bord haut, qui continue de monter et SORT du cadre. Le trait de stop se replie sur lui-même et devient une RÈGLE GRADUÉE : c'était l'instrument de mesure. En le déplaçant, on n'a pas réduit la perte — on a retiré la graduation."
+        },
+        {
+          "t": "3.5-11",
+          "do": "TENUE VIVANTE longue : à gauche le bloc borné, immobile et fini ; à droite le bloc qui continue de monter et de sortir du cadre. La règle graduée pulse doucement entre les deux."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "deux blocs issus du même tracé : l'un borné par une graduation, l'autre sans bord haut, qui sort du cadre",
+      "turn": "déplacer le stop n'a rien réparé. ça a retiré l'instrument."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise + le CTA.",
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-2",
+          "do": "La prise : le trait de stop est posé AVANT l'entrée, et une flèche montre le SEUL sens dans lequel il a le droit de se déplacer ensuite — vers la position, jamais à l'opposé. Une flèche barrée montre l'autre sens. La règle tient en une image : un stop se resserre, il ne recule pas."
+        },
+        {
+          "t": "2-3.5",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : zone MÉDIANE (bas 12% vide), en encre nette : « @kongrave_ » et dessous, plus petit : « the mechanics nobody explains ». Lisible sans son. La voix le prononce. ⛔ AUCUN mot-clé."
+        },
+        {
+          "t": "3.5-12",
+          "do": "IMAGE FINALE TENUE >=3s : la règle du sens unique et le CTA tenus à l'écran. Immobile."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "le stop posé avant l'entrée + la flèche du sens unique (il se resserre, il ne recule pas), et le CTA abonnement"
+    }
+  ],
+  "total": 60.0,
+  "caption": "Two traders take the same trade. One lets the stop close it. The other drags the stop lower.\n\nNothing about the second trade got better. Same instrument, same second, same idea — and the idea was wrong on both sides. A stop is the price where that gets proven. Move it and the idea is still wrong; you have only removed the number that was measuring it.\n\nThe first trader knew the cost before the entry. The second one finds out after, and by then it is not a decision anymore.\n\nA stop tightens. It does not retreat.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #riskmanagement #daytrading #forex #stoploss #tradingdiscipline #priceaction #tradingpsychology #propfirm #trader",
+  "pinned_comment": null,
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "split_test_hashtags": "BRAS A (3 hashtags) — à appliquer dans queue/L88/caption.txt à la fabrication : ne garder que #trading #stoploss #riskmanagement. Le JSON conserve les 10 (bras B).",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "premiere_seconde": "LOI 1ter (mesure du 17/08) : frame 0 = objet reconnaissable DÉJÀ en mouvement (le prix qui marche dans le stop) ; voice[0] = DUEL ANNONCÉ + le mot watch (archétype L68/L72, seuls épisodes courts >1100 vues) ; rien n'est demandé au spectateur avant la 3e seconde. Objectif skip ≤ 52 %.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché. Aucun montant chiffré à l'écran.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~60s. Valeur dense AVANT la 20e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": null
+}
