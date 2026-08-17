@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L88 « THE STOP THAT KEPT MOVING » — dispositif MONTAGE PARALLÈLE (pas de fusil). S1 : émotion frame 0 = levier TENSION +
+       RECONNAISSANCE — écran divisé en DEUX BANDES horizontales identiques ; dans chacune un prix teal DESCEND DÉJÀ vers un trait de
+       stop posé juste dessous, contact imminent, tout en mouvement dès t=0. S2 (bande HAUTE) : le prix touche le stop, la position se
+       ferme, un BLOC DE PERTE gris se remplit jusqu'à un COUVERCLE (une marque posée AVANT l'entrée) — hauteur bornée, finie ; pendant
+       ce temps la bande BASSE continue de descendre vers son propre stop (vie continue). S3 (bande BASSE) : au moment du contact, le
+       TRAIT DE STOP recule vers le bas, le contact n'a pas lieu, la position reste ouverte ; le bloc de perte GRANDIT sans couvercle,
+       bord haut ouvert — prix qui descend, trait qui recule, bloc qui monte, trois mouvements simultanés. S4 : diptyque — même prix des
+       deux côtés, à gauche bloc borné par un couvercle, à droite le même bloc sans bord haut qui monte et SORT du cadre ; le trait de
+       stop se replie en RÈGLE GRADUÉE (c'était l'instrument de mesure, pas le coût). S5 : la prise — le stop est posé avant l'entrée,
+       une flèche montre le SEUL sens permis (vers la position, jamais à l'opposé, l'autre sens barré) : un stop se resserre, il ne recule
+       pas ; CTA abonnement @kongrave_ (TOFU, aucun mot-clé). Doctrine : aucun chiffre à l'écran ; perte = gris ; teal = toi/ta position ;
+       pas de brun ; bas ~12% vide ; jamais « perdre plus que son dépôt » ; aucune intention prêtée aux institutionnels. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LES DEUX BANDES (montage parallèle) : chaque bande = trait d'entrée (pointillé) + trait de STOP + prix teal (tracé + pastille) ──
+    const entryLine=[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':3,'stroke-dasharray':'10 12',opacity:0}));
+    const stopLine =[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0}));
+    const priceTrail=[0,1].map(()=>mk('polyline',{fill:'none',stroke:YOU,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const priceDot=[0,1].map(()=>mk('circle',{r:13,fill:YOU,opacity:0}));
+    // ── LES BLOCS DE PERTE (gris) + leur COUVERCLE / MARQUE (encre) ──
+    const lossBar=[0,1].map(()=>mk('rect',{fill:DEAD,rx:3,opacity:0}));
+    const lidMark=[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0}));
+    // ── S4 : la RÈGLE GRADUÉE (le stop replié = l'instrument de mesure) ──
+    const ruler=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const rulerTicks=[]; for(let i=0;i<7;i++)rulerTicks.push(mk('line',{stroke:YOU,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    // ── S5 : la prise (stop posé + sens unique) ──
+    const s5stop=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const s5entry=mk('line',{stroke:INK,'stroke-width':3,'stroke-dasharray':'10 12',opacity:0});
+    const arrOk=mk('line',{stroke:YOU,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const arrOkHead=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':10,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const arrNo=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const arrNoHead=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':10,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const arrNoBar1=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const arrNoBar2=mk('line',{stroke:DEAD,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const ctaMain=mk('text',{x:CX,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':78,'letter-spacing':'1',opacity:0});ctaMain.textContent='@kongrave_';
+    const ctaSub=mk('text',{x:CX,'text-anchor':'middle',fill:DEAD,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':40,'letter-spacing':'1.5',opacity:0});ctaSub.textContent='THE MECHANICS NOBODY EXPLAINS';
+
+    function hideBands(){for(let i=0;i<2;i++){setOp(entryLine[i],0);setOp(stopLine[i],0);setOp(priceTrail[i],0);setOp(priceDot[i],0);setOp(lossBar[i],0);setOp(lidMark[i],0);}}
+    function hideS4(){setOp(ruler,0);for(const e of rulerTicks)setOp(e,0);}
+    function hideS5(){for(const e of [s5stop,s5entry,arrOk,arrOkHead,arrNo,arrNoHead,arrNoBar1,arrNoBar2,ctaMain,ctaSub])setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ; le « ? » va dans la GOUTTIÈRE entre les deux bandes ──
+    const QLINES=['SAME TRADE','ONE STOP MOVES'];
+    const FS=78,lineH=100,y0=300,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=1040,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL depuis l26.html) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34),capG=caption(38),capH=caption(38);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH])setOp(e,0);}
+
+    // ── géométrie des deux bandes (montage parallèle S1→S3) ──
+    const CX0=150, CX1=700;                 // colonne du prix (chart)
+    const BAR_CX=858, BAR_HW=46;            // colonne du bloc de perte (à droite du chart, jamais dessus)
+    const YE=[640,1120], YS0=[850,1330];    // entrée / stop de base — bande HAUTE puis BASSE
+
+    // tracé de prix descendant, deux harmoniques (vie continue), pastille = prix courant à droite
+    function pricePath(el,x0,x1,yEntry,yCur,n,u,seed){
+      let pts=[];
+      for(let i=0;i<=n;i++){const f=i/n;
+        const base=lerp(yEntry,yCur,eIn(f));
+        const wig=7*Math.sin(u*1.7+i*1.05+seed)+3.5*Math.sin(u*2.9+i*1.9+seed*1.3);
+        pts.push([lerp(x0,x1,f).toFixed(1),(base+wig).toFixed(1)]);}
+      el.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
+      return pts[pts.length-1];
+    }
+    function drawBar(el,cx,hw,yBase,yTop,op){
+      const y=Math.min(yTop,yBase-2),h=yBase-y;
+      el.setAttribute('x',(cx-hw).toFixed(1));el.setAttribute('width',(2*hw).toFixed(1));
+      el.setAttribute('y',y.toFixed(1));el.setAttribute('height',Math.max(2,h).toFixed(1));setOp(el,op);
+    }
+    // une bande complète : entrée + stop + prix, le tout à opacité opChart
+    function drawBand(idx,x0,x1,yEntry,yStop,yCur,u,seed,opChart){
+      entryLine[idx].setAttribute('x1',x0);entryLine[idx].setAttribute('x2',x1);
+      entryLine[idx].setAttribute('y1',yEntry.toFixed(1));entryLine[idx].setAttribute('y2',yEntry.toFixed(1));setOp(entryLine[idx],0.55*opChart);
+      stopLine[idx].setAttribute('x1',x0);stopLine[idx].setAttribute('x2',x1);
+      stopLine[idx].setAttribute('y1',yStop.toFixed(1));stopLine[idx].setAttribute('y2',yStop.toFixed(1));setOp(stopLine[idx],opChart);
+      const cur=pricePath(priceTrail[idx],x0,x1,yEntry,yCur,22,u,seed);setOp(priceTrail[idx],opChart);
+      priceDot[idx].setAttribute('cx',cur[0]);priceDot[idx].setAttribute('cy',cur[1]);setOp(priceDot[idx],opChart);
+    }
+
+    // ═══ S1 — MONTAGE PARALLÈLE : deux bandes identiques, deux prix qui marchent déjà dans leur stop ═══
+    // Verbe visuel : le duel annoncé (deux tracés jumeaux avancent ensemble, aucun n'a encore bougé son stop).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideBands(); hideS4(); hideS5();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      // question en HAUT (ligne 0 pleine dès t=0)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      // le « ? » POP dans la GOUTTIÈRE entre les deux bandes, puis fade
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1)*clamp(1-(u-1.7)/0.7,0,1),qsc=0.6+0.4*backOut(clamp(qm/0.2,0,1));setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // les deux bandes RIGOUREUSEMENT identiques : le prix descend, le gap au stop se resserre (30→13 px), contact imminent
+      const gap=lerp(30,13,clamp(u/6,0,1));
+      for(let i=0;i<2;i++){
+        const drift=1.4*Math.sin(u*1.2+i*0.0);   // même dérive : ils avancent ENSEMBLE
+        drawBand(i,CX0,CX1,YE[i]+drift,YS0[i]+drift,YS0[i]-gap+drift+2.2*Math.sin(u*1.9+i*0.0)+1.1*Math.sin(u*3.1),u,3.0,1);
+      }
+      putCap(capA,'YOUR STOP',300,YS0[0]+52,INK,1);
+      putCap(capC,'YOUR STOP',300,YS0[1]+52,INK,1);
+      putCap(capB,'SAME TRADE — BOTH SIDES',CX,560,DEAD,clamp((u-1.9)/0.7,0,1)*gf);
+    }
+
+    // ═══ S2 — BANDE HAUTE : le stop tient, le prix le touche, la perte se ferme sur une hauteur DÉCIDÉE ═══
+    // Verbe visuel : la fermeture bornée (le bloc gris se remplit jusqu'à un couvercle posé avant l'entrée).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBands(); hideS4(); hideS5();
+      // BANDE HAUTE (active) : le prix atteint le stop (contact à u~1.4) puis y reste
+      const cy=YS0[0]-lerp(18,0,clamp(u/1.4,0,1))+1.0*Math.sin(u*2.2);
+      drawBand(0,CX0,CX1,YE[0],YS0[0],cy,u,3.0,1);
+      // le COUVERCLE / MARQUE est posé AVANT l'entrée (dès u=0, au niveau de l'entrée) — le bloc s'arrêtera exactement là
+      const lidY=YE[0];
+      lidMark[0].setAttribute('x1',BAR_CX-BAR_HW-16);lidMark[0].setAttribute('x2',BAR_CX+BAR_HW+16);
+      lidMark[0].setAttribute('y1',lidY);lidMark[0].setAttribute('y2',lidY);setOp(lidMark[0],clamp(u/0.4,0,1));
+      // le bloc de perte gris se remplit du stop (bas) jusqu'au couvercle (haut = entrée) — hauteur bornée, finie
+      const fill=clamp((u-0.5)/1.1,0,1), barTop=lerp(YS0[0],lidY,fill);
+      drawBar(lossBar[0],BAR_CX,BAR_HW,YS0[0],barTop,clamp(u/0.5,0,1));
+      putCap(capA,'STOP HOLDS — TRADE CLOSED',400,560,INK,clamp((u-1.3)/0.6,0,1));
+      putCap(capB,'THE LOSS',BAR_CX,YS0[0]+52,DEAD,clamp((u-0.7)/0.5,0,1));
+      putCap(capC,'SET BEFORE ENTRY',BAR_CX,lidY-28,INK,clamp((u-1.7)/0.6,0,1));
+      // BANDE BASSE : le prix continue de descendre vers son propre stop — le mouvement ne s'arrête jamais (vie continue)
+      const gap2=lerp(26,6,clamp(u/8,0,1));
+      drawBand(1,CX0,CX1,YE[1],YS0[1],YS0[1]-gap2+2.0*Math.sin(u*1.8)+1.0*Math.sin(u*3.0),u,5.0,0.85);
+      putCap(capD,'THE OTHER TRADE',300,YS0[1]+52,DEAD,clamp((u-2.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — BANDE BASSE : le stop est TRAÎNÉ vers le bas, la position reste ouverte, la perte grandit sans couvercle ═══
+    // Verbe visuel : le recul du stop (le trait fuit devant le prix, le bloc monte sans bord haut).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBands(); hideS4(); hideS5();
+      // BANDE HAUTE : l'état fermé (rappel), presque figé mais VIVANT — micro-mouvement continu, deux harmoniques
+      const wob=1.6*Math.sin(u*1.3)+0.8*Math.sin(u*2.3);
+      drawBand(0,CX0,CX1,YE[0]+wob,YS0[0]+wob,YS0[0]+wob+0.6*Math.sin(u*2.2),u,3.0,0.8);
+      lidMark[0].setAttribute('x1',BAR_CX-BAR_HW-16);lidMark[0].setAttribute('x2',BAR_CX+BAR_HW+16);
+      lidMark[0].setAttribute('y1',YE[0]+wob);lidMark[0].setAttribute('y2',YE[0]+wob);setOp(lidMark[0],0.8);
+      drawBar(lossBar[0],BAR_CX,BAR_HW,YS0[0]+wob,YE[0]+wob,0.8);
+      // BANDE BASSE (active) : le prix descend, le trait de STOP recule pour lui laisser la place — jamais de contact
+      const drop=lerp(0,58,clamp(u/3.2,0,1));                 // le prix descend
+      const cy=YS0[1]-8+drop+1.4*Math.sin(u*2.1)+0.7*Math.sin(u*3.3);
+      const yStopMoved=cy+18+lerp(0,10,clamp((u-0.4)/2.5,0,1));   // le stop reste JUSTE dessous, il recule encore
+      drawBand(1,CX0,CX1,YE[1],yStopMoved,cy,u,5.0,1);
+      // le bloc de perte grandit vers le HAUT, sans couvercle : son bord haut passe au-dessus de la marque (là où un couvercle serait)
+      const barTop=lerp(YS0[1],YS0[1]-300,clamp((u-0.4)/3.0,0,1))+2.0*Math.sin(u*2.0);
+      drawBar(lossBar[1],BAR_CX,BAR_HW,yStopMoved,barTop,1);
+      // la MARQUE (où un couvercle aurait dû se poser) reste visible, faible — le bloc la dépasse (ses extrémités dépassent la barre)
+      lidMark[1].setAttribute('x1',BAR_CX-BAR_HW-18);lidMark[1].setAttribute('x2',BAR_CX+BAR_HW+18);
+      lidMark[1].setAttribute('y1',YE[1]);lidMark[1].setAttribute('y2',YE[1]);
+      lidMark[1].setAttribute('stroke',DEAD);lidMark[1].setAttribute('stroke-dasharray','12 9');setOp(lidMark[1],clamp((u-1.0)/0.6,0,1)*0.7);
+      putCap(capA,'STOP DRAGGED — STILL OPEN',300,YE[1]-34,INK,clamp((u-1.2)/0.6,0,1));
+      putCap(capB,'NO LID',BAR_CX,1010,DEAD,clamp((u-2.0)/0.6,0,1));   // dans la gouttière VIDE entre les deux blocs
+      putCap(capC,'NOTHING GOT BETTER',CX,560,INK,clamp((u-3.0)/0.7,0,1));
+    }
+
+    // ═══ S4 — DIPTYQUE : même prix des deux côtés ; borné à gauche, sans bord haut à droite ; le stop devient une RÈGLE ═══
+    // Verbe visuel : la comparaison-révélation (l'écart n'est pas le coût — le stop MESURAIT).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBands(); hideS4(); hideS5();
+      const yBase=1250;
+      // le MÊME tracé de prix traverse les deux côtés, identique — PLEIN dès la frame 0 (plan d'établissement),
+      // il s'efface avant que le bloc droit ne balaie le haut du cadre. Il DESCEND (vie continue) tant qu'il est là.
+      const estab=clamp(1-(u-2.4)/0.6,0,1);
+      const py=620, slide=lerp(0,70,clamp(u/2.4,0,1)), wob=6*Math.sin(u*1.5)+3*Math.sin(u*2.6);
+      const cur=pricePath(priceTrail[0],140,940,py-40+slide,py+60+slide+wob,26,u,4.0);setOp(priceTrail[0],estab);
+      priceDot[0].setAttribute('cx',cur[0]);priceDot[0].setAttribute('cy',cur[1]);setOp(priceDot[0],estab);
+      // titre : plein dès l'ouverture, il s'EFFACE avant que le bloc de droite ne balaie le haut du cadre
+      putCap(capB,'SAME IDEA — WRONG BOTH SIDES',CX,565,INK,clamp(u/0.3,0,1)*clamp(1-(u-3.0)/0.6,0,1));
+      // GAUCHE — bloc BORNÉ par un couvercle (la perte décidée)
+      const lidL=800;
+      drawBar(lossBar[0],330,60,yBase,lidL,clamp((u-1.4)/0.7,0,1));
+      lidMark[0].setAttribute('x1',330-78);lidMark[0].setAttribute('x2',330+78);
+      lidMark[0].setAttribute('y1',lidL);lidMark[0].setAttribute('y2',lidL);
+      lidMark[0].setAttribute('stroke',INK);lidMark[0].setAttribute('stroke-dasharray','');setOp(lidMark[0],clamp((u-1.4)/0.7,0,1));
+      putCap(capC,'BOUNDED',330,yBase+54,INK,clamp((u-1.8)/0.6,0,1));
+      // la RÈGLE GRADUÉE : le stop replié, l'instrument qui a mesuré la perte à gauche. Ses graduations GLISSENT
+      // en continu (déplacement de position, pas une pulsation d'opacité) — l'instrument reste vivant tout du long.
+      const rx=205, rTop=lidL, rBot=yBase, slideT=6*Math.sin(u*1.3)+3*Math.sin(u*2.2);
+      ruler.setAttribute('x1',rx);ruler.setAttribute('x2',rx);ruler.setAttribute('y1',rTop);ruler.setAttribute('y2',rBot);setOp(ruler,clamp((u-2.2)/0.7,0,1));
+      for(let i=0;i<rulerTicks.length;i++){const gy=lerp(rBot,rTop,i/(rulerTicks.length-1))+slideT*Math.cos(i*0.9);
+        rulerTicks[i].setAttribute('x1',rx-18);rulerTicks[i].setAttribute('x2',rx+18);rulerTicks[i].setAttribute('y1',gy.toFixed(1));rulerTicks[i].setAttribute('y2',gy.toFixed(1));
+        setOp(rulerTicks[i],clamp((u-2.4-i*0.05)/0.5,0,1));}
+      putCap(capE,'IT MEASURED THE LOSS',300,rTop-34,YOU,clamp((u-2.8)/0.7,0,1));
+      // DROITE — le MÊME bloc SANS bord haut : il monte et SORT du cadre. La montée est ÉTALÉE sur presque toute la
+      // scène (jamais figé mi-parcours) et son bord haut respire à deux harmoniques — vie continue en tenue longue.
+      const topR=lerp(yBase,410,clamp((u-1.6)/6.5,0,1))+10*Math.sin(u*1.6)+5*Math.sin(u*2.8);
+      drawBar(lossBar[1],740,60,yBase,topR,clamp((u-1.6)/0.6,0,1));
+      putCap(capD,'NO LID',740,yBase+54,DEAD,clamp((u-2.0)/0.6,0,1));
+      // la prise, posée SOUS les deux blocs (le bloc droit ne descend jamais jusque-là)
+      putCap(capF,'MOVE IT — THE LOSS IS NOT MEASURED',CX,1380,DEAD,clamp((u-3.4)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA PRISE : le stop se resserre, il ne recule pas + CTA abonnement (TOFU) ═══
+    // Verbe visuel : le sens unique (une flèche permise vers la position, l'autre barrée).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideBands(); hideS4(); hideS5();
+      const cxL=540, entryY=720, stopY=940;
+      // le stop posé AVANT l'entrée, et l'entrée au-dessus (ta position) — PLEINS dès l'ouverture (pas d'écran vide)
+      s5entry.setAttribute('x1',260);s5entry.setAttribute('x2',820);s5entry.setAttribute('y1',entryY);s5entry.setAttribute('y2',entryY);setOp(s5entry,clamp(u/0.15,0,1));
+      s5stop.setAttribute('x1',260);s5stop.setAttribute('x2',820);s5stop.setAttribute('y1',stopY);s5stop.setAttribute('y2',stopY);setOp(s5stop,clamp(u/0.15,0,1));
+      putCap(capA,'ENTRY',300,entryY-28,INK,clamp(u/0.3,0,1));
+      putCap(capB,'STOP',215,stopY+52,INK,clamp(u/0.3,0,1));
+      // flèche PERMISE (teal) : le stop se resserre VERS la position (vers le haut) — présente vite, vie continue : la pointe respire
+      const okAp=clamp((u-0.25)/0.4,0,1), bob=6*Math.sin(u*2.3)+3*Math.sin(u*3.5);
+      const okX=430, okTop=entryY+30+bob, okBot=stopY-10;
+      arrOk.setAttribute('x1',okX);arrOk.setAttribute('x2',okX);arrOk.setAttribute('y1',okBot);arrOk.setAttribute('y2',okTop);setOp(arrOk,okAp);
+      arrOkHead.setAttribute('points',`${okX-22},${okTop+30} ${okX},${okTop} ${okX+22},${okTop+30}`);setOp(arrOkHead,okAp);
+      putCap(capC,'TIGHTEN',okX,stopY+52,YOU,clamp((u-1.1)/0.6,0,1));
+      // flèche INTERDITE (gris, barrée) : jamais à l'opposé (vers le bas, loin de la position)
+      const noAp=clamp((u-1.2)/0.6,0,1);
+      const noX=650, noTop=stopY+10, noBot=stopY+150+4*Math.sin(u*2.0);
+      arrNo.setAttribute('x1',noX);arrNo.setAttribute('x2',noX);arrNo.setAttribute('y1',noTop);arrNo.setAttribute('y2',noBot);setOp(arrNo,noAp);
+      arrNoHead.setAttribute('points',`${noX-22},${noBot-30} ${noX},${noBot} ${noX+22},${noBot-30}`);setOp(arrNoHead,noAp);
+      const bcy=(noTop+noBot)/2;
+      arrNoBar1.setAttribute('x1',noX-34);arrNoBar1.setAttribute('x2',noX+34);arrNoBar1.setAttribute('y1',bcy-30);arrNoBar1.setAttribute('y2',bcy+30);setOp(arrNoBar1,clamp((u-1.5)/0.4,0,1));
+      arrNoBar2.setAttribute('x1',noX-34);arrNoBar2.setAttribute('x2',noX+34);arrNoBar2.setAttribute('y1',bcy+30);arrNoBar2.setAttribute('y2',bcy-30);setOp(arrNoBar2,clamp((u-1.5)/0.4,0,1));
+      putCap(capD,'NEVER AWAY',noX,noBot+50,DEAD,clamp((u-1.5)/0.6,0,1));
+      putCap(capE,'A STOP TIGHTENS — IT DOES NOT RETREAT',CX,600,INK,clamp((u-2.0)/0.7,0,1));
+      // CTA abonnement (TOFU) : zone MÉDIANE, bas ~12% vide — lisible sans son
+      const ctaAp=clamp((u-2.3)/0.7,0,1), csc=0.9+0.1*backOut(clamp((u-2.3)/0.5,0,1));
+      ctaMain.setAttribute('y',1250);setOp(ctaMain,ctaAp);ctaMain.setAttribute('transform',`translate(${(CX*(1-csc)).toFixed(2)} ${(1250*(1-csc)).toFixed(2)}) scale(${csc.toFixed(3)})`);
+      ctaSub.setAttribute('y',1318);setOp(ctaSub,clamp((u-2.7)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
