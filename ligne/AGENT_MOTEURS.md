@@ -35,6 +35,40 @@ existe un `engine/lNN.html.refused_*` (ou un `_hold/LNN_meta_*`), ce N est une *
 
 
 
+## ⛔ LOI : LA FRAME 0 (mesurée sur 59 épisodes le 17/08/2026)
+
+Le **taux de skip** — la part des spectateurs qui partent dans les premières
+secondes — classe les épisodes de façon parfaitement monotone, et rien d'autre
+n'approche cet écart :
+
+| skip rate | vues médianes |
+|-----------|---------------|
+| ≤ 46 %    | 1 271         |
+| 46-52 %   | 950           |
+| 52-60 %   | 340           |
+| > 60 %    | 163           |
+
+Sept fois et demie d'écart, décidé avant la troisième seconde. **Ta première
+frame est le poste le plus rentable de tout le moteur.**
+
+**Ce que la frame 0 doit être :** un objet de trading RECONNAISSABLE au premier
+regard, DÉJÀ en mouvement. Un stop touché par une mèche et le prix qui repart
+sans la position (L57, skip 45,9 %). Deux bandes symétriques qui avancent
+ensemble avant de diverger (L68, skip 43,7 % — meilleure rétention de la série).
+
+**Ce qui tue, mesuré :**
+- un mécanisme ABSTRAIT qui se construit sous nos yeux — une pile de
+  vérifications qui s'empile, un cadre qui se déforme (L63 skip 74,4 % ·
+  L69 skip 72,6 %) ;
+- une composition qui demande un EFFORT au spectateur — « retiens cette image,
+  tu la reverras » (L67 skip 62,1 %) ;
+- toute scène qui ouvre sur peu d'objets et se remplit ensuite.
+
+La scène 1 ouvre sur SES objets, pleins, en mouvement, dès la première frame.
+C'est déjà la règle du scan fail-loud ; c'est aussi celle qui rapporte le plus.
+
+Rapport complet : https://claude.ai/code/artifact/9b0c5ad6-b584-47df-9d8d-27c396dfb275
+
 ## ⛔ LOI : ZÉRO CHEVAUCHEMENT (la plus violée, la plus coûteuse)
 
 **Rien ne se superpose à l'image.** Ni étiquette sur un dessin, ni étiquette sur une autre

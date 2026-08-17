@@ -118,6 +118,55 @@ DOCTRINE INTACTE malgré l'agressivité : aucun mensonge, aucun chiffre
 inventé, aucune promesse de chasse, registre BEE. Mordant ET digne —
 jamais putaclic.
 
+## LOI 1ter — LA PREMIÈRE SECONDE (mesurée sur 59 épisodes le 17/08/2026)
+
+**Le taux de skip est le seul juge.** Mesure faite sur les 59 épisodes publiés
+mesurables (L12→L72 ; durées ffprobe sur les MP4 du repo × base Notion « Posts
+Instagram »). Classement parfaitement monotone, aucune autre variable n'approche :
+
+| skip rate | vues médianes | saves médians | n  |
+|-----------|---------------|---------------|----|
+| ≤ 46 %    | 1 271         | 12            | 10 |
+| 46-52 %   | 950           | 8             | 19 |
+| 52-60 %   | 340           | 2,5           | 14 |
+| > 60 %    | 163           | 1             | 16 |
+
+corr(log vues, skip) = −0,76. Sur les 19 épisodes de moins de 60 s,
+corr(log vues, watch÷durée) = +0,80. **Objectif : skip ≤ 52 %. Au-dessus de
+60 %, l'épisode est mort quel que soit son contenu.**
+
+**La durée n'est PAS le problème.** Le passage de 75 s (L12→L55) à 31 s
+(L64→L72) a fait MONTER la rétention : 19 % de l'épisode vu au-dessus de 60 s,
+30 % en dessous de 40 s. L68 et L72 (30 s) tiennent 46 % et 41 %, records de la
+série. **Ne jamais rallonger un épisode pour « gagner du watch time ».**
+
+### Les 4 règles de la S1
+
+1. **La frame 0 montre un objet de trading RECONNAISSABLE au premier regard,
+   déjà en mouvement.** Un stop touché par une mèche. Deux mains au-dessus d'un
+   ticket. Jamais un mécanisme abstrait qui se construit sous nos yeux.
+2. **`voice[0]` commence par « You » + un geste que le spectateur a FAIT.**
+   Voix active, verbes d'action. Interdits mesurés : la voix passive
+   (L69 « Your plan is being followed » → skip 72,6 %, 147 vues) et le gérondif
+   en sujet (L63 « Waiting for more information keeps you safe » → skip 74,4 %).
+3. **À défaut d'accusation, le DUEL ANNONCÉ** : deux sujets identiques, une
+   divergence promise, le mot *watch*. Seul archétype ayant produit deux épisodes
+   au-dessus de 1 100 vues au format court (L68 1 254 · L72 1 133). Réutilisable.
+4. **Rien ne se demande au spectateur avant la 3ᵉ seconde.** Pas de « remember
+   this », pas de récompense repoussée, pas de promesse chiffrée en secondes
+   (L67 « you'll see it again in forty seconds » → skip 62,1 %, et l'épisode ne
+   durait que 34 s). La tension se DONNE, elle ne se réclame pas.
+
+Les 8 meilleurs épisodes ouvrent tous ainsi : « You set a stop and went to bed. » ·
+« You look back at yesterday's chart and the trade is obvious. » · « You're in a
+position and it's going your way. So you check it. Then you check it again. »
+
+**Exception honnête** : L53 ouvre sur une abstraction (« There are two fears in
+trading ») et fait 1 360 vues. La règle 2 est forte, pas absolue : une abstraction
+DUELLE et immédiatement incarnée tient.
+
+Rapport complet : https://claude.ai/code/artifact/9b0c5ad6-b584-47df-9d8d-27c396dfb275
+
 ## LOI 2 — LE MUET AU-DESSUS DE TOUT
 
 Un Reel doit être **compréhensible ET intéressant son coupé, sans
