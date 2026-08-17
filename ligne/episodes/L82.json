@@ -5,7 +5,7 @@
   "_cellule": "SERD (Sniper) · Curiosité · Likelihood · regard=les autres traders · passé · −−",
   "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
   "voice": [
-    "Every trader you follow made it back. That's the only reason you can see them.",
+    "You picked your method from the traders you can see. Watch where the others went.",
     "The ones who took the same route and didn't return don't post. They don't teach. They aren't on your feed.",
     "So the advice you're absorbing comes entirely from the survivors — including the ones who survived by luck.",
     "You can't tell the two apart from the outside. Both look identical: the account, the confidence, the story that fits.",
@@ -132,7 +132,7 @@
     }
   ],
   "total": 60.0,
-  "caption": "Every trader you follow made it back. That's the only reason you can see them.\n\nThe ones who took the same route and didn't return don't post, don't teach and aren't on your feed — so the advice you absorb comes entirely from survivors, including the ones who survived on luck. From the quay the two look identical: same account, same confidence, same story that fits. The number that would separate them is out at sea, and it never comes back.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingeducation #daytrading #forex #survivorshipbias #mindset #propfirm #priceaction #discipline #trader",
+  "caption": "You picked your method from the traders you can see. Watch where the others went.\n\nThe ones who took the same route and didn't return don't post, don't teach and aren't on your feed — so the advice you absorb comes entirely from survivors, including the ones who survived on luck. From the quay the two look identical: same account, same confidence, same story that fits. The number that would separate them is out at sea, and it never comes back.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #survivorshipbias #tradingeducation",
   "pinned_comment": "A method proven by the people it worked for isn't proven. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -143,7 +143,9 @@
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "duree": "~60s. Valeur dense AVANT la 20e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "circuit": "M24 frames DoD d'abord.",
+    "split_test_hashtags": "BRAS A (3 hashtags) — porte dans le JSON : #trading #survivorshipbias #tradingeducation. Reproduit tel quel a la refabrication.",
+    "premiere_seconde": "LOI 1ter (mesure du 17/08) : ouverture reecrite le 17/08. voice[0] = 'You' + geste vecu, ou duel actif avec le mot watch. Ancienne ouverture ecartee (abstraction / voix passive) : « Every trader you follow made it back. That's the only reason you can see them. »"
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",

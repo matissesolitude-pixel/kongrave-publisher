@@ -5,7 +5,7 @@
   "_cellule": "SIRX (Glacier) · Miroir · Ease · regard=un pair extérieur · passé · −−",
   "_dispositif": "MONTAGE PARALLÈLE",
   "voice": [
-    "Two plans are built on the same year of data. One has four rules. The other has fourteen.",
+    "Two traders build a plan on the same year. Watch how many rules each one needs.",
     "On that year, the fourteen-rule plan looks flawless. Almost every loss has been ruled out by a condition.",
     "But each condition was added after seeing the loss it removes. The plan didn't predict the year — it memorised it.",
     "Run both on a year neither has seen. The simple plan performs about the same. The perfect one falls apart.",
@@ -132,7 +132,7 @@
     }
   ],
   "total": 60.0,
-  "caption": "Two plans are built on the same year of data. One has four rules, the other has fourteen — and on that year, fourteen looks flawless.\n\nAlmost every loss has been ruled out by a condition. But each condition was added after seeing the loss it removes: the plan didn't predict the year, it memorised it. Run both on a year neither has seen and the simple plan performs about the same, while the perfect one falls apart.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingstrategy #daytrading #forex #backtesting #overfitting #propfirm #discipline #priceaction #trader",
+  "caption": "Two traders build a plan on the same year. Watch how many rules each one needs.\n\nAlmost every loss has been ruled out by a condition. But each condition was added after seeing the loss it removes: the plan didn't predict the year, it memorised it. Run both on a year neither has seen and the simple plan performs about the same, while the perfect one falls apart.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #backtesting #overfitting",
   "pinned_comment": "A plan with a rule for every past loss has no rule for the next one. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -143,7 +143,9 @@
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "duree": "~60s. Valeur dense AVANT la 20e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "circuit": "M24 frames DoD d'abord.",
+    "split_test_hashtags": "BRAS A (3 hashtags) — porte dans le JSON : #trading #backtesting #overfitting. Reproduit tel quel a la refabrication.",
+    "premiere_seconde": "LOI 1ter (mesure du 17/08) : ouverture reecrite le 17/08. voice[0] = 'You' + geste vecu, ou duel actif avec le mot watch. Ancienne ouverture ecartee (abstraction / voix passive) : « Two plans are built on the same year of data. One has four rules. The other has fourteen. »"
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",

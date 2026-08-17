@@ -5,7 +5,7 @@
   "_cellule": "SETX (Sniper) · Autorité · Dream/identité · regard=les autres traders · passé · −−",
   "_dispositif": "MÉTAPHORE VISUELLE PORTÉE SEULE",
   "voice": [
-    "You're running your race while watching someone else's scoreboard.",
+    "You checked someone else's numbers this week, and then you traded bigger.",
     "Different starting capital, different hours, different risk per trade, different years in. None of it is on the board.",
     "The board shows one number, and it's the one number that hides every difference between you.",
     "So you speed up to close a gap that was never measurable — and speeding up is the only thing you actually changed.",
@@ -132,7 +132,7 @@
     }
   ],
   "total": 60.0,
-  "caption": "You're running your race while watching someone else's scoreboard.\n\nDifferent starting capital, different hours, different risk per trade, different years in — none of it is on the board. The board shows one number, and it's the one number that hides every difference between you. So you speed up to close a gap that was never measurable, and the only variable you actually moved was the dangerous one.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #daytrading #forex #comparison #mindset #propfirm #discipline #priceaction #trader",
+  "caption": "You checked someone else's numbers this week, and then you traded bigger.\n\nDifferent starting capital, different hours, different risk per trade, different years in — none of it is on the board. The board shows one number, and it's the one number that hides every difference between you. So you speed up to close a gap that was never measurable, and the only variable you actually moved was the dangerous one.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #comparison",
   "pinned_comment": "A comparison you can't see the terms of isn't a comparison. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -143,7 +143,9 @@
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "duree": "~60s. Valeur dense AVANT la 20e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "circuit": "M24 frames DoD d'abord.",
+    "split_test_hashtags": "BRAS A (3 hashtags) — porte dans le JSON : #trading #tradingpsychology #comparison. Reproduit tel quel a la refabrication.",
+    "premiere_seconde": "LOI 1ter (mesure du 17/08) : ouverture reecrite le 17/08. voice[0] = 'You' + geste vecu, ou duel actif avec le mot watch. Ancienne ouverture ecartee (abstraction / voix passive) : « You're running your race while watching someone else's scoreboard. »"
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix George en OFF.",
