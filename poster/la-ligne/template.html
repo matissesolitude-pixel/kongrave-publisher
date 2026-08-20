@@ -1,0 +1,255 @@
+<meta charset="utf-8">
+<title>LA LIGNE — une vie en une seule ligne</title>
+<style>
+/* ── Fonts embarquées (Google Fonts, sous-ensemble latin, base64) ───────── */
+__FONTS__
+
+/* ── Tokens ─────────────────────────────────────────────────────────────── */
+:root{
+  --ink:#0E1315;
+  --ink-deep:#080C0D;
+  --bone:#E9E4D9;
+  --ochre:#C8873A;
+  --oxide:#8E3B2F;
+  --hair:rgba(233,228,217,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#05080A}
+body{display:flex;justify-content:center;align-items:flex-start}
+
+/* ── Poster ─────────────────────────────────────────────────────────────── */
+.poster{
+  position:relative;
+  width:100%;
+  aspect-ratio:2/3;
+  container-type:size;
+  overflow:hidden;
+  background:radial-gradient(120% 80% at 50% 8%, #161D1F 0%, var(--ink) 45%, var(--ink-deep) 100%);
+  color:var(--bone);
+  font-family:'Barlow Condensed',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.poster::after{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  opacity:.055;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='300' height='300' filter='url(%23g)'/></svg>");
+  background-size:26cqw 26cqw;
+}
+.frame{
+  position:relative;z-index:1;
+  height:100%;
+  padding:5.4cqw 5.6cqw 4.4cqw;
+  display:flex;flex-direction:column;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.eyebrow{
+  display:flex;justify-content:space-between;align-items:baseline;gap:2cqw;
+  font-family:'IBM Plex Mono',monospace;font-weight:400;
+  font-size:1.34cqw;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(233,228,217,.62);
+}
+.rule{height:1px;background:var(--hair);margin:1.5cqw 0 3.1cqw}
+.title{
+  font-weight:700;font-size:19cqw;line-height:.82;letter-spacing:-.022em;
+  text-transform:uppercase;
+}
+.title span{display:block}
+.title .l2{color:var(--bone)}
+.subtitle{
+  display:flex;justify-content:space-between;align-items:baseline;gap:2cqw;
+  margin-top:2.4cqw;
+}
+.subtitle .lead{
+  font-weight:400;font-size:3.05cqw;letter-spacing:.02em;
+  color:rgba(233,228,217,.82);
+}
+.subtitle .meta{
+  font-family:'IBM Plex Mono',monospace;font-weight:500;
+  font-size:1.42cqw;letter-spacing:.2em;text-transform:uppercase;color:var(--ochre);
+}
+
+/* ── Chart ──────────────────────────────────────────────────────────────── */
+.chart{margin:3.2cqw 0 0;flex:1 1 auto;display:flex;align-items:center}
+.chart > svg{width:100%}
+.chart svg{display:block;width:100%;height:auto}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer{margin-top:auto;padding-top:3.2cqw}
+.band{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+}
+.cell{padding:1.8cqw 1.6cqw 1.9cqw 0}
+.cell + .cell{border-left:1px solid var(--hair);padding-left:1.6cqw}
+.cell dt{
+  font-family:'IBM Plex Mono',monospace;font-weight:400;
+  font-size:1.16cqw;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(233,228,217,.42);
+  margin-bottom:.85cqw;
+}
+.cell dd{
+  font-weight:500;font-size:2.15cqw;line-height:1.14;letter-spacing:.03em;
+  text-transform:uppercase;color:rgba(233,228,217,.94);
+}
+.cell dd b{display:block;font-weight:400;color:rgba(233,228,217,.62)}
+.credits{
+  margin:3.2cqw auto 0;max-width:82cqw;
+  text-align:center;text-wrap:balance;
+  font-weight:400;font-size:1.42cqw;line-height:1.42;
+  letter-spacing:.085em;text-transform:uppercase;
+  color:rgba(233,228,217,.72);
+}
+.credits b{font-weight:600;color:rgba(233,228,217,.92)}
+.note{
+  margin-top:2.5cqw;text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-weight:400;
+  font-size:1.06cqw;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(233,228,217,.26);
+}
+
+/* ── Impression A2 (420 × 594 mm) : le poster est en 2/3, on l'ajuste en hauteur ─ */
+@page{size:420mm 594mm;margin:0}
+@media print{
+  html,body{background:var(--ink-deep);width:420mm;height:594mm}
+  body{display:block}
+  .poster{width:396mm;height:594mm;aspect-ratio:auto;margin:0 auto}
+}
+
+/* ── SVG type ───────────────────────────────────────────────────────────── */
+.lbl{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:11.5px;letter-spacing:1.35px;fill:var(--bone)}
+.lbl.ox{fill:var(--oxide)}
+.sub{font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:10.4px;letter-spacing:.42px;fill:rgba(233,228,217,.5)}
+.axis-t{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:9.6px;letter-spacing:1.1px;fill:rgba(233,228,217,.3)}
+.goal{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12.4px;letter-spacing:1.45px;fill:var(--ochre)}
+.goal-sub{font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:11px;letter-spacing:.5px;fill:rgba(200,135,58,.62)}
+.tag-t{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:10.6px;letter-spacing:1.1px;fill:#0E1315}
+.lead-l{stroke:rgba(233,228,217,.34);stroke-width:.9;fill:none}
+.lead-l.ox{stroke:rgba(142,59,47,.75)}
+</style>
+
+<div class="poster">
+ <div class="frame">
+
+  <!-- ── HEADER ─────────────────────────────────────────────────────── -->
+  <header>
+    <div class="eyebrow">
+      <span>Archive Disruptive — pièce 001</span>
+      <span>Lyon 1990 &#8594; Duba&#239; 2026</span>
+    </div>
+    <div class="rule"></div>
+    <h1 class="title"><span>LA</span><span class="l2">LIGNE</span></h1>
+    <div class="subtitle">
+      <span class="lead">Une vie en une seule ligne</span>
+      <span class="meta">36 ans · 10 ans de marché</span>
+    </div>
+  </header>
+
+  <!-- ── CHART ──────────────────────────────────────────────────────── -->
+  <div class="chart">
+   <svg viewBox="0 0 1000 620" role="img" aria-label="La vie de Matisse tracée comme une structure de marché">
+
+    <!-- grille -->
+    <g stroke="rgba(233,228,217,.07)" stroke-width="1">
+      <line x1="40" y1="170" x2="980" y2="170"/>
+      <line x1="40" y1="280" x2="980" y2="280"/>
+      <line x1="40" y1="390" x2="980" y2="390"/>
+      <line x1="40" y1="500" x2="980" y2="500"/>
+    </g>
+    <!-- axes -->
+    <g stroke="rgba(233,228,217,.22)" stroke-width="1">
+      <line x1="40" y1="66" x2="40" y2="596"/>
+      <line x1="40" y1="596" x2="980" y2="596"/>
+    </g>
+    <text class="axis-t" x="48" y="612">1990</text>
+    <text class="axis-t" x="500" y="612" text-anchor="middle">TEMPS</text>
+    <text class="axis-t" x="972" y="612" text-anchor="end">2026 →</text>
+
+    <!-- zone ORDER BLOCK -->
+    <rect x="330" y="380" width="140" height="52" fill="rgba(200,135,58,.05)" stroke="rgba(200,135,58,.30)" stroke-width="1"/>
+    <!-- zone FVG -->
+    <rect x="654" y="226" width="62" height="46" fill="none" stroke="rgba(200,135,58,.42)" stroke-width="1" stroke-dasharray="4 4"/>
+    <text class="lbl" x="654" y="218" font-size="10.2px" fill="rgba(200,135,58,.8)">FVG</text>
+
+    <!-- ligne objectif -->
+    <line x1="520" y1="112" x2="960" y2="112" stroke="rgba(200,135,58,.55)" stroke-width="1" stroke-dasharray="6 6"/>
+    <text class="goal" x="960" y="78" text-anchor="end">OBJECTIF — 5 000 €/MOIS NET</text>
+    <text class="goal-sub" x="960" y="96" text-anchor="end">1,59 M€ AU RENDEMENT MIXTE DE 5,39 %</text>
+
+    <!-- LA LIGNE -->
+    <path d="M55,522 L120,514 L165,496 L205,510 L250,466 L285,528 L330,478 L375,404 L420,422 L465,396 L505,330 L545,364 L600,300 L640,272 L680,290 L720,216 L760,242 L800,178 L845,152 L880,140"
+          fill="none" stroke="var(--ochre)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- projection -->
+    <path d="M880,140 L945,108" fill="none" stroke="rgba(200,135,58,.55)" stroke-width="2.2"
+          stroke-dasharray="7 6" stroke-linecap="round"/>
+
+    <!-- ── annotations ─────────────────────────────────────────────── -->
+
+    <!-- 1990 · LYON -->
+    <line class="lead-l" x1="55" y1="515" x2="55" y2="504"/>
+    <circle cx="55" cy="522" r="3.2" fill="var(--ochre)"/>
+    <text class="lbl" x="49" y="496">1990 · LYON</text>
+
+    <!-- LIQUIDITY SWEEP -->
+    <line class="lead-l ox" x1="285" y1="535" x2="285" y2="550"/>
+    <circle cx="285" cy="528" r="3.2" fill="var(--oxide)"/>
+    <text class="lbl ox" x="285" y="564" text-anchor="middle">LIQUIDITY SWEEP</text>
+    <text class="sub" x="285" y="578" text-anchor="middle">CE QUE LE MARCHÉ REPREND AVANT DE DONNER</text>
+
+    <!-- ORDER BLOCK -->
+    <text class="lbl" x="318" y="394" text-anchor="end">ORDER BLOCK</text>
+    <text class="sub" x="318" y="409" text-anchor="end">DIX ANS D'ACCUMULATION — PRICE ACTION, ICT, RÉPÉTITION.</text>
+    <text class="sub" x="318" y="423" text-anchor="end">TOASTFX · COACH TOASTER · UNCHND TRDR</text>
+
+    <!-- BOS — DUBAÏ -->
+    <line class="lead-l" x1="505" y1="338" x2="505" y2="382"/>
+    <circle cx="505" cy="330" r="3.2" fill="var(--ochre)"/>
+    <text class="lbl" x="505" y="396">BOS — DUBAÏ</text>
+    <text class="sub" x="505" y="410">RUPTURE DE STRUCTURE</text>
+
+    <!-- EXPANSION -->
+    <line class="lead-l" x1="724" y1="223" x2="745" y2="292"/>
+    <circle cx="720" cy="216" r="3.2" fill="var(--ochre)"/>
+    <text class="lbl" x="738" y="306">EXPANSION</text>
+    <text class="sub" x="738" y="320">KONGRAVE — LE PATRIARCHE NOIR</text>
+
+    <!-- DISRUPTIVE INVESTMENT -->
+    <line class="lead-l" x1="849" y1="158" x2="965" y2="222"/>
+    <circle cx="845" cy="152" r="3.2" fill="var(--ochre)"/>
+    <text class="lbl" x="975" y="240" text-anchor="end">DISRUPTIVE INVESTMENT</text>
+    <text class="sub" x="975" y="254" text-anchor="end">HONG KONG · 13 LP SÉLECTIFS</text>
+
+    <!-- point présent + tag -->
+    <circle cx="880" cy="140" r="9" fill="none" stroke="rgba(200,135,58,.28)" stroke-width="1"/>
+    <circle cx="880" cy="140" r="3.6" fill="var(--ochre)"/>
+    <line class="lead-l" x1="820" y1="134" x2="871" y2="138"/>
+    <rect x="730" y="122" width="88" height="24" rx="1" fill="var(--ochre)"/>
+    <text class="tag-t" x="774" y="138" text-anchor="middle">20.08.2026</text>
+
+   </svg>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <dl class="band">
+      <div class="cell"><dt>Origine</dt><dd>Lyon<b>25.12.1990</b></dd></div>
+      <div class="cell"><dt>Position</dt><dd>Dubaï<b>Long terme</b></dd></div>
+      <div class="cell"><dt>Méthode</dt><dd>Price action<b>Smart money</b></dd></div>
+      <div class="cell"><dt>Signe</dt><dd>Le gorille<b>Kongrave</b></dd></div>
+    </dl>
+
+    <p class="credits">
+      Archive Disruptive présente <b>« LA LIGNE »</b> — une vie de Matisse — avec Bronx et Quorentin —
+      méthode price action smart money / ICT — ToastFX · Kongrave · Disruptive Investment Ltd (Hong&nbsp;Kong) ·
+      OTP Consulting LLC (New&nbsp;Mexico) — podcast UNCHND TRDR — personnage Le&nbsp;Patriarche&nbsp;Noir —
+      direction artistique Fincher · Kubrick · Scorsese — langues FR / EN — tous droits réservés
+    </p>
+
+    <p class="note">Échelle temporelle non linéaire — les niveaux ne sont pas à l'échelle</p>
+  </footer>
+
+ </div>
+</div>
