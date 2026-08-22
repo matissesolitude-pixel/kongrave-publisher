@@ -1,0 +1,7 @@
+Two traders build a plan on the same year. Watch how many rules each one needs.
+
+Almost every loss has been ruled out by a condition. But each condition was added after seeing the loss it removes: the plan didn't predict the year, it memorised it. Run both on a year neither has seen and the simple plan performs about the same, while the perfect one falls apart.
+
+Follow @kongrave_ — the mechanics nobody explains.
+
+#trading #backtesting #overfitting
