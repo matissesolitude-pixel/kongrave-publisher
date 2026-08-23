@@ -1,0 +1,805 @@
+<title>Le Réseau Marvel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --paper:#ECEEF2;
+  --surface:#F8F9FB;
+  --surface2:#DFE4EA;
+  --ink:#12161D;
+  --ink2:#4A5462;
+  --ink3:#7B8593;
+  --rule:#C9D0D9;
+  --rule2:#DDE2E9;
+  --accent:#B8241A;
+  --shadow:0 1px 2px rgba(18,22,29,.06),0 6px 18px rgba(18,22,29,.05);
+
+  --l-mcu:#B8241A;
+  --l-net:#5A2A96;
+  --l-tv:#1B6480;
+  --l-ssu:#146F4D;
+  --l-sony:#A44A08;
+  --l-fox:#7A6008;
+  --l-anim:#96225F;
+  --l-leg:#4E5765;
+  --l-verse:#1F4E9C;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C0F14;
+    --surface:#141922;
+    --surface2:#1C232E;
+    --ink:#E9EDF3;
+    --ink2:#A4B0BF;
+    --ink3:#6E7987;
+    --rule:#262E3A;
+    --rule2:#1E2530;
+    --accent:#FF7A6B;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+
+    --l-mcu:#FF7A6B;
+    --l-net:#B392F0;
+    --l-tv:#63C4E0;
+    --l-ssu:#48D19E;
+    --l-sony:#F5A44B;
+    --l-fox:#DFBE58;
+    --l-anim:#F27BB8;
+    --l-leg:#98A3B3;
+    --l-verse:#7FAEF5;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C0F14;
+  --surface:#141922;
+  --surface2:#1C232E;
+  --ink:#E9EDF3;
+  --ink2:#A4B0BF;
+  --ink3:#6E7987;
+  --rule:#262E3A;
+  --rule2:#1E2530;
+  --accent:#FF7A6B;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+
+  --l-mcu:#FF7A6B;
+  --l-net:#B392F0;
+  --l-tv:#63C4E0;
+  --l-ssu:#48D19E;
+  --l-sony:#F5A44B;
+  --l-fox:#DFBE58;
+  --l-anim:#F27BB8;
+  --l-leg:#98A3B3;
+  --l-verse:#7FAEF5;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+
+/* ---------- HERO ---------- */
+.hero{padding:64px 0 40px;border-bottom:1px solid var(--rule)}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin:0 0 18px;
+}
+h1{
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif;
+  font-weight:800;font-size:clamp(56px,11vw,132px);line-height:.86;
+  letter-spacing:-.01em;margin:0 0 20px;text-wrap:balance;text-transform:uppercase;
+}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{font-size:clamp(16px,1.9vw,19px);color:var(--ink2);max-width:64ch;margin:0 0 34px}
+.lede strong{color:var(--ink);font-weight:600}
+
+.diagram{
+  overflow-x:auto;margin:0 0 8px;padding-bottom:8px;
+  border:1px solid var(--rule);border-radius:2px;background:var(--surface);
+}
+.diagram svg{display:block;min-width:820px;width:100%;height:auto}
+.dg-node{fill:var(--surface);stroke:var(--ink);stroke-width:3}
+.dg-label{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;
+  letter-spacing:.09em;fill:var(--ink2);text-transform:uppercase;
+}
+.dg-rail-label{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:500;
+  letter-spacing:.06em;fill:var(--ink3);
+}
+
+/* ---------- STATS ---------- */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);margin:36px 0 0;
+}
+.stat{background:var(--paper);padding:18px 20px}
+.stat-n{
+  font-family:"Big Shoulders Display",sans-serif;font-weight:700;
+  font-size:42px;line-height:1;font-variant-numeric:tabular-nums;
+}
+.stat-l{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3);margin-top:6px;
+}
+
+/* ---------- CONTROLS ---------- */
+.controls{
+  position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--rule);padding:14px 0;margin-bottom:8px;
+}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--rule);background:transparent;color:var(--ink2);
+  padding:6px 12px;border-radius:100px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;
+  transition:border-color .15s,color .15s,background .15s;
+}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip .dot{width:8px;height:8px;border-radius:100px;background:currentColor;flex:none}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.express[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.progress{display:flex;align-items:center;gap:14px;margin-top:12px}
+.bar{flex:1;height:6px;background:var(--surface2);border-radius:100px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s ease}
+.pcount{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;
+  color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.reset{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;background:none;border:none;color:var(--ink3);
+  cursor:pointer;padding:4px 6px;text-decoration:underline;text-underline-offset:3px;
+}
+.reset:hover{color:var(--accent)}
+.reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- BLOCKS ---------- */
+.block{padding:56px 0 8px;border-top:1px solid var(--rule)}
+.block:first-of-type{border-top:none}
+.block-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:8px}
+.block-tick{width:6px;align-self:stretch;flex:none;background:var(--ln);min-height:56px}
+.block-meta{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ln);margin-bottom:4px;
+}
+h2{
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif;
+  font-weight:700;font-size:clamp(34px,5.4vw,58px);line-height:.92;
+  margin:0 0 10px;text-transform:uppercase;letter-spacing:-.005em;text-wrap:balance;
+}
+.block-note{color:var(--ink2);max-width:66ch;margin:0 0 4px;font-size:15px}
+.block-note code{
+  font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--surface2);
+  padding:1px 5px;border-radius:2px;
+}
+
+/* ---------- ERA ---------- */
+.era{
+  display:flex;align-items:baseline;gap:14px;
+  margin:34px 0 6px;padding-left:54px;
+}
+.era-t{
+  font-family:"Big Shoulders Display",sans-serif;font-weight:700;font-size:22px;
+  text-transform:uppercase;letter-spacing:.02em;
+}
+.era-y{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
+  color:var(--ink3);
+}
+.era::after{content:"";flex:1;height:1px;background:var(--rule2)}
+
+/* ---------- ENTRY ---------- */
+.entry{
+  position:relative;display:grid;
+  grid-template-columns:54px 1fr auto;
+  gap:0 16px;align-items:start;padding:11px 0;scroll-margin-top:160px;
+}
+.entry::before{
+  content:"";position:absolute;left:37px;top:0;bottom:0;width:3px;
+  background:var(--ln);opacity:.28;
+}
+.entry:first-of-type::before{top:18px}
+.entry.last-of-block::before{bottom:auto;height:18px}
+.rail{position:relative;height:100%;min-height:22px}
+.rail i{
+  position:absolute;left:31px;top:6px;width:15px;height:15px;border-radius:100px;
+  background:var(--paper);border:3px solid var(--ln);box-sizing:border-box;
+}
+.entry.node .rail i{
+  width:21px;height:21px;left:28px;top:3px;border-width:4px;
+  box-shadow:0 0 0 4px var(--paper),0 0 0 6px var(--ln);
+}
+.num{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
+  color:var(--ink3);position:absolute;left:0;top:8px;letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;
+}
+.body{min-width:0}
+.title{
+  font-weight:600;font-size:17px;line-height:1.3;letter-spacing:-.005em;
+  display:inline;
+}
+.kind{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:500;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+  border:1px solid var(--rule);padding:1px 5px;border-radius:2px;
+  margin-left:9px;white-space:nowrap;vertical-align:2px;
+}
+.meta{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink2);
+  margin-top:3px;font-variant-numeric:tabular-nums;
+}
+.meta b{color:var(--ln);font-weight:600}
+.warn{
+  display:block;margin-top:6px;font-family:"IBM Plex Sans",sans-serif;font-size:13.5px;
+  color:var(--ink2);border-left:2px solid var(--ln);padding:2px 0 2px 11px;max-width:62ch;
+}
+.star{color:var(--accent);font-size:12px;margin-left:7px;letter-spacing:.1em}
+
+.check{
+  appearance:none;-webkit-appearance:none;width:22px;height:22px;flex:none;
+  border:1.5px solid var(--rule);border-radius:2px;background:var(--surface);
+  cursor:pointer;margin:2px 0 0;position:relative;transition:background .15s,border-color .15s;
+}
+.check:hover{border-color:var(--ink3)}
+.check:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.check:checked{background:var(--ln);border-color:var(--ln)}
+.check:checked::after{
+  content:"";position:absolute;left:6.5px;top:2.5px;width:5px;height:11px;
+  border:solid var(--paper);border-width:0 2.5px 2.5px 0;transform:rotate(42deg);
+}
+.entry.done .body{opacity:.42}
+
+/* ---------- JUNCTION ---------- */
+.junction{
+  margin:26px 0 26px 54px;border:1px solid var(--rule);background:var(--surface);
+  padding:20px 22px;position:relative;box-shadow:var(--shadow);
+}
+.junction::before{
+  content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:5px;background:var(--accent);
+}
+.j-tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:7px;
+}
+.j-t{
+  font-family:"Big Shoulders Display",sans-serif;font-weight:700;font-size:27px;
+  text-transform:uppercase;line-height:1;margin-bottom:9px;
+}
+.j-b{font-size:14.5px;color:var(--ink2);max-width:70ch;margin:0}
+.j-b b{color:var(--ink);font-weight:600}
+
+/* ---------- FOOTER ---------- */
+footer{border-top:1px solid var(--rule);margin-top:64px;padding:44px 0 72px}
+.fnote{font-size:14px;color:var(--ink2);max-width:70ch;margin:0 0 14px}
+.fnote b{color:var(--ink)}
+.ftitle{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink3);margin:0 0 16px;
+}
+.scrollhint{
+  display:none;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:6px 0 0;
+}
+.hidden{display:none !important}
+
+@media (max-width:660px){
+  .wrap{padding:0 18px}
+  #chips{
+    flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+    margin:0 -18px;padding:0 18px 2px;
+  }
+  #chips::-webkit-scrollbar{display:none}
+  .chip{flex:none}
+  .era{flex-direction:column;align-items:flex-start;gap:1px;margin:28px 0 4px}
+  .era::after{display:none}
+  .hero{padding:44px 0 30px}
+  .entry{grid-template-columns:34px 1fr auto;gap:0 12px}
+  .entry::before{left:9px}
+  .rail i{left:4px}
+  .entry.node .rail i{left:1px}
+  .entry.node .rail i{box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--ln)}
+  .num{display:none}
+  .era{padding-left:34px}
+  .junction{margin-left:34px;padding:16px 18px}
+  .block-tick{width:5px}
+  .stats .stat:last-child{grid-column:1 / -1}
+  .scrollhint{display:block}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Ordre de visionnage chronologique · Mis à jour août 2026</p>
+  <h1>Le Réseau<br><em>Marvel</em></h1>
+  <p class="lede">Neuf lignes, un seul plan. Le MCU forme l'épine dorsale ; Netflix, Sony, la Fox et l'animation courent en parallèle et ne se rejoignent qu'à trois <strong>nœuds multiversels</strong>. Suis la ligne principale de haut en bas, embranche-toi quand un marqueur te le dit, coche au fur et à mesure.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 1180 352" role="img" aria-label="Diagramme schématique : les lignes Marvel Television, Netflix, Sony et Fox rejoignent la ligne principale du MCU à trois nœuds — No Way Home, Deadpool &amp; Wolverine et Avengers : Doomsday.">
+      <g fill="none" stroke-width="7" stroke-linecap="round">
+        <path d="M20,46 H360 C425,46 435,198 500,198" stroke="var(--l-tv)"/>
+        <path d="M20,92 H545 C615,92 625,198 695,198" stroke="var(--l-net)"/>
+        <path d="M20,138 H835 C905,138 912,198 975,198" stroke="var(--l-fox)"/>
+        <path d="M20,198 H1105" stroke="var(--l-mcu)" stroke-width="11"/>
+        <path d="M20,252 H700 C758,252 762,198 800,198" stroke="var(--l-sony)"/>
+        <path d="M20,288 H690 C755,288 768,206 799,201" stroke="var(--l-sony)" stroke-dasharray="2 13"/>
+        <path d="M20,324 H745 C800,324 806,214 813,204" stroke="var(--l-ssu)"/>
+        <path d="M902,324 H1160" stroke="var(--l-anim)" stroke-dasharray="3 14"/>
+      </g>
+
+      <circle cx="500" cy="198" r="6" fill="var(--l-tv)"/>
+      <circle cx="695" cy="198" r="6" fill="var(--l-net)"/>
+      <circle class="dg-node" cx="800" cy="198" r="13"/>
+      <circle class="dg-node" cx="975" cy="198" r="13"/>
+      <circle class="dg-node" cx="1105" cy="198" r="17" style="stroke:var(--l-mcu);stroke-width:6"/>
+
+      <text class="dg-label" x="800" y="168" text-anchor="middle">No Way Home</text>
+      <text class="dg-label" x="1105" y="168" text-anchor="middle">Doomsday</text>
+      <text class="dg-label" x="975" y="230" text-anchor="middle">Deadpool &amp; Wolverine</text>
+
+      <text class="dg-rail-label" x="20" y="33">Marvel Television</text>
+      <text class="dg-rail-label" x="20" y="79">Netflix — Defenders</text>
+      <text class="dg-rail-label" x="20" y="125">20th Century Fox — X-Men</text>
+      <text class="dg-rail-label" x="20" y="183" style="font-weight:600;fill:var(--l-mcu)">MCU — Terre-616</text>
+      <text class="dg-rail-label" x="20" y="239">Spider-Man Sony — Raimi</text>
+      <text class="dg-rail-label" x="20" y="275">Spider-Man Sony — Webb</text>
+      <text class="dg-rail-label" x="20" y="311">Sony’s Spider-Man Universe</text>
+      <text class="dg-rail-label" x="1160" y="311" text-anchor="end">Animation / Spider-Verse — aucune jonction</text>
+    </svg>
+  </div>
+
+  <p class="scrollhint">← Faire glisser le schéma →</p>
+
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-row" id="chips"></div>
+  <div class="progress">
+    <div class="bar"><span id="barfill"></span></div>
+    <div class="pcount" id="pcount">0 / 0 vus</div>
+    <button class="reset" id="reset" type="button">Réinitialiser</button>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<footer>
+  <p class="ftitle">Notes de lecture</p>
+  <p class="fnote"><b>Chronologie interne ≠ ordre de sortie.</b> Ce plan suit l'ordre des événements dans la fiction, pas les dates de sortie en salle. Quelques placements restent discutés par Marvel elle-même — je les ai signalés au cas par cas. Si tu préfères l'expérience « comme au cinéma », regarde le MCU en ordre de sortie : les révélations tombent alors comme prévu.</p>
+  <p class="fnote"><b>Les cases cochées restent dans ton navigateur.</b> Elles ne sont enregistrées nulle part ailleurs — un autre appareil ou une fenêtre privée repart de zéro.</p>
+  <p class="fnote"><b>Titres de 2026 à vérifier.</b> Mes données s'arrêtent à mai 2026 : les dates et l'existence des sorties postérieures (notamment <em>Spider-Man : Brand New Day</em> et <em>Avengers : Doomsday</em>) sont à confirmer, et leur placement chronologique peut bouger une fois les films vus.</p>
+</footer>
+
+</div>
+
+<script>
+const LINES = {
+  mcu:{label:"MCU — Terre-616", v:"--l-mcu"},
+  net:{label:"Netflix — Defenders", v:"--l-net"},
+  tv:{label:"Marvel Television", v:"--l-tv"},
+  ssu:{label:"Sony's Spider-Man Universe", v:"--l-ssu"},
+  sony:{label:"Spider-Man Sony", v:"--l-sony"},
+  fox:{label:"Fox — X-Men", v:"--l-fox"},
+  anim:{label:"Animation", v:"--l-anim"},
+  verse:{label:"Spider-Verse", v:"--l-verse"},
+  leg:{label:"Patrimoine pré-MCU", v:"--l-leg"}
+};
+
+/* e(titre, type, quand, plateforme, {x: essentiel, n: nœud, w: avertissement}) */
+const e = (t,k,when,plat,o={}) => ({t,k,when,plat,...o});
+
+const DATA = [
+{
+  line:"mcu", meta:"Ligne 1 · Terre-616",
+  title:"La ligne principale",
+  note:"Films Marvel Studios + séries Disney+, rangés par date des événements. C'est le tronc : tout le reste s'y raccroche. 60 entrées, environ 145 heures.",
+  eras:[
+    {t:"Origines", y:"1260 av. J.-C. → 1995", items:[
+      e("Eyes of Wakanda","Série anim.","1260 av. J.-C. → 1896","Disney+",{w:"Anthologie : chaque épisode se passe à une époque différente de l'histoire du Wakanda. Aucun prérequis, mais l'ordre chronologique commence ici."}),
+      e("Captain America: The First Avenger","Film","1943 → 1945","Disney+",{x:1}),
+      e("Agent Carter — Saison 1","Série","1946","Disney+"),
+      e("Agent Carter — Saison 2","Série","1947","Disney+"),
+      e("Captain Marvel","Film","1995 (prologue 1989)","Disney+",{x:1})
+    ]},
+    {t:"Phase 1 — L'Initiative Avengers", y:"2010 → 2012", items:[
+      e("Iron Man","Film","2010","Disney+",{x:1}),
+      e("Iron Man 2","Film","2011","Disney+"),
+      e("L'Incroyable Hulk","Film","2011","Disney+",{w:"Iron Man 2, L'Incroyable Hulk et Thor se déroulent sur la même semaine — la « Fury's Big Week ». L'ordre entre eux est conventionnel, pas strict."}),
+      e("Thor","Film","2011","Disney+"),
+      e("Avengers","Film","2012","Disney+",{x:1})
+    ]},
+    {t:"Phase 2 — L'univers s'élargit", y:"2012 → 2015", items:[
+      e("Iron Man 3","Film","déc. 2012","Disney+"),
+      e("Thor : Le Monde des ténèbres","Film","2013","Disney+"),
+      e("Agents of S.H.I.E.L.D. — S1, ép. 1 à 16","Série","2013 → 2014","Disney+",{w:"Arrête-toi à l'épisode 16 : la saison est construite pour que Le Soldat de l'hiver tombe entre le 16 et le 17. Reprends juste après le film."}),
+      e("Captain America : Le Soldat de l'hiver","Film","2014","Disney+",{x:1}),
+      e("Agents of S.H.I.E.L.D. — S1, ép. 17 à 22","Série","2014","Disney+"),
+      e("Les Gardiens de la Galaxie","Film","2014 (prologue 1988)","Disney+",{x:1}),
+      e("Les Gardiens de la Galaxie Vol. 2","Film","2014, quelques mois plus tard","Disney+"),
+      e("Daredevil — Saison 1","Série","2015","Disney+",{w:"Point d'entrée de la ligne Netflix (ligne 2). Tu peux soit basculer sur les 13 saisons Defenders maintenant, soit continuer le tronc et y revenir plus tard — la ligne Netflix ne recroise le MCU qu'avec Echo."}),
+      e("Avengers : L'Ère d'Ultron","Film","2015","Disney+",{x:1}),
+      e("Ant-Man","Film","2015","Disney+"),
+      e("Agents of S.H.I.E.L.D. — S2 à S7","Série","2014 → 2019 (+ sauts temporels)","Disney+",{w:"7 saisons, 136 épisodes. Autonome à partir de la S2 : à regarder en bloc quand tu veux, son statut canonique est de toute façon flou depuis les Multiverse Sagas."})
+    ]},
+    {t:"Phase 3 — La guerre civile et l'Infini", y:"2016 → 2018", items:[
+      e("Captain America : Civil War","Film","2016","Disney+",{x:1}),
+      e("Black Widow","Film","2016, juste après Civil War","Disney+"),
+      e("Black Panther","Film","2016, une semaine après Civil War","Disney+",{x:1}),
+      e("Spider-Man : Homecoming","Film","2016","Disney+",{x:1}),
+      e("Doctor Strange","Film","2016 → 2017","Disney+",{x:1}),
+      e("Thor : Ragnarok","Film","2017","Disney+",{x:1}),
+      e("Ant-Man et la Guêpe","Film","2018, pile avant le Blip","Disney+"),
+      e("Avengers : Infinity War","Film","2018","Disney+",{x:1}),
+      e("Avengers : Endgame","Film","2018 → 2023","Disney+",{x:1,w:"Fin de la Saga de l'Infini. Tout ce qui suit se passe après le retour des disparus (le « Blip »)."})
+    ]},
+    {t:"Phase 4 — Le multivers s'ouvre", y:"2023 → 2025", items:[
+      e("Loki — Saison 1","Série","hors du temps","Disney+",{x:1,w:"Hors chronologie : la TVA existe en dehors du flux temporel. À voir juste après Endgame — la fin de la S1 déclenche tout le multivers."}),
+      e("Loki — Saison 2","Série","hors du temps","Disney+",{x:1}),
+      e("WandaVision","Série","2023, trois semaines après Endgame","Disney+",{x:1}),
+      e("Falcon et le Soldat de l'Hiver","Série","2024","Disney+",{x:1}),
+      e("Shang-Chi et la Légende des Dix Anneaux","Film","2024","Disney+"),
+      e("Les Éternels","Film","2024","Disney+"),
+      e("Spider-Man : Far From Home","Film","2024, huit mois après Endgame","Disney+",{x:1}),
+      e("Spider-Man : No Way Home","Film","déc. 2024","Disney+",{x:1,n:1}),
+      e("Œil de Faucon","Série","déc. 2024","Disney+"),
+      e("Deadpool & Wolverine","Film","2024 / Void / TVA","Disney+",{x:1,n:1}),
+      e("Ms. Marvel","Série","2025","Disney+",{x:1}),
+      e("Moon Knight","Série","2025","Disney+"),
+      e("She-Hulk : Avocate","Série","2025","Disney+"),
+      e("Doctor Strange in the Multiverse of Madness","Film","2025, peu après No Way Home","Disney+",{x:1,w:"Regarde WandaVision et au moins What If…? S1 avant : le film s'appuie directement sur les deux."}),
+      e("Black Panther : Wakanda Forever","Film","2025","Disney+",{x:1}),
+      e("Werewolf by Night","Spécial","2025","Disney+"),
+      e("Echo","Série","2025, après Œil de Faucon","Disney+",{w:"Le raccord officiel entre la ligne Netflix et le MCU : Kingpin et Daredevil y reviennent avec leur continuité Netflix intacte."}),
+      e("Les Gardiens de la Galaxie — Spécial Fêtes","Spécial","déc. 2025","Disney+")
+    ]},
+    {t:"Phase 5 — Recomposition", y:"2026 → 2027", items:[
+      e("Ant-Man et la Guêpe : Quantumania","Film","2026","Disney+"),
+      e("Les Gardiens de la Galaxie Vol. 3","Film","2026","Disney+",{x:1}),
+      e("Secret Invasion","Série","2026","Disney+"),
+      e("The Marvels","Film","2026","Disney+"),
+      e("Agatha All Along","Série","2026, trois ans après WandaVision","Disney+"),
+      e("Daredevil : Born Again — Saison 1","Série","2026","Disney+",{x:1,w:"Suite directe de Daredevil S3 et d'Echo. Les 13 saisons Netflix sont un prérequis réel ici, pas un bonus."}),
+      e("Captain America : Brave New World","Film","2027","Disney+",{x:1}),
+      e("Thunderbolts*","Film","2027","Disney+",{x:1}),
+      e("Ironheart","Série","2027, après Wakanda Forever","Disney+"),
+      e("Wonder Man","Série","2027","Disney+"),
+      e("Daredevil : Born Again — Saison 2","Série","2027","Disney+")
+    ]},
+    {t:"Phase 6 — Vers la convergence", y:"2027 →", items:[
+      e("Les 4 Fantastiques : Premiers Pas","Film","années 1960 rétrofuturistes · Terre-828","Disney+",{x:1,w:"Univers séparé, pas la Terre-616. Le film est autonome — c'est Doomsday qui raccorde les deux mondes."}),
+      e("Spider-Man : Brand New Day","Film","après Born Again","Cinéma",{w:"Sorti en juillet 2026, après ma date de connaissance : vérifie son placement exact une fois vu."}),
+      e("Avengers : Doomsday","Film","2027","Cinéma",{x:1,n:1}),
+      e("Avengers : Secret Wars","Film","annoncé 2027-2028","Cinéma")
+    ]}
+  ]
+},
+{
+  line:"net", meta:"Ligne 2 · Terre-616, New York",
+  title:"La saga des Defenders",
+  note:"13 saisons, une seule continuité, entièrement autonome. Elle démarre en 2015 après la bataille de New York (« l'Incident ») et se termine en 2019. Aucun film n'en dépend — mais Echo et Daredevil : Born Again en dépendent totalement.",
+  eras:[
+    {t:"Premier passage", y:"2015 → 2017", items:[
+      e("Daredevil — Saison 1","Série","2015","Disney+",{x:1}),
+      e("Jessica Jones — Saison 1","Série","2015","Disney+",{x:1}),
+      e("Daredevil — Saison 2","Série","2016","Disney+",{x:1,w:"Introduit le Punisher et Elektra. Indispensable avant The Punisher."}),
+      e("Luke Cage — Saison 1","Série","2016","Disney+"),
+      e("Iron Fist — Saison 1","Série","2016 → 2017","Disney+",{w:"La saison la plus faible du lot. Si tu veux couper quelque part, coupe ici : un résumé suffit avant The Defenders."}),
+      e("The Defenders","Mini-série","2017","Disney+",{x:1}),
+      e("The Punisher — Saison 1","Série","2017","Disney+",{x:1})
+    ]},
+    {t:"Second passage", y:"2018 → 2019", items:[
+      e("Jessica Jones — Saison 2","Série","2018","Disney+"),
+      e("Luke Cage — Saison 2","Série","2018","Disney+"),
+      e("Iron Fist — Saison 2","Série","2018","Disney+"),
+      e("Daredevil — Saison 3","Série","2018","Disney+",{x:1,w:"Le sommet de la ligne, et le vrai prérequis de Born Again."}),
+      e("The Punisher — Saison 2","Série","2019","Disney+"),
+      e("Jessica Jones — Saison 3","Série","2019","Disney+",{w:"Fin de la ligne Netflix. La suite se joue sur le tronc : Echo, puis Daredevil : Born Again."})
+    ]}
+  ]
+},
+{
+  line:"tv", meta:"Ligne 3 · Marvel Television",
+  title:"Les séries périphériques",
+  note:"Diffusées sur ABC, Freeform et Hulu entre 2013 et 2020. Leur canonicité a toujours été tenue à distance par Marvel Studios, et le multivers a réglé la question à sa façon : ce sont des embranchements, pas des passages obligés.",
+  eras:[
+    {t:"À voir si tu veux tout", y:"2013 → 2020", items:[
+      e("Agents of S.H.I.E.L.D. — S1 à S7","Série","2013 → 2019","Disney+",{w:"Déjà placée dans la ligne principale, aux bons points de raccord."}),
+      e("Inhumans","Série","2017","Disney+",{w:"Universellement démolie. Le personnage de Black Bolt a été rejoué autrement dans Multiverse of Madness — cette série ne raconte rien de nécessaire."}),
+      e("Runaways — S1 à S3","Série","2017 → 2019","Disney+"),
+      e("Cloak & Dagger — S1 à S2","Série","2018 → 2019","Disney+",{w:"Crossover avec Runaways dans la saison 3 de celle-ci : regarde Cloak & Dagger avant Runaways S3."}),
+      e("Helstrom","Série","2020","Disney+"),
+      e("M.O.D.O.K.","Série anim.","hors continuité","Disney+"),
+      e("Hit-Monkey — S1 à S2","Série anim.","hors continuité","Disney+")
+    ]}
+  ]
+},
+{
+  line:"sony", meta:"Ligne 4 · Terres 96283 & 120703",
+  title:"Les Spider-Man de Sony",
+  note:"Deux univers indépendants du MCU pendant vingt ans — puis canonisés d'un coup par No Way Home. Ce sont les seuls films de ce plan à regarder impérativement AVANT un film MCU, sinon la moitié de No Way Home ne t'atteint pas.",
+  eras:[
+    {t:"Trilogie Raimi — Terre-96283", y:"2002 → 2007", items:[
+      e("Spider-Man","Film","2002","—",{x:1}),
+      e("Spider-Man 2","Film","2004","—",{x:1}),
+      e("Spider-Man 3","Film","2007","—")
+    ]},
+    {t:"Duologie Webb — Terre-120703", y:"2012 → 2014", items:[
+      e("The Amazing Spider-Man","Film","2012","—",{x:1}),
+      e("The Amazing Spider-Man : Le Destin d'un héros","Film","2014","—",{x:1,w:"La mort de Gwen Stacy ici est exactement ce que No Way Home vient rejouer. Ne saute pas ce film."})
+    ]}
+  ]
+},
+{
+  line:"ssu", meta:"Ligne 5 · Terre-688",
+  title:"Sony's Spider-Man Universe",
+  note:"Six films autour des ennemis de Spider-Man, dans un univers où Spider-Man n'apparaît jamais. Il ne touche le MCU qu'une fois, par le symbiote, pendant No Way Home. Entièrement facultatif.",
+  eras:[
+    {t:"Ordre chronologique", y:"2003 → 2024", items:[
+      e("Madame Web","Film","2003","—",{w:"Prologue en 1973, récit principal en 2003 : chronologiquement le premier de la ligne, même s'il est sorti en dernier."}),
+      e("Venom","Film","2018","—",{x:1}),
+      e("Kraven le Chasseur","Film","non daté précisément","—",{w:"Aucun raccord explicite avec le reste de la ligne : place-le où tu veux, il ne change rien."}),
+      e("Venom : Let There Be Carnage","Film","2021","—",{w:"La scène post-générique envoie Eddie dans le MCU — elle se raccorde directement à No Way Home."}),
+      e("Morbius","Film","2022, après No Way Home","—"),
+      e("Venom : The Last Dance","Film","2024, dans la foulée de No Way Home","—")
+    ]}
+  ]
+},
+{
+  line:"fox", meta:"Ligne 6 · Terre-10005",
+  title:"Les X-Men de la Fox",
+  note:"Vingt ans de films, une continuité que Days of Future Past a réécrite en cours de route. La chronologie interne est ci-dessous, mais l'ordre de sortie reste franchement plus lisible — c'est celui que je te conseille. Seuls trois titres comptent avant Deadpool & Wolverine.",
+  eras:[
+    {t:"Timeline d'origine", y:"1979 → 2013", items:[
+      e("X-Men : Le Commencement","Film","1962","—",{x:1}),
+      e("X-Men : Days of Future Past","Film","1973 / 2023","—",{x:1,w:"Le point de bascule : le film efface la timeline des trois premiers X-Men. D'où le désordre de tout ce qui suit."}),
+      e("X-Men Origins: Wolverine","Film","1845 → années 2000","—"),
+      e("X-Men","Film","2000","—"),
+      e("X-Men 2","Film","2003","—"),
+      e("X-Men : L'Affrontement final","Film","2006","—"),
+      e("Wolverine : Le Combat de l'immortel","Film","2013","—")
+    ]},
+    {t:"Timeline réécrite", y:"1983 → 2029", items:[
+      e("X-Men : Apocalypse","Film","1983","—"),
+      e("Dark Phoenix","Film","1992","—"),
+      e("Les Nouveaux Mutants","Film","années 2010","—"),
+      e("Deadpool","Film","2016","—",{x:1}),
+      e("Deadpool 2","Film","2018","—",{x:1}),
+      e("Logan","Film","2029","—",{x:1,w:"Fin de la ligne Fox. Deadpool & Wolverine s'ouvre littéralement sur sa dernière image : à voir avant, sans exception."})
+    ]},
+    {t:"Les 4 Fantastiques de la Fox", y:"2005 → 2015", items:[
+      e("Les 4 Fantastiques","Film","2005","—",{w:"Chris Evans y joue la Torche — la blague est reprise dans Deadpool & Wolverine."}),
+      e("Les 4 Fantastiques et le Surfer d'argent","Film","2007","—"),
+      e("Les 4 Fantastiques","Film","2015","—")
+    ]}
+  ]
+},
+{
+  line:"anim", meta:"Ligne 7 · Multivers animé",
+  title:"L'animation Marvel",
+  note:"Officiellement canonique et branchée sur le multivers. What If…? est le seul titre de ce bloc qui ait un vrai poids sur les films : Strange Suprême revient dans Multiverse of Madness.",
+  eras:[
+    {t:"À intercaler après Endgame", y:"—", items:[
+      e("What If…? — Saison 1","Série anim.","multivers","Disney+",{x:1,w:"À voir avant Multiverse of Madness."}),
+      e("What If…? — Saison 2","Série anim.","multivers","Disney+"),
+      e("What If…? — Saison 3","Série anim.","multivers","Disney+"),
+      e("X-Men '97","Série anim.","suite directe de la série de 1992","Disney+",{x:1,w:"Continuité propre, aucun prérequis MCU. Rebranche-la mentalement sur la ligne Fox plutôt que sur le tronc."}),
+      e("Marvel Zombies","Mini-série anim.","branche de What If…? S1","Disney+"),
+      e("Your Friendly Neighborhood Spider-Man","Série anim.","Terre-26496","Disney+",{w:"Origine alternative de Peter Parker, sans lien avec Homecoming."}),
+      e("Eyes of Wakanda","Série anim.","déjà en tête de la ligne principale","Disney+")
+    ]}
+  ]
+},
+{
+  line:"verse", meta:"Ligne 8 · Terre-1610 & au-delà",
+  title:"Le Spider-Verse",
+  note:"Sony, animation, univers totalement clos. Aucun lien de continuité avec quoi que ce soit d'autre sur ce plan — et sans doute les deux meilleurs films de toute la liste.",
+  eras:[
+    {t:"Dans l'ordre", y:"2018 → à venir", items:[
+      e("Spider-Man : New Generation","Film anim.","2018","—",{x:1}),
+      e("Spider-Man : Across the Spider-Verse","Film anim.","2023","—",{x:1}),
+      e("Spider-Man : Beyond the Spider-Verse","Film anim.","annoncé","—",{w:"Repoussé plusieurs fois. Across se termine sur un cliffhanger sec — sache-le avant de le lancer."})
+    ]}
+  ]
+},
+{
+  line:"leg", meta:"Ligne 9 · Hors continuité",
+  title:"Le patrimoine pré-MCU",
+  note:"Les adaptations Marvel d'avant 2008, éparpillées entre studios. Rien à raccorder, aucun ordre à respecter : c'est de la culture générale, et Blade y a plus d'importance historique que le reste réuni.",
+  eras:[
+    {t:"Par ordre de sortie", y:"1986 → 2011", items:[
+      e("Howard… une nouvelle race de héros","Film","1986","—"),
+      e("Blade","Film","1998","—",{x:1,w:"Le film qui a rendu les adaptations Marvel viables au cinéma. Wesley Snipes revient d'ailleurs dans Deadpool & Wolverine."}),
+      e("Blade II","Film","2002","—"),
+      e("Hulk","Film","2003","—"),
+      e("Daredevil","Film","2003","—"),
+      e("Blade: Trinity","Film","2004","—"),
+      e("The Punisher","Film","2004","—"),
+      e("Elektra","Film","2005","—"),
+      e("Ghost Rider","Film","2007","—"),
+      e("Punisher : Zone de guerre","Film","2008","—"),
+      e("Ghost Rider : L'Esprit de vengeance","Film","2011","—")
+    ]}
+  ]
+}
+];
+
+const JUNCTIONS = {
+  "Spider-Man : No Way Home":{
+    tag:"Nœud multiversel 01",
+    body:"Trois lignes se touchent ici pour la première fois. <b>Prérequis : la trilogie Raimi et la duologie Webb en entier</b> (ligne 4), plus Far From Home. La ligne 5 (Sony's Spider-Man Universe) effleure le nœud par la scène post-générique de <em>Let There Be Carnage</em>, sans jamais s'y raccorder vraiment."
+  },
+  "Deadpool & Wolverine":{
+    tag:"Nœud multiversel 02",
+    body:"La ligne Fox est absorbée par la TVA. <b>Prérequis : Deadpool, Deadpool 2, Logan et Loki S1-S2.</b> Le film récompense en plus une bonne dizaine de titres périphériques du plan — <em>Les 4 Fantastiques</em> 2005, <em>Elektra</em>, <em>Blade</em>, <em>X-Men Origins</em> — sans jamais les exiger."
+  },
+  "Avengers : Doomsday":{
+    tag:"Nœud multiversel 03",
+    body:"Le point de convergence annoncé : la Terre-616, la Terre-828 des Quatre Fantastiques et les rescapés de la ligne Fox dans un même film. <b>À ce stade, chaque ligne de ce plan a été balisée.</b> Contenu et casting définitifs à vérifier — le film sort après ma date de connaissance."
+  }
+};
+
+/* ---------- RENDU ---------- */
+const main = document.getElementById("main");
+let total = 0, films = 0, series = 0;
+const idOf = t => "m_" + t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+
+DATA.forEach(block => {
+  const sec = document.createElement("section");
+  sec.className = "block";
+  sec.dataset.line = block.line;
+  sec.style.setProperty("--ln", `var(${LINES[block.line].v})`);
+
+  let html = `<div class="block-head">
+      <div class="block-tick"></div>
+      <div>
+        <div class="block-meta">${block.meta}</div>
+        <h2>${block.title}</h2>
+        <p class="block-note">${block.note}</p>
+      </div>
+    </div>`;
+
+  block.eras.forEach(era => {
+    html += `<div class="era"><span class="era-t">${era.t}</span><span class="era-y">${era.y}</span></div>`;
+    era.items.forEach((it, i) => {
+      total++;
+      if (it.k.indexOf("Film") === 0) films++; else series++;
+      const id = idOf(block.line + "-" + it.t);
+      const last = i === era.items.length - 1 ? " last-of-block" : "";
+      html += `<div class="entry${it.n ? " node" : ""}${last}" data-line="${block.line}" data-ess="${it.x ? 1 : 0}" data-id="${id}">
+          <div class="rail"><i></i><span class="num">${String(total).padStart(3,"0")}</span></div>
+          <div class="body">
+            <span class="title">${it.t}</span><span class="kind">${it.k}</span>${it.x ? '<span class="star" title="Parcours express">★</span>' : ""}
+            <div class="meta"><b>${it.when}</b>${it.plat !== "—" ? " · " + it.plat : ""}</div>
+            ${it.w ? `<span class="warn">${it.w}</span>` : ""}
+          </div>
+          <input class="check" type="checkbox" id="${id}" aria-label="Marquer ${it.t.replace(/"/g,"")} comme vu">
+        </div>`;
+      if (JUNCTIONS[it.t]) {
+        const j = JUNCTIONS[it.t];
+        html += `<div class="junction"><div class="j-tag">${j.tag}</div><div class="j-t">${it.t}</div><p class="j-b">${j.body}</p></div>`;
+      }
+    });
+  });
+
+  sec.innerHTML = html;
+  main.appendChild(sec);
+});
+
+/* ---------- STATS ---------- */
+const essentials = document.querySelectorAll('.entry[data-ess="1"]').length;
+document.getElementById("stats").innerHTML = [
+  [total, "entrées au total"],
+  [films, "films"],
+  [series, "séries & spéciaux"],
+  [Object.keys(LINES).length, "lignes / univers"],
+  [essentials, "au parcours express"]
+].map(([n,l]) => `<div class="stat"><div class="stat-n">${n}</div><div class="stat-l">${l}</div></div>`).join("");
+
+/* ---------- FILTRES ---------- */
+const chips = document.getElementById("chips");
+let active = null, express = false;
+
+chips.innerHTML =
+  `<button class="chip" type="button" data-f="all" aria-pressed="true">Tout</button>` +
+  Object.entries(LINES).map(([k,v]) =>
+    `<button class="chip" type="button" data-f="${k}" aria-pressed="false" style="color:var(${v.v})"><span class="dot"></span>${v.label}</button>`
+  ).join("") +
+  `<button class="chip express" type="button" data-f="express" aria-pressed="false">★ Parcours express</button>`;
+
+function applyFilters(){
+  document.querySelectorAll(".block").forEach(b => {
+    const lineOk = !active || b.dataset.line === active;
+    let visible = 0;
+    b.querySelectorAll(".entry").forEach(en => {
+      const ok = lineOk && (!express || en.dataset.ess === "1");
+      en.classList.toggle("hidden", !ok);
+      if (ok) visible++;
+    });
+    b.querySelectorAll(".era").forEach(era => {
+      let n = era.nextElementSibling, any = false;
+      while (n && !n.classList.contains("era")) {
+        if (n.classList.contains("entry") && !n.classList.contains("hidden")) any = true;
+        n = n.nextElementSibling;
+      }
+      era.classList.toggle("hidden", !any);
+    });
+    b.querySelectorAll(".junction").forEach(j => {
+      const prev = j.previousElementSibling;
+      j.classList.toggle("hidden", !prev || prev.classList.contains("hidden"));
+    });
+    b.classList.toggle("hidden", visible === 0);
+  });
+  chips.querySelectorAll(".chip").forEach(c => {
+    const f = c.dataset.f;
+    c.setAttribute("aria-pressed",
+      f === "express" ? String(express) : f === "all" ? String(!active) : String(active === f));
+  });
+}
+
+chips.addEventListener("click", ev => {
+  const c = ev.target.closest(".chip");
+  if (!c) return;
+  const f = c.dataset.f;
+  if (f === "express") express = !express;
+  else if (f === "all") { active = null; express = false; }
+  else active = active === f ? null : f;
+  applyFilters();
+});
+
+/* ---------- PROGRESSION ---------- */
+const KEY = "reseau-marvel-vus-v1";
+const fill = document.getElementById("barfill");
+const pcount = document.getElementById("pcount");
+let seen = new Set();
+
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) seen = new Set(JSON.parse(raw));
+} catch (err) { seen = new Set(); }
+
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify([...seen])); } catch (err) {}
+}
+function refresh(){
+  const pct = total ? (seen.size / total) * 100 : 0;
+  fill.style.width = pct + "%";
+  pcount.textContent = `${seen.size} / ${total} vus · ${Math.round(pct)} %`;
+}
+
+document.querySelectorAll(".entry").forEach(en => {
+  const box = en.querySelector(".check");
+  if (seen.has(en.dataset.id)) { box.checked = true; en.classList.add("done"); }
+  box.addEventListener("change", () => {
+    if (box.checked) seen.add(en.dataset.id); else seen.delete(en.dataset.id);
+    en.classList.toggle("done", box.checked);
+    save(); refresh();
+  });
+});
+
+document.getElementById("reset").addEventListener("click", () => {
+  seen.clear(); save();
+  document.querySelectorAll(".check").forEach(b => { b.checked = false; });
+  document.querySelectorAll(".entry").forEach(en => en.classList.remove("done"));
+  refresh();
+});
+
+refresh();
+applyFilters();
+</script>
