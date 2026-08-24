@@ -19,8 +19,11 @@ protéines, 2 lb de viande à 1 120 kcal, **880 kcal libres**).
    13–15 maintien · 16–18 prise modérée · 19–21 prise extrême.
 3. **Protéines** — 1 gramme par livre.
 4. **Viande** — une livre de dinde, poulet, bœuf maigre, crevette ou poisson
-   blanc ≈ 100 g de protéines. Il en faut donc autant de livres que de
-   centaines de grammes de protéines visées.
+   blanc ≈ 100 g de protéines. Le raccourci ne vaut que pour la viande maigre :
+   une livre d'œufs n'en donne que 57 g, une livre de cottage cheese 50 g.
+   Chaque source porte donc sa densité réelle (kcal et g de protéines pour
+   100 g d'aliment), et chaque vignette affiche le seul chiffre comparable —
+   ce que coûtent 100 g de protéines.
 5. **Calories libres** — on retire du budget ce que la viande coûte
    *réellement* (gras compris), pas 4 kcal par gramme de protéine. Le reste se
    dépense librement.
@@ -29,8 +32,8 @@ protéines, 2 lb de viande à 1 120 kcal, **880 kcal libres**).
 
 | Écran | Ce qu'il fait |
 |---|---|
-| Calcul | Poids cible et taille. Curseur de coefficient sur un fléau gradué 7 → 21. Choix de la source de protéines (kcal par livre). Sortie : kcal/jour, g de protéines, livres et grammes de viande, coût de cette viande, et le grand chiffre des calories libres |
-| Journée | Calories restantes avant le plafond, jauge de protéines, 26 aliments à ajouter d'un tap (protéines / féculents / plaisirs), saisie libre. Remise à zéro automatique au changement de date |
+| Calcul | Poids cible et taille. Curseur de coefficient sur un fléau gradué 7 → 21. Choix parmi neuf sources de protéines (dinde, poulet, bœuf 96/4, crevettes, poisson blanc, saumon, œufs, cottage cheese, whey). Sortie : kcal/jour, g de protéines, quantité à manger en grammes et en livres — en pièces quand l'aliment en a — coût réel de cette source, et le grand chiffre des calories libres |
+| Journée | Calories restantes avant le plafond, jauge de protéines, 27 aliments à ajouter d'un tap (protéines / féculents / plaisirs), saisie libre. Remise à zéro automatique au changement de date |
 | Suivi | Journal de pesées, courbe avec la ligne d'objectif (épinglée au bord du cadre si la cible sort de l'échelle), tendance 7 jours et depuis le début, jauge départ → cible, poids du jour et IMC |
 
 ## Le fichier

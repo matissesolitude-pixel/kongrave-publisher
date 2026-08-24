@@ -250,6 +250,7 @@ input[type="range"]::-moz-range-thumb{
   font-size:13px;color:var(--ink-2);
 }
 .row:last-child{border-bottom:0}
+.row[hidden]{display:none}
 .row b{
   font-family:"Archivo",sans-serif;
   font-variation-settings:"wdth" 112,"wght" 700;
@@ -303,6 +304,7 @@ input[type="range"]::-moz-range-thumb{
 .food .e{font-size:16px;line-height:1.1}
 .food .n{font-size:11px;color:var(--ink);line-height:1.25;overflow-wrap:anywhere}
 .food .k{
+  white-space:nowrap;
   font-family:"IBM Plex Mono",ui-monospace,monospace;
   font-size:10px;color:var(--ink-3);font-variant-numeric:tabular-nums;
 }
@@ -472,11 +474,12 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     </div>
 
     <div class="card">
-      <p class="eyebrow">Ta source de protéines</p>
+      <p class="eyebrow">Ta source — ce que coûtent 100 g de protéines</p>
       <div class="foods" id="srcPick"></div>
       <div class="rows">
-        <div class="row"><span>À manger dans la journée</span><b id="meatLb">1,6 lb — 720 g</b></div>
-        <div class="row"><span>Ce que cette viande coûte</span><b id="srcKcal">890 kcal</b></div>
+        <div class="row"><span>À manger dans la journée</span><b id="meatLb">723 g — 1,6 lb</b></div>
+        <div class="row" id="srcPieceRow" hidden><span>En pièces</span><b id="srcPiece">—</b></div>
+        <div class="row"><span>Ce que ça coûte</span><b id="srcKcal">890 kcal</b></div>
       </div>
       <div class="budget">
         <span class="num" id="freeKcal">697</span>
@@ -609,7 +612,11 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
          13–15 maintien · 16–18 prise modérée · 19–21 prise extrême. Si tu perds trop vite, monte d'un cran.</p>
       <p><b>Protéines.</b> Un gramme par livre. 158 lb de cible, 158 g de protéines.</p>
       <p><b>La viande.</b> Une livre de dinde, poulet, bœuf maigre, crevette ou poisson blanc ≈ 100 g de
-         protéines. Il t'en faut donc autant de livres que de centaines de grammes de protéines.</p>
+         protéines. Il t'en faut donc autant de livres que de centaines de grammes de protéines.
+         Ce raccourci ne vaut que pour la viande maigre : une livre d'œufs n'en donne que 57 g,
+         une livre de cottage cheese 50 g. Chaque source porte donc sa vraie densité, et le chiffre
+         affiché sur chaque vignette — les calories que coûtent 100 g de protéines — permet de les
+         comparer d'un coup d'œil.</p>
       <p><b>Les calories libres.</b> C'est là qu'est toute la méthode : tu retires du budget ce que ta
          viande coûte réellement — pas 4 kcal par gramme de protéine, mais les calories de la pièce, gras
          compris. Ce qui reste se dépense comme tu veux : cocktails, dessert, dîner d'affaires. Les
@@ -644,7 +651,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
 
   var KEY = "coefficient.v2";
   var LB = 2.20462;
-  var MEAT_G_PER_100_PROT = 454;   /* one pound of meat ~ 100 g of protein */
+  var GRAMS_PER_LB = 453.6;
 
   /* the published bands of the method */
   var BANDS = [
@@ -655,15 +662,19 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     { max: 21, name: "Prise extrême" }
   ];
 
-  /* a pound of any of these is about 100 g of protein — what differs is the calories it costs */
+  /* per 100 g of the food itself: calories and grams of protein.
+     The "one pound = 100 g of protein" shortcut holds for lean meat only —
+     eggs and cottage cheese are far less dense, so each source carries its own numbers. */
   var SOURCES = [
-    { e: "🦃", n: "Dinde hachée",   kl: 560 },
-    { e: "🍗", n: "Blanc de poulet", kl: 500 },
-    { e: "🥩", n: "Bœuf 96/4",       kl: 620 },
-    { e: "🍤", n: "Crevettes",       kl: 480 },
-    { e: "🐟", n: "Poisson blanc",   kl: 400 },
-    { e: "🍣", n: "Saumon",          kl: 940 },
-    { e: "🥛", n: "Whey",            kl: 460 }
+    { e: "🦃", n: "Dinde hachée",    k: 123, p: 22 },
+    { e: "🍗", n: "Blanc de poulet", k: 110, p: 22 },
+    { e: "🥩", n: "Bœuf 96/4",       k: 136, p: 22 },
+    { e: "🍤", n: "Crevettes",       k: 106, p: 22 },
+    { e: "🐟", n: "Poisson blanc",   k:  88, p: 22 },
+    { e: "🍣", n: "Saumon",          k: 207, p: 22 },
+    { e: "🥚", n: "Œufs entiers",    k: 143, p: 13, pc: 50, pn: "œufs" },
+    { e: "🧀", n: "Cottage cheese",  k:  84, p: 11 },
+    { e: "🥛", n: "Whey",            k: 400, p: 80, pc: 30, pn: "doses" }
   ];
 
   var FOODS = [
@@ -674,7 +685,8 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
       { e: "🐟", n: "Saumon 100 g",    k: 208, p: 20 },
       { e: "🥚", n: "2 œufs",          k: 155, p: 13 },
       { e: "🥛", n: "Shake protéiné",  k: 120, p: 25 },
-      { e: "🧀", n: "Fromage 30 g",    k: 115, p:  7 }
+      { e: "🧀", n: "Fromage 30 g",    k: 115, p:  7 },
+      { e: "🥣", n: "Cottage 200 g",   k: 168, p: 22 }
     ]},
     { g: "Féculents & plats", items: [
       { e: "🍚", n: "Riz cuit 150 g",  k: 200, p:  4 },
@@ -763,14 +775,17 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     var baseLb = state.kgGoal * LB;                 /* always the target weight */
     var kcal   = Math.round(baseLb * state.coeff);  /* lb x coefficient */
     var prot   = Math.round(baseLb);                /* 1 g of protein per pound */
-    var meatLb = prot / 100;                        /* a pound of meat ~ 100 g of protein */
     var src    = SOURCES[state.src];
-    var srcKcal = Math.round(meatLb * src.kl);      /* what that meat actually costs */
+    var srcG   = prot / src.p * 100;                /* grams of that food to hit the protein */
+    var srcKcal = Math.round(srcG * src.k / 100);   /* what it actually costs */
     return {
       baseLb: baseLb, kcal: kcal, prot: prot,
-      meatLb: meatLb,
-      meatG: Math.round(meatLb * MEAT_G_PER_100_PROT),
-      src: src, srcKcal: srcKcal,
+      src: src,
+      srcG: srcG,
+      srcLb: srcG / GRAMS_PER_LB,
+      srcPieces: src.pc ? srcG / src.pc : null,
+      per100: Math.round(src.k / src.p * 100),      /* calories per 100 g of protein — the comparable */
+      srcKcal: srcKcal,
       free: kcal - srcKcal
     };
   }
@@ -789,6 +804,12 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     requestAnimationFrame(frame);
   }
   var asInt = function(v){ return nf(Math.round(v),0); };
+
+  /* "de dinde" but "d'œufs" */
+  function de(name){
+    var n = name.toLowerCase();
+    return /^[aeiouyœéèêà]/.test(n) ? "d'" + n : "de " + n;
+  }
 
   /* ---------- beam ---------- */
   function buildBeam(){
@@ -825,7 +846,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
       html += '<button class="food" type="button" data-s="' + i + '" aria-pressed="false">' +
               '<span class="e" aria-hidden="true">' + it.e + "</span>" +
               '<span class="n">' + it.n + "</span>" +
-              '<span class="k">' + it.kl + " kcal / lb</span></button>";
+              '<span class="k">' + Math.round(it.k / it.p * 100) + " kcal</span></button>";
     });
     $("srcPick").innerHTML = html;
   }
@@ -840,14 +861,22 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     tween($("kcal"), c.kcal, asInt);
     tween($("prot"), c.prot, asInt);
 
-    $("meatLb").textContent = nf(c.meatLb, 1) + " lb — " + nf(c.meatG, 0) + " g";
+    $("meatLb").textContent = nf(Math.round(c.srcG), 0) + " g — " + nf(c.srcLb, 1) + " lb";
     $("srcKcal").textContent = nf(c.srcKcal, 0) + " kcal";
+
+    var pieceRow = $("srcPieceRow");
+    if (c.srcPieces){
+      pieceRow.hidden = false;
+      $("srcPiece").textContent = "≈ " + nf(Math.round(c.srcPieces), 0) + " " + c.src.pn;
+    } else {
+      pieceRow.hidden = true;
+    }
 
     var free = $("freeKcal");
     free.textContent = nf(Math.abs(c.free), 0);
     free.classList.toggle("over", c.free < 0);
     free.nextElementSibling.textContent = c.free < 0
-      ? "kcal de trop — cette viande dépasse déjà le budget"
+      ? "kcal de trop — cette source dépasse déjà le budget"
       : "kcal libres — à dépenser comme tu veux";
 
     var picks = $("srcPick").children;
@@ -859,9 +888,11 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
       nf(state.kgGoal, 1) + " kg de cible × 2,20462 = <b>" + nf(c.baseLb, 1) + " lb</b><br>" +
       nf(c.baseLb, 1) + " lb × " + state.coeff + " = <b>" + nf(c.kcal, 0) + " kcal</b><br>" +
       nf(c.baseLb, 1) + " lb × 1 = <b>" + nf(c.prot, 0) + " g de protéines</b><br>" +
-      nf(c.prot, 0) + " g ÷ 100 = <b>" + nf(c.meatLb, 1) + " lb</b> de " + c.src.n.toLowerCase() + "<br>" +
-      nf(c.meatLb, 1) + " lb × " + c.src.kl + " = <b>" + nf(c.srcKcal, 0) + " kcal</b><br>" +
-      nf(c.kcal, 0) + " − " + nf(c.srcKcal, 0) + " = <b>" + nf(c.free, 0) + " kcal libres</b>";
+      nf(c.prot, 0) + " g ÷ " + c.src.p + " × 100 = <b>" + nf(Math.round(c.srcG), 0) +
+        " g</b> " + de(c.src.n) + "<br>" +
+      nf(Math.round(c.srcG), 0) + " g × " + c.src.k + " / 100 = <b>" + nf(c.srcKcal, 0) + " kcal</b><br>" +
+      nf(c.kcal, 0) + " − " + nf(c.srcKcal, 0) + " = <b>" + nf(Math.abs(c.free), 0) +
+        (c.free < 0 ? " kcal de trop</b>" : " kcal libres</b>");
 
     placePoise();
   }
