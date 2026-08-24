@@ -1,0 +1,1074 @@
+<title>Coefficient</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#E9ECED;
+  --surface:#F8F9F9;
+  --recess:#DDE2E4;
+  --edge:#C2CACD;
+  --hair:#D5DBDD;
+  --ink:#14181A;
+  --ink-2:#4C555A;
+  --ink-3:#7D878C;
+  --index:#B8342A;
+  --index-wash:rgba(184,52,42,.10);
+  --data:#00789B;
+  --cast:rgba(20,28,32,.13);
+  --lift:rgba(255,255,255,.9);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#111517;
+    --surface:#191F22;
+    --recess:#0D1113;
+    --edge:#333D42;
+    --hair:#283135;
+    --ink:#E9EDEF;
+    --ink-2:#A5B0B5;
+    --ink-3:#78848A;
+    --index:#DB584D;
+    --index-wash:rgba(219,88,77,.16);
+    --data:#2A9CB4;
+    --cast:rgba(0,0,0,.55);
+    --lift:rgba(255,255,255,.05);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#111517;
+  --surface:#191F22;
+  --recess:#0D1113;
+  --edge:#333D42;
+  --hair:#283135;
+  --ink:#E9EDEF;
+  --ink-2:#A5B0B5;
+  --ink-3:#78848A;
+  --index:#DB584D;
+  --index-wash:rgba(219,88,77,.16);
+  --data:#2A9CB4;
+  --cast:rgba(0,0,0,.55);
+  --lift:rgba(255,255,255,.05);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased;
+}
+
+.shell{
+  max-width:460px;
+  margin:0 auto;
+  padding:0 18px calc(96px + env(safe-area-inset-bottom,0px));
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* ---- engraved header plate ---- */
+.plate{
+  background:var(--surface);
+  border-bottom:1px solid var(--edge);
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+.plate-in{
+  max-width:460px;
+  margin:0 auto;
+  padding:16px 18px 13px;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+}
+.plate h1{
+  margin:0;
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 120,"wght" 700;
+  font-size:19px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  line-height:1;
+}
+.plate .serial{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* ---- shared bits ---- */
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  margin:0;
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--hair);
+  border-radius:3px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  box-shadow:0 1px 0 var(--lift) inset, 0 1px 2px var(--cast);
+}
+.panel{display:none;flex-direction:column;gap:20px}
+.panel.is-on{display:flex;animation:fade .22s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+}
+input[type="number"],input[type="date"]{
+  width:100%;
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 600;
+  font-size:26px;
+  font-variant-numeric:tabular-nums;
+  color:var(--ink);
+  background:var(--recess);
+  border:1px solid var(--edge);
+  border-radius:2px;
+  padding:9px 12px;
+  line-height:1.2;
+  -webkit-appearance:none;
+  appearance:none;
+}
+input[type="date"]{font-size:17px}
+input:focus-visible,button:focus-visible,[role="tab"]:focus-visible,input[type="range"]:focus-visible{
+  outline:2px solid var(--index);
+  outline-offset:2px;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+
+.convert{
+  display:flex;align-items:baseline;gap:8px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:12px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+}
+.convert b{
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 700;
+  font-size:17px;color:var(--ink);
+}
+
+/* ---- the beam ---- */
+.beam-block{display:flex;flex-direction:column;gap:10px}
+.beam{
+  --th:19px;
+  position:relative;
+  height:50px;
+  background:var(--recess);
+  border:1px solid var(--edge);
+  border-radius:2px;
+  box-shadow:0 1px 3px var(--cast) inset;
+}
+.beam-zone{
+  position:absolute;top:1px;bottom:1px;
+  background:var(--index-wash);
+  pointer-events:none;
+}
+.ticks{position:absolute;left:var(--th);right:var(--th);top:0;bottom:0;pointer-events:none}
+.tick{position:absolute;top:7px;width:1px;background:var(--edge);transform:translateX(-.5px)}
+.tick.minor{height:9px}
+.tick.major{height:17px;background:var(--ink-3);width:1.5px}
+
+/* the graduations are read below the beam, never under the poise */
+.scale{position:relative;height:32px;margin:0 19px}
+.scale-num{
+  position:absolute;top:0;transform:translateX(-50%);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+}
+.scale-note{
+  position:absolute;top:16px;transform:translateX(-50%);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);
+  white-space:nowrap;
+}
+.scale-note.start{left:0;transform:none}
+.scale-note.end{left:100%;transform:translateX(-100%)}
+.scale-note.mid{color:var(--index)}
+input[type="range"]{
+  position:absolute;inset:0;width:100%;height:100%;margin:0;
+  background:transparent;-webkit-appearance:none;appearance:none;cursor:grab;
+}
+input[type="range"]:active{cursor:grabbing}
+input[type="range"]::-webkit-slider-runnable-track{background:transparent;height:100%}
+input[type="range"]::-moz-range-track{background:transparent;height:100%}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:38px;height:44px;
+  border-radius:2px;
+  background:linear-gradient(180deg,var(--surface),var(--recess));
+  border:1px solid var(--ink-3);
+  box-shadow:0 2px 5px var(--cast);
+  position:relative;
+}
+input[type="range"]::-moz-range-thumb{
+  width:38px;height:44px;border-radius:2px;
+  background:linear-gradient(180deg,var(--surface),var(--recess));
+  border:1px solid var(--ink-3);
+  box-shadow:0 2px 5px var(--cast);
+}
+.poise-index{
+  position:absolute;top:3px;bottom:3px;width:2px;
+  background:var(--index);
+  transform:translateX(-1px);
+  pointer-events:none;
+  box-shadow:0 0 0 1px var(--surface);
+}
+.poise-index.smooth{transition:left .16s cubic-bezier(.22,.8,.3,1)}
+
+.coeff-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.coeff-val{
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 125,"wght" 800;
+  font-size:40px;line-height:.9;font-variant-numeric:tabular-nums;
+}
+.coeff-name{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--index);
+  text-align:right;
+}
+.stepper{display:flex;gap:8px}
+.step-btn{
+  flex:1;
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 700;
+  font-size:19px;
+  color:var(--ink);
+  background:var(--surface);
+  border:1px solid var(--edge);
+  border-radius:2px;
+  padding:9px 0;
+  cursor:pointer;
+  box-shadow:0 1px 2px var(--cast);
+}
+.step-btn:active{transform:translateY(1px);box-shadow:none}
+
+/* ---- read-out plates ---- */
+.readouts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.readout{
+  background:var(--surface);
+  border:1px solid var(--hair);
+  border-top:2px solid var(--ink);
+  border-radius:2px;
+  padding:13px 14px 12px;
+  display:flex;flex-direction:column;gap:2px;
+  box-shadow:0 1px 2px var(--cast);
+  min-width:0;
+}
+.readout.primary{border-top-color:var(--index)}
+.readout .num{
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 118,"wght" 800;
+  font-size:36px;line-height:1;letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+  overflow-wrap:anywhere;
+}
+.readout .unit{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+}
+.readout .sub{font-size:12px;color:var(--ink-2);margin-top:4px}
+
+.formula{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;line-height:1.7;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+  border-left:2px solid var(--edge);
+  padding-left:12px;
+  margin:0;
+}
+.formula b{color:var(--ink);font-weight:600}
+
+/* ---- objectif ---- */
+.goal-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-2);
+  background:var(--surface);
+  border:1px solid var(--edge);
+  border-radius:2px;
+  padding:11px 4px;
+  cursor:pointer;
+  line-height:1.3;
+}
+.chip b{
+  display:block;
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 700;
+  font-size:15px;letter-spacing:0;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.chip[aria-pressed="true"]{
+  border-color:var(--index);
+  background:var(--index-wash);
+  color:var(--index);
+}
+.chip[aria-pressed="true"] b{color:var(--index)}
+
+.gauge{display:flex;flex-direction:column;gap:8px}
+.gauge-track{
+  position:relative;height:10px;background:var(--recess);
+  border:1px solid var(--edge);border-radius:2px;overflow:hidden;
+}
+.gauge-fill{position:absolute;left:0;top:0;bottom:0;background:var(--data);transition:width .3s ease}
+.gauge-legend{
+  display:flex;justify-content:space-between;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{display:flex;flex-direction:column;gap:1px;min-width:0}
+.stat .n{
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 115,"wght" 700;
+  font-size:25px;line-height:1.05;font-variant-numeric:tabular-nums;
+}
+.stat .n.up{color:var(--index)}
+.stat .n.down{color:var(--data)}
+.stat .l{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+}
+
+/* ---- suivi ---- */
+.chart-wrap{position:relative}
+.chart-wrap svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.tip{
+  position:absolute;pointer-events:none;opacity:0;
+  transform:translate(-50%,-100%);
+  background:var(--ink);color:var(--ground);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;font-variant-numeric:tabular-nums;
+  padding:5px 8px;border-radius:2px;white-space:nowrap;
+  transition:opacity .12s ease;
+}
+.tip.on{opacity:1}
+.empty{
+  font-size:13px;color:var(--ink-3);
+  border:1px dashed var(--edge);border-radius:2px;
+  padding:26px 16px;text-align:center;
+}
+.add-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--surface);background:var(--ink);
+  border:1px solid var(--ink);border-radius:2px;
+  padding:13px 16px;cursor:pointer;width:100%;
+}
+.btn:active{transform:translateY(1px)}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.log li{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--hair);
+  font-variant-numeric:tabular-nums;
+}
+.log li:last-child{border-bottom:0}
+.log .d{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;letter-spacing:.08em;color:var(--ink-3);width:74px;flex:none;
+}
+.log .w{
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 700;
+  font-size:18px;
+}
+.log .delta{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--ink-3)}
+.log .rm{
+  margin-left:auto;background:none;border:0;cursor:pointer;
+  color:var(--ink-3);font-size:17px;line-height:1;padding:6px 2px;
+}
+.log .rm:hover{color:var(--index)}
+
+details.about{border-top:1px solid var(--hair);padding-top:14px}
+details.about summary{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  cursor:pointer;list-style:none;
+}
+details.about summary::-webkit-details-marker{display:none}
+details.about summary::after{content:" +"}
+details.about[open] summary::after{content:" −"}
+details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
+
+/* ---- tab bar ---- */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:10;
+  display:flex;
+  background:var(--surface);
+  border-top:1px solid var(--edge);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.tabbar .inner{max-width:460px;margin:0 auto;display:flex;width:100%}
+.tabbar button{
+  flex:1;background:none;border:0;cursor:pointer;
+  padding:13px 4px 15px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);
+  border-top:2px solid transparent;margin-top:-1px;
+}
+.tabbar button[aria-selected="true"]{color:var(--index);border-top-color:var(--index)}
+.tabbar svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+
+<header class="plate">
+  <div class="plate-in">
+    <h1>Coefficient</h1>
+    <span class="serial">7 — 21</span>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- ============ CALCUL ============ -->
+  <section class="panel is-on" id="p-calcul" role="tabpanel" aria-labelledby="t-calcul">
+
+    <div class="card">
+      <div class="field">
+        <label for="kg">Poids actuel — kilogrammes</label>
+        <input id="kg" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="80">
+      </div>
+      <div class="convert">
+        <span>=</span><b id="lb">176.4</b><span>lb</span>
+        <span style="color:var(--ink-3)">· kg × 2,20462</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">Coefficient calorique</p>
+
+      <div class="coeff-row">
+        <span class="coeff-val" id="coeffVal">14</span>
+        <span class="coeff-name" id="coeffName">Maintien</span>
+      </div>
+
+      <div class="beam-block">
+        <div class="beam" id="beam">
+          <div class="beam-zone" id="zoneMaint"></div>
+          <div class="ticks" id="ticks"></div>
+          <input id="coeff" type="range" min="7" max="21" step="1" value="14"
+                 aria-label="Coefficient calorique, de 7 à 21">
+          <div class="poise-index smooth" id="poise"></div>
+        </div>
+        <div class="scale" id="scale"></div>
+        <div class="stepper">
+          <button class="step-btn" id="minus" type="button" aria-label="Diminuer le coefficient">−</button>
+          <button class="step-btn" id="plus" type="button" aria-label="Augmenter le coefficient">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="readouts">
+      <div class="readout primary">
+        <span class="num" id="kcal">2 470</span>
+        <span class="unit">kcal / jour</span>
+      </div>
+      <div class="readout">
+        <span class="num" id="prot">176</span>
+        <span class="unit">g protéines</span>
+      </div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+  </section>
+
+  <!-- ============ OBJECTIF ============ -->
+  <section class="panel" id="p-objectif" role="tabpanel" aria-labelledby="t-objectif" hidden>
+
+    <div class="card">
+      <p class="eyebrow">Direction</p>
+      <div class="goal-chips">
+        <button class="chip" type="button" data-goal="secher" data-coeff="10" aria-pressed="false">Sécher<b>10</b></button>
+        <button class="chip" type="button" data-goal="maintenir" data-coeff="14" aria-pressed="false">Maintenir<b>14</b></button>
+        <button class="chip" type="button" data-goal="prendre" data-coeff="19" aria-pressed="false">Prendre<b>19</b></button>
+      </div>
+      <p class="formula" id="goalNote"></p>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">Bornes</p>
+      <div class="add-row">
+        <div class="field">
+          <label for="startKg">Départ — kg</label>
+          <input id="startKg" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="80">
+        </div>
+        <div class="field">
+          <label for="targetKg">Cible — kg</label>
+          <input id="targetKg" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="75">
+        </div>
+      </div>
+
+      <div class="gauge">
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
+        <div class="gauge-legend">
+          <span id="gStart">80,0 kg</span>
+          <span id="gPct">0 %</span>
+          <span id="gTarget">75,0 kg</span>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><span class="n" id="sNow">80,0</span><span class="l">kg aujourd'hui</span></div>
+        <div class="stat"><span class="n" id="sLeft">5,0</span><span class="l">kg restants</span></div>
+      </div>
+    </div>
+
+    <details class="about">
+      <summary>La règle</summary>
+      <p><b>Protéines.</b> Poids en livres × 1 = grammes de protéines par jour. 80 kg = 176 lb = 176 g.</p>
+      <p><b>Calories.</b> Poids en livres × un coefficient entre 7 et 21. Bas pour sécher, autour de 14 pour tenir, haut pour prendre.</p>
+      <p>Tes chiffres restent sur ce téléphone, dans ce navigateur. Rien n'est envoyé nulle part, et personne d'autre ne les voit — même en partageant le lien.</p>
+      <p style="color:var(--ink-3)">Règle empirique de terrain, pas un avis médical.</p>
+    </details>
+  </section>
+
+  <!-- ============ SUIVI ============ -->
+  <section class="panel" id="p-suivi" role="tabpanel" aria-labelledby="t-suivi" hidden>
+
+    <div class="card">
+      <p class="eyebrow">Nouvelle pesée</p>
+      <div class="add-row">
+        <div class="field">
+          <label for="logDate">Date</label>
+          <input id="logDate" type="date">
+        </div>
+        <div class="field">
+          <label for="logKg">Poids — kg</label>
+          <input id="logKg" type="number" inputmode="decimal" step="0.1" min="20" max="300">
+        </div>
+      </div>
+      <button class="btn" id="addBtn" type="button">Enregistrer</button>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">Courbe de poids — kg</p>
+      <div class="chart-wrap" id="chartWrap">
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><span class="n" id="tr7">—</span><span class="l">kg sur 7 jours</span></div>
+        <div class="stat"><span class="n" id="trAll">—</span><span class="l">kg depuis le début</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">Journal</p>
+      <ul class="log" id="logList"></ul>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <div class="inner" role="tablist" aria-label="Sections">
+    <button id="t-calcul" role="tab" aria-selected="true" aria-controls="p-calcul" data-p="calcul">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M12 7v11"/><path d="M8 18h8"/><path d="M7 7l-3 5h6z"/><path d="M17 7l-3 5h6z"/></svg>
+      Calcul
+    </button>
+    <button id="t-objectif" role="tab" aria-selected="false" aria-controls="p-objectif" data-p="objectif">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/></svg>
+      Objectif
+    </button>
+    <button id="t-suivi" role="tab" aria-selected="false" aria-controls="p-suivi" data-p="suivi">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-5 3.5 3L20 7"/></svg>
+      Suivi
+    </button>
+  </div>
+</nav>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = "coefficient.v1";
+  var LB = 2.20462;
+
+  var BANDS = [
+    { max: 9,  name: "Sèche agressive" },
+    { max: 11, name: "Sèche" },
+    { max: 13, name: "Déficit léger" },
+    { max: 15, name: "Maintien" },
+    { max: 18, name: "Léger surplus" },
+    { max: 21, name: "Prise" }
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- state ---------- */
+  var state = {
+    weightKg: 80,
+    coeff: 14,
+    startKg: 80,
+    targetKg: 75,
+    goal: null,
+    log: []
+  };
+
+  function load(){
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (s && typeof s === "object") {
+        if (isFinite(s.weightKg)) state.weightKg = +s.weightKg;
+        if (isFinite(s.coeff))    state.coeff    = clamp(Math.round(+s.coeff), 7, 21);
+        if (isFinite(s.startKg))  state.startKg  = +s.startKg;
+        if (isFinite(s.targetKg)) state.targetKg = +s.targetKg;
+        if (typeof s.goal === "string") state.goal = s.goal;
+        if (Array.isArray(s.log)) {
+          state.log = s.log.filter(function(e){
+            return e && typeof e.d === "string" && isFinite(e.kg);
+          }).map(function(e){ return { d: e.d, kg: +e.kg }; });
+        }
+      }
+    } catch (e) { /* private mode, blocked storage — run on defaults */ }
+  }
+
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { /* nothing to do; the session still works in memory */ }
+  }
+
+  /* ---------- helpers ---------- */
+  function clamp(v, a, b){ return Math.min(b, Math.max(a, v)); }
+  function toLb(kg){ return kg * LB; }
+  function bandName(c){
+    for (var i = 0; i < BANDS.length; i++) if (c <= BANDS[i].max) return BANDS[i].name;
+    return BANDS[BANDS.length - 1].name;
+  }
+  function nf(n, d){
+    return n.toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+  function signed(n, d){ return (n > 0 ? "+" : n < 0 ? "−" : "") + nf(Math.abs(n), d); }
+  function todayISO(){
+    var t = new Date();
+    return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+  }
+  function parseISO(s){
+    var p = s.split("-");
+    return new Date(+p[0], +p[1] - 1, +p[2]).getTime();
+  }
+  function shortDate(s){
+    var p = s.split("-");
+    return p[2] + "/" + p[1];
+  }
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* count the read-outs up like a needle settling */
+  function tween(el, to, decimals, format){
+    var from = parseFloat(el.dataset.v || "0");
+    el.dataset.v = String(to);
+    if (reduced || !isFinite(from) || from === to) { el.textContent = format(to); return; }
+    var t0 = null, dur = 260;
+    function frame(t){
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / dur);
+      var e = 1 - Math.pow(1 - k, 3);
+      el.textContent = format(from + (to - from) * e);
+      if (k < 1) requestAnimationFrame(frame);
+      else el.textContent = format(to);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- the beam ---------- */
+  function buildBeam(){
+    var ticks = $("ticks"), html = "";
+    for (var v = 7; v <= 21; v++){
+      var f = (v - 7) / 14 * 100;
+      var major = (v === 7 || v === 14 || v === 21);
+      html += '<span class="tick ' + (major ? "major" : "minor") + '" style="left:' + f + '%"></span>';
+    }
+    ticks.innerHTML = html;
+
+    /* the maintien window, 14–15, washed on the beam */
+    var z = $("zoneMaint");
+    var a = (14 - 7) / 14, b = (15 - 7) / 14;
+    z.style.left  = "calc(19px + " + a + " * (100% - 38px))";
+    z.style.width = "calc(" + (b - a) + " * (100% - 38px))";
+
+    /* graduations read below the beam */
+    var sc = "";
+    [7, 14, 21].forEach(function(v){
+      sc += '<span class="scale-num" style="left:' + ((v - 7) / 14 * 100) + '%">' + v + "</span>";
+    });
+    sc += '<span class="scale-note start">sèche</span>';
+    sc += '<span class="scale-note mid" style="left:' + ((a + b) / 2 * 100) + '%">maintien</span>';
+    sc += '<span class="scale-note end">prise</span>';
+    $("scale").innerHTML = sc;
+  }
+
+  function placePoise(){
+    var f = (state.coeff - 7) / 14;
+    $("poise").style.left = "calc(19px + " + f + " * (100% - 38px))";
+  }
+
+  /* ---------- render ---------- */
+  function renderCalc(){
+    var kg = state.weightKg, lb = toLb(kg);
+    $("lb").textContent = nf(lb, 1);
+    $("coeffVal").textContent = String(state.coeff);
+    $("coeffName").textContent = bandName(state.coeff);
+
+    tween($("kcal"), Math.round(lb * state.coeff), 0, function(v){ return nf(Math.round(v), 0); });
+    tween($("prot"), Math.round(lb), 0, function(v){ return nf(Math.round(v), 0); });
+
+    $("formula").innerHTML =
+      nf(kg, 1) + " kg × 2,20462 = <b>" + nf(lb, 1) + " lb</b><br>" +
+      nf(lb, 1) + " lb × " + state.coeff + " = <b>" + nf(Math.round(lb * state.coeff), 0) + " kcal</b><br>" +
+      nf(lb, 1) + " lb × 1 = <b>" + nf(Math.round(lb), 0) + " g de protéines</b>";
+
+    placePoise();
+  }
+
+  function renderGoal(){
+    var start = state.startKg, target = state.targetKg, now = state.weightKg;
+    var span = start - target;
+    var pct = 0;
+    if (Math.abs(span) > 0.05) pct = clamp((start - now) / span * 100, 0, 100);
+    else if (Math.abs(now - target) < 0.05) pct = 100;
+
+    $("gaugeFill").style.width = pct + "%";
+    $("gStart").textContent  = nf(start, 1) + " kg";
+    $("gTarget").textContent = nf(target, 1) + " kg";
+    $("gPct").textContent    = Math.round(pct) + " %";
+
+    $("sNow").textContent = nf(now, 1);
+    var left = now - target;
+    var sLeft = $("sLeft");
+    sLeft.textContent = nf(Math.abs(left), 1);
+    sLeft.className = "n" + (Math.abs(left) < 0.05 ? "" : (span > 0 ? " down" : " up"));
+
+    var chips = document.querySelectorAll(".chip");
+    for (var i = 0; i < chips.length; i++){
+      chips[i].setAttribute("aria-pressed", chips[i].dataset.goal === state.goal ? "true" : "false");
+    }
+
+    var lb = toLb(now);
+    $("goalNote").innerHTML =
+      "Coefficient retenu <b>" + state.coeff + "</b> — " + bandName(state.coeff) +
+      "<br>Soit <b>" + nf(Math.round(lb * state.coeff), 0) + " kcal</b> et <b>" +
+      nf(Math.round(lb), 0) + " g</b> de protéines par jour.";
+  }
+
+  /* ---------- chart ---------- */
+  var W = 360, H = 190, PL = 34, PR = 12, PT = 14, PB = 24;
+
+  function renderChart(){
+    var wrap = $("chartWrap");
+    var old = wrap.querySelector("svg");
+    if (old) old.remove();
+    var oldEmpty = wrap.querySelector(".empty");
+    if (oldEmpty) oldEmpty.remove();
+    $("tip").classList.remove("on");
+
+    var data = state.log.slice().sort(function(a, b){ return parseISO(a.d) - parseISO(b.d); });
+
+    if (data.length < 2){
+      var e = document.createElement("div");
+      e.className = "empty";
+      e.textContent = data.length === 0
+        ? "Enregistre ta première pesée pour démarrer la courbe."
+        : "Une deuxième pesée et la courbe apparaît.";
+      wrap.insertBefore(e, $("tip"));
+      $("tr7").textContent = "—";
+      $("trAll").textContent = "—";
+      $("tr7").className = "n";
+      $("trAll").className = "n";
+      return;
+    }
+
+    var xs = data.map(function(d){ return parseISO(d.d); });
+    var ys = data.map(function(d){ return d.kg; });
+    var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+    if (x1 === x0) x1 = x0 + 86400000;
+
+    var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys);
+    var t = state.targetKg;
+    var showTarget = isFinite(t) && t > 0 && t >= lo - 12 && t <= hi + 12;
+    if (showTarget){ lo = Math.min(lo, t); hi = Math.max(hi, t); }
+    var pad = Math.max(0.6, (hi - lo) * 0.18);
+    lo -= pad; hi += pad;
+
+    var X = function(v){ return PL + (v - x0) / (x1 - x0) * (W - PL - PR); };
+    var Y = function(v){ return PT + (hi - v) / (hi - lo) * (H - PT - PB); };
+
+    var s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Évolution du poids en kilogrammes">';
+    s += '<defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">' +
+         '<stop offset="0" stop-color="var(--data)" stop-opacity="0.20"/>' +
+         '<stop offset="1" stop-color="var(--data)" stop-opacity="0"/>' +
+         "</linearGradient></defs>";
+
+    /* recessive grid + axis labels */
+    for (var i = 0; i <= 3; i++){
+      var gv = lo + (hi - lo) * i / 3, gy = Y(gv);
+      s += '<line x1="' + PL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - PR) + '" y2="' + gy.toFixed(1) +
+           '" stroke="var(--hair)" stroke-width="1"/>';
+      s += '<text x="' + (PL - 6) + '" y="' + (gy + 3.2).toFixed(1) +
+           '" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--ink-3)">' +
+           nf(gv, 1) + "</text>";
+    }
+
+    /* target reference — dashed, so it never reads by color alone */
+    if (showTarget){
+      var ty = Y(t);
+      s += '<line x1="' + PL + '" y1="' + ty.toFixed(1) + '" x2="' + (W - PR) + '" y2="' + ty.toFixed(1) +
+           '" stroke="var(--index)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+      s += '<text x="' + (PL + 3) + '" y="' + (ty - 5).toFixed(1) +
+           '" font-family="IBM Plex Mono, monospace" font-size="9" ' +
+           'letter-spacing="1.2" fill="var(--index)">CIBLE ' + nf(t, 1) + "</text>";
+    }
+
+    /* area + line */
+    var pts = data.map(function(d, k){ return [X(xs[k]), Y(ys[k])]; });
+    var path = pts.map(function(p, k){ return (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+    s += '<path d="' + path + " L" + pts[pts.length - 1][0].toFixed(1) + " " + (H - PB) +
+         " L" + pts[0][0].toFixed(1) + " " + (H - PB) + ' Z" fill="url(#fade)"/>';
+    s += '<path d="' + path + '" fill="none" stroke="var(--data)" stroke-width="2" ' +
+         'stroke-linecap="round" stroke-linejoin="round"/>';
+
+    /* emphasized endpoint, directly labelled */
+    var last = pts[pts.length - 1];
+    s += '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) +
+         '" r="4" fill="var(--data)" stroke="var(--surface)" stroke-width="2"/>';
+    var lx = Math.min(last[0], W - PR - 4);
+    s += '<text x="' + lx.toFixed(1) + '" y="' + Math.max(11, last[1] - 10).toFixed(1) +
+         '" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" ' +
+         'font-weight="600" fill="var(--ink)">' + nf(ys[ys.length - 1], 1) + "</text>";
+
+    /* x extremes only */
+    s += '<text x="' + PL + '" y="' + (H - 7) + '" font-family="IBM Plex Mono, monospace" ' +
+         'font-size="9" fill="var(--ink-3)">' + shortDate(data[0].d) + "</text>";
+    s += '<text x="' + (W - PR) + '" y="' + (H - 7) + '" text-anchor="end" ' +
+         'font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--ink-3)">' +
+         shortDate(data[data.length - 1].d) + "</text>";
+
+    /* hover layer */
+    s += '<line id="cross" x1="0" y1="' + PT + '" x2="0" y2="' + (H - PB) +
+         '" stroke="var(--ink-3)" stroke-width="1" opacity="0"/>';
+    s += '<circle id="hoverDot" r="4.5" fill="var(--data)" stroke="var(--surface)" stroke-width="2" opacity="0"/>';
+    s += '<rect id="hit" x="' + PL + '" y="' + PT + '" width="' + (W - PL - PR) +
+         '" height="' + (H - PT - PB) + '" fill="transparent"/>';
+    s += "</svg>";
+
+    wrap.insertAdjacentHTML("afterbegin", s);
+
+    var svg = wrap.querySelector("svg");
+    var cross = svg.querySelector("#cross");
+    var dot = svg.querySelector("#hoverDot");
+    var hit = svg.querySelector("#hit");
+    var tip = $("tip");
+
+    function move(ev){
+      var r = svg.getBoundingClientRect();
+      var vx = (ev.clientX - r.left) / r.width * W;
+      var best = 0, bd = Infinity;
+      for (var k = 0; k < pts.length; k++){
+        var d = Math.abs(pts[k][0] - vx);
+        if (d < bd){ bd = d; best = k; }
+      }
+      var p = pts[best];
+      cross.setAttribute("x1", p[0]); cross.setAttribute("x2", p[0]);
+      cross.setAttribute("opacity", "0.45");
+      dot.setAttribute("cx", p[0]); dot.setAttribute("cy", p[1]);
+      dot.setAttribute("opacity", "1");
+      tip.textContent = shortDate(data[best].d) + "  ·  " + nf(data[best].kg, 1) + " kg";
+      tip.style.left = (p[0] / W * r.width) + "px";
+      tip.style.top = (p[1] / H * r.height - 8) + "px";
+      tip.classList.add("on");
+    }
+    function leave(){
+      cross.setAttribute("opacity", "0");
+      dot.setAttribute("opacity", "0");
+      tip.classList.remove("on");
+    }
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerdown", move);
+    hit.addEventListener("pointerleave", leave);
+    hit.addEventListener("pointercancel", leave);
+
+    /* trends */
+    var latest = data[data.length - 1];
+    var cutoff = parseISO(latest.d) - 7 * 86400000;
+    var ref = data[0];
+    for (var j = data.length - 1; j >= 0; j--){
+      if (parseISO(data[j].d) <= cutoff){ ref = data[j]; break; }
+    }
+    var d7 = latest.kg - ref.kg;
+    var dAll = latest.kg - data[0].kg;
+    setTrend($("tr7"), d7);
+    setTrend($("trAll"), dAll);
+  }
+
+  function setTrend(el, v){
+    el.textContent = signed(v, 1);
+    el.className = "n" + (Math.abs(v) < 0.05 ? "" : (v < 0 ? " down" : " up"));
+  }
+
+  function renderLog(){
+    var list = $("logList");
+    var data = state.log.slice().sort(function(a, b){ return parseISO(b.d) - parseISO(a.d); });
+    if (!data.length){
+      list.innerHTML = '<li style="color:var(--ink-3);font-size:13px;border:0">Aucune pesée enregistrée.</li>';
+      return;
+    }
+    var html = "";
+    for (var i = 0; i < data.length; i++){
+      var prev = data[i + 1];
+      var delta = prev ? data[i].kg - prev.kg : null;
+      html += "<li>" +
+        '<span class="d">' + shortDate(data[i].d) + "</span>" +
+        '<span class="w">' + nf(data[i].kg, 1) + "</span>" +
+        '<span class="delta">' + (delta === null ? "" : signed(delta, 1)) + "</span>" +
+        '<button class="rm" type="button" data-d="' + data[i].d +
+        '" aria-label="Supprimer la pesée du ' + shortDate(data[i].d) + '">×</button>' +
+        "</li>";
+    }
+    list.innerHTML = html;
+  }
+
+  function renderAll(){ renderCalc(); renderGoal(); renderChart(); renderLog(); }
+
+  /* ---------- wiring ---------- */
+  function setCoeff(v){
+    state.coeff = clamp(Math.round(v), 7, 21);
+    $("coeff").value = state.coeff;
+    var chips = document.querySelectorAll(".chip");
+    var match = null;
+    for (var i = 0; i < chips.length; i++){
+      if (+chips[i].dataset.coeff === state.coeff) match = chips[i].dataset.goal;
+    }
+    state.goal = match;
+    save(); renderCalc(); renderGoal();
+  }
+
+  $("kg").addEventListener("input", function(){
+    var v = parseFloat(this.value);
+    if (!isFinite(v) || v <= 0) return;
+    state.weightKg = v;
+    save(); renderCalc(); renderGoal();
+  });
+
+  $("coeff").addEventListener("input", function(){
+    $("poise").classList.remove("smooth");
+    setCoeff(+this.value);
+  });
+  $("coeff").addEventListener("change", function(){ $("poise").classList.add("smooth"); });
+
+  $("minus").addEventListener("click", function(){ $("poise").classList.add("smooth"); setCoeff(state.coeff - 1); });
+  $("plus").addEventListener("click",  function(){ $("poise").classList.add("smooth"); setCoeff(state.coeff + 1); });
+
+  $("startKg").addEventListener("input", function(){
+    var v = parseFloat(this.value);
+    if (!isFinite(v) || v <= 0) return;
+    state.startKg = v; save(); renderGoal(); renderChart();
+  });
+  $("targetKg").addEventListener("input", function(){
+    var v = parseFloat(this.value);
+    if (!isFinite(v) || v <= 0) return;
+    state.targetKg = v; save(); renderGoal(); renderChart();
+  });
+
+  var chips = document.querySelectorAll(".chip");
+  for (var c = 0; c < chips.length; c++){
+    chips[c].addEventListener("click", function(){
+      $("poise").classList.add("smooth");
+      setCoeff(+this.dataset.coeff);
+      state.goal = this.dataset.goal;
+      save(); renderGoal();
+    });
+  }
+
+  $("addBtn").addEventListener("click", function(){
+    var d = $("logDate").value || todayISO();
+    var kg = parseFloat($("logKg").value);
+    if (!isFinite(kg) || kg <= 0){
+      $("logKg").focus();
+      return;
+    }
+    state.log = state.log.filter(function(e){ return e.d !== d; });
+    state.log.push({ d: d, kg: kg });
+    if (parseISO(d) >= Math.max.apply(null, state.log.map(function(e){ return parseISO(e.d); }))){
+      state.weightKg = kg;
+      $("kg").value = kg;
+    }
+    if (state.log.length === 1){
+      state.startKg = kg;
+      $("startKg").value = kg;
+    }
+    $("logKg").value = "";
+    save(); renderAll();
+  });
+
+  $("logList").addEventListener("click", function(ev){
+    var btn = ev.target.closest(".rm");
+    if (!btn) return;
+    state.log = state.log.filter(function(e){ return e.d !== btn.dataset.d; });
+    save(); renderChart(); renderLog(); renderGoal();
+  });
+
+  var tabs = document.querySelectorAll('[role="tab"]');
+  for (var t = 0; t < tabs.length; t++){
+    tabs[t].addEventListener("click", function(){
+      var name = this.dataset.p;
+      for (var k = 0; k < tabs.length; k++){
+        tabs[k].setAttribute("aria-selected", tabs[k] === this ? "true" : "false");
+      }
+      var panels = document.querySelectorAll(".panel");
+      for (var m = 0; m < panels.length; m++){
+        var on = panels[m].id === "p-" + name;
+        panels[m].classList.toggle("is-on", on);
+        if (on) panels[m].removeAttribute("hidden"); else panels[m].setAttribute("hidden", "");
+      }
+      window.scrollTo(0, 0);
+      if (name === "suivi") renderChart();
+    });
+  }
+
+  window.addEventListener("resize", function(){ placePoise(); });
+
+  /* ---------- boot ---------- */
+  load();
+  buildBeam();
+  $("kg").value = state.weightKg;
+  $("coeff").value = state.coeff;
+  $("startKg").value = state.startKg;
+  $("targetKg").value = state.targetKg;
+  $("logDate").value = todayISO();
+  renderAll();
+  requestAnimationFrame(placePoise);
+})();
+</script>
