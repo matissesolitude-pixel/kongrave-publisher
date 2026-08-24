@@ -24,7 +24,11 @@ protéines, 2 lb de viande à 1 120 kcal, **880 kcal libres**).
    Chaque source porte donc sa densité réelle (kcal et g de protéines pour
    100 g d'aliment), et chaque vignette affiche le seul chiffre comparable —
    ce que coûtent 100 g de protéines.
-5. **Calories libres** — on retire du budget ce que la viande coûte
+5. **Le mélange** — rien n'oblige à tout tirer d'une seule source. Ajouter une
+   source comble ce qui manque, ou rééquilibre l'ensemble si la cible est déjà
+   couverte ; « Ajuster pile à la cible » remet le total sur la cible en gardant
+   les proportions.
+6. **Calories libres** — on retire du budget ce que la viande coûte
    *réellement* (gras compris), pas 4 kcal par gramme de protéine. Le reste se
    dépense librement.
 
@@ -32,7 +36,7 @@ protéines, 2 lb de viande à 1 120 kcal, **880 kcal libres**).
 
 | Écran | Ce qu'il fait |
 |---|---|
-| Calcul | Poids cible et taille. Curseur de coefficient sur un fléau gradué 7 → 21. Choix parmi neuf sources de protéines (dinde, poulet, bœuf 96/4, crevettes, poisson blanc, saumon, œufs, cottage cheese, whey). Sortie : kcal/jour, g de protéines, quantité à manger en grammes et en livres — en pièces quand l'aliment en a — coût réel de cette source, et le grand chiffre des calories libres |
+| Calcul | Poids cible et taille. Curseur de coefficient sur un fléau gradué 7 → 21. Composeur de sources de protéines : on en combine autant qu'on veut parmi neuf (dinde, poulet, bœuf 96/4, crevettes, poisson blanc, saumon, œufs, cottage cheese, whey), chacune avec sa quantité réglable, en grammes ou en pièces. Sortie : kcal/jour, g de protéines, jauge de la cible protéique, coût réel du mélange, et le grand chiffre des calories libres |
 | Journée | Calories restantes avant le plafond, jauge de protéines, 27 aliments à ajouter d'un tap (protéines / féculents / plaisirs), saisie libre. Remise à zéro automatique au changement de date |
 | Suivi | Journal de pesées, courbe avec la ligne d'objectif (épinglée au bord du cadre si la cible sort de l'échelle), tendance 7 jours et depuis le début, jauge départ → cible, poids du jour et IMC |
 

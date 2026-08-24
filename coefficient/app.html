@@ -321,6 +321,26 @@ input[type="range"]::-moz-range-thumb{
   font-variation-settings:"wdth" 112,"wght" 700;font-size:16px;white-space:nowrap;
 }
 .eaten .p{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--ink-3);white-space:nowrap}
+.qty{display:flex;align-items:center;gap:6px;margin-left:auto;flex:none}
+.qty b{
+  font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 700;
+  font-size:15px;font-variant-numeric:tabular-nums;
+  min-width:62px;text-align:right;white-space:nowrap;
+}
+.qty button{
+  width:28px;height:28px;flex:none;cursor:pointer;
+  background:var(--surface);border:1px solid var(--edge);border-radius:2px;
+  color:var(--ink);font-family:"Archivo",sans-serif;
+  font-variation-settings:"wdth" 112,"wght" 700;font-size:15px;line-height:1;padding:0;
+}
+.qty button:active{transform:translateY(1px)}
+.mix-main{display:flex;flex-direction:column;gap:0;min-width:0;flex:1}
+.mix-main .mix-n{font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+.mix-main .mix-sub{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;color:var(--ink-3);white-space:nowrap;
+}
 .rm{background:none;border:0;cursor:pointer;color:var(--ink-3);font-size:17px;line-height:1;padding:6px 2px;flex:none}
 .rm:hover{color:var(--index)}
 
@@ -474,17 +494,28 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     </div>
 
     <div class="card">
-      <p class="eyebrow">Ta source — ce que coûtent 100 g de protéines</p>
+      <p class="eyebrow">Tes sources — ce que coûtent 100 g de protéines</p>
       <div class="foods" id="srcPick"></div>
-      <div class="rows">
-        <div class="row"><span>À manger dans la journée</span><b id="meatLb">723 g — 1,6 lb</b></div>
-        <div class="row" id="srcPieceRow" hidden><span>En pièces</span><b id="srcPiece">—</b></div>
-        <div class="row"><span>Ce que ça coûte</span><b id="srcKcal">890 kcal</b></div>
+
+      <ul class="eaten" id="mixList"></ul>
+
+      <div class="meter"><i class="goal" id="mixMeter" style="width:0%"></i></div>
+      <div class="meter-legend">
+        <span id="mixProt">0 g de protéines</span>
+        <span id="mixTarget">cible 159 g</span>
       </div>
+
+      <div class="rows">
+        <div class="row"><span>Ce que ces sources coûtent</span><b id="srcKcal">890 kcal</b></div>
+      </div>
+
+      <button class="btn ghost" id="fitMix" type="button">Ajuster pile à la cible</button>
+
       <div class="budget">
         <span class="num" id="freeKcal">697</span>
         <span class="cap">kcal libres — à dépenser comme tu veux</span>
       </div>
+
       <p class="formula" id="formula"></p>
     </div>
   </section>
@@ -717,7 +748,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
 
   var state = {
     kgNow: 80, kgGoal: 72, cm: 180,
-    coeff: 10, src: 0,
+    coeff: 10, mix: [{ i: 0, g: 0 }],
     startKg: 80,
     log: [],
     day: { d: "", items: [] }
@@ -734,7 +765,14 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
         if (isFinite(s[k]) && +s[k] > 0) state[k] = +s[k];
       });
       if (isFinite(s.coeff)) state.coeff = clamp(Math.round(+s.coeff), 7, 21);
-      if (isFinite(s.src)) state.src = clamp(Math.round(+s.src), 0, SOURCES.length - 1);
+      if (Array.isArray(s.mix)){
+        var m = s.mix
+          .filter(function(r){ return r && isFinite(r.i) && isFinite(r.g) && SOURCES[r.i]; })
+          .map(function(r){ return { i: Math.round(+r.i), g: Math.max(0, +r.g) }; });
+        if (m.length) state.mix = m;
+      } else if (isFinite(s.src)){
+        state.mix = [{ i: clamp(Math.round(+s.src), 0, SOURCES.length - 1), g: 0 }];  /* v2 layout */
+      }
       if (Array.isArray(s.log)){
         state.log = s.log
           .filter(function(e){ return e && typeof e.d === "string" && isFinite(e.kg); })
@@ -775,18 +813,20 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     var baseLb = state.kgGoal * LB;                 /* always the target weight */
     var kcal   = Math.round(baseLb * state.coeff);  /* lb x coefficient */
     var prot   = Math.round(baseLb);                /* 1 g of protein per pound */
-    var src    = SOURCES[state.src];
-    var srcG   = prot / src.p * 100;                /* grams of that food to hit the protein */
-    var srcKcal = Math.round(srcG * src.k / 100);   /* what it actually costs */
+    var mixProt = 0, mixKcal = 0;
+    var rows = state.mix.map(function(r){
+      var src = SOURCES[r.i];
+      var pg  = r.g * src.p / 100;
+      var kg  = r.g * src.k / 100;
+      mixProt += pg; mixKcal += kg;
+      return { i: r.i, src: src, g: r.g, prot: pg, kcal: kg };
+    });
     return {
       baseLb: baseLb, kcal: kcal, prot: prot,
-      src: src,
-      srcG: srcG,
-      srcLb: srcG / GRAMS_PER_LB,
-      srcPieces: src.pc ? srcG / src.pc : null,
-      per100: Math.round(src.k / src.p * 100),      /* calories per 100 g of protein — the comparable */
-      srcKcal: srcKcal,
-      free: kcal - srcKcal
+      rows: rows,
+      mixProt: mixProt,
+      mixKcal: Math.round(mixKcal),
+      free: kcal - Math.round(mixKcal)
     };
   }
 
@@ -804,6 +844,20 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     requestAnimationFrame(frame);
   }
   var asInt = function(v){ return nf(Math.round(v),0); };
+
+  /* grams of source i that supply a given amount of protein, in a portion you can actually serve */
+  function gramsFor(i, protein){
+    var src = SOURCES[i];
+    var raw = Math.max(0, protein) / src.p * 100;
+    return src.pc ? Math.max(src.pc, Math.round(raw / src.pc) * src.pc) : Math.max(1, Math.round(raw));
+  }
+  function stepFor(i){ return SOURCES[i].pc || 25; }
+  function amountLabel(i, g){
+    var src = SOURCES[i];
+    return src.pc
+      ? nf(Math.round(g / src.pc), 0) + " " + src.pn
+      : nf(Math.round(g), 0) + " g";
+  }
 
   /* "de dinde" but "d'œufs" */
   function de(name){
@@ -861,37 +915,66 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     tween($("kcal"), c.kcal, asInt);
     tween($("prot"), c.prot, asInt);
 
-    $("meatLb").textContent = nf(Math.round(c.srcG), 0) + " g — " + nf(c.srcLb, 1) + " lb";
-    $("srcKcal").textContent = nf(c.srcKcal, 0) + " kcal";
-
-    var pieceRow = $("srcPieceRow");
-    if (c.srcPieces){
-      pieceRow.hidden = false;
-      $("srcPiece").textContent = "≈ " + nf(Math.round(c.srcPieces), 0) + " " + c.src.pn;
-    } else {
-      pieceRow.hidden = true;
+    /* which sources are in the mix */
+    var inMix = {};
+    c.rows.forEach(function(r){ inMix[r.i] = true; });
+    var tiles = $("srcPick").children;
+    for (var t = 0; t < tiles.length; t++){
+      tiles[t].setAttribute("aria-pressed", inMix[+tiles[t].dataset.s] ? "true" : "false");
     }
+
+    /* one row per source, each with its own quantity */
+    var html = "";
+    if (!c.rows.length){
+      html = '<li style="color:var(--ink-3);font-size:13px;border:0">' +
+             "Choisis une source ci-dessus, ou plusieurs si tu veux varier.</li>";
+    } else {
+      c.rows.forEach(function(r, idx){
+        html += "<li>" +
+          '<span aria-hidden="true">' + r.src.e + "</span>" +
+          '<span class="mix-main"><span class="mix-n">' + r.src.n + "</span>" +
+            '<span class="mix-sub">' + nf(Math.round(r.kcal), 0) + " kcal · " +
+            nf(Math.round(r.prot), 0) + " g de protéines</span></span>" +
+          '<span class="qty">' +
+            '<button type="button" data-q="-1" data-r="' + idx + '" aria-label="Moins de ' + r.src.n + '">−</button>' +
+            "<b>" + amountLabel(r.i, r.g) + "</b>" +
+            '<button type="button" data-q="1" data-r="' + idx + '" aria-label="Plus de ' + r.src.n + '">+</button>' +
+          "</span>" +
+          '<button class="rm" type="button" data-rm="' + idx + '" aria-label="Retirer ' + r.src.n + '">×</button>' +
+          "</li>";
+      });
+    }
+    $("mixList").innerHTML = html;
+
+    var pct = c.prot > 0 ? clamp(c.mixProt / c.prot * 100, 0, 100) : 0;
+    $("mixMeter").style.width = pct + "%";
+    $("mixProt").textContent = nf(Math.round(c.mixProt), 0) + " g de protéines";
+    var gap = c.prot - c.mixProt;
+    $("mixTarget").textContent = Math.abs(gap) < 1
+      ? "cible atteinte"
+      : (gap > 0 ? "manque " + nf(Math.round(gap), 0) + " g"
+                 : "dépasse de " + nf(Math.round(-gap), 0) + " g");
+
+    $("srcKcal").textContent = nf(c.mixKcal, 0) + " kcal";
 
     var free = $("freeKcal");
     free.textContent = nf(Math.abs(c.free), 0);
     free.classList.toggle("over", c.free < 0);
     free.nextElementSibling.textContent = c.free < 0
-      ? "kcal de trop — cette source dépasse déjà le budget"
+      ? "kcal de trop — tes sources dépassent déjà le budget"
       : "kcal libres — à dépenser comme tu veux";
 
-    var picks = $("srcPick").children;
-    for (var i = 0; i < picks.length; i++){
-      picks[i].setAttribute("aria-pressed", +picks[i].dataset.s === state.src ? "true" : "false");
-    }
+    var detail = c.rows.map(function(r){
+      return amountLabel(r.i, r.g) + " " + de(r.src.n) + " = " +
+             nf(Math.round(r.kcal), 0) + " kcal, " + nf(Math.round(r.prot), 0) + " g";
+    }).join("<br>");
 
     $("formula").innerHTML =
       nf(state.kgGoal, 1) + " kg de cible × 2,20462 = <b>" + nf(c.baseLb, 1) + " lb</b><br>" +
       nf(c.baseLb, 1) + " lb × " + state.coeff + " = <b>" + nf(c.kcal, 0) + " kcal</b><br>" +
-      nf(c.baseLb, 1) + " lb × 1 = <b>" + nf(c.prot, 0) + " g de protéines</b><br>" +
-      nf(c.prot, 0) + " g ÷ " + c.src.p + " × 100 = <b>" + nf(Math.round(c.srcG), 0) +
-        " g</b> " + de(c.src.n) + "<br>" +
-      nf(Math.round(c.srcG), 0) + " g × " + c.src.k + " / 100 = <b>" + nf(c.srcKcal, 0) + " kcal</b><br>" +
-      nf(c.kcal, 0) + " − " + nf(c.srcKcal, 0) + " = <b>" + nf(Math.abs(c.free), 0) +
+      nf(c.baseLb, 1) + " lb × 1 = <b>" + nf(c.prot, 0) + " g de protéines</b>" +
+      (detail ? "<br>" + detail : "") + "<br>" +
+      nf(c.kcal, 0) + " − " + nf(c.mixKcal, 0) + " = <b>" + nf(Math.abs(c.free), 0) +
         (c.free < 0 ? " kcal de trop</b>" : " kcal libres</b>");
 
     placePoise();
@@ -1136,6 +1219,28 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   function renderAll(){ renderCalc(); renderDay(); renderGoal(); renderChart(); renderLog(); }
 
   /* ---------- wiring ---------- */
+  /* scale every quantity so the mix lands on the protein target, keeping the proportions */
+  function fitToTarget(){
+    var c = calc();
+    if (!state.mix.length) return;
+    if (c.mixProt <= 0){
+      state.mix.forEach(function(r){ r.g = gramsFor(r.i, c.prot / state.mix.length); });
+      return;
+    }
+    var factor = c.prot / c.mixProt;
+    state.mix.forEach(function(r){
+      var src = SOURCES[r.i], g = r.g * factor;
+      r.g = src.pc ? Math.max(src.pc, Math.round(g / src.pc) * src.pc) : Math.max(1, Math.round(g));
+    });
+  }
+
+  /* with a single source the quantity is implied by the target, so keep it in step */
+  function refitLone(){
+    if (state.mix.length === 1){
+      state.mix[0].g = gramsFor(state.mix[0].i, Math.round(state.kgGoal * LB));
+    }
+  }
+
   function setCoeff(v){
     state.coeff = clamp(Math.round(v),7,21);
     $("coeff").value = state.coeff;
@@ -1150,7 +1255,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     });
   }
   numInput("kgNow","kgNow", renderGoal);
-  numInput("kgGoal","kgGoal", function(){ renderCalc(); renderDay(); renderGoal(); renderChart(); });
+  numInput("kgGoal","kgGoal", function(){ refitLone(); renderCalc(); renderDay(); renderGoal(); renderChart(); });
   numInput("cm","cm", renderGoal);
   numInput("startKg","startKg", renderGoal);
 
@@ -1162,9 +1267,41 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   $("plus").addEventListener("click",  function(){ $("poise").classList.add("smooth"); setCoeff(state.coeff+1); });
 
   $("srcPick").addEventListener("click", function(ev){
-    var b=ev.target.closest("[data-s]");
+    var b = ev.target.closest("[data-s]");
     if (!b) return;
-    state.src=+b.dataset.s; save(); renderCalc();
+    var i = +b.dataset.s;
+    var at = -1;
+    state.mix.forEach(function(r, k){ if (r.i === i) at = k; });
+    if (at >= 0){
+      state.mix.splice(at, 1);
+    } else {
+      var c = calc();
+      var gap = c.prot - c.mixProt;
+      if (gap > 5){
+        state.mix.push({ i: i, g: gramsFor(i, gap) });          /* fill what is missing */
+      } else {
+        state.mix.push({ i: i, g: gramsFor(i, c.prot / (state.mix.length + 1)) });
+        fitToTarget();                                          /* make room, keep the ratios */
+      }
+    }
+    save(); renderCalc();
+  });
+
+  $("mixList").addEventListener("click", function(ev){
+    var rm = ev.target.closest("[data-rm]");
+    if (rm){ state.mix.splice(+rm.dataset.rm, 1); save(); renderCalc(); return; }
+    var q = ev.target.closest("[data-q]");
+    if (!q) return;
+    var row = state.mix[+q.dataset.r];
+    if (!row) return;
+    row.g = Math.max(0, row.g + (+q.dataset.q) * stepFor(row.i));
+    if (row.g === 0) state.mix.splice(+q.dataset.r, 1);
+    save(); renderCalc();
+  });
+
+  /* scale the whole mix so it lands exactly on the protein target, keeping the proportions */
+  $("fitMix").addEventListener("click", function(){
+    fitToTarget(); save(); renderCalc();
   });
 
   $("foodGroups").addEventListener("click", function(ev){
@@ -1248,6 +1385,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   $("startKg").value=state.startKg;
   $("coeff").value=state.coeff;
   $("logDate").value=todayISO();
+  refitLone();
   renderAll();
   requestAnimationFrame(placePoise);
 })();
