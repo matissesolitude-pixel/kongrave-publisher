@@ -21,8 +21,10 @@ Reprise de la transcription de la vidéo, avec ses chiffres en test de référen
 4. **Viande** — une livre de dinde, poulet, bœuf maigre, crevette ou poisson blanc
    ≈ 100 g de protéines. Le raccourci ne vaut que pour la viande maigre : chaque
    source porte sa densité réelle et affiche ce que lui coûtent 100 g de protéines.
-5. **Mélange** — on combine autant de sources qu'on veut ; ajouter une source
-   comble le manque ou rééquilibre l'ensemble.
+5. **Mélange** — on combine autant de sources qu'on veut. Sélectionner ou retirer
+   une source **répartit la cible protéique à parts égales** entre celles qui
+   restent, et les portions se recalculent seules. Les boutons − / + permettent de
+   dévier ; « Répartir à parts égales » remet tout d'aplomb.
 6. **Calories libres** — on retire du budget ce que la source coûte *réellement*,
    gras compris, pas 4 kcal par gramme de protéine.
 

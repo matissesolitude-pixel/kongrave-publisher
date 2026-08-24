@@ -59,6 +59,7 @@
 }
 
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 
 body{
   margin:0;
@@ -290,7 +291,7 @@ input[type=number]{-moz-appearance:textfield}
 }
 .hero .n{display:block;font-size:76px;letter-spacing:-.03em;color:var(--accent);transition:color .3s ease}
 .hero .n.over{color:var(--b5)}
-.hero .lab{font-size:14px;font-weight:700;color:var(--ink-3);max-width:120px;text-align:right;line-height:1.25}
+.hero .lab{font-size:14px;font-weight:700;color:var(--ink-3);max-width:158px;text-align:right;line-height:1.3;text-wrap:balance}
 .done{
   display:inline-flex;align-items:center;gap:7px;
   background:var(--good);color:var(--ground);
@@ -508,7 +509,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px so
       <div class="segs" id="mixSegs"></div>
     </div>
 
-    <button class="ghost" id="fit" type="button" style="margin-top:10px">Ajuster pile à la cible</button>
+    <button class="ghost" id="fit" type="button" style="margin-top:10px">Répartir à parts égales</button>
 
     <div class="hero" style="margin-top:14px">
       <span class="n big" id="free">1 587</span>
@@ -1221,20 +1222,24 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px so
   num("startKg","startKg", renderRoute);
 
   function refitLone(){
-    if (state.mix.length === 1) state.mix[0].g = gramsFor(state.mix[0].i, Math.round(state.kgGoal*LB));
+    if (state.mix.length === 1) spreadEven();
   }
-  function fitToTarget(){
-    var c = calc();
-    if (!state.mix.length) return;
-    if (c.mixProt <= 0){
-      state.mix.forEach(function(r){ r.g = gramsFor(r.i, c.prot/state.mix.length); });
-      return;
-    }
-    var f = c.prot/c.mixProt;
-    state.mix.forEach(function(r){
-      var s = SOURCES[r.i], g = r.g*f;
-      r.g = s.pc ? Math.max(s.pc, Math.round(g/s.pc)*s.pc) : Math.max(1, Math.round(g));
-    });
+  /* every selected source carries an equal share of the protein target, then the
+     rounding residue is absorbed by a source you can weigh freely (not eggs or scoops) */
+  function spreadEven(){
+    var n = state.mix.length;
+    if (!n) return;
+    var target = Math.round(state.kgGoal * LB);
+    state.mix.forEach(function(r){ r.g = gramsFor(r.i, target / n); });
+
+    var loose = null;
+    state.mix.forEach(function(r){ if (loose === null && !SOURCES[r.i].pc) loose = r; });
+    if (!loose) return;
+    var got = 0;
+    state.mix.forEach(function(r){ got += r.g * SOURCES[r.i].p / 100; });
+    var miss = target - got;
+    if (Math.abs(miss) < 0.5) return;
+    loose.g = Math.max(1, Math.round(loose.g + miss / SOURCES[loose.i].p * 100));
   }
 
   $("pills").addEventListener("click", function(ev){
@@ -1242,11 +1247,8 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px so
     var i = +b.dataset.s, at = -1;
     state.mix.forEach(function(r,k){ if (r.i===i) at=k; });
     if (at >= 0) state.mix.splice(at,1);
-    else {
-      var c = calc(), gap = c.prot - c.mixProt;
-      if (gap > 5) state.mix.push({ i:i, g:gramsFor(i, gap) });
-      else { state.mix.push({ i:i, g:gramsFor(i, c.prot/(state.mix.length+1)) }); fitToTarget(); }
-    }
+    else state.mix.push({ i:i, g:0 });
+    spreadEven();
     save(); renderSet();
   });
 
@@ -1258,7 +1260,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px so
     save(); renderSet();
   });
 
-  $("fit").addEventListener("click", function(){ fitToTarget(); save(); renderSet(); });
+  $("fit").addEventListener("click", function(){ spreadEven(); save(); renderSet(); });
 
   $("ftabs").addEventListener("click", function(ev){
     var b = ev.target.closest("[data-g]"); if (!b) return;
