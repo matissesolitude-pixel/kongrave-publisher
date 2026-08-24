@@ -299,6 +299,7 @@ input[type="range"]::-moz-range-thumb{
   display:flex;flex-direction:column;gap:2px;min-width:0;
 }
 .food:active{transform:translateY(1px)}
+.food[aria-pressed="true"]{border-color:var(--index);background:var(--index-wash)}
 .food .e{font-size:16px;line-height:1.1}
 .food .n{font-size:11px;color:var(--ink);line-height:1.25;overflow-wrap:anywhere}
 .food .k{
@@ -420,37 +421,27 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   <section class="panel is-on" id="p-calcul" role="tabpanel" aria-labelledby="t-calcul">
 
     <div class="card">
-      <p class="eyebrow">Toi</p>
-      <div class="trio">
+      <p class="eyebrow">Ton poids cible — la base de tout le calcul</p>
+      <div class="duo">
         <div class="field">
-          <label for="kgNow">Actuel kg</label>
-          <input id="kgNow" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="80">
-        </div>
-        <div class="field">
-          <label for="kgGoal">Objectif kg</label>
+          <label for="kgGoal">Cible — kg</label>
           <input id="kgGoal" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="72">
         </div>
         <div class="field">
-          <label for="cm">Taille cm</label>
+          <label for="cm">Taille — cm</label>
           <input id="cm" type="number" inputmode="numeric" step="1" min="100" max="240" value="180">
         </div>
       </div>
       <div class="rows">
-        <div class="row"><span>Poids objectif en livres</span><b id="lbGoal">158,7 lb</b></div>
-        <div class="row"><span>IMC — aujourd'hui / à l'objectif</span><b id="bmi">24,7 → 22,2</b></div>
+        <div class="row"><span>En livres</span><b id="lbGoal">158,7 lb</b></div>
       </div>
     </div>
 
     <div class="card">
-      <p class="eyebrow">Base du calcul des calories</p>
-      <div class="seg" id="segBase">
-        <button type="button" data-base="objectif" aria-pressed="true">Poids objectif</button>
-        <button type="button" data-base="actuel" aria-pressed="false">Poids actuel</button>
-      </div>
-
+      <p class="eyebrow">Coefficient</p>
       <div class="coeff-row">
         <span class="coeff-val" id="coeffVal">10</span>
-        <span class="coeff-name" id="coeffName">Perte de poids</span>
+        <span class="coeff-name" id="coeffName">Perte modérée</span>
       </div>
 
       <div class="beam-block">
@@ -475,17 +466,21 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
         <span class="unit">kcal / jour</span>
       </div>
       <div class="readout">
-        <span class="num" id="prot">160</span>
+        <span class="num" id="prot">159</span>
         <span class="unit">g protéines</span>
       </div>
     </div>
 
     <div class="card">
-      <p class="eyebrow">Ce que ça fait dans l'assiette</p>
+      <p class="eyebrow">Ta source de protéines</p>
+      <div class="foods" id="srcPick"></div>
       <div class="rows">
-        <div class="row"><span>Viande pour tenir les protéines</span><b id="meatG">725 g</b></div>
-        <div class="row"><span>Soit en livres</span><b id="meatLb">1,6 lb</b></div>
-        <div class="row"><span>Reste à dépenser librement</span><b id="freeKcal">947 kcal</b></div>
+        <div class="row"><span>À manger dans la journée</span><b id="meatLb">1,6 lb — 720 g</b></div>
+        <div class="row"><span>Ce que cette viande coûte</span><b id="srcKcal">890 kcal</b></div>
+      </div>
+      <div class="budget">
+        <span class="num" id="freeKcal">697</span>
+        <span class="cap">kcal libres — à dépenser comme tu veux</span>
       </div>
       <p class="formula" id="formula"></p>
     </div>
@@ -585,9 +580,18 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
         <div class="stat"><span class="n" id="sNow">80,0</span><span class="l">kg aujourd'hui</span></div>
         <div class="stat"><span class="n" id="sLeft">8,0</span><span class="l">kg restants</span></div>
       </div>
-      <div class="field">
-        <label for="startKg">Poids de départ — kg</label>
-        <input id="startKg" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="80">
+      <div class="duo">
+        <div class="field">
+          <label for="startKg">Départ — kg</label>
+          <input id="startKg" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="80">
+        </div>
+        <div class="field">
+          <label for="kgNow">Aujourd'hui — kg</label>
+          <input id="kgNow" type="number" inputmode="decimal" step="0.1" min="20" max="300" value="80">
+        </div>
+      </div>
+      <div class="rows">
+        <div class="row"><span>IMC — aujourd'hui / à la cible</span><b id="bmi">24,7 → 22,2</b></div>
       </div>
     </div>
 
@@ -598,20 +602,21 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
 
     <details class="about">
       <summary>La règle</summary>
-      <p><b>Calories.</b> Poids en livres × un coefficient de 7 à 21. La méthode se calcule sur le poids
-         du corps ; ici c'est ton <b>poids objectif</b> par défaut — tu manges comme la personne que tu
-         veux devenir. Le bouton bascule sur le poids actuel si tu préfères.</p>
-      <p><b>Les paliers.</b> 7–9 déficit agressif · 10–12 perte de poids · 13–15 maintien ·
-         16–18 léger surplus · 19–21 surplus franc.</p>
-      <p><b>Protéines.</b> Poids actuel en kilos × 2. C'est la version métrique du « 1 g par livre » —
-         la règle en livres donne environ 10 % de plus.</p>
-      <p><b>La viande.</b> Une livre (454 g) de bœuf, poulet, canard ou crevette ≈ 100 g de protéines.
-         Approximation de terrain : selon la pièce et la cuisson, compte 90 à 110 g.</p>
-      <p><b>Le reste.</b> Une fois les protéines atteintes, les calories qui restent se dépensent comme
-         tu veux. C'est tout l'intérêt de la méthode.</p>
+      <p><b>Calories.</b> Poids en livres × un coefficient de 7 à 21. Ici c'est le <b>poids cible</b>
+         qui sert de base, pas le poids du jour : le budget ne bouge plus tant que la cible ne bouge pas.
+         Le poids d'aujourd'hui ne sert qu'à suivre l'évolution.</p>
+      <p><b>Les paliers, de trois en trois.</b> 7–9 perte extrême · 10–12 perte modérée ·
+         13–15 maintien · 16–18 prise modérée · 19–21 prise extrême. Si tu perds trop vite, monte d'un cran.</p>
+      <p><b>Protéines.</b> Un gramme par livre. 158 lb de cible, 158 g de protéines.</p>
+      <p><b>La viande.</b> Une livre de dinde, poulet, bœuf maigre, crevette ou poisson blanc ≈ 100 g de
+         protéines. Il t'en faut donc autant de livres que de centaines de grammes de protéines.</p>
+      <p><b>Les calories libres.</b> C'est là qu'est toute la méthode : tu retires du budget ce que ta
+         viande coûte réellement — pas 4 kcal par gramme de protéine, mais les calories de la pièce, gras
+         compris. Ce qui reste se dépense comme tu veux : cocktails, dessert, dîner d'affaires. Les
+         protéines sont déjà faites.</p>
       <p>Tes chiffres restent dans ce navigateur, sur cet appareil. Rien n'est envoyé nulle part, et un
          pote qui ouvre le même lien a son propre suivi, pas le tien.</p>
-      <p style="color:var(--ink-3)">Règle empirique de terrain, pas un avis médical.</p>
+      <p style="color:var(--ink-3)">Méthode empirique, pas un avis médical.</p>
     </details>
   </section>
 </div>
@@ -643,11 +648,22 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
 
   /* the published bands of the method */
   var BANDS = [
-    { max: 9,  name: "Déficit agressif" },
-    { max: 12, name: "Perte de poids" },
+    { max: 9,  name: "Perte extrême" },
+    { max: 12, name: "Perte modérée" },
     { max: 15, name: "Maintien" },
-    { max: 18, name: "Léger surplus" },
-    { max: 21, name: "Surplus franc" }
+    { max: 18, name: "Prise modérée" },
+    { max: 21, name: "Prise extrême" }
+  ];
+
+  /* a pound of any of these is about 100 g of protein — what differs is the calories it costs */
+  var SOURCES = [
+    { e: "🦃", n: "Dinde hachée",   kl: 560 },
+    { e: "🍗", n: "Blanc de poulet", kl: 500 },
+    { e: "🥩", n: "Bœuf 96/4",       kl: 620 },
+    { e: "🍤", n: "Crevettes",       kl: 480 },
+    { e: "🐟", n: "Poisson blanc",   kl: 400 },
+    { e: "🍣", n: "Saumon",          kl: 940 },
+    { e: "🥛", n: "Whey",            kl: 460 }
   ];
 
   var FOODS = [
@@ -672,14 +688,16 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     { g: "Plaisirs", items: [
       { e: "🍷", n: "Verre de vin",    k: 125, p:  0 },
       { e: "🍺", n: "Bière 33 cl",     k: 150, p:  2 },
-      { e: "🍸", n: "Cocktail",        k: 220, p:  0 },
+      { e: "🍸", n: "Cocktail",        k: 150, p:  0 },
       { e: "🥃", n: "Shot d'alcool",   k: 100, p:  0 },
       { e: "🍦", n: "Glace 2 boules",  k: 250, p:  4 },
       { e: "🍫", n: "Barre chocolat",  k: 250, p:  3 },
       { e: "🥐", n: "Croissant",       k: 240, p:  5 },
       { e: "🥤", n: "Soda 33 cl",      k: 140, p:  0 },
       { e: "☕", n: "Latte",           k: 120, p:  6 },
-      { e: "🥜", n: "Poignée de noix", k: 200, p:  5 }
+      { e: "🥜", n: "Poignée de noix", k: 200, p:  5 },
+      { e: "🍪", n: "Gros cookie",     k: 400, p:  5 },
+      { e: "🍨", n: "Pinte de glace",  k: 880, p: 16 }
     ]}
   ];
 
@@ -687,7 +705,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
 
   var state = {
     kgNow: 80, kgGoal: 72, cm: 180,
-    coeff: 10, base: "objectif",
+    coeff: 10, src: 0,
     startKg: 80,
     log: [],
     day: { d: "", items: [] }
@@ -704,7 +722,7 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
         if (isFinite(s[k]) && +s[k] > 0) state[k] = +s[k];
       });
       if (isFinite(s.coeff)) state.coeff = clamp(Math.round(+s.coeff), 7, 21);
-      if (s.base === "actuel" || s.base === "objectif") state.base = s.base;
+      if (isFinite(s.src)) state.src = clamp(Math.round(+s.src), 0, SOURCES.length - 1);
       if (Array.isArray(s.log)){
         state.log = s.log
           .filter(function(e){ return e && typeof e.d === "string" && isFinite(e.kg); })
@@ -742,14 +760,18 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
 
   /* the derived numbers, in one place */
   function calc(){
-    var baseKg = state.base === "actuel" ? state.kgNow : state.kgGoal;
-    var baseLb = baseKg * LB;
-    var kcal = Math.round(baseLb * state.coeff);
-    var prot = Math.round(state.kgNow * 2);
+    var baseLb = state.kgGoal * LB;                 /* always the target weight */
+    var kcal   = Math.round(baseLb * state.coeff);  /* lb x coefficient */
+    var prot   = Math.round(baseLb);                /* 1 g of protein per pound */
+    var meatLb = prot / 100;                        /* a pound of meat ~ 100 g of protein */
+    var src    = SOURCES[state.src];
+    var srcKcal = Math.round(meatLb * src.kl);      /* what that meat actually costs */
     return {
-      baseKg: baseKg, baseLb: baseLb, kcal: kcal, prot: prot,
-      meatG: Math.round(prot / 100 * MEAT_G_PER_100_PROT),
-      protKcal: prot * 4
+      baseLb: baseLb, kcal: kcal, prot: prot,
+      meatLb: meatLb,
+      meatG: Math.round(meatLb * MEAT_G_PER_100_PROT),
+      src: src, srcKcal: srcKcal,
+      free: kcal - srcKcal
     };
   }
 
@@ -787,9 +809,9 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     [7,14,21].forEach(function(v){
       sc += '<span class="scale-num" style="left:'+((v-7)/14*100)+'%">'+v+"</span>";
     });
-    sc += '<span class="scale-note start">déficit</span>';
+    sc += '<span class="scale-note start">perte</span>';
     sc += '<span class="scale-note mid" style="left:'+((a+b)/2*100)+'%">maintien</span>';
-    sc += '<span class="scale-note end">surplus</span>';
+    sc += '<span class="scale-note end">prise</span>';
     $("scale").innerHTML = sc;
   }
   function placePoise(){
@@ -797,41 +819,51 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   }
 
   /* ---------- calcul ---------- */
+  function buildSources(){
+    var html = "";
+    SOURCES.forEach(function(it, i){
+      html += '<button class="food" type="button" data-s="' + i + '" aria-pressed="false">' +
+              '<span class="e" aria-hidden="true">' + it.e + "</span>" +
+              '<span class="n">' + it.n + "</span>" +
+              '<span class="k">' + it.kl + " kcal / lb</span></button>";
+    });
+    $("srcPick").innerHTML = html;
+  }
+
   function renderCalc(){
     var c = calc();
-    $("lbGoal").textContent = nf(state.kgGoal*LB,1)+" lb";
 
-    var m = state.cm/100;
-    if (m > 0.5){
-      $("bmi").textContent = nf(state.kgNow/(m*m),1)+" → "+nf(state.kgGoal/(m*m),1);
-    } else {
-      $("bmi").textContent = "—";
-    }
-
+    $("lbGoal").textContent = nf(c.baseLb, 1) + " lb";
     $("coeffVal").textContent = String(state.coeff);
     $("coeffName").textContent = bandName(state.coeff);
 
     tween($("kcal"), c.kcal, asInt);
     tween($("prot"), c.prot, asInt);
 
-    $("meatG").textContent  = nf(c.meatG,0)+" g";
-    $("meatLb").textContent = nf(c.meatG/453.6,1)+" lb";
-    var free = c.kcal - c.protKcal;
-    $("freeKcal").textContent = (free < 0 ? "0 kcal" : nf(free,0)+" kcal");
+    $("meatLb").textContent = nf(c.meatLb, 1) + " lb — " + nf(c.meatG, 0) + " g";
+    $("srcKcal").textContent = nf(c.srcKcal, 0) + " kcal";
 
-    var baseLabel = state.base === "actuel" ? "poids actuel" : "poids objectif";
+    var free = $("freeKcal");
+    free.textContent = nf(Math.abs(c.free), 0);
+    free.classList.toggle("over", c.free < 0);
+    free.nextElementSibling.textContent = c.free < 0
+      ? "kcal de trop — cette viande dépasse déjà le budget"
+      : "kcal libres — à dépenser comme tu veux";
+
+    var picks = $("srcPick").children;
+    for (var i = 0; i < picks.length; i++){
+      picks[i].setAttribute("aria-pressed", +picks[i].dataset.s === state.src ? "true" : "false");
+    }
+
     $("formula").innerHTML =
-      nf(c.baseKg,1)+" kg ("+baseLabel+") × 2,20462 = <b>"+nf(c.baseLb,1)+" lb</b><br>"+
-      nf(c.baseLb,1)+" lb × "+state.coeff+" = <b>"+nf(c.kcal,0)+" kcal</b><br>"+
-      nf(state.kgNow,1)+" kg × 2 = <b>"+nf(c.prot,0)+" g de protéines</b><br>"+
-      nf(c.prot,0)+" g ÷ 100 × 454 = <b>"+nf(c.meatG,0)+" g de viande</b>";
+      nf(state.kgGoal, 1) + " kg de cible × 2,20462 = <b>" + nf(c.baseLb, 1) + " lb</b><br>" +
+      nf(c.baseLb, 1) + " lb × " + state.coeff + " = <b>" + nf(c.kcal, 0) + " kcal</b><br>" +
+      nf(c.baseLb, 1) + " lb × 1 = <b>" + nf(c.prot, 0) + " g de protéines</b><br>" +
+      nf(c.prot, 0) + " g ÷ 100 = <b>" + nf(c.meatLb, 1) + " lb</b> de " + c.src.n.toLowerCase() + "<br>" +
+      nf(c.meatLb, 1) + " lb × " + c.src.kl + " = <b>" + nf(c.srcKcal, 0) + " kcal</b><br>" +
+      nf(c.kcal, 0) + " − " + nf(c.srcKcal, 0) + " = <b>" + nf(c.free, 0) + " kcal libres</b>";
 
     placePoise();
-
-    var segs = $("segBase").children;
-    for (var i=0;i<segs.length;i++){
-      segs[i].setAttribute("aria-pressed", segs[i].dataset.base === state.base ? "true":"false");
-    }
   }
 
   /* ---------- journée ---------- */
@@ -912,6 +944,11 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
     var leftKg = now-target, sLeft=$("sLeft");
     sLeft.textContent = nf(Math.abs(leftKg),1);
     sLeft.className = "n" + (Math.abs(leftKg) < 0.05 ? "" : (span > 0 ? " down" : " up"));
+
+    var m = state.cm / 100;
+    $("bmi").textContent = m > 0.5
+      ? nf(now/(m*m),1) + " → " + nf(target/(m*m),1)
+      : "—";
   }
 
   var W=360,H=190,PL=34,PR=12,PT=14,PB=24;
@@ -972,6 +1009,14 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
       s+='<text x="'+(PL+3)+'" y="'+(ty-5).toFixed(1)+
          '" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.2" '+
          'fill="var(--index)">OBJECTIF '+nf(t,1)+"</text>";
+    } else if (isFinite(t) && t > 0){
+      /* off the drawn scale — pin it to the edge it lies beyond rather than dropping it */
+      var below = t < lo, ey = below ? H-PB : PT;
+      s+='<line x1="'+PL+'" y1="'+ey+'" x2="'+(W-PR)+'" y2="'+ey+
+         '" stroke="var(--index)" stroke-width="1.5" stroke-dasharray="2 4" opacity="0.75"/>';
+      s+='<text x="'+(PL+3)+'" y="'+(below ? ey-5 : ey+10)+
+         '" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.2" '+
+         'fill="var(--index)">OBJECTIF '+nf(t,1)+(below ? " ↓" : " ↑")+"</text>";
     }
 
     var pts=data.map(function(d,k){ return [X(xs[k]),Y(ys[k])]; });
@@ -1073,9 +1118,9 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
       state[key]=v; save(); after();
     });
   }
-  numInput("kgNow","kgNow", function(){ renderCalc(); renderDay(); renderGoal(); });
+  numInput("kgNow","kgNow", renderGoal);
   numInput("kgGoal","kgGoal", function(){ renderCalc(); renderDay(); renderGoal(); renderChart(); });
-  numInput("cm","cm", renderCalc);
+  numInput("cm","cm", renderGoal);
   numInput("startKg","startKg", renderGoal);
 
   $("coeff").addEventListener("input", function(){
@@ -1085,10 +1130,10 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   $("minus").addEventListener("click", function(){ $("poise").classList.add("smooth"); setCoeff(state.coeff-1); });
   $("plus").addEventListener("click",  function(){ $("poise").classList.add("smooth"); setCoeff(state.coeff+1); });
 
-  $("segBase").addEventListener("click", function(ev){
-    var b=ev.target.closest("button[data-base]");
+  $("srcPick").addEventListener("click", function(ev){
+    var b=ev.target.closest("[data-s]");
     if (!b) return;
-    state.base=b.dataset.base; save(); renderCalc(); renderDay();
+    state.src=+b.dataset.s; save(); renderCalc();
   });
 
   $("foodGroups").addEventListener("click", function(ev){
@@ -1165,8 +1210,9 @@ details.about p{font-size:13px;color:var(--ink-2);margin:12px 0 0}
   rollDay();
   buildBeam();
   buildFoods();
-  $("kgNow").value=state.kgNow;
+  buildSources();
   $("kgGoal").value=state.kgGoal;
+  $("kgNow").value=state.kgNow;
   $("cm").value=state.cm;
   $("startKg").value=state.startKg;
   $("coeff").value=state.coeff;
