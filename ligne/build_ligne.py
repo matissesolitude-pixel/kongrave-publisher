@@ -31,9 +31,14 @@ VOICE = "0jNVx6MiRPvEBiq9DBhH"          # LIGNE — Coach (A2), Voice Design, re
 # ancienne voix canon (L01 -> L95) : George "JBFqnCBsd6RMkjVDRZzb"
 MODEL = "eleven_multilingual_v2"
 FMT = "mp3_44100_128"
-# Réglages agressifs demandés par le PO le 25/08 : stabilité basse = fluctuation d'émotion,
-# style 0,50 = attitude accentuée. Coût mesuré sur L91 : +6,0 s (40,2 s contre 34,3 s).
-SETTINGS = {"stability": 0.25, "similarity_boost": 0.80, "style": 0.50, "speed": 1.12, "use_speaker_boost": True}
+# Réglages par DÉFAUT (décision PO du 25/08 : on revient au posé après mesure).
+SETTINGS = {"stability": 0.50, "similarity_boost": 0.75, "style": 0.0, "speed": 1.12, "use_speaker_boost": True}
+# Variante agressive, réservée aux épisodes de TEST : un JSON qui porte "_voice": "agressif"
+# est fabriqué avec ces réglages-là. Coût mesuré sur L91 : 40,2 s contre 34,3 s, soit +6,0 s.
+SETTINGS_AGRESSIF = {"stability": 0.25, "similarity_boost": 0.80, "style": 0.50, "speed": 1.12, "use_speaker_boost": True}
+# Garde-fou de durée : si la voix dépasse ce seuil, l'épisode est refait avec les réglages par
+# défaut. Le format court (rétention 30 % sous 40 s contre 19 % au-dessus de 60 s) prime sur le style.
+DUREE_MAX_TEST = 36.0
 H = {"xi-api-key": KEY}
 
 TAIL = 0.12                              # respiration de transition par scène (dernier segment un peu +)
@@ -54,10 +59,10 @@ def dur_of(p):
     return float(r.stdout.strip())
 
 
-def tts_timed(text):
+def tts_timed(text, settings=None):
     r = requests.post(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE}/with-timestamps",
                       headers={**H, "Content-Type": "application/json"}, params={"output_format": FMT},
-                      json={"text": text, "model_id": MODEL, "voice_settings": SETTINGS}, timeout=180)
+                      json={"text": text, "model_id": MODEL, "voice_settings": settings or SETTINGS}, timeout=180)
     if r.status_code != 200:
         sys.exit(f"[ERREUR TTS] HTTP {r.status_code} : {r.text[:200]}")
     d = r.json()
@@ -91,12 +96,27 @@ def load_episode(eid):
 def gen_voice(eid, ep, work):
     if not KEY:
         sys.exit("[ERREUR] ELEVENLABS_API_KEY absente de .env.local")
-    durs, allwords = [], []
-    for i, txt in enumerate(ep["voice"], 1):
-        mp3, words = tts_timed(txt)
-        (work / f"v{i}.mp3").write_bytes(mp3)
-        durs.append(dur_of(work / f"v{i}.mp3")); allwords.append(words)
-        print(f"  S{i} {durs[-1]:.2f}s ({len(words)} mots)")
+    test = ep.get("_voice") == "agressif"
+    settings = SETTINGS_AGRESSIF if test else SETTINGS
+
+    def passe(st, etiquette):
+        durs, allwords = [], []
+        for i, txt in enumerate(ep["voice"], 1):
+            mp3, words = tts_timed(txt, st)
+            (work / f"v{i}.mp3").write_bytes(mp3)
+            durs.append(dur_of(work / f"v{i}.mp3")); allwords.append(words)
+            print(f"  S{i} {durs[-1]:.2f}s ({len(words)} mots) [{etiquette}]")
+        return durs, allwords
+
+    durs, allwords = passe(settings, "agressif" if test else "défaut")
+
+    # Le repli ne se déclenche PAS sur un échec de publication — Meta refuse pour des raisons
+    # d'encodage, jamais à cause d'un réglage de voix. Le seul signal pertinent est la DURÉE.
+    if test and sum(durs) > DUREE_MAX_TEST:
+        print(f"[voice] {eid} : test agressif à {sum(durs):.1f}s > {DUREE_MAX_TEST}s — "
+              f"on refait la voix aux réglages par défaut.")
+        durs, allwords = passe(SETTINGS, "repli défaut")
+
     (work / "durations.json").write_text(json.dumps(durs, indent=2))
     (work / "words.json").write_text(json.dumps(allwords, indent=2))
     print(f"[voice] {eid} total = {sum(durs):.1f}s")
