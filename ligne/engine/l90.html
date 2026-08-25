@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L90 « THE SECOND ENTRY THAT LOOKED FREE » — MONTAGE PARALLÈLE (deux bandes). S1 : émotion frame 0 = RECONNAISSANCE DE SOI —
+       deux graphes de prix TEAL identiques, tous deux en perte de la même amplitude (deux traders, même trade). Sur la bande HAUTE un
+       second ticket teal est en train de se poser ; sur la bande BASSE la position se referme. Rien ne se construit : l'énigme est
+       entière dès t=0, la 1re ligne de la question est écrite à t=0. S2 : sur la bande haute, le trait de prix MOYEN descend vers le prix
+       actuel — la distance au point mort rétrécit visiblement (l'amélioration est réelle, montrée sans ironie). S3 : à côté, une barre
+       d'EXPOSITION double d'un coup, et un anneau gris marque l'endroit du graphe où le marché a REFUSÉ l'idée une première fois. S4 : un
+       même mouvement adverse traverse les deux bandes — en bas (fermée) il ne prend rien ; en haut il traverse une position deux fois plus
+       grande, la perte s'élargit et le mur (ligne grise) est deux fois plus proche. S5 : la prise (une 2e entrée se décide AVANT la 1re,
+       sinon c'est un nouveau trade) + CTA d'abonnement @kongrave_ (TOFU, aucun mot-clé). Doctrine : aucun chiffre ; teal = toi ; gris =
+       perte / neutre ; pas de brun ; bas du cadre vide ; aucune intention prêtée aux institutionnels. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── POOLS (créés une fois, repositionnés chaque frame) ──
+    const PATHS=[0,1,2,3].map(()=>mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const LINES=[]; for(let i=0;i<10;i++)LINES.push(mk('line',{opacity:0}));
+    const RECTS=[]; for(let i=0;i<8;i++)RECTS.push(mk('rect',{rx:4,opacity:0}));
+    const DOTS=[];  for(let i=0;i<6;i++)DOTS.push(mk('circle',{opacity:0}));
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE AVERAGE IMPROVED','DID THE TRADE'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL depuis l26.html) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(42),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36),capG=caption(74),capH=caption(32);
+    const CAPS=[capA,capB,capC,capD,capE,capF,capG,capH];
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+
+    function hideAll(){for(const e of PATHS)setOp(e,0);for(const e of LINES)setOp(e,0);for(const e of RECTS)setOp(e,0);for(const e of DOTS)setOp(e,0);for(const e of CAPS)setOp(e,0);}
+
+    // ── GÉOMÉTRIE DES DEUX BANDES ──
+    const AX0=170, AX1=910, BANDW=AX1-AX0;
+    const DIVX=AX0+0.40*BANDW;                 // point où le prix quitte l'entrée (le marché refuse et plonge)
+    const yTe=700, yTc=890;                     // BANDE HAUTE : entrée / prix actuel (en perte)
+    const DIV=1015;                             // ligne de partage
+    const yBe=1175, yBc=1360;                   // BANDE BASSE : entrée / prix actuel (en perte)
+
+    // trajectoire de prix vivante (deux harmoniques) : plate près de l'entrée, puis plonge vers le prix actuel
+    function priceLine(el,yEntry,yCur,u,phase){
+      const N=26,pts=[],df=0.40;
+      for(let i=0;i<=N;i++){const f=i/N,x=lerp(AX0,AX1,f);
+        let base=f<df?yEntry:lerp(yEntry,yCur,(f-df)/(1-df));
+        const wob=6*Math.sin(u*1.6+f*7+phase)+3.5*Math.sin(u*2.7+f*11+phase);
+        pts.push([x,base+wob]);}
+      el.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      el.setAttribute('stroke',INK);setOp(el,1);
+      const lw=6*Math.sin(u*1.6+7+phase)+3.5*Math.sin(u*2.7+11+phase);
+      return {cx:AX1, cy:yCur+lw};
+    }
+    function hline(el,y,x0,x1,color,dash,w,op){el.setAttribute('x1',x0);el.setAttribute('x2',x1);el.setAttribute('y1',y.toFixed(1));el.setAttribute('y2',y.toFixed(1));el.setAttribute('stroke',color);el.setAttribute('stroke-width',w);el.setAttribute('stroke-dasharray',dash||'none');el.setAttribute('stroke-dashoffset',0);setOp(el,op);}
+    function lossRect(el,yTop,yBot,x0,x1,fop,op){el.setAttribute('x',x0.toFixed(1));el.setAttribute('y',yTop.toFixed(1));el.setAttribute('width',Math.max(1,x1-x0).toFixed(1));el.setAttribute('height',Math.max(2,yBot-yTop).toFixed(1));el.setAttribute('fill',YOU);el.setAttribute('fill-opacity',fop);el.setAttribute('stroke','none');setOp(el,op);}
+    function dot(el,x,y,color,r,op){el.setAttribute('cx',x.toFixed(1));el.setAttribute('cy',y.toFixed(1));el.setAttribute('r',r||12);el.setAttribute('fill',color);el.setAttribute('stroke','none');setOp(el,op);}
+    function ring(el,cx,cy,r,color,op){el.setAttribute('cx',cx.toFixed(1));el.setAttribute('cy',cy.toFixed(1));el.setAttribute('r',r.toFixed(1));el.setAttribute('fill','none');el.setAttribute('stroke',color);el.setAttribute('stroke-width',5);setOp(el,op);}
+    function divider(u){const e=LINES[9];e.setAttribute('x1',140);e.setAttribute('x2',940);e.setAttribute('y1',DIV);e.setAttribute('y2',DIV);e.setAttribute('stroke',DEAD);e.setAttribute('stroke-width',3);e.setAttribute('stroke-dasharray','2 16');setOp(e,0.45);}
+
+    // ═══ S1 — DEUX TRADERS, MÊME PERTE : l'un ajoute, l'autre ferme ═══
+    // Verbe visuel : le dédoublement diptyque + la seconde entrée qui se pose (haut) vs la fermeture (bas).
+    function s1(lf,t,s){
+      const u=t-s; hideAll();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      divider(u);
+      // ── BANDE HAUTE (il ajoute) : pleine dès t=0 ──
+      const cT=priceLine(PATHS[0],yTe,yTc,u,0.0);
+      hline(LINES[0],yTe+2*Math.sin(u*1.7),AX0,AX1,YOU,'16 10',6,1);          // première entrée
+      lossRect(RECTS[0],yTe,cT.cy,DIVX,AX1,0.28,1);                           // perte ouverte (teal)
+      dot(DOTS[0],cT.cx,cT.cy,YOU,13,1);
+      // second ticket : il descend et se pose juste en dessous de la première entrée (près du prix actuel)
+      const place=eOut(clamp((u-0.35)/1.1,0,1));
+      const tkY=lerp(yTe-70,yTc-6,place);
+      const e=RECTS[1];e.setAttribute('x',(AX1-215).toFixed(1));e.setAttribute('y',(tkY-16).toFixed(1));e.setAttribute('width',150);e.setAttribute('height',32);e.setAttribute('rx',5);e.setAttribute('fill',YOU);e.setAttribute('fill-opacity',1);e.setAttribute('stroke','none');setOp(e,1);
+      hline(LINES[1],yTc-6+2*Math.sin(u*2.1),AX0,AX1,YOU,'10 12',5,place);    // seconde entrée (le niveau se pose)
+      // ── BANDE BASSE (il ferme) ──
+      const closeF=eIn(clamp((u-0.55)/1.3,0,1));
+      const cB=priceLine(PATHS[1],yBe,yBc,u,2.1);
+      PATHS[1].setAttribute('stroke',closeF>0.6?DEAD:INK);
+      hline(LINES[2],yBe+2*Math.sin(u*1.9),AX0,AX1,YOU,'16 10',6,1-closeF);
+      lossRect(RECTS[2],yBe,cB.cy,lerp(DIVX,AX1,closeF),AX1,0.28,1-closeF);   // la perte se referme (le teal se retire)
+      dot(DOTS[1],cB.cx,cB.cy,closeF>0.5?DEAD:YOU,13,1);
+      // étiquettes (après l'accroche visuelle)
+      const la=clamp((u-1.7)/0.7,0,1)*gf;
+      const la2=clamp((u-1.9)/0.7,0,1);
+      putCap(capA,'HE ADDS',300,650,YOU,la);
+      putCap(capB,'HE CLOSES',300,1090,DEAD,la2);
+    }
+
+    // ═══ S2 — LE PRIX MOYEN DESCEND : la distance au point mort rétrécit ═══
+    // Verbe visuel : le glissement (le trait de prix moyen descend vers le prix actuel).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideAll(); divider(u);
+      // HAUT
+      const cT=priceLine(PATHS[0],yTe,yTc,u,0.0);
+      hline(LINES[0],yTe+2*Math.sin(u*1.7),AX0,AX1,YOU,'16 10',5,0.5);        // première entrée (fanée)
+      hline(LINES[1],yTc-6+2*Math.sin(u*2.1),AX0,AX1,YOU,'10 12',5,0.5);      // seconde entrée
+      const yAvg=(yTe+(yTc-6))/2;
+      const av=eInOut(clamp((u-0.3)/1.0,0,1));
+      const yA=lerp(yTe,yAvg,av)+2*Math.sin(u*1.9);
+      hline(LINES[3],yA,AX0,AX1,YOU,'none',7,1);                              // PRIX MOYEN (descend)
+      lossRect(RECTS[0],yA,cT.cy,DIVX,AX1,0.28,0.9);                          // la zone à combler rétrécit
+      dot(DOTS[0],cT.cx,cT.cy,YOU,13,1);
+      putCap(capB,'THE NUMBER GETS BETTER',CX,594,INK,clamp((u-0.6)/0.7,0,1));
+      putCap(capC,'BREAKEVEN LOOKS CLOSER',CX,662,DEAD,clamp((u-2.2)/0.6,0,1));
+      // BAS (dehors) — reste vivant en gris
+      const cB=priceLine(PATHS[1],yBe,yBc,u,2.1); PATHS[1].setAttribute('stroke',DEAD);
+      dot(DOTS[1],cB.cx,cB.cy,DEAD,11,0.7);
+      putCap(capD,'OUT',300,1090,DEAD,1);
+    }
+
+    // ═══ S3 — L'EXPOSITION DOUBLE, ET LE MARCHÉ AVAIT DÉJÀ REFUSÉ ═══
+    // Verbe visuel : le doublement brutal de la barre + l'anneau du refus sur le graphe.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideAll(); divider(u);
+      const cT=priceLine(PATHS[0],yTe,yTc,u,0.0);
+      const yAvg=(yTe+(yTc-6))/2;
+      hline(LINES[0],yTe+2*Math.sin(u*1.7),AX0,AX1,YOU,'16 10',5,0.5);
+      hline(LINES[3],yAvg+2*Math.sin(u*1.9),AX0,AX1,YOU,'none',7,1);          // prix moyen (tenu)
+      lossRect(RECTS[0],yAvg,cT.cy,DIVX,AX1,0.28,0.85);
+      dot(DOTS[0],cT.cx,cT.cy,YOU,13,1);
+      // barre d'EXPOSITION (gouttière gauche) : elle double d'un coup
+      const ex=eOut(clamp((u-0.25)/0.6,0,1));
+      const baseY=940, h=lerp(84,172,ex)+4*Math.sin(u*2.3);
+      const e=RECTS[3];e.setAttribute('x',108);e.setAttribute('y',(baseY-h).toFixed(1));e.setAttribute('width',44);e.setAttribute('height',h.toFixed(1));e.setAttribute('rx',4);e.setAttribute('fill',YOU);e.setAttribute('fill-opacity',0.9);e.setAttribute('stroke','none');setOp(e,1);
+      // anneau du REFUS sur le tournant du prix
+      const rr=17+3*Math.sin(u*2.6);
+      ring(DOTS[2],DIVX,yTe+2*Math.sin(u*1.7),rr,DEAD,clamp((u-0.8)/0.5,0,1));
+      putCap(capB,'THE SIZE DOUBLED',CX,596,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capA,'REFUSED ONCE ALREADY',CX,664,DEAD,clamp((u-1.4)/0.6,0,1));
+      // BAS (dehors)
+      const cB=priceLine(PATHS[1],yBe,yBc,u,2.1); PATHS[1].setAttribute('stroke',DEAD);
+      dot(DOTS[1],cB.cx,cB.cy,DEAD,11,0.7);
+      putCap(capD,'OUT',300,1090,DEAD,1);
+    }
+
+    // ═══ S4 — MÊME MOUVEMENT ADVERSE, DEUX RÉSULTATS ═══
+    // Verbe visuel : la comparaison A/B simultanée (le même choc passe, prend tout en haut, rien en bas).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideAll(); divider(u);
+      const drop=eIn(clamp((u-0.2)/1.3,0,1));
+      // HAUT — la position double encaisse tout ; le mur se rapproche
+      const yTc2=yTc+58*drop;
+      const cT=priceLine(PATHS[0],yTe,yTc2,u,0.0);
+      const yAvg=(yTe+(yTc-6))/2;
+      hline(LINES[3],yAvg+2*Math.sin(u*1.9),AX0,AX1,YOU,'none',6,0.8);        // prix moyen
+      lossRect(RECTS[0],yAvg,cT.cy,DIVX,AX1,0.42,0.92);                       // grosse perte teal (double taille)
+      dot(DOTS[0],cT.cx,cT.cy,YOU,13,1);
+      const yPain=yTc+96+3*Math.sin(u*2.2);
+      hline(LINES[5],yPain,AX0,AX1,DEAD,'14 12',5,clamp((u-0.6)/0.6,0,1));    // le MUR (gris) — deux fois plus proche
+      putCap(capB,'TWICE THE SIZE',CX,596,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capA,'THE WALL IS HALF AS FAR',CX,664,DEAD,clamp((u-1.6)/0.6,0,1));
+      // BAS — fermée : le même mouvement passe et ne prend rien
+      const cB=priceLine(PATHS[1],yBe,yBc+58*drop,u,2.1); PATHS[1].setAttribute('stroke',DEAD);
+      dot(DOTS[1],cB.cx,cB.cy,DEAD,11,0.7);
+      putCap(capD,'ALREADY OUT — NOTHING TAKEN',CX,1095,DEAD,clamp((u-1.0)/0.6,0,1));
+    }
+
+    // ═══ S5 — LA PRISE + LE CTA D'ABONNEMENT (TOFU, aucun mot-clé) ═══
+    // Verbe visuel : les lignes de la règle qui se posent, puis le CTA qui monte et respire.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      // vie continue à deux harmoniques : chaque ligne respire en POSITION (jamais figée pendant la voix)
+      const life=(a,w1,w2,ph)=>a*Math.sin(u*w1+ph)+0.5*a*Math.sin(u*w2+ph*1.7);
+      const lines=['PLAN THE SECOND ENTRY','BEFORE THE FIRST IS OPEN','OR IT IS A NEW TRADE'];
+      const caps=[capA,capB,capC], ysb=[706,788,870], pops=[0.0,0.30,0.60];
+      for(let i=0;i<3;i++){
+        // i=0 : pleine dès la frame 0 (la scène ouvre sur son objet) ; i=1,2 se posent juste après
+        const ap=(i===0)?1:clamp((u-pops[i])/0.34,0,1), sc=0.88+0.12*backOut((i===0)?clamp((u+0.3)/0.3,0,1):ap);
+        const yy=ysb[i]+life(6,1.3+0.12*i,2.2+0.1*i,i*1.1);
+        putCap(caps[i],lines[i],CX,yy,INK,ap);
+        caps[i].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(yy*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const cta=clamp((u-0.9)/0.6,0,1);
+      const bob=life(6,1.5,2.7,0.4);
+      putCap(capG,'@KONGRAVE_',CX,1076+bob,YOU,cta);
+      capG.setAttribute('transform','');
+      putCap(capH,'THE MECHANICS NOBODY EXPLAINS',CX,1148+0.6*bob,DEAD,clamp((u-1.3)/0.6,0,1));
+      // soulignement teal sous le handle — sa largeur pulse (déplacement = vie continue jusque dans la tenue)
+      const uw=196+46*Math.abs(Math.sin(u*1.15));
+      const ul=LINES[6];ul.setAttribute('x1',(CX-uw/2).toFixed(1));ul.setAttribute('x2',(CX+uw/2).toFixed(1));ul.setAttribute('y1',(1100+bob).toFixed(1));ul.setAttribute('y2',(1100+bob).toFixed(1));ul.setAttribute('stroke',YOU);ul.setAttribute('stroke-width',5);ul.setAttribute('stroke-dasharray','none');ul.setAttribute('stroke-dashoffset',0);setOp(ul,cta);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
