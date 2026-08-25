@@ -27,10 +27,13 @@ FF = "ffmpeg"
 
 load_dotenv(ROOT / ".env.local")
 KEY = os.environ.get("ELEVENLABS_API_KEY")
-VOICE = "JBFqnCBsd6RMkjVDRZzb"          # George (canon Ligne)
+VOICE = "0jNVx6MiRPvEBiq9DBhH"          # LIGNE — Coach (A2), Voice Design, retenue par le PO le 25/08
+# ancienne voix canon (L01 -> L95) : George "JBFqnCBsd6RMkjVDRZzb"
 MODEL = "eleven_multilingual_v2"
 FMT = "mp3_44100_128"
-SETTINGS = {"stability": 0.50, "similarity_boost": 0.75, "style": 0.0, "speed": 1.12, "use_speaker_boost": True}
+# Réglages agressifs demandés par le PO le 25/08 : stabilité basse = fluctuation d'émotion,
+# style 0,50 = attitude accentuée. Coût mesuré sur L91 : +6,0 s (40,2 s contre 34,3 s).
+SETTINGS = {"stability": 0.25, "similarity_boost": 0.80, "style": 0.50, "speed": 1.12, "use_speaker_boost": True}
 H = {"xi-api-key": KEY}
 
 TAIL = 0.12                              # respiration de transition par scène (dernier segment un peu +)
