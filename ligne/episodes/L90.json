@@ -1,0 +1,154 @@
+{
+  "id": "L90",
+  "engine": "l90",
+  "title": "L90 — THE SECOND ENTRY THAT LOOKED FREE",
+  "_cellule": "OETX (Assaillant) · Éducation · Nightmare · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders are wrong on the same trade. One adds a second entry to improve his average, and the other closes.",
+    "Adding looks free, because the average entry price improves the moment the second ticket goes in. The number on the screen gets better.",
+    "But the risk did not improve. The position is now twice the size, on an idea the market has already refused once.",
+    "So the distance the price has to travel to hurt him has just been cut in half, at the exact moment his conviction was highest.",
+    "Improving your average is not the same as improving your trade. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders ont tort sur le même trade, et l'un des deux ajoute une seconde entrée.",
+      "question": "THE AVERAGE IMPROVED. DID THE TRADE?",
+      "emotion_lever": "Le geste est montré au moment où il paraît raisonnable.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader qui ajoute."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader qui clôture."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. La même position teal est en perte sur chacune, exactement de la même amplitude. Sur la bande haute, une seconde position est saisie en cours de pose, juste en dessous de la première. Sur la bande basse, une main referme la position."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : la seconde entrée du haut finit de se poser, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux positions sont en perte de la même façon, et une seconde entrée est saisie en cours de pose sur la bande haute.",
+      "dispositif_cle": "Les deux bandes avancent toujours au même instant."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le prix moyen s'améliore à la seconde où le second ticket passe.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande haute, un trait marque le prix moyen d'entrée. Au moment où la seconde position se pose, ce trait descend et se rapproche du prix actuel."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "La distance à parcourir pour revenir à l'équilibre se réduit visiblement. Le calcul est juste, et c'est précisément ce qui le rend irrésistible : l'écran affiche une amélioration réelle."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : le trait de prix moyen tient sa nouvelle position, plus proche du prix."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le prix moyen remonte visiblement, et l'amélioration est montrée sans ironie.",
+      "turn": "Le calcul n'est pas faux. Il est incomplet."
+    },
+    {
+      "id": "s3",
+      "clarity": "La taille de la position, elle, a doublé sur une idée déjà refusée une fois.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "À côté du trait de prix moyen, une barre d'exposition s'affiche. Elle double d'un coup au moment de la seconde entrée."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "On rappelle ce que le marché a déjà fait : il a refusé cette idée une première fois, et le refus est marqué sur le graphe. La conviction a grandi au moment exact où la preuve contraire est arrivée."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : le prix moyen amélioré d'un côté, l'exposition doublée de l'autre, les deux tenus à l'écran."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La barre d'exposition double pendant que le trait de prix moyen reste au même endroit.",
+      "turn": "Le prix moyen s'est amélioré, et l'exposition a doublé."
+    },
+    {
+      "id": "s4",
+      "clarity": "La distance qui sépare le trader de la douleur vient d'être divisée par deux.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Un mouvement adverse de même amplitude traverse les deux bandes. Sur la bande basse, la position est déjà fermée : le mouvement passe sans rien prendre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "Sur la bande haute, le même mouvement traverse une position deux fois plus grande. La perte n'est pas égale à celle qu'il aurait prise en clôturant : elle est bien plus grande. Le trader a réduit la distance jusqu'à la douleur au moment où il se sentait le plus sûr."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : le mouvement passé sans effet en bas, la perte élargie en haut, les deux montrées à la même échelle."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le même mouvement adverse est rejoué sur les deux bandes, et il ne produit pas le même résultat.",
+      "turn": "Il n'a pas amélioré son trade. Il a rapproché le mur."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : une seconde entrée n'est autorisée que si elle était prévue avant l'ouverture de la première, avec sa taille et son niveau écrits à l'avance. Toute autre addition est traitée comme un nouveau trade, et elle doit passer les mêmes critères que le premier."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La règle de la seconde entrée décidée à l'avance, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders are wrong on the same trade. One adds a second entry to improve his average, and the other closes.\n\nAdding looks free, because the average entry price improves the moment the second ticket goes in. But the risk did not improve: the position is now twice the size, on an idea the market has already refused once. The distance the price has to travel to hurt him has just been cut in half, at the exact moment his conviction was highest.\n\nImproving your average is not the same as improving your trade.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #riskmanagement #averagingdown #daytrading #forex #positionsizing #propfirm #discipline #tradingpsychology #trader",
+  "pinned_comment": "He didn't improve the trade. He moved the wall closer. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "MECANIQUE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "id": "L96",
+  "engine": "l96",
+  "title": "L96 — THREE POSITIONS, ONE RISK",
+  "_cellule": "OIRD (Circuit) · Éducation · Risk · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders open three positions each. One of them is holding three risks, and the other is holding one.",
+    "The first trader picked three instruments that move apart from each other. When one of them falls, the other two do not follow it down.",
+    "The second trader picked three instruments that move together. He believes he has spread his risk across three trades, and the market treats them as a single one.",
+    "So when the move goes against him, it does not take a third of his exposure. It takes all of it, at the same second, three times over.",
+    "Count your exposure, not your tickets. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders ouvrent trois positions chacun, et l'écran les suit en parallèle dès la première image.",
+      "question": "THREE TICKETS. HOW MANY RISKS?",
+      "emotion_lever": "Deux séries identiques, et l'annonce qu'elles ne le sont pas.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader dont les instruments divergent."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader dont les instruments avancent ensemble."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes horizontales. Sur chacune, trois positions teal s'ouvrent en même temps, de taille identique. Le geste est saisi en cours : la troisième position finit de se poser. Les deux bandes paraissent rigoureusement identiques."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "Les deux bandes avancent d'un cran, les six positions respirent, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux bandes démarrent ensemble, chacune avec trois positions ouvertes, et rien ne les distingue encore.",
+      "dispositif_cle": "Les deux bandes progressent toujours au même instant. Elles ne sont jamais montrées l'une après l'autre."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le premier trader a choisi trois instruments qui ne bougent pas ensemble.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande haute, les trois positions se mettent à tracer leur trajectoire. Elles s'écartent les unes des autres : l'une monte, une autre reste plate, la troisième descend légèrement."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Une mesure d'écart s'affiche entre les trois trajectoires, et elle est large. Quand l'une des trois recule, les deux autres ne la suivent pas."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : les trois trajectoires continuent de diverger, et l'écart reste ouvert."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les trois trajectoires de la bande haute partent dans des directions différentes, et l'écart entre elles est visible.",
+      "turn": "Trois trajectoires différentes tiennent trois risques différents."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le second trader a choisi trois instruments qui avancent ensemble sans qu'il l'ait remarqué.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande basse, les trois positions tracent à leur tour. Elles suivent la même forme, au même moment, avec la même amplitude."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "On superpose les trois trajectoires : elles coïncident presque au trait près. La mesure d'écart tombe à zéro. Ce ne sont pas trois trades, c'est le même trade répété trois fois."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : les trois trajectoires confondues avancent comme une seule ligne épaisse."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les trois trajectoires de la bande basse se superposent presque parfaitement, et l'écart entre elles est nul.",
+      "turn": "Trois tickets ne font pas trois risques."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le mouvement adverse arrive, et il ne prend pas un tiers de l'exposition.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Un mouvement adverse traverse les deux bandes au même moment. En haut, il touche une seule des trois positions : les deux autres ne bougent pas, et la perte reste contenue."
+        },
+        {
+          "t": "1.5-3",
+          "do": "En bas, il touche les trois positions à la même seconde, avec la même amplitude. Les trois barres de perte s'empilent. Le trader du bas croyait avoir divisé son risque en trois, et il vient de le prendre trois fois."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : une perte simple en haut, une perte triplée en bas, les deux montrées à la même échelle."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Sur la bande haute une seule position est entamée, sur la bande basse les trois le sont au même instant.",
+      "turn": "Il n'a pas réparti son risque. Il l'a multiplié."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : avant d'ouvrir la troisième position, une mesure de corrélation se pose entre les instruments déjà en portefeuille. Si les trajectoires se ressemblent, la taille totale se réduit jusqu'à ce que l'exposition réelle redevienne celle d'un seul trade."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La mesure de corrélation posée avant l'ouverture, la taille réduite en conséquence, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders open three positions each. One of them is holding three risks, and the other is holding one.\n\nThe first picked instruments that move apart from each other, so when one falls the other two stay where they are. The second picked instruments that move together, and the market treats his three trades as a single one. When the move goes against him it does not take a third of his exposure — it takes all of it, at the same second, three times over.\n\nCount your exposure, not your tickets.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #riskmanagement #correlation #daytrading #forex #portfolio #propfirm #discipline #priceaction #trader",
+  "pinned_comment": "Three tickets are not three risks. Count the exposure, not the positions. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "STRUCTURE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
+    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

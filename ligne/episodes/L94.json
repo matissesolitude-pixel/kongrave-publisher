@@ -1,0 +1,154 @@
+{
+  "id": "L94",
+  "engine": "l94",
+  "title": "L94 — THE TWO DAYS WITH NO STOP",
+  "_cellule": "SITX (Glacier) · Éducation · Risk · regard=le prospect · futur · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders finish the week with the same position. One closes on Friday, and the other leaves it open over the weekend.",
+    "The stop is still there on Saturday. It is simply that nothing can execute it, because the market is not trading.",
+    "When the market opens again, the price does not walk to the new level. It appears there, and everything in between is skipped.",
+    "So the stop is filled at the first price available, which can sit well beyond the level that was supposed to protect him.",
+    "A stop needs a market to work. For two days a week, there isn't one. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders terminent la semaine avec la même position, et l'un des deux la laisse ouverte.",
+      "question": "THE STOP IS STILL THERE. IS IT WORKING?",
+      "emotion_lever": "Une protection visible dont on annonce qu'elle ne protège pas.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader qui garde la position ouverte."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader qui ferme avant la fermeture."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. La même position teal est ouverte sur chacune, avec le même stop en dessous. Un trait vertical marque la fin de la semaine et il est saisi en cours de traversée. Sur la bande basse, la position se ferme juste avant lui. Sur la bande haute, elle reste ouverte et le trait la traverse."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : le trait vertical achève sa traversée, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La cloche de fin de semaine est saisie en cours, une position se ferme et l'autre reste.",
+      "dispositif_cle": "Les deux bandes avancent toujours ensemble."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le stop est toujours là pendant la fermeture, et il ne peut simplement rien exécuter.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande haute, le trait du stop reste parfaitement visible sous la position. Rien ne l'a effacé."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Mais autour de lui, la zone devient inerte : aucune bougie ne se forme, aucun échange n'a lieu. On souligne la distinction : le stop est une instruction donnée à un marché, et pendant deux jours il n'y a personne pour la recevoir."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : le stop intact et la zone inerte autour de lui."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le trait du stop reste visible pendant que la zone de marché fermé s'étend, sans aucune activité.",
+      "turn": "Le stop n'a pas disparu. Le marché, si."
+    },
+    {
+      "id": "s3",
+      "clarity": "À la réouverture, le prix n'avance pas jusqu'au nouveau niveau : il y apparaît.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "La zone inerte se termine. Le prix réapparaît, et il réapparaît nettement plus bas que là où il s'était arrêté."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "On montre l'espace entre les deux : il est entièrement vide. Aucun échange n'a eu lieu là-dedans, donc aucun ordre n'a pu y être exécuté. Le stop se trouvait précisément dans cet espace."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : les deux points de prix, l'espace vide entre eux, et le trait du stop suspendu au milieu de ce vide."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le prix saute d'un point à l'autre, et tout l'espace intermédiaire reste vide.",
+      "turn": "Le stop était dans l'espace que le prix a sauté."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le stop est exécuté au premier prix disponible, et il est bien au-delà.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le stop de la bande haute s'exécute enfin, au premier prix disponible après le saut. Une barre mesure la perte réellement subie."
+        },
+        {
+          "t": "1.5-3",
+          "do": "À côté, on affiche la perte que le stop était censé produire. La première est nettement plus grande que la seconde. Sur la bande basse, aucune barre n'apparaît, parce que la position avait été fermée avant. Le trader du haut avait un stop, et il n'a pas eu la perte qu'il avait acceptée."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : la perte prévue et la perte réelle côte à côte, l'écart entre les deux évident."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La perte réelle est comparée à la perte prévue, à la même échelle.",
+      "turn": "Il avait accepté une perte, et il en a reçu une autre."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : avant la fermeture hebdomadaire, la taille de la position est réduite jusqu'à ce que le pire saut habituel reste supportable, ou bien la position est fermée. Le choix est écrit avant le vendredi, jamais découvert le lundi."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La taille réduite ou la position fermée avant la fermeture hebdomadaire, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders finish the week with the same position. One closes on Friday, and the other leaves it open over the weekend.\n\nThe stop is still there on Saturday: it is simply that nothing can execute it, because a stop is an instruction given to a market and for two days there is nobody to receive it. When the market opens again the price does not walk to the new level, it appears there, and everything in between is skipped. The stop was sitting in that gap.\n\nHe had accepted a loss, and he received a different one.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #riskmanagement #weekendgap #daytrading #forex #stoploss #propfirm #discipline #priceaction #trader",
+  "pinned_comment": "A stop needs a market to work. For two days a week, there isn't one. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "STRUCTURE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "id": "L95",
+  "engine": "l95",
+  "title": "L95 — THE MARKET CHANGED ITS HANDWRITING",
+  "_cellule": "OERD (Assaillant) · Éducation · Likelihood · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders trade the same range for a week. One stops when the range breaks, and the other keeps selling the top.",
+    "For five days the market does the same thing: it turns at the top, it turns at the bottom, and selling the top pays every time.",
+    "Then one move goes through the top and closes above it. Nothing about the screen looks dramatic, and the habit is now pointing the wrong way.",
+    "The second trader is not wrong about the level. He is wrong about which game the market is playing around it.",
+    "A setup that stopped working looks exactly like one that still does. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders travaillent la même zone pendant une semaine, et le sommet vient d'être franchi.",
+      "question": "THE LEVEL HELD FIVE TIMES. AND NOW?",
+      "emotion_lever": "Un niveau qui a toujours tenu, et une bougie qui vient de le franchir sous nos yeux.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader qui s'arrête au franchissement."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader qui continue de vendre le sommet."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. La même zone horizontale est dessinée sur chacune, avec un sommet et un plancher marqués. Une bougie est saisie en cours de clôture juste au-dessus du sommet, sur les deux bandes en même temps."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : la bougie achève sa clôture au-dessus du sommet, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La zone est visible dès la première image, et une bougie est saisie en cours de clôture au-dessus du sommet.",
+      "dispositif_cle": "Les deux bandes avancent toujours ensemble."
+    },
+    {
+      "id": "s2",
+      "clarity": "Pendant cinq jours, le marché fait exactement la même chose.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur les deux bandes, le prix fait cinq allers-retours dans la zone. À chaque fois, il tourne au sommet et redescend vers le plancher."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "À chaque tour, une vente se pose au sommet et elle est payée. Cinq fois de suite. Une habitude se dessine, et elle est rationnelle : elle repose sur cinq preuves."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : les cinq allers-retours et les cinq ventes payées, empilés à l'écran."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les cinq allers-retours dans la zone sont montrés, et chaque vente au sommet fonctionne.",
+      "turn": "L'habitude n'est pas paresseuse. Elle repose sur cinq preuves."
+    },
+    {
+      "id": "s3",
+      "clarity": "Puis un mouvement traverse le sommet et clôture au-dessus.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Le sixième mouvement monte vers le sommet comme les cinq précédents. Mais cette fois, le corps de la bougie clôture au-dessus, et pas seulement la mèche."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "On compare : les cinq premières fois, seule la mèche dépassait, et le corps restait sous le sommet. Cette fois le corps est au-dessus. Visuellement, l'écart est minuscule. Structurellement, ce n'est plus le même marché."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : les cinq mèches et la clôture, côte à côte, l'écart minuscule surligné."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La clôture au-dessus du sommet est isolée et comparée aux cinq mèches précédentes.",
+      "turn": "La différence tient dans la clôture, et elle change tout."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le second trader n'a pas tort sur le niveau, il a tort sur le jeu qui s'y joue.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le prix revient tester le sommet par le dessus. Sur la bande haute, le trader ne fait rien : sa règle lui interdit d'agir tant que le nouveau comportement n'est pas établi."
+        },
+        {
+          "t": "1.5-3",
+          "do": "Sur la bande basse, la vente se pose au sommet comme les cinq fois précédentes. Cette fois, le prix ne redescend pas : il repart vers le haut, et la position devient grise. Le niveau est le même, le geste est le même, et le marché n'écrit plus de la même façon."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : le trader du haut hors du marché, la position du bas en perte, et le sommet devenu un support."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux comportements sont rejoués après le franchissement, et un seul continue de payer.",
+      "turn": "Le niveau n'a pas changé. Le jeu qui s'y joue, si."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : une clôture de corps au-delà de la zone suspend l'habitude, quel que soit le nombre de fois où elle a payé. Le trader attend que le nouveau comportement produise sa propre preuve avant de reprendre position."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La règle de suspension sur clôture de corps, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders trade the same range for a week. One stops when the range breaks, and the other keeps selling the top.\n\nFor five days the market does the same thing and selling the top pays every time, so the habit is built on five real proofs. Then one move goes through the top and closes above it. Visually the difference is tiny — a body instead of a wick — and structurally it is a different market. The second trader is not wrong about the level. He is wrong about which game is being played around it.\n\nA setup that stopped working looks exactly like one that still does.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #priceaction #marketstructure #daytrading #forex #tradingstrategy #propfirm #discipline #tradingeducation #trader",
+  "pinned_comment": "The level didn't change. The game being played around it did. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "STRUCTURE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

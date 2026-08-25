@@ -1,0 +1,154 @@
+{
+  "id": "L91",
+  "engine": "l91",
+  "title": "L91 — THE COST THAT RUNS WHILE YOU SLEEP",
+  "_cellule": "OIRX (Circuit) · Éducation · Time delay · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders hold the same position. One closes it before the session ends, and the other keeps it open for eleven nights.",
+    "Nothing happens on the chart during those nights. The price ends up in the same place it started, and the idea is neither right nor wrong yet.",
+    "But a financing cost is applied every time the position crosses midnight, and it is applied whether the trade is winning, losing or asleep.",
+    "So one of them paid for eleven nights of nothing, and the other paid for none, on exactly the same idea.",
+    "A position you are not watching is still being charged. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders tiennent la même position, et l'un des deux la garde ouverte la nuit.",
+      "question": "THE CHART DIDN'T MOVE. WHAT DID?",
+      "emotion_lever": "Une position immobile qui coûte quelque chose intrigue immédiatement.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader qui garde la position ouverte."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader qui ferme avant la nuit."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. La même position teal est ouverte sur chacune. Sur la bande haute, une bande sombre traverse l'écran de gauche à droite : c'est la nuit, et elle est saisie en cours de passage. Sur la bande basse, la position vient de se fermer avant que la bande sombre n'arrive."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : la bande sombre finit de traverser, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux positions sont identiques, et une bande de nuit traverse déjà celle du haut.",
+      "dispositif_cle": "Les deux bandes avancent toujours ensemble, nuit après nuit."
+    },
+    {
+      "id": "s2",
+      "clarity": "Onze nuits passent, et le prix revient exactement là où il était parti.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande haute, les nuits défilent une à une : une, trois, six, onze. Le prix ondule pendant ce temps, monte un peu, redescend."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "À la onzième nuit, le prix est revenu à son point de départ exact. Un trait horizontal le montre. Sur le graphe, il ne s'est rien passé : l'idée n'a été ni confirmée ni démentie."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : le prix revenu à son point de départ, les onze nuits empilées derrière lui."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les onze bandes de nuit défilent, et la trajectoire du prix revient à son point de départ.",
+      "turn": "Le graphe n'a rien décidé pendant ces onze nuits."
+    },
+    {
+      "id": "s3",
+      "clarity": "Un coût de financement est appliqué à chaque passage de minuit.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "À chaque nuit franchie, une petite tuile grise se détache et vient se poser sous la position. Une tuile, puis deux, puis trois."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Les tuiles s'appliquent que la position soit gagnante, perdante ou à l'arrêt : elles ne regardent pas le résultat, elles regardent le calendrier. Sur la bande basse, aucune tuile n'apparaît, parce qu'aucune nuit n'a été franchie."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : la pile de tuiles grises grandit sous la position du haut, et le sol reste nu sous celle du bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Une petite tuile grise se pose à chaque nuit franchie, et les tuiles s'empilent.",
+      "turn": "Le coût ne dépend pas du résultat. Il dépend du temps."
+    },
+    {
+      "id": "s4",
+      "clarity": "Les deux traders avaient la même idée, et un seul l'a payée onze fois.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Les onze tuiles grises s'empilent en une colonne sous la position du haut. À côté, on affiche ce que le trade lui-même a produit : rien, puisque le prix est revenu à son point de départ."
+        },
+        {
+          "t": "1.5-3",
+          "do": "La colonne grise est donc le seul résultat de ces onze jours. Le trader du bas, lui, a le même graphe et aucune colonne. Ce n'est pas le marché qui les sépare, c'est le nombre de minuits franchis."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : la colonne de tuiles d'un côté, le sol nu de l'autre."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les onze tuiles grises sont comparées au résultat du trade, à la même échelle.",
+      "turn": "Le marché ne les a pas séparés. Le calendrier l'a fait."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : avant de garder une position ouverte une nuit de plus, le coût du portage est comparé à la distance que le trade doit encore parcourir. Si le portage mange une part sensible de la cible, la position se ferme, et l'idée est reprise le lendemain si elle tient toujours."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le coût de portage comparé à la distance restante avant chaque nuit, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders hold the same position. One closes it before the session ends, and the other keeps it open for eleven nights.\n\nNothing happens on the chart during those nights: the price ends up where it started, and the idea is neither right nor wrong yet. But a financing cost is applied every time the position crosses midnight, whether the trade is winning, losing or asleep. One of them paid for eleven nights of nothing, and the other paid for none, on exactly the same idea.\n\nA position you are not watching is still being charged.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingcosts #swap #daytrading #forex #riskmanagement #propfirm #discipline #priceaction #trader",
+  "pinned_comment": "The market didn't separate them. The calendar did. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "MECANIQUE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

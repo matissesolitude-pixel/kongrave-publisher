@@ -1,0 +1,154 @@
+{
+  "id": "L92",
+  "engine": "l92",
+  "title": "L92 — THE CHART THAT AGREED WITH YOU",
+  "_cellule": "SERD (Sniper) · Miroir · Likelihood · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders open the same chart looking for a reason to buy. One finds three, and the other finds none.",
+    "The first trader goes down through the timeframes until something supports the idea he arrived with. On the fourth one, it finally does.",
+    "The second trader looks at one timeframe he decided on before he opened the chart, and it says nothing, so he closes it.",
+    "Both of them found what they were looking for. Only one of them was actually looking.",
+    "A reason you had to hunt for is a reason the market never gave you. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders ouvrent le même graphe en cherchant une raison d'acheter.",
+      "question": "THREE REASONS. WHERE DID THEY COME FROM?",
+      "emotion_lever": "Un geste que tout le monde fait sans le nommer.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader qui descend les unités de temps."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader qui reste sur une seule unité."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. Le même graphe apparaît sur chacune. Au-dessus des deux, la même intention est marquée : acheter. Sur la bande haute, une main est saisie en train de changer d'unité de temps. Sur la bande basse, rien ne bouge."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : la main du haut termine son changement d'unité de temps, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux bandes affichent le même graphe, et une idée d'achat est déjà posée au-dessus de chacune.",
+      "dispositif_cle": "Les deux bandes avancent toujours ensemble."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le premier trader descend les unités de temps jusqu'à en trouver une qui lui donne raison.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande haute, quatre unités de temps se succèdent. La première ne soutient pas l'idée d'achat, la deuxième non plus, la troisième non plus."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "La quatrième la soutient enfin, et la main s'arrête là. On souligne l'ordre des opérations : l'idée était posée avant le graphe, et la recherche s'est arrêtée au moment où le graphe a cédé."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : les trois unités écartées restent visibles en gris, la quatrième reste allumée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les quatre unités de temps défilent sur la bande haute, et seule la quatrième soutient l'idée.",
+      "turn": "La recherche ne s'est pas arrêtée sur une preuve. Elle s'est arrêtée sur un accord."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le second trader a choisi son unité de temps avant d'ouvrir le graphe.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande basse, une seule unité de temps est allumée, et un marqueur montre qu'elle a été choisie avant l'ouverture du graphe."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Elle ne soutient pas l'idée d'achat. Le trader ne descend pas chercher ailleurs : il referme le graphe, et la journée ne produit pas de trade. Le silence est un résultat, et il est enregistré comme tel."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : l'unité unique allumée, le graphe refermé, aucune position ouverte."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Une seule unité de temps est allumée sur la bande basse, décidée à l'avance, et elle ne dit rien.",
+      "turn": "Une règle décidée avant ne peut pas être négociée pendant."
+    },
+    {
+      "id": "s4",
+      "clarity": "Les deux ont trouvé ce qu'ils cherchaient, et un seul cherchait vraiment.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "On rejoue la même scène en inversant l'intention de départ : cette fois, l'idée posée au-dessus des deux bandes est de vendre."
+        },
+        {
+          "t": "1.5-3",
+          "do": "Sur la bande haute, la main descend à nouveau les unités de temps, et elle trouve à nouveau trois raisons, dans le sens opposé. Le même graphe a soutenu deux idées contraires. Sur la bande basse, l'unité unique dit toujours la même chose. Ce qui distingue les deux traders n'est pas la lecture, c'est le moment où la règle a été écrite."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : trois raisons pour acheter et trois raisons pour vendre, sur le même graphe, côte à côte."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux méthodes sont rejouées sur une idée de vente, et la bande haute produit à nouveau trois raisons.",
+      "turn": "Le même graphe a donné raison aux deux idées contraires."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : l'unité de temps qui décide est choisie avant l'ouverture du graphe, et elle ne change pas pendant la séance. Les autres unités restent visibles, mais elles sont marquées comme informatives et non décisionnaires."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "L'unité de temps décisionnaire choisie avant la séance, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders open the same chart looking for a reason to buy. One finds three, and the other finds none.\n\nThe first goes down through the timeframes until something supports the idea he arrived with, and on the fourth one it finally does. The second looks at one timeframe he decided on before opening the chart, it says nothing, and he closes it. Run it again with the opposite intention and the same chart hands the first trader three reasons to sell.\n\nA reason you had to hunt for is a reason the market never gave you.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #tradingpsychology #confirmationbias #daytrading #forex #priceaction #propfirm #discipline #marketstructure #trader",
+  "pinned_comment": "The same chart agreed with both ideas. That's what searching does. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "MENTAL",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

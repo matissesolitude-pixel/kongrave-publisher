@@ -1,0 +1,154 @@
+{
+  "id": "L89",
+  "engine": "l89",
+  "title": "L89 — THE STOP THAT MOVED TO ZERO",
+  "_cellule": "SITD (Glacier) · Miroir · Risk · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders take the same trade. One moves the stop to break-even early, and the other leaves it where the plan put it.",
+    "Both trades go their way at first. The first trader feels the profit and wants to protect it, so he pulls the stop up to his entry price.",
+    "Then price pulls back the way it always does before continuing. It touches his entry, closes him for nothing, and carries on without him.",
+    "The second trader is still in the trade, because his stop was never placed where the market breathes. It was placed where his idea would be wrong.",
+    "A break-even stop protects your feelings and cancels your trade. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders prennent le même trade, et l'un des deux touche à son stop.",
+      "question": "SAME TRADE. WHY DOES ONE CLOSE?",
+      "emotion_lever": "Un geste que tout le monde a fait, montré au moment où il se produit.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte le trader qui remonte son stop."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte le trader qui ne touche à rien."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. La même position teal est ouverte sur chacune, au même prix, avec le même stop posé en dessous. Sur la bande haute, une main est saisie en cours de geste : elle remonte le stop vers le prix d'entrée. Sur la bande basse, rien ne bouge."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : le stop du haut finit de remonter jusqu'au prix d'entrée, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux positions sont identiques dès la première image, et une main est saisie en train de déplacer le stop de la bande haute.",
+      "dispositif_cle": "Les deux bandes avancent toujours ensemble, et le seul écart introduit est le geste de la main."
+    },
+    {
+      "id": "s2",
+      "clarity": "Les deux trades partent dans le bon sens, et le premier trader veut protéger ce qu'il voit.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur les deux bandes, le prix avance dans le sens de la position. Un gain latent se dessine, identique des deux côtés."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Sur la bande haute, une onde part de ce gain et remonte vers la main. Ce n'est pas le graphe qui a demandé le déplacement du stop : c'est le gain latent qui l'a demandé."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : l'onde circule encore, et le stop du haut reste collé au prix d'entrée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le gain latent apparaît sur les deux bandes, et une onde le relie à la main qui a bougé.",
+      "turn": "Le graphe n'a rien demandé. Le gain latent, si."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le prix revient en arrière comme il le fait presque toujours avant de repartir.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Le prix retrace sur les deux bandes, de la même amplitude, au même moment. Une bande de respiration normale est dessinée autour du prix."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Le stop du haut est à l'intérieur de cette bande de respiration : il est touché, et la position se ferme pour rien. Le stop du bas est en dehors : il n'est pas atteint, et la position reste ouverte."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : une position grise en haut, une position teal encore vivante en bas."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le retracement traverse le stop de la bande haute sans atteindre celui de la bande basse.",
+      "turn": "Le stop du haut n'a pas protégé un gain. Il a annulé un trade."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le prix repart, et un seul des deux traders est encore là pour le voir.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "Le prix repart dans le sens initial et parcourt toute la distance prévue par le plan. Sur la bande basse, la position teal l'accompagne jusqu'à la cible."
+        },
+        {
+          "t": "1.5-3",
+          "do": "Sur la bande haute, la position grise est restée au prix d'entrée. On mesure ce qu'elle a manqué : exactement le mouvement entier. Le trader du haut n'a pas perdu d'argent, et il n'en a pas gagné non plus, alors que son idée était juste."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : le mouvement accompli, la position teal à la cible, la position grise abandonnée à l'entrée."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le mouvement se déroule entièrement, la bande haute est sortie et la bande basse le suit jusqu'au bout.",
+      "turn": "Il avait raison sur le trade, et il n'était plus dedans."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : le stop ne se déplace que lorsque la structure se déplace, jamais lorsque le gain latent grandit. Une règle se pose sur le graphe, et le gain latent est retiré du cadre : il n'entre plus dans la décision."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La règle du stop lié à la structure et non au gain latent, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders take the same trade. One moves the stop to break-even early, and the other leaves it where the plan put it.\n\nBoth trades go their way at first, and the first trader wants to protect what he can see, so he pulls the stop up to his entry. Then price pulls back the way it always does before continuing: it touches his entry, closes him for nothing, and carries on without him. The second trader is still in it, because his stop was never placed where the market breathes.\n\nA break-even stop protects your feelings and cancels your trade.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #riskmanagement #stoploss #daytrading #forex #tradingpsychology #propfirm #discipline #priceaction #trader",
+  "pinned_comment": "He was right about the trade, and he was no longer in it. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "MENTAL",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}

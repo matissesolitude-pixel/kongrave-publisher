@@ -1,0 +1,154 @@
+{
+  "id": "L93",
+  "engine": "l93",
+  "title": "L93 — THE PRICE YOU ASKED FOR",
+  "_cellule": "OITX (Circuit) · Éducation · Speed · regard=le prospect · présent · négatif",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders send an order at the same second, during a news release. One gets the price he asked for, and the other does not.",
+    "The first trader sent a limit order, which tells the market a price and waits. If nobody meets it, nothing happens to him.",
+    "The second trader sent a market order, which tells the market to fill him now, at whatever price is available at that moment.",
+    "During a release, the price available at that moment can sit far below the one on his screen, and the gap comes straight out of his trade.",
+    "One order names a price. The other accepts one. Follow @kongrave_ — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders envoient un ordre à la même seconde pendant une publication.",
+      "question": "SAME SECOND. SAME PRICE?",
+      "emotion_lever": "Le prix qui saute est visible immédiatement et crée la tension.",
+      "cast": {
+        "lane1": {
+          "type": "path",
+          "note": "La bande haute porte l'ordre à cours limité."
+        },
+        "lane2": {
+          "type": "path",
+          "note": "La bande basse porte l'ordre au marché."
+        }
+      },
+      "beats": [
+        {
+          "t": "0-0.5",
+          "do": "L'écran est partagé en deux bandes. Sur chacune, un ordre est saisi en cours d'envoi, à la même seconde. Le prix, lui, est déjà en train de sauter violemment : la publication vient de tomber, et le trait de prix se déplace par bonds."
+        },
+        {
+          "t": "0.5-1.2",
+          "do": "Le point d'interrogation apparaît par-dessus, à deux cents pixels."
+        },
+        {
+          "t": "1.2-5",
+          "do": "La tenue est courte : le prix fait un bond de plus, et le point d'interrogation s'efface."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux ordres partent au même instant, et le prix est déjà en train de sauter.",
+      "dispositif_cle": "Les deux bandes avancent toujours ensemble, à la même seconde."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le premier ordre nomme un prix et attend qu'on vienne le chercher.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande haute, l'ordre se pose sous la forme d'un trait horizontal, à un prix précis. Il ne bouge pas."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "Le prix bondit autour de lui. Quand il traverse le trait, l'ordre est exécuté à ce prix exact. Quand il ne le traverse pas, rien ne se passe et le trader reste à l'écart."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : le trait fixe, le prix qui bondit, et l'exécution nette lorsqu'ils se rencontrent."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le trait de l'ordre à cours limité reste fixe pendant que le prix bondit autour de lui.",
+      "turn": "Un ordre à cours limité peut ne rien faire. C'est sa protection."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le second ordre demande à être rempli maintenant, au prix disponible.",
+      "beats": [
+        {
+          "t": "0-1.2",
+          "do": "Sur la bande basse, l'ordre part sans trait de prix : il demande simplement à être rempli. Le prix affiché à l'écran au moment de l'envoi est marqué d'un repère."
+        },
+        {
+          "t": "1.2-2.5",
+          "do": "L'exécution arrive instantanément, mais elle se pose bien plus bas que le repère. L'écart entre les deux est surligné : c'est ce que le carnet avait à offrir à cette seconde-là, et personne ne l'a décidé."
+        },
+        {
+          "t": "2.5-8",
+          "do": "La tenue est vivante : le repère du prix affiché d'un côté, le point d'exécution réel de l'autre, et l'écart entre les deux tenu à l'écran."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "L'ordre au marché est exécuté immédiatement, et le point d'exécution est loin du prix affiché.",
+      "turn": "Il a été rempli tout de suite, et pas au prix qu'il voyait."
+    },
+    {
+      "id": "s4",
+      "clarity": "L'écart sort directement du trade, avant même que l'idée soit jugée.",
+      "note": "C'est la scène qui porte la démonstration.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "L'écart mesuré à la scène précédente est reporté sur la position du bas. Le prix d'entrée est plus mauvais, donc la distance jusqu'au stop est plus grande et la distance jusqu'à la cible est plus longue."
+        },
+        {
+          "t": "1.5-3",
+          "do": "On compare les deux rapports gain sur risque, côte à côte : celui du haut est intact, celui du bas est nettement écrasé. Les deux traders avaient la même idée, au même instant, et l'un des deux a payé le droit d'entrer tout de suite."
+        },
+        {
+          "t": "3-8",
+          "do": "La tenue est vivante : les deux rapports affichés à la même échelle, l'écart entre eux évident."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "L'écart d'exécution est reporté sur la barre de risque, qui s'allonge d'autant.",
+      "turn": "Il n'a pas payé une erreur d'analyse. Il a payé son impatience."
+    },
+    {
+      "id": "s5",
+      "clarity": "La prise et le CTA d'abonnement.",
+      "note": "Le CTA d'abonnement occupe la scène 5 et reste à l'écran jusqu'à la fin.",
+      "beats": [
+        {
+          "t": "0-1.5",
+          "do": "La prise s'affiche : pendant une publication, l'ordre nomme un prix ou il n'existe pas. Le trader écrit son prix avant la publication, et si le marché ne vient pas le chercher, la séance se termine sans position."
+        },
+        {
+          "t": "1.5-3",
+          "do": "⚠️ CTA ABONNEMENT À L'ÉCRAN (TOFU) : en zone médiane, le bas 12 % du cadre reste vide. Le texte affiché est « @kongrave_ », et en dessous, plus petit, « the mechanics nobody explains ». Tout reste lisible sans le son. La voix prononce la même phrase au même moment. Aucun mot-clé n'apparaît : LINE, MAP et PROFILE sont réservés au MOFU et au BOFU."
+        },
+        {
+          "t": "3-8",
+          "do": "L'image finale est tenue au moins trois secondes. La prise reste visible, le CTA d'abonnement reste affiché, et rien ne bouge."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "L'ordre à cours limité écrit avant la publication, et le CTA d'abonnement affiché et prononcé."
+    }
+  ],
+  "total": 32.0,
+  "caption": "Two traders send an order at the same second, during a news release. One gets the price he asked for, and the other does not.\n\nThe first sent a limit order, which names a price and waits: if nobody meets it, nothing happens to him. The second sent a market order, which asks to be filled now, at whatever price is available at that moment — and during a release that price can sit far below the one on his screen. The gap comes straight out of the trade, before the idea has even been judged.\n\nOne order names a price. The other accepts one.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #slippage #news #daytrading #forex #execution #propfirm #riskmanagement #priceaction #trader",
+  "pinned_comment": "He didn't pay for a bad read. He paid for being filled immediately. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "MECANIQUE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet."
+  },
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  }
+}
