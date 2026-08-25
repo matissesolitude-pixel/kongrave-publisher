@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L93 « THE PRICE YOU ASKED FOR » — MONTAGE PARALLÈLE, écran partagé en DEUX BANDES qui avancent à la même seconde.
+       S1 : émotion frame 0 = levier TENSION (le prix qui saute) — les deux bandes portent LE MÊME prix qui BONDIT déjà par
+       à-coups (la publication vient de tomber), un ticket d'ordre est saisi en cours d'envoi sur chacune. S2 : bande HAUTE =
+       ordre À COURS LIMITÉ — un trait teal fixe à un prix nommé ; le prix bondit autour, et quand il traverse le trait, exécution
+       NETTE à ce prix exact. S3 : bande BASSE = ordre AU MARCHÉ — pas de trait, un repère teal sur le prix affiché à l'envoi, une
+       exécution instantanée qui se pose bien plus BAS, et l'écart (gris) tenu entre les deux. S4 : le REPORT — l'écart est reporté
+       sur la barre de risque du bas : entrée plus mauvaise, la part de risque (gris) s'allonge et la part de gain (teal) s'écrase ;
+       les deux rapports côte à côte, même échelle. S5 : la PRISE — pendant une publication l'ordre nomme un prix ou il n'existe pas
+       (trait teal écrit d'avance, le prix ne vient pas, séance à plat) puis le CTA d'abonnement @kongrave_. Doctrine : aucun chiffre ;
+       le prix = encre ; l'ordre du trader = teal ; l'écart/la perte = gris ; pas de brun ; bas du cadre vide ; aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── DEUX BANDES ──
+    const BX0=110, BX1=970;
+    const TB0=605, TB1=945;   // bande HAUTE — LIMIT
+    const BB0=1075, BB1=1415; // bande BASSE — MARKET
+    function plot(b0,b1){return {x0:BX0+150,x1:BX1-40,yt:b0+42,yb:b1-42};}
+    const PT=plot(TB0,TB1), PB=plot(BB0,BB1);
+    function yOf(P,val){return P.yb-clamp(val,0,1)*(P.yb-P.yt);}
+
+    // ── LE PRIX QUI BONDIT (suite de niveaux DÉTERMINISTE — jamais Math.random, qui casserait le scrub) ──
+    const LV=[]; (function(){for(let i=0;i<48;i++){const h=Math.sin(i*12.9898+7.13)*43758.5453;const f=h-Math.floor(h);LV.push(0.16+0.68*f);}})();
+    function levelAt(ph){const i=Math.floor(ph),f=ph-i;const n=LV.length;
+      const a=LV[((i%n)+n)%n], b=LV[(((i+1)%n)+n)%n];return lerp(a,b,eInOut(clamp(f/0.16,0,1)));}
+    const DT=0.34;                                   // un bond toutes les 0,34 s
+
+    // ── OBJETS ──
+    const bandTop=mk('rect',{x:BX0,y:TB0,width:BX1-BX0,height:TB1-TB0,rx:16,fill:'none',stroke:INK,'stroke-width':3,opacity:0});
+    const bandBot=mk('rect',{x:BX0,y:BB0,width:BX1-BX0,height:BB1-BB0,rx:16,fill:'none',stroke:INK,'stroke-width':3,opacity:0});
+    const priceTop=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const priceBot=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const dotTop=mk('circle',{r:11,fill:INK,opacity:0});
+    const dotBot=mk('circle',{r:11,fill:INK,opacity:0});
+    const limitLine=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'18 12',opacity:0});
+    const execDot=mk('circle',{r:15,fill:YOU,opacity:0});
+    const execTick=mk('line',{stroke:YOU,'stroke-width':5,opacity:0});
+    const mkrLine=mk('line',{stroke:YOU,'stroke-width':6,opacity:0});
+    const fillDot=mk('circle',{r:15,fill:YOU,opacity:0});
+    const gapBand=mk('rect',{fill:DEAD,'fill-opacity':0.45,rx:5,opacity:0});
+    const ticketR=[0,1].map(()=>mk('rect',{rx:9,fill:'none',stroke:YOU,'stroke-width':5,opacity:0}));
+    const ticketA=[0,1].map(()=>mk('path',{fill:'none',stroke:YOU,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    // barres de risque (S4) : stop (gris) au-dessus, gain (teal) en dessous, entrée (encre) au milieu — SELL setup
+    const barStop=[0,1].map(()=>mk('line',{stroke:DEAD,'stroke-width':22,'stroke-linecap':'butt',opacity:0}));
+    const barRew=[0,1].map(()=>mk('line',{stroke:YOU,'stroke-width':22,'stroke-linecap':'butt',opacity:0}));
+    const barEntry=[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+
+    function hideAll(){for(const e of [bandTop,bandBot,priceTop,priceBot,dotTop,dotBot,limitLine,execDot,execTick,mkrLine,fillDot,gapBand])setOp(e,0);
+      for(const e of ticketR)setOp(e,0);for(const e of ticketA)setOp(e,0);
+      for(const e of barStop)setOp(e,0);for(const e of barRew)setOp(e,0);for(const e of barEntry)setOp(e,0);}
+
+    // le prix : ligne pas-à-pas (les BONDS) + un frémissement continu à deux harmoniques (la VIE entre les bonds,
+    // sinon l'image se fige une demi-seconde à chaque palier — cf. LOI 9). Retourne le val courant + le croisement d'un niveau.
+    function drawPrice(el,dot,P,p,u,color,op,limit){
+      const K=12,pts=[];let cx=0,cy=0;
+      for(let j=0;j<K;j++){const ph=p-(K-1-j),v=levelAt(ph),x=P.x0+(P.x1-P.x0)*j/(K-1);
+        const wob=5*Math.sin(u*4.3+j*0.9)+3*Math.sin(u*7.1+j*1.7),y=clamp(yOf(P,v)+wob,P.yt,P.yb);pts.push([x.toFixed(1),y.toFixed(1)]);if(j===K-1){cx=x;cy=y;}}
+      el.setAttribute('points',pts.map(q=>q.join(',')).join(' '));el.setAttribute('stroke',color);setOp(el,op);
+      dot.setAttribute('cx',cx.toFixed(1));dot.setAttribute('cy',cy.toFixed(1));setOp(dot,op);
+      let cross=null;
+      if(limit!=null){for(let j=1;j<K;j++){const va=levelAt(p-(K-1-(j-1))),vb=levelAt(p-(K-1-j));
+        if((va-limit)*(vb-limit)<=0&&va!==vb){const f=(limit-va)/(vb-va);const x=P.x0+(P.x1-P.x0)*((j-1)+f)/(K-1);cross={x:x,y:yOf(P,limit)};}}}
+      return {cur:levelAt(p),cross:cross};
+    }
+    function ticket(i,cx,cy,op){const w=78,h=54;ticketR[i].setAttribute('x',cx-w/2);ticketR[i].setAttribute('y',cy-h/2);
+      ticketR[i].setAttribute('width',w);ticketR[i].setAttribute('height',h);setOp(ticketR[i],op);
+      ticketA[i].setAttribute('d',`M ${cx} ${cy+14} L ${cx} ${cy-16} M ${cx-13} ${cy-3} L ${cx} ${cy-16} L ${cx+13} ${cy-3}`);setOp(ticketA[i],op);}
+    function riskBar(i,P,cx,entryVal,stopVal,targVal,op){
+      const ey=yOf(P,entryVal),sy=yOf(P,stopVal),ty=yOf(P,targVal);
+      barStop[i].setAttribute('x1',cx);barStop[i].setAttribute('x2',cx);barStop[i].setAttribute('y1',ey);barStop[i].setAttribute('y2',sy);setOp(barStop[i],op);
+      barRew[i].setAttribute('x1',cx);barRew[i].setAttribute('x2',cx);barRew[i].setAttribute('y1',ey);barRew[i].setAttribute('y2',ty);setOp(barRew[i],op);
+      barEntry[i].setAttribute('x1',cx-46);barEntry[i].setAttribute('x2',cx+46);barEntry[i].setAttribute('y1',ey);barEntry[i].setAttribute('y2',ey);setOp(barEntry[i],op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME SECOND.','SAME PRICE?'];
+    const FS=72,lineH=98,y0q=214,qY=QLINES.map((s,li)=>y0q+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0q+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(48),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34),capG=caption(34),capH=caption(34);
+    const ctaMain=caption(96),ctaSub=caption(40);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH,ctaMain,ctaSub])setOp(e,0);}
+
+    const LIMIT=0.55, SCREENV=0.62, FILLV=0.36;      // niveaux clés (prix nommé · prix affiché · prix rempli)
+
+    // ═══ S1 — DEUX BANDES, LE MÊME PRIX QUI BONDIT DÉJÀ, DEUX ORDRES EN COURS D'ENVOI ═══
+    // Verbe visuel : le saut (le prix bondit) + la mise en miroir (deux bandes, même seconde).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (TENSION) : le prix SAUTE déjà par à-coups sur les DEUX bandes (même prix), les tickets partent.
+      setOp(bandTop,1); setOp(bandBot,1);
+      const p=u/DT+3;
+      drawPrice(priceTop,dotTop,PT,p,u,INK,1,null);
+      drawPrice(priceBot,dotBot,PB,p,u,INK,1,null);
+      ticket(0,190,(TB0+TB1)/2,1); ticket(1,190,(BB0+BB1)/2,1);
+      putCap(capC,'NEWS JUST DROPPED',CX,1012,DEAD,clamp((u-1.6)/0.6,0,1)*gf);
+    }
+
+    // ═══ S2 — L'ORDRE À COURS LIMITÉ : un prix nommé, fixe ; le prix vient le chercher ═══
+    // Verbe visuel : la rencontre (trait fixe, prix qui bondit, exécution NETTE quand ils se croisent).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      setOp(bandTop,1); setOp(bandBot,1);
+      putCap(capA,'IT NAMES A PRICE AND WAITS',CX,515,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capC,'LIMIT ORDER',188,585,YOU,1);
+      // bande haute : le trait LIMITE fixe, le prix qui bondit autour, l'exécution au croisement
+      const ly=yOf(PT,LIMIT);
+      limitLine.setAttribute('x1',PT.x0);limitLine.setAttribute('x2',PT.x1);limitLine.setAttribute('y1',ly);limitLine.setAttribute('y2',ly);
+      limitLine.setAttribute('stroke-dashoffset',(-u*22).toFixed(0));setOp(limitLine,1);
+      const p=u/DT+3, r=drawPrice(priceTop,dotTop,PT,p,u,INK,1,LIMIT);
+      if(u>1.4 && r.cross){execDot.setAttribute('cx',r.cross.x.toFixed(1));execDot.setAttribute('cy',r.cross.y.toFixed(1));setOp(execDot,1);
+        execTick.setAttribute('x1',r.cross.x);execTick.setAttribute('x2',r.cross.x);execTick.setAttribute('y1',r.cross.y-26);execTick.setAttribute('y2',r.cross.y+26);setOp(execTick,1);
+        putCap(capB,'FILLED AT THAT EXACT PRICE',CX,1012,YOU,clamp((u-1.6)/0.6,0,1));}
+      // bande basse : présente et vivante (le prix bondit), elle agit en S3
+      drawPrice(priceBot,dotBot,PB,p,u,INK,0.82,null);
+    }
+
+    // ═══ S3 — L'ORDRE AU MARCHÉ : rempli tout de suite, loin du prix affiché ═══
+    // Verbe visuel : le remplissage immédiat + l'écart (le repère en haut, l'exécution bien plus bas, l'écart gris tenu).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      setOp(bandTop,1); setOp(bandBot,1);
+      putCap(capA,'IT TAKES WHATEVER IS THERE',CX,515,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capC,'MARKET ORDER',192,1055,YOU,1);
+      // bande haute : le résultat de S2 tenu (trait + exécution), vivant
+      const lyT=yOf(PT,LIMIT);
+      limitLine.setAttribute('x1',PT.x0);limitLine.setAttribute('x2',PT.x1);limitLine.setAttribute('y1',lyT);limitLine.setAttribute('y2',lyT);setOp(limitLine,0.5);
+      const p=u/DT+3; drawPrice(priceTop,dotTop,PT,p,u,INK,0.7,null);
+      // bande basse : PAS de trait de prix — un repère teal sur le prix affiché, une exécution instantanée BIEN plus bas,
+      // et l'écart gris tenu entre les deux ; l'exécution FLOTTE (le prix disponible bouge encore) → l'image ne se fige pas.
+      const sy=yOf(PB,SCREENV), fx=(PB.x0+PB.x1)/2;
+      const fvf=FILLV+0.020*Math.sin(u*3.0)+0.011*Math.sin(u*5.1), fy=yOf(PB,fvf);
+      mkrLine.setAttribute('x1',PB.x0);mkrLine.setAttribute('x2',PB.x1);mkrLine.setAttribute('y1',sy);mkrLine.setAttribute('y2',sy);setOp(mkrLine,clamp((u+0.2)/0.4,0,1));
+      const fap=clamp((u-0.6)/0.4,0,1);
+      fillDot.setAttribute('cx',fx.toFixed(1));fillDot.setAttribute('cy',fy.toFixed(1));setOp(fillDot,fap);
+      gapBand.setAttribute('x',fx-30);gapBand.setAttribute('width',60);gapBand.setAttribute('y',sy);gapBand.setAttribute('height',(fy-sy).toFixed(1));setOp(gapBand,fap);
+      putCap(capD,'SCREEN PRICE',fx,sy-24,YOU,clamp((u-0.3)/0.5,0,1));
+      putCap(capB,'FILLED LOWER · SLIPPAGE',fx,1352,DEAD,clamp((u-1.2)/0.6,0,1));
+    }
+
+    // ═══ S4 — LE REPORT : l'écart passe dans la barre de risque, le rapport s'écrase ═══
+    // Verbe visuel : le report sur le risque (entrée plus mauvaise → risque gris allongé, gain teal écrasé).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      setOp(bandTop,1); setOp(bandBot,1);
+      putCap(capA,'THE GAP COMES OUT OF THE TRADE',CX,515,INK,clamp((u-0.3)/0.6,0,1));
+      // la publication CONTINUE : le prix bondit toujours, en fantôme derrière les deux barres (vie continue)
+      const p=u/DT+3; drawPrice(priceTop,dotTop,PT,p,u,INK,0.20,null); drawPrice(priceBot,dotBot,PB,p,u,INK,0.20,null);
+      setOp(dotTop,0); setOp(dotBot,0);
+      // niveaux communs (SELL setup) : STOP au-dessus (gris), TARGET en dessous (teal)
+      const STOP=0.82, TARG=0.14;
+      // HAUT (limite) : entrée au prix nommé → rapport intact
+      riskBar(0,PT,CX,LIMIT,STOP,TARG,1);
+      // BAS (marché) : entrée à l'exécution réelle (plus bas) → risque allongé, gain écrasé ; l'écart reporté (gris).
+      // Une fois glissée, l'entrée FLOTTE (le prix disponible bouge encore) → l'image ne se fige jamais.
+      const glide=clamp(u/1.2,0,1);
+      const eBot=lerp(SCREENV,FILLV,glide)+(0.020*Math.sin(u*3.1)+0.011*Math.sin(u*5.3))*glide;
+      riskBar(1,PB,CX,eBot,STOP,TARG,1);
+      const gy1=yOf(PB,SCREENV), gy2=yOf(PB,eBot);
+      gapBand.setAttribute('x',CX+34);gapBand.setAttribute('width',26);gapBand.setAttribute('y',Math.min(gy1,gy2));gapBand.setAttribute('height',Math.abs(gy2-gy1).toFixed(1));setOp(gapBand,clamp((u-0.2)/0.5,0,1));
+      putCap(capC,'CLEAN R : R',CX,585,YOU,clamp((u-1.0)/0.6,0,1));
+      putCap(capD,'CRUSHED BY THE GAP',CX,1055,DEAD,clamp((u-1.4)/0.6,0,1));
+      // STOP / TARGET dans la colonne GAUCHE (x<260, hors du prix fantôme) — orientent les deux barres, même échelle
+      putCap(capE,'STOP',186,yOf(PT,STOP)+10,DEAD,clamp((u-1.6)/0.6,0,1));
+      putCap(capF,'TARGET',186,yOf(PT,TARG)+10,YOU,clamp((u-1.8)/0.6,0,1));
+    }
+
+    // ═══ S5 — LA PRISE + CTA D'ABONNEMENT (TOFU, aucun mot-clé) ═══
+    // Verbe visuel : le prix écrit d'avance (trait teal fixe, le prix ne vient pas, séance à plat) puis le CTA.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      setOp(bandTop,1);
+      // la PRISE : le trait LIMITE écrit d'avance, haut ; le prix bondit SANS le traverser → pas de position
+      const ly=yOf(PT,0.30);
+      limitLine.setAttribute('x1',PT.x0);limitLine.setAttribute('x2',PT.x1);limitLine.setAttribute('y1',ly);limitLine.setAttribute('y2',ly);
+      limitLine.setAttribute('stroke-dashoffset',(-u*22).toFixed(0));setOp(limitLine,1);
+      const p=u/DT+3; drawPrice(priceTop,dotTop,PT,p,u,INK,1,null);    // le prix vit, reste au-dessus du trait (niveaux ≥0.16, trait à 0.30 souvent non touché)
+      putCap(capC,'YOUR PRICE, WRITTEN FIRST',CX,585,YOU,clamp((u-0.3)/0.6,0,1));
+      putCap(capA,'NAME A PRICE — OR DON’T PLAY',CX,1010,INK,clamp((u-0.8)/0.7,0,1));
+      // CTA d'abonnement — zone médiane dégagée, bas du cadre vide
+      const ca=clamp((u-1.5)/0.7,0,1);
+      putCap(ctaMain,'@kongrave_',CX,1230,INK,ca);
+      putCap(ctaSub,'THE MECHANICS NOBODY EXPLAINS',CX,1300,YOU,clamp((u-1.9)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
