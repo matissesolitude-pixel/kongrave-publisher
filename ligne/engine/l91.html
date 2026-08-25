@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L91 « THE COST THAT RUNS WHILE YOU SLEEP » — dispositif MONTAGE PARALLÈLE (deux traders, deux bandes).
+       S1 : émotion frame 0 = levier CURIOSITÉ / DUEL ANNONCÉ — deux bandes, la MÊME position teal ouverte sur chacune,
+       et sur la bande HAUTE une bande de nuit sombre traverse DÉJÀ l'écran (saisie en cours de passage) pendant que la
+       bande basse vient de fermer avant la nuit. Rien ne se construit : le duel est entier dès t=0. S2 : sur la bande haute
+       ONZE nuits s'accumulent (bandes sombres) tandis que le prix ondule et REVIENT exactement à son point de départ —
+       le graphe n'a rien décidé. S3 : à chaque nuit franchie une petite tuile GRISE se détache et tombe se poser SOUS la
+       position — la pile grandit ; la bande basse reste nue (aucune nuit franchie, aucun coût). S4 : diptyque HELD/CLOSED
+       — même résultat de trade (rien, prix revenu), mais une COLONNE grise sous le tenu ; le marché ne les a pas séparés,
+       le calendrier l'a fait. S5 : la prise (comparer le portage à la distance restante avant chaque nuit) + CTA abonnement
+       TOFU « @kongrave_ » (aucun mot-clé). Doctrine : aucun chiffre (les onze nuits par le NOMBRE de bandes/tuiles) ;
+       gris = coût/perte ; teal = ta position ; pas de brun, pas de rouge ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LES DEUX BANDES (lignes de prix), LES POSITIONS TEAL, LES NUITS (bandes sombres) et LES TUILES DE COÛT (gris) ──
+    const X0=150, X1=630, STEP=(X1-X0)/11;                 // 11 nuits réparties sur la largeur de la bande haute
+    const TY=850, BY=1270;                                  // lignes de prix (bande haute / bande basse)
+    const TBT=735, TBB=872, BBT=1155, BBB=1292;             // hauteurs des deux bandes-chart
+    const baseT=mk('line',{stroke:DEAD,'stroke-width':3,'stroke-dasharray':'10 9',opacity:0});
+    const baseB=mk('line',{stroke:DEAD,'stroke-width':3,'stroke-dasharray':'10 9',opacity:0});
+    const priceT=mk('polyline',{fill:'none',stroke:INK,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const priceB=mk('polyline',{fill:'none',stroke:INK,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const NIGHTS=[]; for(let i=0;i<12;i++)NIGHTS.push(mk('rect',{fill:INK,opacity:0}));
+    const sweep=mk('rect',{fill:INK,opacity:0});
+    const TILES=[]; for(let i=0;i<12;i++)TILES.push(mk('rect',{rx:3,fill:DEAD,opacity:0}));
+    const posT=mk('rect',{rx:7,fill:YOU,opacity:0});
+    const posB=mk('rect',{rx:7,fill:YOU,opacity:0});
+    const closeCap=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const resL=mk('rect',{rx:5,fill:YOU,opacity:0});
+    const resR=mk('rect',{rx:5,fill:YOU,opacity:0});
+    const targetArrow=mk('line',{stroke:YOU,'stroke-width':10,'stroke-linecap':'round',opacity:0});
+    const targetHead=mk('polygon',{fill:YOU,opacity:0});
+    const carryBar=mk('rect',{rx:6,fill:DEAD,opacity:0});
+    const trav=mk('circle',{r:13,fill:YOU,opacity:0});
+    const ctaMain=mk('text',{x:CX,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':80,'letter-spacing':'1',opacity:0}); ctaMain.textContent='@kongrave_';
+    const ctaSub=mk('text',{x:CX,'text-anchor':'middle',fill:DEAD,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':40,'letter-spacing':'1.5',opacity:0}); ctaSub.textContent='the mechanics nobody explains';
+
+    function hideObjs(){
+      setOp(baseT,0);setOp(baseB,0);setOp(priceT,0);setOp(priceB,0);setOp(sweep,0);
+      setOp(posT,0);setOp(posB,0);setOp(closeCap,0);setOp(resL,0);setOp(resR,0);
+      setOp(targetArrow,0);setOp(targetHead,0);setOp(carryBar,0);setOp(trav,0);
+      setOp(ctaMain,0);setOp(ctaSub,0);
+      for(const e of NIGHTS)setOp(e,0);for(const e of TILES)setOp(e,0);
+    }
+    // prix qui ondule et REVIENT à son point de départ (enveloppe nulle aux bords) — deux harmoniques, vie continue
+    function setPrice(el,x0,x1,baseY,amp,ph){
+      const n=42,p=[];
+      for(let i=0;i<=n;i++){const f=i/n,x=x0+(x1-x0)*f;
+        const env=Math.sin(Math.PI*f);
+        const y=baseY-amp*env*(Math.sin(5.4*Math.PI*f+ph)+0.42*Math.sin(9.1*Math.PI*f+ph*1.37));
+        p.push(x.toFixed(1)+','+y.toFixed(1));}
+      el.setAttribute('points',p.join(' '));
+    }
+    function laneBase(el,y){el.setAttribute('x1',140);el.setAttribute('x2',648);el.setAttribute('y1',y);el.setAttribute('y2',y);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE CHART DIDN’T MOVE.','WHAT DID?'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle, copié TEL QUEL de l26.html ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(34),capC=caption(34),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // dessine une position teal (petit bloc posé sur la ligne de prix, à gauche)
+    function drawPos(el,x,baseY,br){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',(baseY-34-br).toFixed(1));el.setAttribute('width',120);el.setAttribute('height',34);setOp(el,1);}
+
+    // ═══ S1 — DEUX BANDES, LA MÊME POSITION ; UNE NUIT TRAVERSE DÉJÀ CELLE DU HAUT ═══
+    // Verbe visuel : le balayage (la bande de nuit traverse la bande haute de gauche à droite).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideObjs();
+      const gf=clamp(1-(lf-0.84)/0.10,0,1);
+      // question
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier CURIOSITÉ / DUEL) : les deux bandes sont pleines dès t=0, la nuit traverse déjà en haut.
+      const phT=u*1.7, phB=1.1+u*1.6;
+      laneBase(baseT,TY);setOp(baseT,0.7); laneBase(baseB,BY);setOp(baseB,0.7);
+      setPrice(priceT,X0,X1,TY,48,phT);setOp(priceT,1);
+      setPrice(priceB,X0,X1,BY,48,phB);setOp(priceB,1);
+      drawPos(posT,155,TY,7*Math.sin(u*1.6)+3*Math.sin(u*2.9));
+      drawPos(posB,155,BY,6*Math.sin(u*1.5)+3*Math.sin(u*2.7));
+      // bande basse : position FERMÉE avant la nuit (mur teal au bout du bloc)
+      const cx0=283; closeCap.setAttribute('x1',cx0);closeCap.setAttribute('x2',cx0);closeCap.setAttribute('y1',BY-52);closeCap.setAttribute('y2',BY+8);setOp(closeCap,1);
+      // la nuit balaie la bande haute (déplacement continu, déjà à 35% en t=0)
+      const prog=clamp(0.35+u*0.135,0,1), sx=X0+prog*(X1-90-X0)+6*Math.sin(u*1.9);
+      sweep.setAttribute('x',sx.toFixed(1));sweep.setAttribute('y',TBT);sweep.setAttribute('width',90);sweep.setAttribute('height',TBB-TBT);
+      sweep.setAttribute('fill-opacity',0.20);setOp(sweep,1);
+      putCap(capA,'THE SAME POSITION',CX,680,INK,clamp((u-0.5)/0.4,0,1)*gf);
+      putCap(capB,'HELD OVERNIGHT',300,946,DEAD,clamp((u-1.1)/0.4,0,1)*gf);
+      putCap(capC,'CLOSED BEFORE NIGHT',300,1350,DEAD,clamp((u-1.6)/0.4,0,1)*gf);
+    }
+
+    // ═══ S2 — ONZE NUITS PASSENT, ET LE PRIX REVIENT À SON POINT DE DÉPART ═══
+    // Verbe visuel : l'accumulation (les nuits s'empilent une à une) + la boucle du prix qui revient.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjs();
+      const phT=u*1.7;
+      laneBase(baseT,TY);setOp(baseT,0.85);
+      setPrice(priceT,X0,X1,TY,50,phT);setOp(priceT,1);
+      drawPos(posT,155,TY,5*Math.sin(u*1.7)+2.5*Math.sin(u*3.0));
+      // les onze nuits défilent une à une et RESTENT (bande haute se remplit de nuits)
+      for(let i=0;i<11;i++){const ti=0.15+i*0.11,ap=clamp((u-ti)/0.28,0,1);
+        const drop=lerp(-22,0,eOut(clamp((u-ti)/0.30,0,1)));
+        const nx=X0+i*STEP+3*Math.sin(u*2.2-i*0.7);
+        const e=NIGHTS[i];e.setAttribute('x',nx.toFixed(1));e.setAttribute('y',(TBT+drop).toFixed(1));
+        e.setAttribute('width',13);e.setAttribute('height',TBB-TBT);e.setAttribute('fill-opacity',0.22);setOp(e,ap*0.9);}
+      putCap(capB,'ELEVEN NIGHTS PASS',862,TY+6,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capA,'THE PRICE CAME BACK',CX,680,INK,clamp((u-1.8)/0.6,0,1));
+    }
+
+    // ═══ S3 — UN COÛT DE FINANCEMENT À CHAQUE MINUIT : les tuiles grises tombent et s'empilent ═══
+    // Verbe visuel : la chute (chaque nuit lâche une tuile qui se pose sous la position).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjs();
+      const phT=u*1.65, phB=0.9+u*1.55;
+      // bande haute (avec ses onze nuits déjà là) + bande basse nue
+      laneBase(baseT,TY);setOp(baseT,0.85); laneBase(baseB,BY);setOp(baseB,0.85);
+      setPrice(priceT,X0,X1,TY,48,phT);setOp(priceT,1);
+      setPrice(priceB,X0,X1,BY,48,phB);setOp(priceB,1);
+      drawPos(posT,155,TY,4*Math.sin(u*1.7)+2*Math.sin(u*3.0));
+      drawPos(posB,155,BY,4*Math.sin(u*1.6)+2*Math.sin(u*2.8));
+      const cx0=283; closeCap.setAttribute('x1',cx0);closeCap.setAttribute('x2',cx0);closeCap.setAttribute('y1',BY-52);closeCap.setAttribute('y2',BY+8);setOp(closeCap,1);
+      for(let i=0;i<11;i++){const nx=X0+i*STEP+3*Math.sin(u*2.0-i*0.6);
+        const e=NIGHTS[i];e.setAttribute('x',nx.toFixed(1));e.setAttribute('y',TBT);e.setAttribute('width',13);
+        e.setAttribute('height',TBB-TBT);e.setAttribute('fill-opacity',0.20);setOp(e,0.75);}
+      // à chaque nuit, une tuile grise se détache et tombe se poser SOUS la position (pile qui grandit)
+      for(let i=0;i<11;i++){const ts=0.25+i*0.17,p=eOut(clamp((u-ts)/0.42,0,1));if(p<=0)continue;
+        const jit=(p>=1)?(3*Math.sin(u*2.3-i*0.8)+1.5*Math.sin(u*3.4-i)):0;
+        const sx=X0+i*STEP, tx=lerp(sx,158+jit,p), ty=lerp(TBB-24,900+i*13,p), tw=lerp(13,110,p);
+        const e=TILES[i];e.setAttribute('x',tx.toFixed(1));e.setAttribute('y',ty.toFixed(1));
+        e.setAttribute('width',tw.toFixed(1));e.setAttribute('height',11);setOp(e,clamp(p*1.3,0,1));}
+      putCap(capA,'CHARGED EVERY MIDNIGHT',CX,680,INK,clamp((u-0.3)/0.5,0,1));
+      putCap(capB,'FINANCING COST',862,972,DEAD,clamp((u-1.0)/0.5,0,1));
+      putCap(capC,'NO NIGHT — NO COST',300,1350,DEAD,clamp((u-1.6)/0.6,0,1));
+    }
+
+    // ═══ S4 — DIPTYQUE HELD / CLOSED : même résultat de trade, une colonne de coût d'un seul côté ═══
+    // Verbe visuel : la comparaison A/B (colonne grise vs sol nu, à la même base).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjs();
+      const baseY=1140;
+      // GAUCHE — HELD : colonne de onze tuiles grises (le coût) + petit résultat teal (le trade n'a rien donné)
+      // colonne PLEINE dès la frame 0 (loi frame 0) — elle vit par respiration x, elle ne se construit pas
+      const drift=5*Math.sin(u*1.5)+3*Math.sin(u*2.6);
+      for(let i=0;i<11;i++){const jit=drift+4*Math.sin(u*2.1-i*0.7)+2*Math.sin(u*3.3-i);
+        const e=TILES[i];e.setAttribute('x',(213+jit).toFixed(1));e.setAttribute('y',(baseY-20-i*21).toFixed(1));
+        e.setAttribute('width',110);e.setAttribute('height',18);setOp(e,1);}
+      const bob=5*Math.sin(u*1.9)+3*Math.sin(u*3.1);
+      resL.setAttribute('x',360);resL.setAttribute('y',(baseY-14+bob).toFixed(1));resL.setAttribute('width',96);resL.setAttribute('height',14);setOp(resL,1);
+      // DROITE — CLOSED : le même petit résultat teal, aucune colonne
+      resR.setAttribute('x',708);resR.setAttribute('y',(baseY-14-bob).toFixed(1));resR.setAttribute('width',96);resR.setAttribute('height',14);setOp(resR,1);
+      putCap(capA,'SAME RESULT — ONE PAID FOR TIME',CX,662,INK,clamp((u-0.3)/0.5,0,1));
+      putCap(capB,'HELD OVERNIGHT',300,baseY+70,DEAD,clamp((u-0.8)/0.5,0,1));
+      putCap(capC,'CLOSED IN TIME',756,baseY+70,DEAD,clamp((u-1.1)/0.5,0,1));
+      putCap(capD,'THE CALENDAR SEPARATED THEM',CX,1330,INK,clamp((u-2.0)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA PRISE + CTA ABONNEMENT (TOFU) ═══
+    // Verbe visuel : la comparaison portage / distance restante, puis le CTA tenu.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObjs();
+      // la distance restante avant la cible (flèche teal) + le portage si on tient (barre grise)
+      const ay=766, ax0=210, ax1=770;
+      targetArrow.setAttribute('x1',ax0);targetArrow.setAttribute('x2',ax1-14);targetArrow.setAttribute('y1',ay);targetArrow.setAttribute('y2',ay);setOp(targetArrow,1);
+      targetHead.setAttribute('points',`${ax1},${ay} ${ax1-26},${ay-15} ${ax1-26},${ay+15}`);setOp(targetHead,1);
+      const cw=268+22*Math.sin(u*1.6)+10*Math.sin(u*2.7);
+      carryBar.setAttribute('x',ax0);carryBar.setAttribute('y',832);carryBar.setAttribute('width',cw.toFixed(1));carryBar.setAttribute('height',26);setOp(carryBar,1);
+      // un repère teal parcourt la distance (vie continue — deux harmoniques, jamais de vitesse nulle prolongée)
+      const tf=0.5+0.42*Math.sin(u*1.1-1.3)+0.08*Math.sin(u*2.3);
+      const tv=ax0+ (ax1-14-ax0)*clamp(tf,0.02,0.98);
+      trav.setAttribute('cx',tv.toFixed(1));trav.setAttribute('cy',ay);setOp(trav,clamp((u-0.3)/0.5,0,1));
+      putCap(capA,'BEFORE ONE MORE NIGHT',CX,632,INK,clamp((u-0.2)/0.5,0,1));
+      putCap(capB,'DISTANCE LEFT TO TARGET',CX,712,YOU,clamp((u-0.5)/0.5,0,1));
+      putCap(capC,'CARRY IF YOU HOLD',862,850,DEAD,clamp((u-0.9)/0.5,0,1));
+      putCap(capD,'IF CARRY EATS THE TARGET, CLOSE',CX,932,INK,clamp((u-1.3)/0.6,0,1));
+      // CTA abonnement (aucun mot-clé) — affiché et prononcé, tenu jusqu'à la fin
+      const ca=clamp((u-1.5)/0.6,0,1);
+      ctaMain.setAttribute('y',(1066+2.5*Math.sin(u*1.4)).toFixed(1));setOp(ctaMain,ca);
+      ctaSub.setAttribute('y',1136);setOp(ctaSub,ca);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
