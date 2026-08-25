@@ -1,9 +1,0 @@
-Two traders hold the same position. One closes it before the session ends, and the other keeps it open for eleven nights.
-
-Nothing happens on the chart during those nights: the price ends up where it started, and the idea is neither right nor wrong yet. But a financing cost is applied every time the position crosses midnight, whether the trade is winning, losing or asleep. One of them paid for eleven nights of nothing, and the other paid for none, on exactly the same idea.
-
-A position you are not watching is still being charged.
-
-Follow @kongrave_ — the mechanics nobody explains.
-
-#trading #tradingcosts #swap #daytrading #forex #riskmanagement #propfirm #discipline #priceaction #trader
