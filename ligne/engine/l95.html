@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L95 « THE MARKET CHANGED ITS HANDWRITING » — MONTAGE PARALLÈLE. Deux bandes empilées portent le MÊME range (un sommet, un plancher)
+       et la MÊME séquence de prix ; elles avancent TOUJOURS ensemble jusqu'à S4. S1 : émotion frame 0 = levier TENSION — le range est net,
+       une bougie est saisie EN COURS DE CLÔTURE dont le corps pousse au-dessus du sommet qui a rejeté cinq fois (mèches déjà là). S2 :
+       accumulation cadencée — cinq allers-retours dans la zone, à chaque sommet une vente teal se pose et le prix redescend = payée cinq
+       fois, une habitude bâtie sur cinq preuves. S3 : comparaison isolée — les cinq bougies (mèche au-dessus, corps dessous) alignées, puis
+       la sixième dont le CORPS (creux) clôture au-dessus : l'écart est minuscule, le marché n'est plus le même. S4 (démonstration) : le
+       prix casse et RETESTE le sommet par le dessus ; en haut le trader ATTEND (pas de vente, le sommet tient en support teal) ; en bas la
+       vente se pose comme les cinq fois et cette fois le prix REPART EN HAUT, la position devient GRISE = perte. Même niveau, autre jeu.
+       S5 : la prise — une clôture de CORPS au-delà de la zone SUSPEND l'habitude (chevron barré gris) — puis le CTA d'abonnement
+       « @kongrave_ / the mechanics nobody explains » (TOFU, aucun mot-clé). Doctrine : aucun chiffre ; teal = le trader ; gris = perte ;
+       pas de brun ; bas du cadre vide ; aucun nom de broker. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── GÉOMÉTRIE DES DEUX BANDES (montage parallèle) — même range dessiné sur chacune ──
+    const XL=175, XR=905, W=XR-XL, NTOP=6, seg=W/NTOP;
+    function topX(i){return XL+(i+0.5)*seg;}                       // 6 sommets : 0..4 rejetés, 5 = la cassure
+    const BANDS=[{topY:680,floorY:860},{topY:1180,floorY:1360}];   // HAUTE = trader qui attend · BASSE = trader qui vend encore
+
+    // ── LES OBJETS : le range (sommet plein, plancher pointillé), le chemin de prix, les bougies, les ventes ──
+    const RANGE=BANDS.map(b=>({
+      rect:mk('rect',{fill:DEAD,'fill-opacity':0.09,rx:10,opacity:0}),
+      topEl:mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0}),          // LE SOMMET (le niveau qui compte)
+      supEl:mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0}),          // le sommet devenu SUPPORT (S4)
+      floorEl:mk('line',{stroke:INK,'stroke-width':3,'stroke-linecap':'round','stroke-dasharray':'3 14',opacity:0}),
+      path:mk('polyline',{fill:'none',stroke:INK,'stroke-width':4,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}),
+      loss:mk('line',{stroke:DEAD,'stroke-width':8,'stroke-linecap':'round',opacity:0}),          // le trait de perte (S4)
+      topY:b.topY, floorY:b.floorY
+    }));
+    // range de comparaison / prise, au centre (S3, S5)
+    const midRect=mk('rect',{fill:DEAD,'fill-opacity':0.09,rx:10,opacity:0});
+    const midTop=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const strike=mk('line',{stroke:DEAD,'stroke-width':8,'stroke-linecap':'round',opacity:0});    // la barre « suspendu » (S5)
+
+    // ── BOUGIES (mèche + corps) : le corps plein = rejet, le corps creux = la cassure qui clôture au-dessus ──
+    const CANDLES=[]; for(let i=0;i<48;i++){const wick=mk('line',{'stroke-width':4,'stroke-linecap':'round',opacity:0});const body=mk('rect',{rx:2,opacity:0});CANDLES.push({wick,body});}
+    let ck=0; function resetC(){ck=0;}
+    function candle(cx,w,yHi,yLo,ybTop,ybBot,color,filled,op){
+      const c=CANDLES[ck++]; if(!c)return;
+      c.wick.setAttribute('x1',cx.toFixed(1));c.wick.setAttribute('x2',cx.toFixed(1));
+      c.wick.setAttribute('y1',yHi.toFixed(1));c.wick.setAttribute('y2',yLo.toFixed(1));c.wick.setAttribute('stroke',color);setOp(c.wick,op);
+      c.body.setAttribute('x',(cx-w/2).toFixed(1));c.body.setAttribute('y',Math.min(ybTop,ybBot).toFixed(1));
+      c.body.setAttribute('width',w.toFixed(1));c.body.setAttribute('height',Math.max(3,Math.abs(ybBot-ybTop)).toFixed(1));
+      c.body.setAttribute('fill',filled?color:PAPER);c.body.setAttribute('stroke',color);c.body.setAttribute('stroke-width',filled?0:4);setOp(c.body,op);
+    }
+    function flushC(){for(let i=ck;i<CANDLES.length;i++){setOp(CANDLES[i].wick,0);setOp(CANDLES[i].body,0);}}
+    // bougie de REJET : la mèche dépasse le sommet, le corps reste DESSOUS
+    function rejCandleAtX(T,cx,ph,u,op){const bo=3*Math.sin(u*2.3+ph*0.8)+2*Math.sin(u*3.1+ph);
+      candle(cx,46, T-44+bo, T+74+bo*0.5, T+12+bo, T+66+bo, INK, true, op);}
+    // bougie de CASSURE : le CORPS (creux) clôture AU-DESSUS du sommet ; grow monte la clôture
+    function breakCandleAtX(T,cx,grow,ph,u,op){const bo=3*Math.sin(u*2.1+ph)+2*Math.sin(u*3.0+ph*1.3);
+      const closeY=lerp(T+8, T-70, clamp(grow,0,1))+bo;
+      candle(cx,54, T-96+bo, T+28+bo, closeY, T+16+bo, INK, false, op);}
+
+    // ── VENTES (chevron teal pointant vers le sommet) — teal = payée, gris = ratée ──
+    const CHEV=[]; for(let i=0;i<10;i++)CHEV.push(mk('path',{fill:'none','stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0}));
+    let hk=0; function resetH(){hk=0;}
+    function chevron(cx,cy,color,op){const e=CHEV[hk++]; if(!e)return;
+      e.setAttribute('d',`M ${(cx-19).toFixed(1)} ${(cy-18).toFixed(1)} L ${cx.toFixed(1)} ${cy.toFixed(1)} L ${(cx+19).toFixed(1)} ${(cy-18).toFixed(1)}`);
+      e.setAttribute('stroke',color);setOp(e,op);}
+    function flushH(){for(let i=hk;i<CHEV.length;i++)setOp(CHEV[i],0);}
+
+    // ── LE CHEMIN DE PRIX (position motion = dessin progressif, jamais l'opacité) ──
+    function keyPts(R){const T=R.topY,F=R.floorY,pts=[[XL,F-6]];
+      for(let i=0;i<NTOP;i++){pts.push([topX(i),T+4]);pts.push([Math.min(XR,topX(i)+seg*0.5),F-6]);}return pts;}
+    function drawKp(el,kp,nPts,u,op,A){
+      const n=Math.max(1,Math.min(kp.length,nPts)),full=Math.floor(n),frac=n-full,out=[];
+      const bp=(i)=>{let x=kp[i][0],y=kp[i][1];const bx=A*Math.sin(u*1.25+i*0.7)+0.6*A*Math.sin(u*2.2+i);const by=A*Math.sin(u*1.6+i*0.9)+0.6*A*Math.sin(u*2.7+i*1.3);return [x+bx,y+by];};
+      for(let i=0;i<full;i++)out.push(bp(i));
+      if(full<kp.length&&frac>0){const a=bp(Math.max(0,full-1)),b=bp(full);out.push([lerp(a[0],b[0],frac),lerp(a[1],b[1],frac)]);}
+      el.setAttribute('points',out.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));setOp(el,op);
+    }
+    // chemin de CASSURE (S4) : monte, casse au-dessus, redescend RETESTER le sommet, repart en haut
+    function breakoutKp(R){const T=R.topY,F=R.floorY;return [
+      [XL,F-6],[XL+0.18*W,T+26],[XL+0.34*W,T-72],[XL+0.50*W,T-16],[XL+0.62*W,T+8],[XL+0.71*W,T+2],[XL+0.86*W,T-72],[XR,T-116]];}
+
+    function drawRange(R,op){
+      R.rect.setAttribute('x',XL);R.rect.setAttribute('y',R.topY);R.rect.setAttribute('width',W);R.rect.setAttribute('height',R.floorY-R.topY);setOp(R.rect,op);
+      R.topEl.setAttribute('x1',XL);R.topEl.setAttribute('x2',XR);R.topEl.setAttribute('y1',R.topY);R.topEl.setAttribute('y2',R.topY);setOp(R.topEl,op);
+      R.floorEl.setAttribute('x1',XL);R.floorEl.setAttribute('x2',XR);R.floorEl.setAttribute('y1',R.floorY);R.floorEl.setAttribute('y2',R.floorY);setOp(R.floorEl,op*0.8);
+    }
+    function drawMid(T,op){
+      midRect.setAttribute('x',XL);midRect.setAttribute('y',T-92);midRect.setAttribute('width',W);midRect.setAttribute('height',184);setOp(midRect,op);
+      midTop.setAttribute('x1',XL);midTop.setAttribute('x2',XR);midTop.setAttribute('y1',T);midTop.setAttribute('y2',T);setOp(midTop,op);
+    }
+    function hideRanges(){for(const R of RANGE){setOp(R.rect,0);setOp(R.topEl,0);setOp(R.supEl,0);setOp(R.floorEl,0);setOp(R.path,0);setOp(R.loss,0);}
+      setOp(midRect,0);setOp(midTop,0);setOp(strike,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE LEVEL HELD FIVE TIMES','AND NOW'];
+    const FS=68,lineH=94,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36),capBig=caption(78),capMed=caption(42);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capBig,capMed])setOp(e,0);}
+
+    // ═══ S1 — OUVERTURE : le range, et la sixième bougie SAISIE en cours de clôture au-dessus du sommet ═══
+    // Verbe visuel : le franchissement saisi (le corps qui pousse à travers un niveau qui a rejeté cinq fois).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetC(); resetH(); hideRanges();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier TENSION) : les deux bandes montrent le MÊME range, cinq mèches déjà posées
+      //    au sommet, et la sixième bougie dont le corps CREUX pousse DÉJÀ au-dessus — caught mid-close, il respire.
+      const grow=clamp(0.42+u/2.2,0,1);
+      for(const R of RANGE){
+        drawRange(R,1);
+        drawKp(R.path, keyPts(R), keyPts(R).length, u, 1, 5);   // l'historique complet du range
+        for(let i=0;i<5;i++) rejCandleAtX(R.topY, topX(i), i, u, 1);
+        breakCandleAtX(R.topY, topX(5), grow, 5, u, 1);
+      }
+      putCap(capA,'IT CLOSES ABOVE',CX,1020,INK,clamp((u-1.4)/0.7,0,1)*gf);
+      flushC(); flushH();
+    }
+
+    // ═══ S2 — CONSTAT : cinq allers-retours, à chaque sommet une vente teal payée ═══
+    // Verbe visuel : l'accumulation cadencée (le range se remplit sommet par sommet, cinq preuves).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetC(); resetH(); hideRanges();
+      const revealN=1+eOut(clamp(u/2.4,0,1))*10;                // révèle 5 sommets (jusqu'au point 11)
+      for(const R of RANGE){
+        drawRange(R,1);
+        drawKp(R.path, keyPts(R), revealN, u, 1, 5);
+        for(let i=0;i<5;i++){
+          const cop=clamp((revealN-(1+2*i))/1.2,0,1); rejCandleAtX(R.topY, topX(i), i, u, cop);
+          const hop=clamp((revealN-(2+2*i))/1.2,0,1); chevron(topX(i), R.topY-52+3*Math.sin(u*2.0+i), YOU, hop);  // vendue au sommet, payée
+        }
+      }
+      putCap(capA,'FIVE DAYS, THE SAME MOVE',CX,1012,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capB,'SELL THE TOP — PAID',CX,1070,YOU,clamp((u-2.3)/0.7,0,1));
+      flushC(); flushH();
+    }
+
+    // ═══ S3 — RETOURNEMENT : cinq mèches contre un corps — l'écart minuscule qui change le marché ═══
+    // Verbe visuel : la comparaison isolée (A/B — mèche au-dessus vs corps au-dessus).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetC(); resetH(); hideRanges();
+      const T=900;
+      drawMid(T,1);
+      for(let i=0;i<5;i++) rejCandleAtX(T, topX(i), i, u, 1);
+      const grow=clamp((u-0.8)/1.2,0,1);
+      breakCandleAtX(T, topX(5), grow, 5, u, 1);
+      putCap(capA,'FIVE WICKS. ONE BODY.',CX,742,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capB,'THE SIXTH CLOSES ABOVE',CX,1052,YOU,clamp((u-1.4)/0.6,0,1)*grow);
+      putCap(capC,'A BODY, NOT A WICK — A DIFFERENT MARKET',CX,1130,INK,clamp((u-2.2)/0.7,0,1));
+      flushC(); flushH();
+    }
+
+    // ═══ S4 — ESCALADE (démonstration) : la cassure retestée — un attend, l'autre vend et perd ═══
+    // Verbe visuel : le diptyque divergent (les deux bandes cessent d'avancer ensemble).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetC(); resetH(); hideRanges();
+      const brk=clamp(u/1.5,0,1), retX=XL+0.71*W;
+      for(let b=0;b<2;b++){const R=RANGE[b];
+        drawRange(R,1);
+        // le sommet vire au SUPPORT (teal) sur sa moitié droite, une fois cassé
+        const sap=clamp((u-1.4)/0.8,0,1);
+        R.supEl.setAttribute('x1',XL+0.34*W);R.supEl.setAttribute('x2',XR);R.supEl.setAttribute('y1',R.topY);R.supEl.setAttribute('y2',R.topY);setOp(R.supEl,sap);
+        drawKp(R.path, breakoutKp(R), 1+brk*7, u, 1, 4);
+      }
+      // BANDE HAUTE — il ATTEND : aucune vente, le sommet tient en support (topEl viré teal)
+      putCap(capA,'HE WAITS',295,600,YOU,clamp((u-0.5)/0.6,0,1));
+      // BANDE BASSE — il VEND encore : la vente se pose au retest, le prix repart, la position devient GRISE
+      const R1=RANGE[1], sell=clamp((u-1.4)/0.5,0,1), loss=clamp((u-2.2)/1.3,0,1);
+      const colr=loss>0.5?DEAD:YOU;
+      if(brk*7>=6) chevron(retX, R1.topY-52+3*Math.sin(u*2.1), colr, sell);
+      R1.loss.setAttribute('x1',retX);R1.loss.setAttribute('y1',R1.topY);
+      R1.loss.setAttribute('x2',lerp(retX, XL+0.86*W, loss).toFixed(1));R1.loss.setAttribute('y2',lerp(R1.topY, R1.topY-72, loss).toFixed(1));setOp(R1.loss,loss);
+      putCap(capD,'HE SELLS AGAIN',300,1045,INK,clamp((u-1.4)/0.6,0,1));
+      putCap(capE,'LOSS',770,1050,DEAD,loss);
+      putCap(capB,'SAME LEVEL — A DIFFERENT GAME',CX,566,INK,clamp((u-2.7)/0.7,0,1));
+      flushC(); flushH();
+    }
+
+    // ═══ S5 — LEÇON : une clôture de corps au-delà de la zone SUSPEND l'habitude — puis le CTA d'abonnement ═══
+    // Verbe visuel : la règle tenue (le geste habituel barré) + l'image finale tenue.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetC(); resetH(); hideRanges();
+      const T=812;
+      drawMid(T,1);
+      const grow=clamp(u/1.3,0,1);
+      breakCandleAtX(T, 470, grow, 0, u, 1);                    // le corps qui clôture au-delà de la zone
+      // l'habitude (vendre le sommet) SUSPENDUE : chevron gris barré, à droite du corps
+      const cy=T-50+3*Math.sin(u*1.9), sap=clamp((u-1.0)/0.6,0,1);
+      chevron(720, cy, DEAD, sap);
+      strike.setAttribute('x1',(720-26).toFixed(1));strike.setAttribute('y1',(cy-30).toFixed(1));
+      strike.setAttribute('x2',(720+26).toFixed(1));strike.setAttribute('y2',(cy+6).toFixed(1));setOp(strike,sap);
+      putCap(capA,'A BODY BEYOND THE ZONE',CX,636,INK,clamp((u-0.2)/0.6,0,1));
+      putCap(capB,'SUSPENDS THE HABIT',CX,710,INK,clamp((u-0.9)/0.6,0,1));
+      // CTA d'abonnement (TOFU — aucun mot-clé)
+      const bob=4*Math.sin(u*1.5)+2*Math.sin(u*2.3);
+      putCap(capBig,'@kongrave_',CX,1176+bob*0.4,YOU,clamp((u-1.9)/0.7,0,1));
+      putCap(capMed,'the mechanics nobody explains',CX,1256+bob*0.4,INK,clamp((u-2.4)/0.7,0,1));
+      flushC(); flushH();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
