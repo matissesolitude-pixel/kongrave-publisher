@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L89 « THE STOP THAT MOVED TO ZERO » — MONTAGE PARALLÈLE. Deux bandes empilées portent le MÊME trade. S1 : émotion frame 0 =
+       levier RECONNAISSANCE DE SOI — deux positions teal identiques, mêmes stops posés dessous, et une MAIN saisie en cours de geste
+       remonte le stop de la bande haute vers le prix d'entrée (le geste que tout le monde a fait). Les deux bandes avancent toujours
+       ENSEMBLE ; le seul écart introduit est ce geste. S2 : le prix monte des deux côtés, un gain latent se dessine, une onde part de ce
+       gain et remonte vers la main (c'est le gain qui a demandé le stop, pas le graphe). S3 : le prix retrace de la même amplitude au même
+       instant ; une bande de respiration est dessinée autour de l'entrée ; le stop du haut (à l'entrée) est DEDANS → touché, position
+       grise ; le stop du bas est DEHORS → intact, position teal. S4 (démonstration) : le prix repart et parcourt tout le mouvement ; en
+       bas la position teal l'accompagne jusqu'à la cible, en haut la position grise reste à l'entrée et on MESURE ce qu'elle a manqué —
+       exactement le mouvement entier. S5 : la prise — le stop ne bouge qu'avec la STRUCTURE, jamais avec le gain latent (retiré du cadre) —
+       puis le CTA d'abonnement « @kongrave_ / the mechanics nobody explains » (TOFU, aucun mot-clé). Doctrine : aucun chiffre ; teal = toi ;
+       gris = perte / sortie ; pas de brun ; bas du cadre vide ; aucun nom de broker. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── GÉOMÉTRIE DES DEUX BANDES (montage parallèle) ──
+    const AX=100, AW=840, AY=615, AH=315, EYA=795;   // bande HAUTE (le trader qui remonte le stop) — prix d'entrée EYA
+    const BX=100, BW=840, BY=1010, BH=315, EYB=1190; // bande BASSE (le trader qui ne touche à rien) — prix d'entrée EYB
+    const PX0=155, PX1=885, NPTS=28;                 // plot horizontal commun aux deux bandes
+    const STOPLOW=-50;                               // stop initial, sous l'entrée (50px)
+    const BB=20;                                     // demi-hauteur de la bande de respiration (S3)
+
+    // ── LES OBJETS ──
+    const frameA=mk('rect',{x:AX,y:AY,width:AW,height:AH,rx:18,fill:'none',stroke:INK,'stroke-width':3,opacity:0});
+    const frameB=mk('rect',{x:BX,y:BY,width:BW,height:BH,rx:18,fill:'none',stroke:INK,'stroke-width':3,opacity:0});
+    const entryA=mk('line',{x1:PX0,x2:PX1,y1:EYA,y2:EYA,stroke:YOU,'stroke-width':4,'stroke-dasharray':'10 12',opacity:0});
+    const entryB=mk('line',{x1:PX0,x2:PX1,y1:EYB,y2:EYB,stroke:YOU,'stroke-width':4,'stroke-dasharray':'10 12',opacity:0});
+    const stopA=mk('line',{x1:PX0,x2:PX1,stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const stopB=mk('line',{x1:PX0,x2:PX1,stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const ghostA=mk('line',{x1:PX0,x2:PX1,stroke:DEAD,'stroke-width':4,'stroke-dasharray':'6 12',opacity:0}); // ancien niveau du stop (S1)
+    const priceA=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const priceB=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const bandA=mk('rect',{fill:DEAD,'fill-opacity':0.20,rx:6,opacity:0});
+    const bandB=mk('rect',{fill:DEAD,'fill-opacity':0.20,rx:6,opacity:0});
+    const gapA=mk('rect',{fill:DEAD,'fill-opacity':0.30,rx:4,opacity:0});   // S4 : le mouvement manqué
+    const waveDot=mk('circle',{r:11,fill:YOU,opacity:0});                   // S2 : l'onde partie du gain
+    const discA=mk('circle',{r:16,fill:YOU,opacity:0});
+    const discB=mk('circle',{r:16,fill:YOU,opacity:0});
+    // ── LA POIGNÉE DE DÉPLACEMENT (S1) — le stop est SAISI et tiré vers le haut : une poignée sur la ligne,
+    //    reliée par une piste de glissement au niveau de départ (ghostA). C'est le geste « je remonte mon stop »,
+    //    rendu sans dessiner de main (une main à un doigt se lit mal). ──
+    const dragTrk=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'5 8',opacity:0}); // la piste du glissement
+    const gGrip=mk('g',{opacity:0});
+    mk('rect',{x:-44,y:-17,width:88,height:34,rx:12,fill:INK},gGrip);       // la poignée, à cheval sur la ligne
+    mk('rect',{x:-18,y:-9,width:5,height:18,rx:2.5,fill:PAPER},gGrip);      // crans de préhension
+    mk('rect',{x:-2.5,y:-9,width:5,height:18,rx:2.5,fill:PAPER},gGrip);
+    mk('rect',{x:13,y:-9,width:5,height:18,rx:2.5,fill:PAPER},gGrip);
+    // ── S5 : le graphe de la prise ──
+    const s5price=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const s5struct=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'10 12',opacity:0});
+    const s5stop=mk('line',{stroke:YOU,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const s5gain=mk('rect',{fill:DEAD,'fill-opacity':0.24,rx:6,opacity:0}); // le gain latent, montré puis retiré
+    const s5disc=mk('circle',{r:16,fill:YOU,opacity:0});
+    const cta1=mk('text',{x:CX,'text-anchor':'middle',fill:YOU,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':76,'data-fs':76,'letter-spacing':'1',opacity:0});
+    const cta2=mk('text',{x:CX,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':700,'font-size':40,'data-fs':40,'letter-spacing':'1.5',opacity:0});
+
+    const HIDE=[frameA,frameB,entryA,entryB,stopA,stopB,ghostA,priceA,priceB,bandA,bandB,gapA,waveDot,discA,discB,dragTrk,gGrip,s5price,s5struct,s5stop,s5gain,s5disc,cta1,cta2];
+    function hideAll(){for(const e of HIDE)setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['SAME TRADE','WHY DOES ONE CLOSE'];
+    const FS=68,lineH=92,y0=190,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+90,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(40),capMid=caption(44),capL=caption(46),capL2=caption(40);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capMid,capL,capL2])setOp(e,0);}
+    // Slots d'étiquettes — bandes horizontales VIDES, jamais dans la colonne d'un objet animé
+    const SLOT_A=600, SLOT_MID=978, SLOT_B=1385;
+
+    // ── LE PRIX PARTAGÉ (identique sur les deux bandes — c'est la LOI du montage parallèle) ──
+    // offset = px AU-DESSUS de l'entrée (positif = plus haut). Deux harmoniques de vie près de la tête.
+    function laneOffset(scene,x01,u,head){
+      let base;
+      if(scene===1){ base=5*Math.sin(x01*7+0.4)+5*x01; }                                  // à peine ouvert, colle à l'entrée
+      else if(scene===2){ base=78*eOut(clamp(x01,0,1)); }                                  // montée vers le gain
+      else if(scene===3){ base=(x01<0.45)?78*eOut(x01/0.45):lerp(78,-8,eInOut((x01-0.45)/0.55)); } // monte puis retrace
+      else if(scene===4){ base=(x01<0.30)?78*eOut(x01/0.30):(x01<0.55?lerp(78,-8,eInOut((x01-0.30)/0.25)):lerp(-8,135,eOut((x01-0.55)/0.45))); } // journey complet + cible
+      else base=0;
+      const wl=clamp((x01-(head-0.4))/0.4,0,1);
+      const wob=(3*Math.sin(u*2.3-x01*9)+2*Math.sin(u*3.6-x01*5))*wl;
+      return base+wob;
+    }
+    function setPrice(el,entryY,head,scene,u){ const pts=[]; for(let i=0;i<NPTS;i++){const x01=i/(NPTS-1); if(x01>head+1e-6)break;
+      pts.push((PX0+(PX1-PX0)*x01).toFixed(1)+','+(entryY-laneOffset(scene,x01,u,head)).toFixed(1)); } el.setAttribute('points',pts.join(' ')); }
+    const headPt=(entryY,head,scene,u)=>({x:PX0+(PX1-PX0)*head, y:entryY-laneOffset(scene,head,u,head)});
+    function bob(u){ return {dx:5*Math.sin(u*2.2)+3*Math.sin(u*3.5), dy:4*Math.sin(u*2.7)+2*Math.sin(u*4.1)}; }
+    function frames(){ setOp(frameA,0.16); setOp(frameB,0.16); }
+
+    // ═══ S1 — LE GESTE : la main remonte le stop de la bande haute vers l'entrée ═══
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll(); frames();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      // question — 1re ligne pleine dès t=0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.95,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // deux bandes IDENTIQUES : mêmes prix, entrées, discs — le prix colle à l'entrée (position tout juste ouverte)
+      setOp(entryA,0.5); setOp(entryB,0.5);
+      setPrice(priceA,EYA,1,1,u); setOp(priceA,1);
+      setPrice(priceB,EYB,1,1,u); setOp(priceB,1);
+      const b=bob(u), hA=headPt(EYA,1,1,u), hB=headPt(EYB,1,1,u);
+      discA.setAttribute('cx',(hA.x+b.dx).toFixed(1));discA.setAttribute('cy',(hA.y+b.dy).toFixed(1));discA.setAttribute('fill',YOU);setOp(discA,1);
+      discB.setAttribute('cx',(hB.x+b.dx).toFixed(1));discB.setAttribute('cy',(hB.y+b.dy).toFixed(1));discB.setAttribute('fill',YOU);setOp(discB,1);
+      // stop du bas : statique, posé sous l'entrée
+      const yB=EYB-STOPLOW; stopB.setAttribute('y1',yB);stopB.setAttribute('y2',yB);setOp(stopB,1);
+      // stop du haut : ghost à l'ancien niveau, puis remontée vers l'entrée (le geste, DÉJÀ en cours à t=0)
+      const yG=EYA-STOPLOW; ghostA.setAttribute('y1',yG);ghostA.setAttribute('y2',yG);setOp(ghostA,0.55);
+      const offA=lerp(STOPLOW,0,eInOut(clamp(u/1.4,0,1))); const yA=EYA-offA;
+      stopA.setAttribute('y1',yA);stopA.setAttribute('y2',yA);setOp(stopA,1);
+      // la poignée saisit le stop du haut et le tire vers l'entrée — la piste de glissement montre le trajet parcouru
+      const hx=300+2*Math.sin(u*2.4)+1.5*Math.sin(u*4.1);
+      dragTrk.setAttribute('x1',hx.toFixed(1));dragTrk.setAttribute('x2',hx.toFixed(1));dragTrk.setAttribute('y1',yG);dragTrk.setAttribute('y2',yA.toFixed(1));setOp(dragTrk,0.7);
+      gGrip.setAttribute('transform',`translate(${hx.toFixed(1)} ${yA.toFixed(1)})`);setOp(gGrip,1);
+      // étiquettes (retardées : la frame 0 est une IMAGE) — chacune dans son slot vide
+      putCap(capA,'STOP DRAGGED UP TO ENTRY',CX,SLOT_A,DEAD,clamp((u-1.6)/0.6,0,1)*gf);
+      putCap(capB,'STOP LEFT WHERE IT WAS',CX,SLOT_B,YOU,clamp((u-2.1)/0.6,0,1)*gf);
+    }
+
+    // ═══ S2 — LA MONTÉE + L'ONDE : le gain latent demande le stop (pas le graphe) ═══
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll(); frames();
+      setOp(entryA,0.4); setOp(entryB,0.4);
+      const head=lerp(0.60,1,eOut(clamp(u/2.2,0,1)));
+      setPrice(priceA,EYA,head,2,u); setOp(priceA,1);
+      setPrice(priceB,EYB,head,2,u); setOp(priceB,1);
+      // stop haut posé à l'entrée (break-even) ; stop bas resté sous l'entrée
+      const yA=EYA-0, yB=EYB-STOPLOW;
+      stopA.setAttribute('y1',yA);stopA.setAttribute('y2',yA);setOp(stopA,0.9);
+      stopB.setAttribute('y1',yB);stopB.setAttribute('y2',yB);setOp(stopB,0.9);
+      const b=bob(u), hA=headPt(EYA,head,2,u), hB=headPt(EYB,head,2,u);
+      discA.setAttribute('cx',(hA.x+b.dx).toFixed(1));discA.setAttribute('cy',(hA.y+b.dy).toFixed(1));discA.setAttribute('fill',YOU);setOp(discA,1);
+      discB.setAttribute('cx',(hB.x+b.dx).toFixed(1));discB.setAttribute('cy',(hB.y+b.dy).toFixed(1));discB.setAttribute('fill',YOU);setOp(discB,1);
+      // l'onde : partie du gain (tête, en haut), elle remonte vers la main (le stop, à l'entrée, à gauche)
+      const p=(u*0.5)%1, wx=lerp(hA.x,300,eInOut(p)), wy=lerp(hA.y,EYA,eInOut(p));
+      waveDot.setAttribute('cx',wx.toFixed(1));waveDot.setAttribute('cy',wy.toFixed(1));setOp(waveDot,clamp((u-0.6)/0.4,0,1)*(0.5+0.5*Math.sin(p*Math.PI)));
+      putCap(capA,'LOCKING IN THE PROFIT',CX,SLOT_A,DEAD,clamp((u-1.0)/0.6,0,1));
+      putCap(capMid,'THE GAIN ASKED — NOT THE CHART',CX,SLOT_MID,INK,clamp((u-1.6)/0.7,0,1));
+      putCap(capB,'SAME TRADE, UNTOUCHED',CX,SLOT_B,YOU,clamp((u-1.3)/0.6,0,1));
+    }
+
+    // ═══ S3 — LE RETRACEMENT + LA TOUCHE : la respiration atteint un stop, pas l'autre ═══
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll(); frames();
+      setOp(entryA,0.4); setOp(entryB,0.4);
+      // bande de respiration autour de l'entrée (dessin) — les étiquettes restent dans leurs slots
+      bandA.setAttribute('x',PX0);bandA.setAttribute('width',PX1-PX0);bandA.setAttribute('y',EYA-BB);bandA.setAttribute('height',2*BB);setOp(bandA,1);
+      bandB.setAttribute('x',PX0);bandB.setAttribute('width',PX1-PX0);bandB.setAttribute('y',EYB-BB);bandB.setAttribute('height',2*BB);setOp(bandB,1);
+      const head=lerp(0.55,1,eOut(clamp(u/2.2,0,1)));
+      const CLOSE=0.90, closed=head>=CLOSE;           // le stop du haut (à l'entrée) est DANS la bande → touché
+      setPrice(priceA,EYA,head,3,u); priceA.setAttribute('stroke',closed?DEAD:INK); setOp(priceA,1);
+      setPrice(priceB,EYB,head,3,u); priceB.setAttribute('stroke',INK); setOp(priceB,1);
+      // stops : haut à l'entrée (dans la bande), bas sous l'entrée (hors bande)
+      const yA=EYA-0, yB=EYB-STOPLOW;
+      stopA.setAttribute('y1',yA);stopA.setAttribute('y2',yA);stopA.setAttribute('stroke-width',closed?9:7);setOp(stopA,1);
+      stopB.setAttribute('y1',yB);stopB.setAttribute('y2',yB);stopB.setAttribute('stroke-width',7);setOp(stopB,0.9);
+      const b=bob(u);
+      // disc bas : suit le prix, encore vivant (teal)
+      const hB=headPt(EYB,head,3,u);
+      discB.setAttribute('cx',(hB.x+b.dx).toFixed(1));discB.setAttribute('cy',(hB.y+b.dy).toFixed(1));discB.setAttribute('fill',YOU);setOp(discB,1);
+      // disc haut : suit le prix jusqu'à la touche, puis GRIS et figé à l'entrée (fermé pour rien)
+      if(!closed){ const hA=headPt(EYA,head,3,u); discA.setAttribute('cx',(hA.x+b.dx).toFixed(1));discA.setAttribute('cy',(hA.y+b.dy).toFixed(1));discA.setAttribute('fill',YOU);setOp(discA,1);
+      } else { const cx=PX0+(PX1-PX0)*CLOSE; discA.setAttribute('cx',cx.toFixed(1));discA.setAttribute('cy',EYA.toFixed(1));discA.setAttribute('fill',DEAD);setOp(discA,1); }
+      putCap(capMid,'PRICE JUST BREATHING',CX,SLOT_MID,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capB,'NOT TOUCHED — STILL IN',CX,SLOT_B,YOU,clamp((u-0.6)/0.6,0,1));
+      putCap(capA,'TOUCHED — CLOSED FOR NOTHING',CX,SLOT_A,DEAD,closed?clamp((head-CLOSE)/0.05,0,1):0);
+    }
+
+    // ═══ S4 — LA REPRISE + LA MESURE : le prix parcourt tout, un seul est encore là ═══
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll(); frames();
+      setOp(entryA,0.4); setOp(entryB,0.4);
+      const head=lerp(0.50,1,eOut(clamp(u/2.4,0,1)));
+      const b=bob(u);
+      // bande BASSE : la position teal accompagne le prix jusqu'à la cible
+      setPrice(priceB,EYB,head,4,u); priceB.setAttribute('stroke',INK); setOp(priceB,1);
+      const hB=headPt(EYB,head,4,u);
+      discB.setAttribute('cx',(hB.x+b.dx).toFixed(1));discB.setAttribute('cy',(hB.y+b.dy).toFixed(1));discB.setAttribute('fill',YOU);setOp(discB,1);
+      // bande HAUTE : le marché monte (gris, ce n'est plus son trade), sa position grise reste à l'entrée
+      setPrice(priceA,EYA,head,4,u); priceA.setAttribute('stroke',DEAD); setOp(priceA,0.85);
+      const cxA=PX0+(PX1-PX0)*0.90; discA.setAttribute('cx',cxA.toFixed(1));discA.setAttribute('cy',EYA.toFixed(1));discA.setAttribute('fill',DEAD);setOp(discA,1);
+      // la MESURE : le mouvement manqué = de l'entrée jusqu'à la cible atteinte, à droite
+      const topY=EYA-laneOffset(4,Math.min(head,1),u,head), gy=Math.min(topY,EYA), gh=Math.abs(EYA-topY);
+      if(head>0.6){ gapA.setAttribute('x',PX1-34);gapA.setAttribute('width',44);gapA.setAttribute('y',gy.toFixed(1));gapA.setAttribute('height',gh.toFixed(1));setOp(gapA,clamp((head-0.6)/0.3,0,1)); }
+      putCap(capB,'RODE IT ALL THE WAY',CX,SLOT_B,YOU,clamp((u-0.8)/0.6,0,1));
+      putCap(capMid,'RIGHT ON THE TRADE, NOT IN IT',CX,SLOT_MID,INK,clamp((u-1.6)/0.7,0,1));
+      putCap(capA,'OUT — MISSED THE WHOLE MOVE',CX,SLOT_A,DEAD,clamp((u-1.3)/0.7,0,1));
+    }
+
+    // ═══ S5 — LA PRISE + LE CTA D'ABONNEMENT (TOFU, aucun mot-clé) ═══
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const EY=900, TX0=175, TX1=905;                 // un seul graphe, centré
+      // règle (la prise actionnable) — présente dès l'ouverture (la scène ouvre sur SES objets pleins)
+      putCap(capL,'MOVE THE STOP WITH STRUCTURE',CX,632,INK,clamp(u/0.3,0,1));
+      putCap(capL2,'NEVER WITH THE PROFIT',CX,694,DEAD,clamp((u-0.4)/0.5,0,1));
+      // le prix monte ; vie continue à deux harmoniques
+      const pts=[]; for(let i=0;i<NPTS;i++){const x01=i/(NPTS-1);const yy=EY-(70*eOut(x01)+3*Math.sin(u*2.2-x01*8)+2*Math.sin(u*3.4-x01*5));pts.push((TX0+(TX1-TX0)*x01).toFixed(1)+','+yy.toFixed(1));}
+      s5price.setAttribute('points',pts.join(' '));setOp(s5price,1);
+      const hx=TX1, hy=EY-70, bb=bob(u);
+      s5disc.setAttribute('cx',(hx+bb.dx).toFixed(1));s5disc.setAttribute('cy',(hy+bb.dy).toFixed(1));setOp(s5disc,1);
+      // structure et stop sont là DÈS L'OUVERTURE ; la structure se déplace ensuite vers le haut → le stop la SUIT (teal)
+      const shift=lerp(0,44,eInOut(clamp((u-0.4)/1.1,0,1)));
+      const structY=EY+58-shift, stopY=structY+18;
+      s5struct.setAttribute('x1',TX0);s5struct.setAttribute('x2',TX1);s5struct.setAttribute('y1',structY);s5struct.setAttribute('y2',structY);setOp(s5struct,1);
+      s5stop.setAttribute('x1',TX0);s5stop.setAttribute('x2',TX1);s5stop.setAttribute('y1',stopY);s5stop.setAttribute('y2',stopY);setOp(s5stop,1);
+      // le gain latent : présent à l'ouverture, puis RETIRÉ du cadre (il n'entre plus dans la décision)
+      const gone=clamp((u-1.3)/0.7,0,1), gtop=EY-70;
+      s5gain.setAttribute('x',TX1-150);s5gain.setAttribute('width',150);s5gain.setAttribute('y',gtop.toFixed(1));s5gain.setAttribute('height',(EY-gtop).toFixed(1));
+      setOp(s5gain,(1-gone));
+      // CTA d'abonnement — zone médiane, bas du cadre vide, aucun mot-clé
+      const ca=clamp((u-1.6)/0.6,0,1);
+      putCap(cta1,'@kongrave_',CX,1150,YOU,ca);
+      putCap(cta2,'the mechanics nobody explains',CX,1225,INK,clamp((u-1.9)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
