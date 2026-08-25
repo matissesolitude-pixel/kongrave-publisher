@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L96 « THREE POSITIONS, ONE RISK » — MONTAGE PARALLÈLE, deux bandes horizontales.
+       S1 : émotion frame 0 = levier CURIOSITÉ — les deux bandes s'ouvrent EN MÊME TEMPS, trois positions teal chacune,
+       identiques, déjà en mouvement (elles respirent) ; la 3e finit de se poser. Rien ne les distingue : combien de risques ?
+       S2 : la bande HAUTE trace — les trois trajectoires S'ÉCARTENT (une monte, une plate, une descend), l'écart reste large :
+       trois risques différents. La bande basse reste sur ses stubs, vivante. S3 : la bande BASSE trace — les trois trajectoires
+       se SUPERPOSENT au trait près, l'écart tombe à zéro : trois tickets, un seul risque. La haute reste écartée, vivante.
+       S4 : un mouvement adverse (gris) TRAVERSE les deux bandes au même instant. En haut il touche UNE position ; en bas il
+       touche les TROIS — trois barres de perte grises S'EMPILENT (×3 la perte). S5 : la prise — mesurer la corrélation avant
+       d'ouvrir, RÉDUIRE la taille jusqu'à ce que trois tickets = un seul risque ; CTA abonnement @kongrave_ tenu.
+       Doctrine : aucun chiffre ; trader/toi = teal ; perte = gris ; pas de brun ; bas du cadre vide ~12% ; aucun mot-clé. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── GÉOMÉTRIE DES DEUX BANDES ──
+    const OX=300, TL=575;            // les trajectoires : x 300 → 875 (gouttière gauche pour les étiquettes)
+    const BY1=760, BY2=1090;         // baseline bande HAUTE / bande BASSE
+    const NP=30;                     // segments par trajectoire
+    const STUB=0.24;                 // longueur des positions « à peine ouvertes » (S1, et point de reprise S2/S3)
+    // paramètres par position. TOP = divergent (phases/amplis différentes, offsets qui s'écartent).
+    // BOT = corrélé (MÊME phase, MÊME ampli, offsets qui convergent vers ~0 → superposition).
+    const TOP=[{s:-44,e:-104,ph:0.2,a:20,t:0.0},{s:0,e:0,ph:2.3,a:20,t:1.1},{s:44,e:104,ph:4.1,a:20,t:2.2}];
+    const BOT=[{s:-44,e:-7,ph:1.0,a:22,t:0.5},{s:0,e:0,ph:1.0,a:22,t:0.5},{s:44,e:7,ph:1.0,a:22,t:0.5}];
+
+    // trajectoires (teal) + têtes (pastilles teal)
+    const TRJ=[[],[]], HD=[[],[]];
+    for(let b=0;b<2;b++)for(let i=0;i<3;i++){
+      TRJ[b][i]=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+      HD[b][i]=mk('circle',{r:16,fill:YOU,opacity:0});
+    }
+    const divider=mk('line',{stroke:INK,'stroke-width':3,'stroke-dasharray':'10 16',opacity:0});
+    // mesure d'écart (bracket vertical) : ligne + deux capuchons
+    const brkL=mk('line',{stroke:DEAD,'stroke-width':5,opacity:0});
+    const brkT=mk('line',{stroke:DEAD,'stroke-width':5,opacity:0});
+    const brkB=mk('line',{stroke:DEAD,'stroke-width':5,opacity:0});
+    // mouvement adverse (S4) : barre grise qui balaie
+    const strike=mk('rect',{fill:DEAD,'fill-opacity':0.45,rx:5,opacity:0});
+    // barres de perte (S4) : gris. A = 1 ; B = 3 empilées
+    const lossA=mk('rect',{fill:DEAD,rx:4,opacity:0});
+    const lossB=[mk('rect',{fill:DEAD,rx:4,opacity:0}),mk('rect',{fill:DEAD,rx:4,opacity:0}),mk('rect',{fill:DEAD,rx:4,opacity:0})];
+    // barres tickets (S5) : teal
+    const tick5=[mk('rect',{fill:YOU,rx:6,opacity:0}),mk('rect',{fill:YOU,rx:6,opacity:0}),mk('rect',{fill:YOU,rx:6,opacity:0})];
+
+    function trajPts(oy,startO,endO,rev,phase,amp,u,tph){
+      const R=clamp(rev,0,1), steps=Math.max(2,Math.round(NP*R)), pts=[];
+      for(let k=0;k<=steps;k++){
+        const s=R*k/steps, x=OX+TL*s;
+        const off=lerp(startO,endO,s*s);   // divergence/convergence quadratique : plate près de l'origine
+                                           // (les deux bandes sont IDENTIQUES tant que le tracé est court, S1),
+                                           // elle ne s'ouvre qu'à mesure que la trajectoire s'étire (S2/S3)
+        const shape=amp*(Math.sin(5.5*s+phase+0.30*u)+0.5*Math.sin(9.5*s+phase*1.7+0.20*u));
+        const breathe=5*Math.sin(u*1.7+tph)+3*Math.sin(u*2.7+tph*1.3);
+        pts.push([x, oy+off+shape+breathe]);
+      }
+      return pts;
+    }
+    function setPoly(el,pts,op,color){el.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));if(color)el.setAttribute('stroke',color);setOp(el,op);}
+    // dessine une bande complète et renvoie les têtes {y0,y2} (extrêmes) pour la mesure d'écart
+    function drawBand(b,oy,rev,u,color){
+      const P=(b===0?TOP:BOT); const heads=[];
+      for(let i=0;i<3;i++){
+        const pts=trajPts(oy,P[i].s,P[i].e,rev,P[i].ph,P[i].a,u,P[i].t);
+        const col=(color&&color[i])?color[i]:YOU;
+        setPoly(TRJ[b][i],pts,1,col);
+        const h=pts[pts.length-1]; heads.push(h);
+        HD[b][i].setAttribute('cx',h[0].toFixed(1));HD[b][i].setAttribute('cy',h[1].toFixed(1));
+        HD[b][i].setAttribute('fill',col);setOp(HD[b][i],1);
+      }
+      return heads;
+    }
+    function hideBand(b){for(let i=0;i<3;i++){setOp(TRJ[b][i],0);setOp(HD[b][i],0);}}
+    function hideExtra(){setOp(divider,0);setOp(brkL,0);setOp(brkT,0);setOp(brkB,0);setOp(strike,0);setOp(lossA,0);for(const e of lossB)setOp(e,0);for(const e of tick5)setOp(e,0);}
+    function showDivider(op){divider.setAttribute('x1',150);divider.setAttribute('x2',930);divider.setAttribute('y1',925);divider.setAttribute('y2',925);setOp(divider,op);}
+    // bracket vertical entre deux y à l'abscisse x
+    function bracket(x,yTop,yBot,op){
+      brkL.setAttribute('x1',x);brkL.setAttribute('x2',x);brkL.setAttribute('y1',yTop);brkL.setAttribute('y2',yBot);setOp(brkL,op);
+      brkT.setAttribute('x1',x-16);brkT.setAttribute('x2',x+16);brkT.setAttribute('y1',yTop);brkT.setAttribute('y2',yTop);setOp(brkT,op);
+      brkB.setAttribute('x1',x-16);brkB.setAttribute('x2',x+16);brkB.setAttribute('y1',yBot);brkB.setAttribute('y2',yBot);setOp(brkB,op);
+    }
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THREE TICKETS','HOW MANY RISKS'];
+    const FS=72,lineH=98,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34),capG=caption(58),capH=caption(38);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH])setOp(e,0);}
+
+    // ═══ S1 — OUVERTURE : deux bandes, trois positions chacune, identiques, déjà en mouvement ═══
+    // Verbe visuel : l'ouverture simultanée (les six positions respirent, la 3e se pose).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideExtra();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      showDivider(clamp(u/0.25,0,1)*0.5);
+      // les trois positions sont là dès la frame 0 ; la 3e finit juste de SE POSER (elle arrive d'en haut)
+      const rev=STUB;
+      for(let b=0;b<2;b++){const P=(b===0?TOP:BOT),oy=(b===0?BY1:BY2);
+        for(let i=0;i<3;i++){
+          const dy=(i===2)?(1-eOut(clamp((u-0.05)/0.40,0,1)))*-24:0;
+          let pts=trajPts(oy,P[i].s,P[i].e,rev,P[i].ph,P[i].a,u,P[i].t);
+          if(dy)pts=pts.map(p=>[p[0],p[1]+dy]);
+          setPoly(TRJ[b][i],pts,1,YOU);
+          const h=pts[pts.length-1];HD[b][i].setAttribute('cx',h[0].toFixed(1));HD[b][i].setAttribute('cy',h[1].toFixed(1));HD[b][i].setAttribute('fill',YOU);setOp(HD[b][i],1);}}
+      putCap(capC,'TRADER A',158,BY1+8,INK,clamp(u/0.3,0,1));
+      putCap(capD,'TRADER B',158,BY2+8,INK,clamp((u-0.1)/0.3,0,1));
+    }
+
+    // ═══ S2 — LA BANDE HAUTE TRACE : les trois trajectoires s'écartent ═══
+    // Verbe visuel : l'écartement (trois lignes qui divergent, un écart large qui s'ouvre).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideExtra();
+      showDivider(0.5);
+      const revTop=lerp(STUB,1,clamp(u/1.2,0,1));
+      const hTop=drawBand(0,BY1,revTop,u,null);       // haute : trace et diverge (reprise exacte depuis S1)
+      drawBand(1,BY2,STUB,u,null);                    // basse : positions à peine ouvertes, vivantes
+      // mesure d'écart LARGE à droite (entre position haute et position basse)
+      if(revTop>0.55){const bx=OX+TL*revTop+22, ap=clamp((u-1.3)/0.5,0,1);
+        bracket(bx, hTop[0][1], hTop[2][1], ap);}
+      putCap(capC,'TRADER A',158,BY1+8,INK,1);
+      putCap(capD,'TRADER B',158,BY2+8,INK,0.55);
+      putCap(capB,'THREE THAT MOVE APART',CX,610,INK,clamp((u-0.7)/0.6,0,1));
+      putCap(capA,'THREE DIFFERENT RISKS',CX,900,DEAD,clamp((u-2.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — LA BANDE BASSE TRACE : les trois trajectoires se superposent ═══
+    // Verbe visuel : la superposition (trois lignes qui se confondent, l'écart tombe à zéro).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideExtra();
+      showDivider(0.5);
+      drawBand(0,BY1,1,u,null);                        // haute : reste écartée, vivante
+      const revBot=lerp(STUB,1,clamp(u/1.2,0,1));
+      const hBot=drawBand(1,BY2,revBot,u,null);        // basse : trace et converge (reprise exacte depuis S1)
+      if(revBot>0.55){const bx=OX+TL*revBot+22, ap=clamp((u-1.3)/0.5,0,1);
+        bracket(bx, hBot[0][1], hBot[2][1], ap);}       // l'écart est ~nul : les capuchons se touchent presque
+      putCap(capC,'TRADER A',158,BY1+8,INK,0.55);
+      putCap(capD,'TRADER B',158,BY2+8,INK,1);
+      putCap(capB,'THREE THAT MOVE TOGETHER',CX,990,INK,clamp((u-0.7)/0.6,0,1));
+      putCap(capA,'THREE TICKETS, ONE RISK',CX,1218,YOU,clamp((u-2.0)/0.7,0,1));
+    }
+
+    // ═══ S4 — LE MOUVEMENT ADVERSE : il touche une position en haut, trois en bas ═══
+    // Verbe visuel : l'empilement (les barres de perte s'empilent — ×3 en bas, ×1 en haut).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideExtra();
+      showDivider(0.5);
+      // balayage adverse : de gauche à droite, au même instant sur les deux bandes
+      const sp=clamp(u/1.4,0,1), sx=lerp(230,880,sp);
+      strike.setAttribute('x',(sx-6).toFixed(1));strike.setAttribute('width',12);
+      strike.setAttribute('y',630);strike.setAttribute('height',1130-630);setOp(strike,(sp<1?0.5:clamp(1-(u-1.4)/0.4,0,1)*0.5));
+      // recolore les positions touchées : HAUT = seule la position 2 ; BAS = les trois
+      const hitTop=(u>0.9), hitBot=(u>1.0);
+      const colTop=[YOU,YOU,hitTop?DEAD:YOU];
+      const colBot=[hitBot?DEAD:YOU,hitBot?DEAD:YOU,hitBot?DEAD:YOU];
+      drawBand(0,BY1,1,u,colTop);
+      drawBand(1,BY2,1,u,colBot);
+      // barres de perte, même échelle. A = 1 unité ; B = 3 empilées (cadence : elles s'empilent)
+      const H=90, floor=1440, AX=300, BX=650, BW=130;
+      const aOp=clamp((u-1.6)/0.4,0,1);
+      lossA.setAttribute('x',AX);lossA.setAttribute('width',BW);lossA.setAttribute('y',(floor-H*aOp).toFixed(1));lossA.setAttribute('height',(H*aOp).toFixed(1));setOp(lossA,aOp>0?1:0);
+      const bt=[1.6,1.9,2.2];
+      for(let i=0;i<3;i++){const op=clamp((u-bt[i])/0.35,0,1);
+        const yb=floor-(i+1)*H-i*2, hh=H*op;
+        lossB[i].setAttribute('x',BX);lossB[i].setAttribute('width',BW);
+        lossB[i].setAttribute('y',(yb+H-hh).toFixed(1));lossB[i].setAttribute('height',hh.toFixed(1));setOp(lossB[i],op>0?1:0);}
+      putCap(capC,'TRADER A',158,BY1+8,INK,1);
+      putCap(capD,'TRADER B',158,BY2+8,INK,1);
+      putCap(capB,'SAME MOVE — THREE TIMES THE LOSS',CX,600,INK,clamp((u-0.2)/0.6,0,1));
+      putCap(capE,'ONE HIT',175,1398,DEAD,clamp((u-1.7)/0.5,0,1));
+      putCap(capF,'THREE HITS',900,1300,DEAD,clamp((u-2.3)/0.5,0,1));
+    }
+
+    // ═══ S5 — LA PRISE : mesurer la corrélation, réduire la taille — puis le CTA ═══
+    // Verbe visuel : la réduction (trois tickets qui se rejoignent en un seul risque).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideExtra();
+      // règle actionnable, en haut
+      putCap(capB,'COUNT YOUR EXPOSURE',CX,650,INK,clamp(u/0.4,0,1));
+      putCap(capA,'NOT YOUR TICKETS',CX,724,INK,clamp((u-0.3)/0.4,0,1));
+      // trois tickets teal qui glissent l'un vers l'autre (réduction → un seul risque)
+      const merge=clamp((u-0.4)/1.2,0,1);
+      const cx0=[380,540,700], cx1=[500,540,580], w=70;
+      const bob=6*Math.sin(u*1.1)+3*Math.sin(u*1.9);          // le groupe respire en position (vie continue jusqu'au bout)
+      for(let i=0;i<3;i++){
+        const cxx=lerp(cx0[i],cx1[i],eInOut(merge))+4*Math.sin(u*1.3+i*2)+2*Math.sin(u*2.1+i);  // léger balancement continu
+        const baseY=1060+bob;
+        const hh=lerp(180,158,merge)+10*Math.sin(u*1.7+i)+5*Math.sin(u*2.9+i);
+        tick5[i].setAttribute('x',(cxx-w/2).toFixed(1));tick5[i].setAttribute('width',w);
+        tick5[i].setAttribute('y',(baseY-hh).toFixed(1));tick5[i].setAttribute('height',hh.toFixed(1));setOp(tick5[i],1);
+      }
+      putCap(capC,(u<1.5?'THREE TICKETS':'ONE REAL RISK'),CX,1150,(u<1.5?INK:YOU),clamp((u-0.6)/0.5,0,1));
+      // CTA abonnement (TOFU) — aucun mot-clé
+      putCap(capG,'@kongrave_',CX,1330,YOU,clamp((u-1.7)/0.5,0,1));
+      putCap(capH,'the mechanics nobody explains',CX,1394,DEAD,clamp((u-2.0)/0.5,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
