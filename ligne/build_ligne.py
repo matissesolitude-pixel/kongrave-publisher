@@ -96,8 +96,23 @@ def load_episode(eid):
 def gen_voice(eid, ep, work):
     if not KEY:
         sys.exit("[ERREUR] ELEVENLABS_API_KEY absente de .env.local")
-    test = ep.get("_voice") == "agressif"
+    # TEST A/B décidé par le PO le 25/08 : un épisode sur deux en agressif, un sur deux en posé,
+    # pendant une semaine, puis on tranche sur les statistiques. Chaque épisode fabriqué emporte
+    # son marqueur `voice.txt` jusque dans `published/`, ce qui rend le dépouillement possible.
+    # Un JSON qui porte explicitement "_voice" garde le dernier mot.
+    forced = ep.get("_voice")
+    if forced in ("agressif", "pose", "posé"):
+        test = forced == "agressif"
+    else:
+        # On alterne sur le RANG de fabrication, pas sur le numéro d'épisode : un trou dans la
+        # numérotation (L95 est resté en voix George) casserait la parité et donnerait deux
+        # épisodes de suite dans le même réglage. Le rang se recompte depuis les marqueurs déjà
+        # déposés — file et publiés confondus — donc aucun fichier d'état à maintenir.
+        deja = sum(1 for d in (LIGNE / "queue", LIGNE / "published") if d.is_dir()
+                   for f in d.glob("*/voice.txt"))
+        test = deja % 2 == 0
     settings = SETTINGS_AGRESSIF if test else SETTINGS
+    mode = "agressif" if test else "pose"
 
     def passe(st, etiquette):
         durs, allwords = [], []
@@ -116,6 +131,10 @@ def gen_voice(eid, ep, work):
         print(f"[voice] {eid} : test agressif à {sum(durs):.1f}s > {DUREE_MAX_TEST}s — "
               f"on refait la voix aux réglages par défaut.")
         durs, allwords = passe(SETTINGS, "repli défaut")
+        mode = "pose_repli"
+
+    # Trace d'attribution : sans elle, la semaine de test ne se dépouille pas.
+    (work / "voice_mode.txt").write_text(mode, encoding="utf-8")
 
     (work / "durations.json").write_text(json.dumps(durs, indent=2))
     (work / "words.json").write_text(json.dumps(allwords, indent=2))

@@ -294,6 +294,10 @@ def make_one(jp: Path) -> bool:
     dst = QUEUE / n / f"{eid}.mp4"
     transcode_25(master, dst)
 
+    wm = QUEUE.parent / "work" / eid / "voice_mode.txt"
+    if wm.is_file():
+        (QUEUE / n / "voice.txt").write_text(wm.read_text().strip(), encoding="utf-8")
+
     cap = (d.get("caption") or "").strip()
     if cap:
         (QUEUE / n / "caption.txt").write_text(cap, encoding="utf-8")
