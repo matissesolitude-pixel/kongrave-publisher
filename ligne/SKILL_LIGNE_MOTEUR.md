@@ -3,6 +3,11 @@ name: ligne-moteur
 description: Méthode complète de fabrication d'un épisode de LA LIGNE (format Reels éducatif trading de KONGRAVE) — copy d'abord, test des 8 ans, lois physiques des animations, gabarit 5 séquences, briefs 7 blocs pour Claude Code, circuit frames-avant-vidéo. Charger cette skill dès que Matisse travaille sur LA LIGNE : écrire ou critiquer un copy d'épisode (L5, L6, L7…), écrire un brief de scène ou un correctif pour Code, valider des frames, concevoir une animation ou une illustration d'ouverture, ou toute mention de "la ligne", "épisode Lx", "brief", "beat par beat", "test du muet", "frames DoD", "gabarit", "le copy de l'épisode". À utiliser même sans que la skill soit nommée — dès qu'on fabrique du contenu Ligne, ces lois s'appliquent sans exception.
 ---
 
+> **Avant d'écrire un JSON d'épisode, lire `ligne/AGENT_SCRIPTS.md`** — il consigne les
+> corrections du 25/08/2026 : numérotation, variation du dispositif, signature de fin sans
+> arobase, et le budget de caractères imposé par la nouvelle voix.
+
+
 # LIGNE-MOTEUR — la fabrication d'un épisode
 
 Chaque loi ci-dessous a été payée en cycles perdus sur L3 et L4.

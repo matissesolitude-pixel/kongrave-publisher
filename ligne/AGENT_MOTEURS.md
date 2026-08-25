@@ -1,5 +1,10 @@
 # AGENT MOTEURS — consigne de l'agent cloud (LA LIGNE)
 
+> **Avant d'écrire un JSON d'épisode, lire `ligne/AGENT_SCRIPTS.md`** — il consigne les
+> corrections du 25/08/2026 : numérotation, variation du dispositif, signature de fin sans
+> arobase, et le budget de caractères imposé par la nouvelle voix.
+
+
 Ce fichier est la consigne de travail de la routine cloud qui écrit les moteurs
 d'animation de LA LIGNE **quand la machine de Matisse est éteinte**. Il est
 autoportant : tout ce qu'il faut savoir est ici ou pointé depuis ici.
