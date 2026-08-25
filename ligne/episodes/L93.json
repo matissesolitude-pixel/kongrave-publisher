@@ -9,7 +9,7 @@
     "The first trader sent a limit order, which tells the market a price and waits. If nobody meets it, nothing happens to him.",
     "The second trader sent a market order, which tells the market to fill him now, at whatever price is available at that moment.",
     "During a release, the price available at that moment can sit far below the one on his screen, and the gap comes straight out of his trade.",
-    "One order names a price. The other accepts one. Follow @kongrave_ — the mechanics nobody explains."
+    "One order names a price. The other accepts one. Follow KONGRAVE — the mechanics nobody explains."
   ],
   "scenes": [
     {
