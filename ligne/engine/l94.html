@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L94 « THE TWO DAYS WITH NO STOP » (weekend gap) — MONTAGE PARALLÈLE, deux bandes.
+       S1 : émotion frame 0 = protection visible qu'on annonce inutile + reconnaissance de soi. L'écran est
+       partagé : la MÊME position teal ouverte sur chaque bande, le MÊME stop teal en dessous. Un trait vertical
+       (fin de semaine) est SAISI EN COURS DE TRAVERSÉE (déjà en mouvement). Sur la bande basse la position se ferme
+       juste avant lui ; sur la bande haute elle reste ouverte et le trait la traverse. 1re ligne de question à t=0.
+       S2 : sur la bande haute le stop reste intact, mais AUTOUR de lui la zone devient inerte (aucune bougie ne se
+       forme) — le stop est une instruction donnée à un marché, et pendant deux jours personne ne la reçoit.
+       S3 : à la réouverture le prix n'avance pas, il RÉAPPARAÎT plus bas ; l'espace entre les deux est vide — aucun
+       échange, aucun ordre exécutable. Le stop pendait précisément dans ce vide.
+       S4 : la démonstration. Le stop s'exécute au premier prix dispo, bien au-delà. Deux barres à la même échelle :
+       la perte PRÉVUE (teal) et la perte RÉELLE (gris), l'écart évident. La bande basse n'a AUCUNE barre (fermée).
+       S5 : la prise — réduire la taille avant vendredi jusqu'à ce que le pire saut reste supportable, ou fermer ;
+       puis le CTA d'abonnement @kongrave_ affiché ET prononcé, image finale tenue.
+       Doctrine : aucun chiffre ; teal = le trader (position, stop, perte acceptée) ; gris = la perte subie / l'inerte ;
+       ink = le prix et le temps ; pas de brun ; bas du cadre vide ; aucun nom de broker ; aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ═══ GÉOMÉTRIE DES DEUX BANDES ═══
+    const XL=150, XR=950;           // étendue du prix
+    const TY=770;                   // ligne de prix — bande HAUTE (garde la position)
+    const BY=1250;                  // ligne de prix — bande BASSE (ferme le vendredi)
+    const POSX=700;                 // abscisse de la position ouverte
+    const TSTOP=900;                // niveau du stop (bande haute)
+    const REOPEN=985;               // niveau de réouverture (plus bas que le stop → dans le vide)
+    const BOUND=630;                // abscisse de la fin de semaine (figée S2→S4)
+    const DIV=1050;                 // séparation des deux bandes
+
+    // ── objets persistants ──
+    const divider=mk('line',{x1:110,x2:970,y1:DIV,y2:DIV,stroke:DEAD,'stroke-width':2,'stroke-dasharray':'2 12',opacity:0});
+    const priceLT=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const priceLB=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const priceRT=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const deadZone=mk('rect',{fill:DEAD,'fill-opacity':0.16,rx:6,opacity:0});
+    const HATCH=[]; for(let i=0;i<6;i++)HATCH.push(mk('line',{stroke:DEAD,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    const gapRect=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':3,'stroke-dasharray':'10 9',rx:6,opacity:0});
+    const dotA=mk('circle',{r:14,fill:INK,opacity:0});
+    const dotB=mk('circle',{r:14,fill:INK,opacity:0});
+    const posT=mk('rect',{rx:8,fill:YOU,opacity:0});
+    const posB=mk('rect',{rx:8,fill:YOU,opacity:0});
+    const stopT=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'18 12',opacity:0});
+    const stopB=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'18 12',opacity:0});
+    // fin de semaine — DEUX segments (un par bande), pour laisser libres les gouttières à étiquettes
+    const weekT=mk('line',{stroke:INK,'stroke-width':7,opacity:0});
+    const weekB=mk('line',{stroke:INK,'stroke-width':7,opacity:0});
+    const lossPlan=mk('rect',{rx:4,fill:YOU,opacity:0});
+    const lossReal=mk('rect',{rx:4,fill:DEAD,opacity:0});
+    const entryLine=mk('line',{stroke:INK,'stroke-width':4,'stroke-dasharray':'4 10',opacity:0});
+    const s4tick=mk('rect',{rx:3,fill:DEAD,opacity:0});
+    const s5block=mk('rect',{rx:8,fill:YOU,opacity:0});
+    const s5arrow=mk('line',{stroke:DEAD,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const s5head=mk('polygon',{fill:DEAD,opacity:0});
+    const s5stop=mk('line',{stroke:YOU,'stroke-width':6,'stroke-dasharray':'18 12',opacity:0});
+    const ctaLine=mk('line',{stroke:INK,'stroke-width':5,'stroke-dasharray':'26 14',opacity:0});
+    const GALL=[divider,priceLT,priceLB,priceRT,deadZone,gapRect,dotA,dotB,posT,posB,stopT,stopB,weekT,weekB,lossPlan,lossReal,entryLine,s4tick,s5block,s5arrow,s5head,s5stop,ctaLine].concat(HATCH);
+    function hideScene(){for(const e of GALL)setOp(e,0);}
+
+    // ── LE PRIX QUI RESPIRE (deux harmoniques → vitesse jamais nulle, vie continue) ──
+    function pricePts(x0,x1,baseY,amp,u,ph){let s='';for(let x=x0;x<=x1+0.1;x+=26){const y=baseY+amp*(Math.sin(0.017*x+1.2*u+ph)+0.5*Math.sin(0.034*x-0.8*u+ph));s+=x.toFixed(1)+','+y.toFixed(1)+' ';}return s.trim();}
+    function setPrice(el,x0,x1,baseY,amp,u,ph,op){el.setAttribute('points',pricePts(x0,x1,baseY,amp,u,ph));setOp(el,op);}
+    const posBob=u=>5*Math.sin(1.7*u)+3*Math.sin(2.9*u);
+    function block(el,cx,topY,w,h,op){el.setAttribute('x',(cx-w/2).toFixed(1));el.setAttribute('y',topY.toFixed(1));el.setAttribute('width',w.toFixed(1));el.setAttribute('height',Math.max(2,h).toFixed(1));setOp(el,op);}
+    function hline(el,x1,x2,y,op){el.setAttribute('x1',x1.toFixed(1));el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y1',y.toFixed(1));el.setAttribute('y2',y.toFixed(1));setOp(el,op);}
+    function vline(el,x,y1,y2,op){el.setAttribute('x1',x.toFixed(1));el.setAttribute('x2',x.toFixed(1));el.setAttribute('y1',y1.toFixed(1));el.setAttribute('y2',y2.toFixed(1));setOp(el,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THE STOP IS STILL THERE.','IS IT WORKING?'];
+    const FS=70,lineH=96,qy0=214,qY=QLINES.map((s,li)=>qy0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.60));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle, copié TEL QUEL depuis l26 ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(44),capB=caption(40),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(84),capG=caption(40);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG])setOp(e,0);}
+
+    // ═══ S1 — LE BALAYAGE : la fin de semaine traverse ; l'un ferme, l'autre reste ═══
+    // Verbe visuel : le balayage / la divergence (le trait de fin de semaine passe, les deux bandes divergent).
+    function s1(lf,t,s){
+      const u=t-s; hideScene(); hideCaps();
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      // question — 1re ligne PLEINE à t=0, la 2e arrive juste après
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.30:u-0.55),ap=clamp(qt/0.28,0,1),sc=0.72+0.28*backOut(ap);
+        setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      setOp(divider,0.5);
+      // ── ÉMOTION FRAME 0 : les deux bandes portent la MÊME position + le MÊME stop, DÉJÀ posés, et le trait
+      //    de fin de semaine est SAISI EN COURS DE TRAVERSÉE (déjà à mi-chemin, en mouvement). Rien ne se construit.
+      const WX=360+500*eInOut(clamp(u/3.0,0,1));
+      setPrice(priceLT,XL,XR,TY,11,u,0.0,1);
+      setPrice(priceLB,XL,XR,BY,11,u,1.7,1);
+      // bande haute — reste ouverte, le trait la traverse
+      block(posT,POSX,TY-46+posBob(u),80,92,1);
+      stopT.setAttribute('stroke-dashoffset',(-u*22).toFixed(0)); hline(stopT,520,880,TSTOP,1);
+      // bande basse — se ferme JUSTE AVANT le trait
+      const closeP=clamp((WX-(POSX-90))/110,0,1);
+      block(posB,POSX,BY-46+posBob(u+0.6),80*(1-closeP),92*(1-closeP*0.4),(1-closeP));
+      stopB.setAttribute('stroke-dashoffset',(u*22).toFixed(0)); hline(stopB,520,880,BY+125,(1-closeP));
+      // le trait de fin de semaine — un segment par bande, traversant chacune sa position
+      vline(weekT,WX,690,850,1);
+      vline(weekB,WX,1170,1330,1);
+      // étiquettes — chacune dans une gouttière VIDE, hors de la course du trait vertical
+      putCap(capA,'KEPT OPEN',290,668,YOU,gf);
+      putCap(capB,'CLOSED FRIDAY',290,1140,DEAD,clamp((closeP-0.2)/0.5,0,1)*gf);
+    }
+
+    // ═══ S2 — L'EXTINCTION : le stop reste, le marché autour de lui devient inerte ═══
+    // Verbe visuel : l'extinction (la zone de marché s'éteint et s'étend autour du stop intact).
+    function s2(lf,t,s){
+      const u=t-s; hideScene(); hideQ(); hideCaps();
+      setOp(divider,0.5);
+      // bande haute — le prix court jusqu'à la fin de semaine, puis PLUS RIEN
+      setPrice(priceLT,XL,BOUND,TY,11,u,0.0,1);
+      block(posT,POSX,TY-46+posBob(u),80,92,1);          // position exposée, dans la zone inerte
+      stopT.setAttribute('stroke-dashoffset',(-u*22).toFixed(0)); hline(stopT,470,880,TSTOP,1);
+      // la zone inerte s'étend vers la droite (aucune bougie ne se forme)
+      const rx=700+(950-700)*eOut(clamp(u/1.6,0,1));
+      deadZone.setAttribute('x',BOUND);deadZone.setAttribute('width',(rx-BOUND).toFixed(1));
+      deadZone.setAttribute('y',700);deadZone.setAttribute('height',240);setOp(deadZone,clamp(u/0.6,0,1)*0.9);
+      // emplacements de bougies restés VIDES — de petits repères gris qui frémissent (position, pas opacité)
+      for(let i=0;i<HATCH.length;i++){const hx=680+i*46; if(hx>rx-14){setOp(HATCH[i],0);continue;}
+        const cy=800+9*Math.sin(u*2.1-i*0.7), hh=30+5*Math.sin(u*2.6-i*0.5);
+        vline(HATCH[i],hx,cy-hh,cy+hh,clamp((u-0.3-i*0.12)/0.4,0,1)*0.5);}
+      // bande basse — fermée, calme, sans risque
+      setPrice(priceLB,XL,XR,BY,10,u,1.7,1);
+      putCap(capA,'THE STOP IS STILL HERE',CX,656,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capC,'STOP',175,912,YOU,1);
+      putCap(capB,'NO ONE LEFT TO EXECUTE IT',CX,1012,DEAD,clamp((u-1.8)/0.7,0,1));
+      putCap(capD,'CLOSED — NO POSITION',290,1140,DEAD,1);
+    }
+
+    // ═══ S3 — LE SAUT : le prix ne marche pas, il réapparaît plus bas ; le vide entre les deux ═══
+    // Verbe visuel : le saut / le vide (le prix se téléporte plus bas, l'espace intermédiaire reste vide).
+    function s3(lf,t,s){
+      const u=t-s; hideScene(); hideQ(); hideCaps();
+      setOp(divider,0.5);
+      // avant : le prix s'arrête à la fin de semaine
+      setPrice(priceLT,XL,BOUND,TY,11,u,0.0,1);
+      dotA.setAttribute('cx',BOUND);dotA.setAttribute('cy',(TY+3*Math.sin(u*2.2)).toFixed(1));setOp(dotA,1);
+      // après : le prix RÉAPPARAÎT, nettement plus bas
+      const app=clamp((u-0.6)/0.5,0,1);
+      setPrice(priceRT,770,930,REOPEN,10,u,2.4,app);
+      dotB.setAttribute('cx',770);dotB.setAttribute('cy',(REOPEN+3*Math.sin(u*2.5)).toFixed(1));setOp(dotB,app);
+      // l'espace entre les deux : ENTIÈREMENT VIDE (aucun échange n'a eu lieu là)
+      const gw=6+2*Math.sin(u*2.3);
+      gapRect.setAttribute('x',(BOUND).toFixed(1));gapRect.setAttribute('width',(770-BOUND).toFixed(1));
+      gapRect.setAttribute('y',(TY+6).toFixed(1));gapRect.setAttribute('height',(REOPEN-TY-12).toFixed(1));
+      gapRect.setAttribute('stroke-dashoffset',(u*10).toFixed(0));setOp(gapRect,app*0.9);
+      // le stop pendait précisément DANS ce vide
+      stopT.setAttribute('stroke-dashoffset',(-u*22).toFixed(0)); hline(stopT,560,830,TSTOP+3*Math.sin(u*2.0),app);
+      // bande basse — calme (fermée avant)
+      setPrice(priceLB,XL,XR,BY,10,u,1.7,1);
+      putCap(capA,'IT REAPPEARS LOWER',CX,566,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capB,'NOTHING TRADED IN BETWEEN',CX,644,DEAD,clamp((u-1.8)/0.7,0,1));
+      putCap(capC,'STOP',470,895,YOU,app);
+      putCap(capD,'CLOSED FRIDAY',290,1140,DEAD,1);
+    }
+
+    // ═══ S4 — LA DÉMONSTRATION : perte prévue vs perte réelle, même échelle ═══
+    // Verbe visuel : la comparaison A/B (deux barres côte à côte, l'écart évident).
+    function s4(lf,t,s){
+      const u=t-s; hideScene(); hideQ(); hideCaps();
+      setOp(divider,0.5);
+      // le niveau d'entrée, commun aux deux pertes
+      entryLine.setAttribute('stroke-dashoffset',(-u*14).toFixed(0)); hline(entryLine,300,780,TY,1);
+      // perte PRÉVUE (teal) — de l'entrée au stop
+      const gp=clamp((u-0.2)/0.6,0,1);
+      block(lossPlan,380,TY,84,(TSTOP-TY)*gp,1);
+      // perte RÉELLE (gris) — de l'entrée au premier prix dispo, bien au-delà
+      const gr=clamp((u-1.0)/0.8,0,1);
+      block(lossReal,680,TY,84,(REOPEN-TY)*gr,1);
+      // l'écart « au-delà » — un repère gris qui respire entre les deux fonds de barre
+      if(gr>0.9){const ty0=TSTOP+3*Math.sin(u*2.4);block(s4tick,680,ty0,84,(REOPEN-TSTOP)+4*Math.sin(u*2.4+1),0.55);}
+      // bande basse — AUCUNE barre : la position avait été fermée
+      setPrice(priceLB,XL,XR,BY,10,u,1.7,1);
+      putCap(capA,'HE ACCEPTED ONE LOSS — HE GOT ANOTHER',CX,656,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capC,'PLANNED LOSS',380,1035,YOU,gp);
+      putCap(capD,'REAL LOSS',680,1035,DEAD,gr);
+      putCap(capB,'CLOSED — NO LOSS',290,1140,DEAD,1);
+    }
+
+    // ═══ S5 — LA PRISE + LE CTA D'ABONNEMENT ═══
+    // Verbe visuel : la réduction (la taille se réduit jusqu'à ce que le pire saut reste supportable).
+    function s5(lf,t,s){
+      const u=t-s; hideScene(); hideQ(); hideCaps();
+      // la position se RÉDUIT avant vendredi
+      const shr=eInOut(clamp(u/1.6,0,1)), h=lerp(168,70,shr)+3*Math.sin(u*1.8);
+      const topY=800; block(s5block,430,topY,86,h,1);
+      s5stop.setAttribute('stroke-dashoffset',(-u*20).toFixed(0)); hline(s5stop,330,780,topY+h+34,clamp((u-0.3)/0.5,0,1));
+      // le pire saut hebdomadaire, de longueur FIXE : à mesure que la taille tombe, il devient supportable
+      const ay=topY+6*Math.sin(u*1.6);
+      vline(s5arrow,650,ay,ay+150,1);
+      s5head.setAttribute('points',`650,${(ay+168).toFixed(1)} 632,${(ay+140).toFixed(1)} 668,${(ay+140).toFixed(1)}`);setOp(s5head,1);
+      putCap(capA,'CUT SIZE UNTIL A WEEKEND GAP IS BEARABLE',CX,668,INK,clamp((u-0.2)/0.6,0,1));
+      putCap(capB,'OR CLOSE THE POSITION BEFORE FRIDAY',CX,1010,DEAD,clamp((u-0.9)/0.6,0,1));
+      // ── CTA D'ABONNEMENT (TOFU) : affiché ET prononcé, aucun mot-clé ──
+      const cap=clamp((u-1.5)/0.6,0,1);
+      putCap(capF,'@kongrave_',CX,1168,INK,cap);
+      putCap(capG,'the mechanics nobody explains',CX,1240,DEAD,cap);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
