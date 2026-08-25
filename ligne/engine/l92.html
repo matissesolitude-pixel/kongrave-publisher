@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L92 « THE CHART THAT AGREED WITH YOU » — dispositif MONTAGE PARALLÈLE (pas de fusil de Tchekhov).
+       S1 : émotion frame 0 = levier RECONNAISSANCE DE SOI — l'écran est DÉJÀ scindé en deux bandes qui portent
+       LE MÊME graphe vivant, la même intention (ACHETER) posée au-dessus, et sur la bande HAUTE le sélecteur
+       d'unité de temps est saisi EN PLEIN mouvement (le geste que tout trader fait sans le nommer) ; la bande
+       BASSE ne bouge pas. S2 : le trader du haut DESCEND les unités de temps — quatre défilent, trois refusées
+       (grises), la quatrième soutient enfin l'idée (teal), et le sélecteur s'arrête là. S3 : le trader du bas a
+       VERROUILLÉ une seule unité AVANT d'ouvrir le graphe (pastille teal « SET BEFORE ») ; elle ne dit rien, il
+       REFERME — pas de position. S4 : on REJOUE en inversant l'intention (VENDRE) — le même graphe rend trois
+       raisons de vendre comme il rendait trois raisons d'acheter, côte à côte ; la bande basse dit toujours la
+       même chose. S5 : la prise (l'unité qui décide se choisit AVANT et ne change pas) puis le CTA d'abonnement
+       @kongrave_ — TOFU, AUCUN mot-clé. Doctrine : aucun chiffre ; gris = la perte/l'écarté ; teal = le trader ;
+       pas de brun ; bas du cadre vide. Émotion par objets SEULE, aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, TAU=6.283185;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── GÉOMÉTRIE DES DEUX BANDES (le montage parallèle) ──
+    const AX0=250,AX1=910,AYC=765,ARISE=95;   // bande HAUTE
+    const BX0=250,BX1=910,BYC=1140,BRISE=95;  // bande BASSE
+    const FA={x:240,y:648,w:690,h:236}, FB={x:240,y:1024,w:690,h:236};
+    const LADX=104, LADW=118, LADH=46;
+    const tabAY=[652,712,772,832], tabBY=[1028,1088,1148,1208];
+
+    // ── LES OBJETS ──
+    const frameA=mk('rect',{fill:'none',stroke:INK,'stroke-width':3,rx:16,opacity:0});
+    const frameB=mk('rect',{fill:'none',stroke:INK,'stroke-width':3,rx:16,opacity:0});
+    const chartA=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const chartB=mk('polyline',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const LADA=tabAY.map(()=>mk('rect',{rx:8,'stroke-width':3,opacity:0}));
+    const LADB=tabBY.map(()=>mk('rect',{rx:8,'stroke-width':3,opacity:0}));
+    const pickA=mk('rect',{fill:'none',stroke:YOU,'stroke-width':6,rx:11,opacity:0});
+    const pickB=mk('rect',{fill:'none',stroke:YOU,'stroke-width':6,rx:11,opacity:0});
+    const pinB=mk('circle',{fill:YOU,opacity:0});
+    const triP=mk('polygon',{opacity:0});   // flèche d'intention / cluster ACHAT
+    const triQ=mk('polygon',{opacity:0});   // cluster VENTE (S4)
+    const TAL=[]; for(let i=0;i<6;i++)TAL.push(mk('rect',{rx:2,fill:YOU,opacity:0}));
+
+    function frame(el,F,op){el.setAttribute('x',F.x);el.setAttribute('y',F.y);el.setAttribute('width',F.w);el.setAttribute('height',F.h);setOp(el,op*0.55);}
+    // le graphe : une ligne de prix vivante (deux harmoniques) qui monte/descend selon `trend`
+    function chartPts(x0,x1,yc,rise,trend,u,ph){const n=26,p=[];
+      for(let i=0;i<=n;i++){const t=i/n,x=x0+(x1-x0)*t;
+        const tr=-rise*trend*(t-0.10);
+        const wob=13*Math.sin(t*TAU*3+u*1.7+ph)+8*Math.sin(t*TAU*5-u*1.15+ph*0.7);
+        p.push([x, yc+tr+wob]);}
+      return p;}
+    function drawChart(el,pts,color,op,w){el.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));el.setAttribute('stroke',color);el.setAttribute('stroke-width',w||6);setOp(el,op);}
+    function tab(el,x,y,fill,stroke,op){el.setAttribute('x',x);el.setAttribute('y',y);el.setAttribute('width',LADW);el.setAttribute('height',LADH);el.setAttribute('fill',fill);el.setAttribute('stroke',stroke);setOp(el,op);}
+    function picker(el,tabY,idx,op){const i0=Math.floor(clamp(idx,0,3)),i1=Math.min(3,i0+1),f=clamp(idx,0,3)-i0;const y=lerp(tabY[i0],tabY[i1],f);el.setAttribute('x',LADX-7);el.setAttribute('y',y-7);el.setAttribute('width',LADW+14);el.setAttribute('height',LADH+14);setOp(el,op);}
+    function upTri(el,cx,cy,s,color,op){el.setAttribute('points',`${cx},${cy-s} ${cx-s},${cy+s} ${cx+s},${cy+s}`);el.setAttribute('fill',color);setOp(el,op);}
+    function dnTri(el,cx,cy,s,color,op){el.setAttribute('points',`${cx},${cy+s} ${cx-s},${cy-s} ${cx+s},${cy-s}`);el.setAttribute('fill',color);setOp(el,op);}
+    function tick(el,x,y,op){el.setAttribute('x',x);el.setAttribute('y',y-16);el.setAttribute('width',7);el.setAttribute('height',32);setOp(el,op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['THREE REASONS.','WHERE DID THEY COME FROM?'];
+    const FS=68,lineH=94,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+96,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capBan=caption(40),capMid=caption(40),capL=caption(36),capR=caption(36),capBot=caption(38),capBig=caption(102),capSub=caption(40);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capBan,capMid,capL,capR,capBot,capBig,capSub])setOp(e,0);}
+
+    function hideAll(){
+      setOp(frameA,0);setOp(frameB,0);setOp(chartA,0);setOp(chartB,0);
+      for(const e of LADA)setOp(e,0);for(const e of LADB)setOp(e,0);
+      setOp(pickA,0);setOp(pickB,0);setOp(pinB,0);setOp(triP,0);setOp(triQ,0);
+      for(const e of TAL)setOp(e,0);
+      hideCaps();
+    }
+
+    // ═══ S1 — DEUX BANDES, LE MÊME GRAPHE, LA MÊME INTENTION D'ACHAT ═══
+    // Verbe visuel : le diptyque qui s'ouvre, le geste (sélecteur d'unité) déjà en cours.
+    function s1(lf,t,s){
+      const u=t-s; hideAll();
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      // question
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.20:u-(0.10+k*0.30)),ap=clamp(qt/0.20,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.7,qap=clamp(qm/0.22,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // intention (ACHAT) posée au-dessus des deux bandes
+      putCap(capBan,'BOTH LOOK FOR A REASON TO BUY',540,612,INK,1);
+      // les deux bandes + LE MÊME graphe vivant
+      frame(frameA,FA,1); frame(frameB,FB,1);
+      const trend=0.16;
+      drawChart(chartA,chartPts(AX0,AX1,AYC,ARISE,trend,u,0.0),INK,1,6);
+      drawChart(chartB,chartPts(BX0,BX1,BYC,BRISE,trend,u,0.0),INK,1,6);
+      // sélecteurs : tabs neutres
+      for(let i=0;i<4;i++){tab(LADA[i],LADX,tabAY[i],PAPER,INK,1);tab(LADB[i],LADX,tabBY[i],PAPER,INK,1);}
+      // bande HAUTE : le sélecteur est SAISI en plein changement d'unité (déjà en mouvement)
+      const idxA=1.5+1.35*Math.sin(u*1.7);
+      picker(pickA,tabAY,idxA,1);
+      // bande BASSE : rien ne bouge → sélecteur figé sur une unité
+      picker(pickB,tabBY,1,1);
+      putCap(capMid,'THE SAME CHART',540,958,INK,clamp((u-1.5)/0.6,0,1)*gf);
+    }
+
+    // ═══ S2 — LE HAUT DESCEND LES UNITÉS JUSQU'À CE QU'UNE SOUTIENNE L'IDÉE ═══
+    // Verbe visuel : la descente/recherche (le sélecteur tombe de marche en marche, le graphe se remodèle).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      const gf=clamp(1-(lf-0.92)/0.06,0,1);
+      putCap(capBan,'LOOKING TO BUY',540,600,INK,1);
+      frame(frameA,FA,1); frame(frameB,FB,1);
+      // BANDE BASSE : présente, vivante mais passive (elle attend S3)
+      drawChart(chartB,chartPts(BX0,BX1,BYC,BRISE,0.05,u,1.3),DEAD,0.8,5);
+      for(let i=0;i<4;i++)tab(LADB[i],LADX,tabBY[i],PAPER,DEAD,0.5);
+      picker(pickB,tabBY,1,0.4);
+      // BANDE HAUTE : le sélecteur descend 1→2→3→4
+      const trends=[-0.42,0.06,-0.26,0.86];
+      const idx=clamp(u/0.62,0,3);
+      const i0=Math.floor(idx),i1=Math.min(3,i0+1),f=idx-i0;
+      const tr=lerp(trends[i0],trends[i1],eInOut(f));
+      const supports=tr>0.45;
+      const col=supports?YOU:INK;
+      drawChart(chartA,chartPts(AX0,AX1,AYC,ARISE,tr,u,0.0),col,1,supports?7:6);
+      for(let i=0;i<4;i++){
+        const passed=(idx>i+0.55)&&i<3;                 // unité écartée → grise
+        const chosen=(i===3)&&(idx>2.6);                // la 4e soutient → teal
+        tab(LADA[i], LADX, tabAY[i], chosen?YOU:(passed?DEAD:PAPER), chosen?YOU:INK, chosen?1:(passed?0.85:1));
+      }
+      picker(pickA,tabAY,idx,1);
+      // explication (une seule ligne centrée, qui bascule)
+      if(idx<2.6) putCap(capMid,'GOING DOWN THE TIMEFRAMES',540,958,INK,clamp((u-0.4)/0.5,0,1));
+      else        putCap(capMid,'THE FOURTH ONE AGREES',540,958,YOU,clamp((u-1.8)/0.5,0,1));
+      putCap(capBot,'IT STOPPED WHEN THE CHART GAVE IN',540,1330,DEAD,clamp((u-3.0)/0.7,0,1)*gf);
+    }
+
+    // ═══ S3 — LE BAS A CHOISI SON UNITÉ AVANT D'OUVRIR : ELLE NE DIT RIEN, IL REFERME ═══
+    // Verbe visuel : la fermeture (l'unique unité verrouillée, le graphe qui se referme, aucune position).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      const gf=clamp(1-(lf-0.92)/0.06,0,1);
+      putCap(capBan,'LOOKING TO BUY',540,600,INK,1);
+      frame(frameA,FA,1); frame(frameB,FB,1);
+      // BANDE HAUTE : son résultat de S2 tenu, vivant (unité 4 teal, graphe montant)
+      drawChart(chartA,chartPts(AX0,AX1,AYC,ARISE,0.82,u,0.0),YOU,0.9,6);
+      for(let i=0;i<4;i++)tab(LADA[i],LADX,tabAY[i], i===3?YOU:DEAD, i===3?YOU:INK, i===3?0.9:0.5);
+      picker(pickA,tabAY,3,0.45);
+      // BANDE BASSE : UNE seule unité, verrouillée AVANT (pastille au-dessus), le graphe se referme
+      const close=clamp((u-1.6)/0.9,0,1);               // fermeture : le tracé s'aplatit puis s'efface
+      const trB=0.0;
+      const ptsB=chartPts(BX0,BX1,BYC,BRISE,trB,u,2.1).map(p=>[p[0], lerp(p[1],BYC,close)]);
+      drawChart(chartB,ptsB,INK,1-0.75*close,6);
+      const chosen=1;                                    // l'unité pré-choisie (2e marche)
+      for(let i=0;i<4;i++)tab(LADB[i],LADX,tabBY[i], i===chosen?YOU:PAPER, i===chosen?YOU:DEAD, i===chosen?1:0.4);
+      // pastille « décidée avant » : au-dessus de la marche choisie
+      pinB.setAttribute('cx',LADX+LADW/2);pinB.setAttribute('cy',tabBY[chosen]-30-3*Math.sin(u*2.0));pinB.setAttribute('r',15);setOp(pinB,1);
+      picker(pickB,tabBY,chosen,1);
+      putCap(capMid,'DECIDED BEFORE THE CHART OPENED',540,958,YOU,clamp((u-0.5)/0.6,0,1));
+      putCap(capBot, close>0.5?'IT SAYS NOTHING — CLOSED, NO TRADE':'IT SAYS NOTHING',540,1330,DEAD,clamp((u-1.9)/0.6,0,1)*gf);
+    }
+
+    // ═══ S4 — REJOUÉ EN VENDANT : LE MÊME GRAPHE REND TROIS RAISONS CONTRAIRES ═══
+    // Verbe visuel : le miroir (mêmes ticks au-dessus pour ACHETER, en dessous pour VENDRE).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      const gf=clamp(1-(lf-0.92)/0.06,0,1);
+      // cluster ACHAT (mémoire de S2) au-dessus
+      upTri(triP,250,600,18,YOU,1);
+      for(let i=0;i<3;i++)tick(TAL[i],300+i*26,600,1);
+      putCap(capL,'THREE TO BUY',640,612,INK,1);
+      frame(frameA,FA,1); frame(frameB,FB,1);
+      // BANDE HAUTE : LE MÊME graphe ambigu
+      drawChart(chartA,chartPts(AX0,AX1,AYC,ARISE,0.14,u,0.0),INK,1,6);
+      for(let i=0;i<4;i++)tab(LADA[i],LADX,tabAY[i],PAPER,INK,1);
+      picker(pickA,tabAY,1.4+1.1*Math.sin(u*1.9),0.9);
+      // cluster VENTE (nouveau) en gouttière médiane — les 3 ticks s'accumulent (cadence)
+      dnTri(triQ,250,958,18,YOU,1);
+      for(let i=0;i<3;i++)tick(TAL[3+i],300+i*26,958,clamp((u-(1.4+i*0.4))/0.3,0,1));
+      putCap(capR,'THREE TO SELL',640,970,INK,clamp((u-1.2)/0.5,0,1));
+      // BANDE BASSE : l'unité unique dit TOUJOURS la même chose (plate, vivante)
+      drawChart(chartB,chartPts(BX0,BX1,BYC,BRISE,0.0,u,2.1),DEAD,0.85,5);
+      for(let i=0;i<4;i++)tab(LADB[i],LADX,tabBY[i], i===1?YOU:PAPER, i===1?YOU:DEAD, i===1?0.9:0.4);
+      pinB.setAttribute('cx',LADX+LADW/2);pinB.setAttribute('cy',tabBY[1]-30);pinB.setAttribute('r',14);setOp(pinB,0.8);
+      putCap(capBot,'SAME CHART — BOTH ANSWERS',540,1330,YOU,clamp((u-2.6)/0.7,0,1)*gf);
+    }
+
+    // ═══ S5 — LA PRISE + LE CTA D'ABONNEMENT (TOFU, AUCUN MOT-CLÉ) ═══
+    // Verbe visuel : l'unité verrouillée qui ne bouge pas, puis la signature qui se tient.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideAll();
+      putCap(capBan,'CHOOSE IT BEFORE YOU OPEN THE CHART',540,600,INK,1);
+      // un seul graphe, l'unité qui DÉCIDE verrouillée (teal + pastille), les autres = informatives (grises)
+      frame(frameA,FA,clamp(u/0.4,0,1));
+      drawChart(chartA,chartPts(AX0,AX1,AYC,ARISE,0.18,u,0.0),INK,clamp(u/0.4,0,1),6);
+      const dec=1;
+      for(let i=0;i<4;i++)tab(LADA[i],LADX,tabAY[i], i===dec?YOU:PAPER, i===dec?YOU:DEAD, i===dec?1:0.55);
+      pinB.setAttribute('cx',LADX+LADW/2);pinB.setAttribute('cy',tabAY[dec]-30-3*Math.sin(u*1.8));pinB.setAttribute('r',15);setOp(pinB,1);
+      picker(pickA,tabAY,dec,1);
+      putCap(capMid,'THE OTHERS ARE ONLY INFORMATION',540,958,DEAD,clamp((u-0.6)/0.6,0,1));
+      // CTA d'abonnement — zone médiane, prononcé au même instant ; bas du cadre vide
+      const ca=clamp((u-1.5)/0.6,0,1);
+      putCap(capBig,'@kongrave_',540,1120,YOU,ca);
+      putCap(capSub,'THE MECHANICS NOBODY EXPLAINS',540,1200,INK,ca);
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
