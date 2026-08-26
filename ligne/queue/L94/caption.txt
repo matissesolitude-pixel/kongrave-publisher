@@ -1,0 +1,9 @@
+Two traders finish the week with the same position. One closes on Friday, and the other leaves it open over the weekend.
+
+The stop is still there on Saturday: it is simply that nothing can execute it, because a stop is an instruction given to a market and for two days there is nobody to receive it. When the market opens again the price does not walk to the new level, it appears there, and everything in between is skipped. The stop was sitting in that gap.
+
+He had accepted a loss, and he received a different one.
+
+Follow @kongrave_ — the mechanics nobody explains.
+
+#trading #riskmanagement #weekendgap #daytrading #forex #stoploss #propfirm #discipline #priceaction #trader
