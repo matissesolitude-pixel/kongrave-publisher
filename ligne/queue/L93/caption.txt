@@ -1,0 +1,9 @@
+Two traders send an order at the same second, during a news release. One gets the price he asked for, and the other does not.
+
+The first sent a limit order, which names a price and waits: if nobody meets it, nothing happens to him. The second sent a market order, which asks to be filled now, at whatever price is available at that moment — and during a release that price can sit far below the one on his screen. The gap comes straight out of the trade, before the idea has even been judged.
+
+One order names a price. The other accepts one.
+
+Follow @kongrave_ — the mechanics nobody explains.
+
+#trading #slippage #news #daytrading #forex #execution #propfirm #riskmanagement #priceaction #trader
