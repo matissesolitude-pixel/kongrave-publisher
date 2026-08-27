@@ -19,7 +19,7 @@ name: CARROUSEL auto-publish (file)
 
 on:
   schedule:
-    - cron: "5 * * * *"        # toutes les heures ; le script publie dès que l'écart est atteint
+    - cron: "5 */3 * * *"      # toutes les 3h : l espacement est un nombre de posts, pas une heure
   workflow_dispatch:
     inputs:
       id:
