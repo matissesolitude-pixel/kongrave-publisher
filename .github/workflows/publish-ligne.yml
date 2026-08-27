@@ -11,7 +11,7 @@ name: LIGNE auto-publish (file)
 
 on:
   schedule:
-    - cron: "30 */4 * * *"     # toutes les 4h = 6 créneaux/jour (cadence_hours=4 gère l'espacement)
+    - cron: "30 */8 * * *"     # 3 creneaux/jour (cadence_hours=4 gere l espacement ; 2 publications/jour observees)
   workflow_dispatch:
     inputs:
       dry_run:

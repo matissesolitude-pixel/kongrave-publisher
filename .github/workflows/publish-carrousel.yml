@@ -19,7 +19,7 @@ name: CARROUSEL auto-publish (file)
 
 on:
   schedule:
-    - cron: "5 */3 * * *"      # toutes les 3h : l espacement est un nombre de posts, pas une heure
+    - cron: "5 */6 * * *"      # 4 sondages/jour : l espacement est un nombre de posts, pas une heure
   workflow_dispatch:
     inputs:
       id:
