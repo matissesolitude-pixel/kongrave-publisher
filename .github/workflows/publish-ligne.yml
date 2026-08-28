@@ -35,19 +35,30 @@ permissions:
   contents: write
 
 jobs:
-  publish:
+  # SONDAGE — le job bon marché, celui qui tourne 12 fois par jour pour rien.
+  # Il ne récupère PAS ligne/published, qui pèse 3,7 Go de masters déjà en ligne :
+  # un checkout complet coûtait deux minutes de runner à chaque sondage à vide.
+  # Il rejoue les trois premières portes de publish_ligne.py — pause, cadence,
+  # file vide — avec le python système, sans rien installer. Le filet Telegram
+  # n'est lu qu'APRÈS ces portes dans le script réel : le comportement est donc
+  # strictement inchangé, seul le coût tombe.
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.verdict.outputs.go }}
     steps:
-      - name: Checkout
+      - name: Checkout partiel — config, journal et file seulement
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ligne/config.json
+            ligne/publish_log.json
+            ligne/precheck.py
+            ligne/queue
+          sparse-checkout-cone-mode: false
 
-      # COURT-CIRCUIT (<10 s) : rejoue les trois premières portes de publish_ligne.py
-      # — pause, cadence, file vide — avec le python système, avant toute installation.
-      # Un sondage à vide coûtait ~1,7 min de runner ; il en coûte quelques secondes.
-      # C'est ce qui permet de sonder souvent, et sonder souvent est la seule protection
-      # contre un créneau planifié que GitHub retarde ou abandonne (28/08/2026).
       - name: Court-circuit — pause, cadence, file
-        id: check
+        id: verdict
         run: |
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
             echo "Force demandé — aucune porte n'est évaluée ici."
@@ -61,19 +72,26 @@ jobs:
             *)   echo "go=false" >> "$GITHUB_OUTPUT" ;;
           esac
 
+  # PUBLICATION — le job cher, qui paie le checkout complet. Il ne démarre que
+  # lorsque le sondage a dit oui, soit deux fois par jour.
+  publish:
+    needs: check
+    if: needs.check.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Python
-        if: steps.check.outputs.go == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
 
       - name: Dépendances
-        if: steps.check.outputs.go == 'true'
         run: pip install -r requirements.txt
 
       - name: Publier le plus ancien épisode de la file
-        if: steps.check.outputs.go == 'true'
         env:
           INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
@@ -88,7 +106,7 @@ jobs:
           python publish_ligne.py $ARGS
 
       - name: Persister le déplacement + le journal
-        if: ${{ steps.check.outputs.go == 'true' && github.event.inputs.dry_run != 'true' && always() }}
+        if: ${{ github.event.inputs.dry_run != 'true' && always() }}
         run: |
           if [ -z "$(git status --porcelain ligne/)" ]; then
             echo "Aucune publication — rien à committer."; exit 0
