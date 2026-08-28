@@ -1,17 +1,19 @@
 name: LIGNE auto-publish (file)
 
-# Publie LIGNE depuis une FILE (ligne/queue/), pas un planning.
-# Chaque jour à 18h30 Paris : prend le PLUS ANCIEN épisode de la file, le publie
-# sur @kongrave_ (mêmes secrets que la saga), le déplace en ligne/published/.
+# Publie LIGNE depuis une FILE (ligne/queue/), pas un planning : prend le PLUS
+# ANCIEN épisode de la file, le publie sur @kongrave_, le déplace en published/.
 #
-# 18h30 Paris toute l'année : deux crons UTC (été CEST=UTC+2, hiver CET=UTC+1).
-# Les DEUX se déclenchent chaque jour, mais publish_ligne.py ne publie QUE lorsque
-# l'heure de Paris vaut 18h -> un seul des deux passe la fenêtre. La cadence (24h)
-# empêche de toute façon deux posts le même jour.
+# IL N'Y A PLUS DE FENÊTRE HORAIRE. Le seul garde-fou temporel est la cadence,
+# lue dans ligne/config.json — 12 h au 28/08/2026, soit deux publications par
+# jour. Le cron ne décide de rien : il ne fait qu'offrir des occasions, et la
+# cadence tranche. Ne JAMAIS régler l'intervalle du cron sans lire la cadence
+# réelle : avec un cron toutes les 8 h, aucun créneau ne retombait à 12 h
+# d'intervalle et le rythme dérivait à 1,5 post par jour au lieu de 2.
 
 on:
   schedule:
-    - cron: "30 */6 * * *"     # 4 creneaux/jour, espaces de 6h : cadence_hours=12 tombe pile sur un creneau sur deux, donc 2 publications/jour
+    - cron: "30 */2 * * *"     # 12 sondages/jour. Le court-circuit rend un sondage a vide quasi gratuit,
+                               # et sonder souvent est la seule protection contre un creneau que GitHub abandonne.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -39,16 +41,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # COURT-CIRCUIT (<10 s) : rejoue les trois premières portes de publish_ligne.py
+      # — pause, cadence, file vide — avec le python système, avant toute installation.
+      # Un sondage à vide coûtait ~1,7 min de runner ; il en coûte quelques secondes.
+      # C'est ce qui permet de sonder souvent, et sonder souvent est la seule protection
+      # contre un créneau planifié que GitHub retarde ou abandonne (28/08/2026).
+      - name: Court-circuit — pause, cadence, file
+        id: check
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            echo "Force demandé — aucune porte n'est évaluée ici."
+            echo "go=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          verdict=$(/usr/bin/python3 ligne/precheck.py)
+          echo "$verdict"
+          case "$verdict" in
+            GO*) echo "go=true"  >> "$GITHUB_OUTPUT" ;;
+            *)   echo "go=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
       - name: Python
+        if: steps.check.outputs.go == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
 
       - name: Dépendances
+        if: steps.check.outputs.go == 'true'
         run: pip install -r requirements.txt
 
       - name: Publier le plus ancien épisode de la file
+        if: steps.check.outputs.go == 'true'
         env:
           INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
@@ -63,7 +88,7 @@ jobs:
           python publish_ligne.py $ARGS
 
       - name: Persister le déplacement + le journal
-        if: ${{ github.event.inputs.dry_run != 'true' && always() }}
+        if: ${{ steps.check.outputs.go == 'true' && github.event.inputs.dry_run != 'true' && always() }}
         run: |
           if [ -z "$(git status --porcelain ligne/)" ]; then
             echo "Aucune publication — rien à committer."; exit 0
