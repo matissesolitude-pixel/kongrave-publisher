@@ -1,0 +1,9 @@
+Two traders open three positions each. One of them is holding three risks, and the other is holding one.
+
+The first picked instruments that move apart from each other, so when one falls the other two stay where they are. The second picked instruments that move together, and the market treats his three trades as a single one. When the move goes against him it does not take a third of his exposure — it takes all of it, at the same second, three times over.
+
+Count your exposure, not your tickets.
+
+Follow @kongrave_ — the mechanics nobody explains.
+
+#trading #riskmanagement #correlation #daytrading #forex #portfolio #propfirm #discipline #priceaction #trader
