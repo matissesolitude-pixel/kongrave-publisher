@@ -35,7 +35,7 @@ jobs:
           cache: "pip"
 
       - name: Dépendances
-        run: pip install requests
+        run: pip install requests python-dotenv
 
       - name: Mesurer
         env:
