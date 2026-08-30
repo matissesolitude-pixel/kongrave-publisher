@@ -1,0 +1,12 @@
+# Donnees de marche : volumineuses, reconstructibles par `grs download`.
+data/raw/
+data/m5/
+data/excluded.csv
+
+# Sorties d'analyse : produites par `grs report`.
+out/sessions.csv
+out/report.md
+out/plots/*.png
+
+.venv*/
+__pycache__/
