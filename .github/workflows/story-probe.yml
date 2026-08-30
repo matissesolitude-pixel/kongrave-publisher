@@ -1,0 +1,68 @@
+name: STORY probe (spike — dry-run)
+
+# SPIKE, à supprimer une fois la réponse obtenue. Ne publie RIEN par défaut.
+#
+# Répond à une seule question : le jeton en Secrets peut-il publier une story ?
+# Le jeton ne vit que dans les Secrets GitHub, donc c'est la seule façon de le
+# demander — exactement le précédent posé par ig-status.yml.
+#
+# Checkout PARTIEL, comme le job `check` des deux chaînes en service : le dépôt
+# pèse 8,7 Go dont 5,0 Go de masters LIGNE dont ce probe n'a aucun besoin. Il ne
+# récupère que les deux fichiers qu'il exécute.
+#
+# NE TOUCHE À RIEN de LIGNE ni du carrousel : pas de cron, pas de permissions
+# d'écriture, aucun commit, aucun fichier partagé modifié.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_url:
+        description: "Image de test (défaut : une slide de carrousel déjà en ligne)"
+        required: false
+        default: ""
+      publish:
+        description: "PUBLIER VRAIMENT une story de test (visible 24 h). Défaut : non."
+        type: boolean
+        default: false
+
+# Aucune écriture sur le dépôt : ce probe ne commite rien.
+permissions:
+  contents: read
+
+concurrency:
+  group: story-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout partiel — le client API et le probe seulement
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ig_api.py
+            story_probe.py
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests python-dotenv
+
+      - name: Interroger le jeton
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          GRAPH_VERSION: v20.0
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.image_url }}" ]; then
+            ARGS="$ARGS --image-url ${{ github.event.inputs.image_url }}"
+          fi
+          if [ "${{ github.event.inputs.publish }}" = "true" ]; then
+            echo "::warning::PUBLICATION RÉELLE demandée — une story va partir sur @kongrave_."
+            ARGS="$ARGS --publish"
+          fi
+          python story_probe.py $ARGS
