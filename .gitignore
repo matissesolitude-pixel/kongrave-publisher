@@ -10,3 +10,6 @@ __pycache__/
 
 # NOTE : en mode GitHub Actions, les vidéos de inbox/ ET schedule.json SONT versionnés
 # (le runner en a besoin pour l'upload resumable). Ils ne sont donc plus ignorés ici.
+
+# Environnements virtuels Python : jamais versionnes.
+.venv*/
