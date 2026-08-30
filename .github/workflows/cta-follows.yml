@@ -1,0 +1,45 @@
+name: LIGNE abonnés par CTA (lecture seule)
+
+# Compare le nombre d'abonnements gagnés par Reel selon la position du CTA :
+# en début de légende avec un mot-clé (jusqu'à L71) ou en fin de légende avec
+# « Follow @kongrave_ » (à partir de L72).
+#
+# AUCUNE écriture, aucune publication, aucun cron : ne tourne qu'à la demande.
+# Le token ne vit que dans les Secrets, c'est donc la seule façon de mesurer.
+# Checkout partiel : le dépôt pèse 5,6 Go dont 3,7 Go de masters inutiles ici.
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "Nombre de médias à remonter"
+        required: false
+        default: "40"
+
+jobs:
+  mesure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ig_api.py
+            requirements.txt
+            ligne/cta_follows.py
+            ligne/publish_log.json
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Dépendances
+        run: pip install requests
+
+      - name: Mesurer
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          GRAPH_VERSION: v22.0
+        run: python ligne/cta_follows.py "${{ github.event.inputs.n }}"
