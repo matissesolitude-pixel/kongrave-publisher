@@ -69,6 +69,42 @@ def insights(media_id):
     return out
 
 
+def abonnes_par_jour():
+    """Nouveaux abonnés par jour, au niveau du COMPTE.
+
+    L'API refuse `follows` au niveau du média — Instagram ne l'expose que dans
+    l'application. Le seul chiffre disponible est `follower_count`, journalier,
+    limité aux 30 derniers jours. Comme la bascule du CTA date du 16/08/2026,
+    cette fenêtre couvre les deux régimes, et c'est donc la seule mesure
+    possible : par jour, pas par post.
+    """
+    import datetime as dt
+    import requests
+    fin = dt.datetime.now(dt.timezone.utc)
+    debut = fin - dt.timedelta(days=29)
+    url = f"{ig_api.GRAPH_HOST}/{ig_api.GRAPH_VERSION}/{ig_api._ig_user_id()}/insights"
+    try:
+        resp = requests.get(url, params={
+            "metric": "follower_count",
+            "period": "day",
+            "since": int(debut.timestamp()),
+            "until": int(fin.timestamp()),
+            "access_token": ig_api._access_token(),
+        }, timeout=30)
+        data = resp.json()
+    except Exception as exc:                                   # noqa: BLE001
+        return {"_erreur": f"{type(exc).__name__}: {exc}"}
+    if "error" in data:
+        return {"_erreur": data["error"].get("message", "erreur API")}
+    par_jour = {}
+    for bloc in data.get("data", []):
+        for v in bloc.get("values", []):
+            jour = str(v.get("end_time", ""))[:10]
+            if jour:
+                par_jour[jour] = v.get("value")
+    return par_jour
+
+
 def numero(nom):
     chiffres = "".join(c for c in nom if c.isdigit())
     return int(chiffres) if chiffres else None
@@ -116,6 +152,27 @@ def main():
         taux = (abos / vues * 100) if vues else 0
         print(f"  {etiquette} : {n} posts, {abos:.0f} abonnés au total, "
               f"{moy:.1f} par post, {taux:.2f} % des vues.")
+
+    # --- Repli au niveau du compte, jour par jour ---------------------------
+    BASCULE_JOUR = "2026-08-16"          # premier post au CTA en fin de légende
+    print("\n  ABONNÉS PAR JOUR (niveau compte — la seule mesure que l'API rende)")
+    jours = abonnes_par_jour()
+    if "_erreur" in jours:
+        print(f"  indisponible : {jours['_erreur']}")
+        return
+    avant_j = {j: v for j, v in jours.items() if j < BASCULE_JOUR and v is not None}
+    apres_j = {j: v for j, v in jours.items() if j >= BASCULE_JOUR and v is not None}
+    for j in sorted(jours):
+        marque = "fin " if j >= BASCULE_JOUR else "début"
+        print(f"    {j}  {marque}  {jours[j]}")
+    for etiquette, lot in (("CTA en début de légende", avant_j),
+                           ("CTA en fin de légende  ", apres_j)):
+        if not lot:
+            print(f"  {etiquette} : aucun jour dans la fenêtre de 30 jours.")
+            continue
+        total = sum(lot.values())
+        print(f"  {etiquette} : {len(lot)} jours, {total} abonnés, "
+              f"{total / len(lot):.1f} par jour.")
 
 
 if __name__ == "__main__":
