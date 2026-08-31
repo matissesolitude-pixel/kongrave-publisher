@@ -1,8 +1,9 @@
 {
   "id": "L99",
-  "title": "L99 — THE LEVEL THEY BOTH DREW",
   "engine": "l99",
-  "total": 26.55,
+  "title": "L99 — THE LEVEL THEY BOTH DREW",
+  "_cellule": "SERX (Sniper) · Autorité · Delay · regard=marché · présent · −−",
+  "_dispositif": "MÉTAPHORE SEULE",
   "voice": [
     "Two traders draw the same level. One sets an alarm. The other watches the candle build.",
     "The level holds. The move runs all afternoon. Only one of them is in it.",
@@ -10,180 +11,170 @@
     "The chart pays position, not analysis. Nothing you see gets paid until it's placed.",
     "An alarm is a decision made in advance. Follow KONGRAVE — the mechanics nobody explains"
   ],
-  "_cellule": "SERX (Sniper) · Autorité · Speed/Time delay · marché · présent · −−",
-  "_dispositif": "MÉTAPHORE SEULE",
-  "_narrator": {
-    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
-    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
-  },
-  "_rules": {
-    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
-    "registre": "STRUCTURE",
-    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
-    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
-    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
-    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
-    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
-    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
-    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
-    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
-    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
-    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
-  },
-  "caption": "Two traders drew the same level. The level held. Only one of them was in it.\n\nThe one who missed it had the move traced perfectly — on paper. The chart doesn't pay analysis, it pays position. An alarm set before the level is reached is a decision made while you can still make one.\n\nNothing you see gets paid until it's placed.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "Two traders drew the same level. The level held. Only one of them was in it.",
   "scenes": [
     {
       "id": "s1",
       "clarity": "Deux personnes tracent le même trait. L'une y accroche un jeton et s'en va, l'autre reste à regarder.",
-      "cast": [
-        "niveau horizontal (encre)",
-        "figure gauche",
-        "figure droite",
-        "marqueur teal",
-        "bougie en construction"
-      ],
-      "duration_s": 5.82,
+      "question": "WHY DOESN'T BEING RIGHT PAY?",
+      "emotion_lever": "CURIOSITÉ — deux traits identiques, un seul porte un marqueur ; l'œil cherche la différence",
+      "cast": {
+        "c1": {
+          "type": "object",
+          "note": "niveau horizontal (encre)"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure gauche"
+        },
+        "c3": {
+          "type": "figure",
+          "note": "figure droite"
+        },
+        "c4": {
+          "type": "object",
+          "note": "marqueur teal"
+        },
+        "c5": {
+          "type": "object",
+          "note": "bougie en construction"
+        }
+      },
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.0",
           "do": "FRAME 0 EN TENSION : un trait horizontal net coupe le cadre, une bougie monte dessous au ras du trait, à un cheveu du contact."
         },
         {
-          "t": 1.0,
+          "t": "1.0-2.8",
           "do": "La figure gauche pose un marqueur teal sur le trait — snap 3 frames — puis sort du cadre."
         },
         {
-          "t": 2.8,
+          "t": "2.8-4.4",
           "do": "La figure droite reste, immobile, le regard sur la bougie qui s'allonge."
         },
         {
-          "t": 4.4,
+          "t": "4.4-5.8",
           "do": "La question pop ligne par ligne. La bougie touche le trait."
         }
       ],
+      "camera": "fixe",
       "dod": "Un trait, un jeton posé dessus, et quelqu'un qui reste planté à regarder.",
-      "question": "WHY DOESN'T BEING RIGHT PAY?",
-      "fusil": "LE MARQUEUR — un petit jeton teal posé sur le niveau en S1 par une seule des deux figures.",
-      "emotion_lever": "CURIOSITÉ — deux traits identiques, un seul porte un marqueur ; l'œil cherche la différence"
+      "dispositif_cle": "MÉTAPHORE SEULE : l'objet visuel porte tout le sens, aucune explication littérale n'est nécessaire."
     },
     {
       "id": "s2",
       "clarity": "Le trait tient, le mouvement dure tout l'après-midi, et un seul des deux est dedans.",
-      "cast": [
-        "niveau",
-        "marqueur teal",
-        "trajectoire",
-        "figure droite"
-      ],
-      "duration_s": 4.84,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.2",
           "do": "La bougie rebondit sur le trait. Le trait tient — épaississement 2 frames."
         },
         {
-          "t": 1.2,
+          "t": "1.2-3.0",
           "do": "Le marqueur teal se détache et monte le long de la trajectoire, cadence lente puis pressée."
         },
         {
-          "t": 3.0,
+          "t": "3.0-4.2",
           "do": "La figure droite est toujours au même endroit, bras le long du corps, dans le cadre."
         },
         {
-          "t": 4.2,
+          "t": "4.2-4.8",
           "do": "La trajectoire sort par le haut. Le marqueur avec elle."
         }
       ],
+      "camera": "fixe",
       "dod": "Le jeton monte avec le prix, la personne qui regarde ne bouge pas.",
       "turn": "Le jeton monte avec le prix, la personne qui regarde ne bouge pas."
     },
     {
       "id": "s3",
       "clarity": "Avoir raison est une lettre que le marché ne poste jamais.",
-      "cast": [
-        "calque de tracé",
-        "socket vide",
-        "figure droite"
-      ],
-      "duration_s": 4.51,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.4",
           "do": "La figure droite déroule un calque : le tracé qu'elle avait prévu."
         },
         {
-          "t": 1.4,
+          "t": "1.4-2.8",
           "do": "PIVOT : le tracé se superpose EXACTEMENT à la trajectoire réelle. Parfait, au trait près."
         },
         {
-          "t": 2.8,
+          "t": "2.8-3.9",
           "do": "La caméra descend sous le calque et découvre un socket vide. Aucun jeton n'y est jamais tombé."
         },
         {
-          "t": 3.9,
+          "t": "3.9-4.5",
           "do": "Immobilité choc 0,9 s : tracé parfait au-dessus, socket nu en dessous."
         }
       ],
+      "camera": "fixe",
       "dod": "Le dessin était juste, et l'emplacement en dessous est resté vide.",
       "turn": "Le dessin était juste, et l'emplacement en dessous est resté vide."
     },
     {
       "id": "s4",
       "clarity": "Le graphique paie la position, pas l'analyse.",
-      "cast": [
-        "trois niveaux",
-        "trois calques",
-        "trois sockets",
-        "compteur"
-      ],
-      "duration_s": 5.56,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.2",
           "do": "Trois niveaux apparaissent en cadence, un par temps."
         },
         {
-          "t": 1.2,
+          "t": "1.2-2.8",
           "do": "Trois calques justes se posent dessus, l'un après l'autre, froidement."
         },
         {
-          "t": 2.8,
+          "t": "2.8-4.2",
           "do": "Sous chacun, un socket reste vide. Aucun ne change de couleur."
         },
         {
-          "t": 4.2,
+          "t": "4.2-5.6",
           "do": "Les trois calques se délavent teal → gris ensemble. Le tracé juste ne se conserve pas."
         }
       ],
+      "camera": "fixe",
       "dod": "Trois analyses justes, trois emplacements vides, et rien qui se garde.",
-      "turn": "Trois analyses justes, trois emplacements vides, et rien qui se garde."
+      "turn": "Trois analyses justes, trois emplacements vides, et rien qui se garde.",
+      "note": "Scène d'escalade — le retournement de S3 se répète, cadencé, froid."
     },
     {
       "id": "s5",
       "clarity": "Un réveil, c'est une décision prise à l'avance.",
-      "cast": [
-        "niveau",
-        "marqueur teal",
-        "socket vide"
-      ],
-      "duration_s": 5.82,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.4",
           "do": "Deux niveaux identiques côte à côte, tracés au même trait."
         },
         {
-          "t": 1.4,
+          "t": "1.4-3.0",
           "do": "Gauche : le marqueur est posé, la ligne se prolonge en teal plein. Droite : rien, la ligne reste encre."
         },
         {
-          "t": 3.0,
+          "t": "3.0-5.8",
           "do": "Image finale tenue ≥ 3 s. Une seule variable entre les deux : le marqueur posé avant, pas pendant."
         }
       ],
+      "camera": "fixe",
       "dod": "Le même trait paie ou ne paie pas selon qu'un jeton y a été accroché avant.",
-      "fusil_decharge": "En S5, le marqueur est la seule chose qui a transformé un dessin en position."
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin."
     }
-  ]
+  ],
+  "total": 26.6,
+  "caption": "Two traders drew the same level. The level held. Only one of them was in it.\n\nThe one who missed it had the move traced perfectly — on paper. The chart doesn't pay analysis, it pays position. An alarm set before the level is reached is a decision made while you can still make one.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #technicalanalysis #tradingstrategy #priceaction",
+  "pinned_comment": "An alarm is a decision made in advance. Follow @kongrave_ — the mechanics nobody explains",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "MÉTAPHORE SEULE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~26.6s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
 }

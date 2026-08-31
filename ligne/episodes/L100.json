@@ -1,8 +1,9 @@
 {
   "id": "L100",
-  "title": "L100 — THE RULES THAT KEPT RUNNING",
   "engine": "l100",
-  "total": 26.62,
+  "title": "L100 — THE RULES THAT KEPT RUNNING",
+  "_cellule": "OIRD (Circuit) · Curiosité · Nightmare · regard=prospect · passé · −−",
+  "_dispositif": "HARENG ROUGE",
   "voice": [
     "Two traders run the same rules. One is flat this month. He thinks the market changed.",
     "He tests a new indicator. Then a new session. Then a new pair. Same result.",
@@ -10,183 +11,170 @@
     "A plan doesn't announce its own death. It just keeps executing.",
     "Date your rules. Anything undated is a guess. Follow KONGRAVE — the mechanics nobody explains"
   ],
-  "_cellule": "OIRD (Circuit) · Curiosité · Dream/Nightmare · prospect · passé · −−",
-  "_dispositif": "HARENG ROUGE",
-  "_narrator": {
-    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
-    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
-  },
-  "_rules": {
-    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
-    "registre": "STRUCTURE",
-    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
-    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
-    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
-    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
-    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
-    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
-    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
-    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
-    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
-    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
-  },
-  "caption": "Two traders run the same rules. One is flat this month and thinks the market changed.\n\nHe swapped the indicator, then the session, then the pair. Same result every time. The market didn't move on him — his rules were written for a regime that had already ended, and a plan never announces its own death. It just keeps executing.\n\nAn undated rule is a guess wearing a uniform.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "Two traders run the same rules. One is flat this month and thinks the market changed.",
   "scenes": [
     {
       "id": "s1",
       "clarity": "Une machine applique des règles sans arrêt, et le bac où tombent les résultats est vide.",
-      "cast": [
-        "machine à tampon (encre)",
-        "pile de cartes",
-        "bac de sortie vide",
-        "figure"
-      ],
-      "duration_s": 5.69,
+      "question": "WHEN DID YOUR PLAN STOP BEING TRUE?",
+      "emotion_lever": "CHOC — une machine qui tamponne sans arrêt dans un bac de sortie parfaitement vide",
+      "cast": {
+        "c1": {
+          "type": "machine",
+          "note": "machine à tampon (encre)"
+        },
+        "c2": {
+          "type": "card",
+          "note": "pile de cartes"
+        },
+        "c3": {
+          "type": "object",
+          "note": "bac de sortie vide"
+        },
+        "c4": {
+          "type": "figure",
+          "note": "figure"
+        }
+      },
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.4",
           "do": "FRAME 0 EN TENSION : la machine tamponne à cadence rapide, bras en plein mouvement, et le bac de sortie sous elle est absolument vide."
         },
         {
-          "t": 1.4,
+          "t": "1.4-3.0",
           "do": "Une carte de règles glisse dans la fente. Face visible : des traits. Le dos ne se voit pas."
         },
         {
-          "t": 3.0,
+          "t": "3.0-4.4",
           "do": "Le tampon retombe. Rien ne tombe dans le bac."
         },
         {
-          "t": 4.4,
+          "t": "4.4-5.7",
           "do": "La question pop ligne par ligne. La figure regarde le bac, pas la machine."
         }
       ],
+      "camera": "fixe",
       "dod": "La machine travaille bien, et rien ne sort.",
-      "question": "WHEN DID YOUR PLAN STOP BEING TRUE?",
-      "fusil": "LA CARTE DE RÈGLES — une carte glissée dans la machine en S1, dont on ne voit pas le dos.",
-      "emotion_lever": "CHOC — une machine qui tamponne sans arrêt dans un bac de sortie parfaitement vide"
+      "dispositif_cle": "HARENG ROUGE : une fausse piste occupe l'attention avant que le vrai mécanisme n'apparaisse."
     },
     {
       "id": "s2",
       "clarity": "Il change les boutons un par un, et le résultat ne bouge pas.",
-      "cast": [
-        "cadran indicateur",
-        "plaque session",
-        "plaque paire",
-        "bac vide"
-      ],
-      "duration_s": 5.03,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.2",
           "do": "La figure tourne le cadran INDICATEUR. Snap. Le tampon repart."
         },
         {
-          "t": 1.2,
+          "t": "1.2-2.4",
           "do": "Elle échange la plaque SESSION. Snap. Le tampon repart."
         },
         {
-          "t": 2.4,
+          "t": "2.4-3.6",
           "do": "Elle échange la plaque PAIRE. Snap. Le tampon repart."
         },
         {
-          "t": 3.6,
+          "t": "3.6-5.0",
           "do": "Le bac est toujours vide. Trois changements, zéro effet — cadence identique à chaque fois."
         }
       ],
+      "camera": "fixe",
       "dod": "Trois pièces changées, exactement le même vide en sortie.",
       "turn": "Trois pièces changées, exactement le même vide en sortie."
     },
     {
       "id": "s3",
       "clarity": "Le marché n'a pas changé : les règles ont été écrites pour un marché déjà fini.",
-      "cast": [
-        "carte de règles",
-        "ligne de bascule",
-        "sol qui glisse"
-      ],
-      "duration_s": 5.43,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.6",
           "do": "La caméra recule d'un cran. Le SOL sous la machine s'est déplacé — une ligne de bascule nette le traverse."
         },
         {
-          "t": 1.6,
+          "t": "1.6-3.2",
           "do": "PIVOT : la carte remonte de la fente et se retourne. Au dos, une date."
         },
         {
-          "t": 3.2,
+          "t": "3.2-4.4",
           "do": "La date se place sur le sol : elle tombe DERRIÈRE la ligne de bascule."
         },
         {
-          "t": 4.4,
+          "t": "4.4-5.4",
           "do": "Immobilité choc 1 s. La machine, elle, continue de tamponner hors champ sonore."
         }
       ],
+      "camera": "fixe",
       "dod": "Les règles portent une date, et cette date est de l'autre côté du changement.",
       "turn": "Les règles portent une date, et cette date est de l'autre côté du changement."
     },
     {
       "id": "s4",
       "clarity": "Un plan ne prévient pas qu'il est mort, il continue.",
-      "cast": [
-        "machine",
-        "sol",
-        "cartes",
-        "bac"
-      ],
-      "duration_s": 4.24,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.0",
           "do": "Le sol glisse d'un cran. La machine ne réagit pas."
         },
         {
-          "t": 1.0,
+          "t": "1.0-2.4",
           "do": "Encore un cran. La machine tamponne au même rythme, parfaitement régulière."
         },
         {
-          "t": 2.4,
+          "t": "2.4-3.8",
           "do": "Les cartes se délavent teal → gris une à une, dans l'ordre, sans bruit."
         },
         {
-          "t": 3.8,
+          "t": "3.8-4.3",
           "do": "Le bras du tampon reste à cadence pleine sur des cartes entièrement grises."
         }
       ],
+      "camera": "fixe",
       "dod": "Le sol bouge, les règles pâlissent, et la machine tamponne toujours pareil.",
-      "turn": "Le sol bouge, les règles pâlissent, et la machine tamponne toujours pareil."
+      "turn": "Le sol bouge, les règles pâlissent, et la machine tamponne toujours pareil.",
+      "note": "Scène d'escalade — le retournement de S3 se répète, cadencé, froid."
     },
     {
       "id": "s5",
       "clarity": "Une règle sans date est une supposition.",
-      "cast": [
-        "carte datée",
-        "carte non datée",
-        "ligne de bascule"
-      ],
-      "duration_s": 6.22,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.4",
           "do": "Deux cartes côte à côte, texte identique au recto."
         },
         {
-          "t": 1.4,
+          "t": "1.4-2.8",
           "do": "Retournement simultané : l'une porte une date lisible, l'autre est nue."
         },
         {
-          "t": 2.8,
+          "t": "2.8-3.6",
           "do": "La ligne de bascule passe entre les deux. La carte datée reste teal, la carte nue se délave en gris."
         },
         {
-          "t": 3.6,
+          "t": "3.6-6.2",
           "do": "Image finale tenue ≥ 3 s."
         }
       ],
+      "camera": "fixe",
       "dod": "La seule différence entre une règle et une supposition, c'est une date au dos.",
-      "fusil_decharge": "En S5, on retourne la carte : elle porte une date, et la date est derrière la ligne de bascule."
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin."
     }
-  ]
+  ],
+  "total": 26.6,
+  "caption": "Two traders run the same rules. One is flat this month and thinks the market changed.\n\nHe swapped the indicator, then the session, then the pair. Same result every time. The market didn't move on him — his rules were written for a regime that had already ended, and a plan never announces its own death. It just keeps executing.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #backtesting #tradingstrategy #marketregime",
+  "pinned_comment": "Date your rules. Anything undated is a guess. Follow @kongrave_ — the mechanics nobody explains",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "META",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "HARENG ROUGE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~26.6s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
 }

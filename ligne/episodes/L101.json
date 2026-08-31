@@ -1,8 +1,9 @@
 {
   "id": "L101",
-  "title": "L101 — THE LEAK NOBODY HEARS",
   "engine": "l101",
-  "total": 24.78,
+  "title": "L101 — THE LEAK NOBODY HEARS",
+  "_cellule": "OERD (Assaillant) · Éducation · Risk · regard=desk · présent · −−",
+  "_dispositif": "PRÉSAGE",
   "voice": [
     "Two traders keep the same win rate. One checks his average loss. The other checks his balance.",
     "The balance still looks fine. The average loss has grown for six weeks.",
@@ -10,184 +11,174 @@
     "By the time the balance shows it, the leak is months old.",
     "Track the average, not the total. Follow KONGRAVE — the mechanics nobody explains"
   ],
-  "_cellule": "OERD (Assaillant) · Éducation · Likelihood/Risk · desk · présent · −−",
-  "_dispositif": "PRÉSAGE",
-  "_narrator": {
-    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
-    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
-  },
-  "_rules": {
-    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
-    "registre": "STRUCTURE",
-    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
-    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
-    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
-    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
-    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
-    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
-    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
-    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
-    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
-    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
-  },
-  "caption": "Two traders keep the exact same win rate. One of them has been leaking for six weeks.\n\nThe balance looked fine the whole time, because it was being refilled at the same rate it drained. An edge rarely breaks — it leaks, silently, and the total is the last number to admit it. The average loss moves first.\n\nThe total is the last number to tell you the truth.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "Two traders keep the exact same win rate. One of them has been leaking for six weeks.",
   "scenes": [
     {
       "id": "s1",
       "clarity": "Deux récipients pareils, remplis pareil, et une petite tache sous un seul des deux.",
-      "cast": [
-        "récipient A",
-        "récipient B",
-        "jauge taux de réussite",
-        "tache au sol",
-        "deux figures"
-      ],
-      "duration_s": 6.28,
+      "question": "WHERE DOES AN EDGE GO WHEN IT LEAVES?",
+      "emotion_lever": "CURIOSITÉ — deux récipients identiques, une tache qui s'élargit sous un seul",
+      "cast": {
+        "c1": {
+          "type": "vessel",
+          "note": "récipient A"
+        },
+        "c2": {
+          "type": "vessel",
+          "note": "récipient B"
+        },
+        "c3": {
+          "type": "gauge",
+          "note": "jauge taux de réussite"
+        },
+        "c4": {
+          "type": "object",
+          "note": "tache au sol"
+        },
+        "c5": {
+          "type": "figure",
+          "note": "deux figures"
+        }
+      },
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.2",
           "do": "FRAME 0 EN TENSION : deux récipients teal remplis au même trait, une jauge identique au-dessus des deux, et sous celui de droite une tache minuscule mais nette."
         },
         {
-          "t": 1.2,
+          "t": "1.2-2.6",
           "do": "La figure gauche lève son récipient et le regarde par en dessous."
         },
         {
-          "t": 2.6,
+          "t": "2.6-4.2",
           "do": "La figure droite regarde la jauge, jamais le sol."
         },
         {
-          "t": 4.2,
+          "t": "4.2-6.3",
           "do": "La question pop ligne par ligne. La tache est cadrée en bas à droite, sans commentaire."
         }
       ],
+      "camera": "fixe",
       "dod": "Deux récipients identiques, et une tache sous un seul, que personne ne regarde.",
-      "question": "WHERE DOES AN EDGE GO WHEN IT LEAVES?",
-      "fusil": "LA TACHE AU SOL — une marque minuscule sous l'un des deux récipients, visible dès S1.",
-      "emotion_lever": "CURIOSITÉ — deux récipients identiques, une tache qui s'élargit sous un seul"
+      "dispositif_cle": "PRÉSAGE : un détail discret posé en S1 annonce ce qui se joue en S3-S4."
     },
     {
       "id": "s2",
       "clarity": "La jauge ne bouge pas, la tache grandit semaine après semaine.",
-      "cast": [
-        "jauge",
-        "tache",
-        "six marques de temps"
-      ],
-      "duration_s": 4.77,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.0",
           "do": "La jauge reste rigoureusement au même trait. Aucun mouvement."
         },
         {
-          "t": 1.0,
+          "t": "1.0-2.6",
           "do": "Six marques de temps défilent en cadence sèche sous le cadre."
         },
         {
-          "t": 2.6,
+          "t": "2.6-4.0",
           "do": "À chaque marque, la tache s'élargit d'un cran. Le niveau du récipient, lui, ne bouge pas."
         },
         {
-          "t": 4.0,
+          "t": "4.0-4.8",
           "do": "Tenue 0,7 s : jauge pleine, tache large."
         }
       ],
+      "camera": "fixe",
       "dod": "Le compteur du haut ne change pas pendant que la tache du bas double.",
       "turn": "Le compteur du haut ne change pas pendant que la tache du bas double."
     },
     {
       "id": "s3",
       "clarity": "Un avantage ne casse pas, il fuit, et une fuite ne fait aucun bruit.",
-      "cast": [
-        "récipient",
-        "filet d'entrée",
-        "goutte de sortie"
-      ],
-      "duration_s": 4.44,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.2",
           "do": "Coupe franche sur le récipient droit, seul dans le cadre."
         },
         {
-          "t": 1.2,
+          "t": "1.2-2.4",
           "do": "PIVOT : un filet entre par le haut et une goutte sort par le bas, exactement au même débit."
         },
         {
-          "t": 2.4,
+          "t": "2.4-3.4",
           "do": "Le niveau ne bouge donc jamais. Le récipient a l'air plein et se vide en continu."
         },
         {
-          "t": 3.4,
+          "t": "3.4-4.4",
           "do": "Immobilité choc 0,8 s sur le niveau parfaitement stable."
         }
       ],
+      "camera": "fixe",
       "dod": "Il se remplit aussi vite qu'il fuit, alors le niveau ment.",
       "turn": "Il se remplit aussi vite qu'il fuit, alors le niveau ment."
     },
     {
       "id": "s4",
       "clarity": "Quand le niveau finit par le montrer, la fuite a des mois.",
-      "cast": [
-        "récipient",
-        "niveau",
-        "tache",
-        "marches de temps"
-      ],
-      "duration_s": 3.85,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.0",
           "do": "Le filet d'entrée se pince d'un cran."
         },
         {
-          "t": 1.0,
+          "t": "1.0-2.2",
           "do": "Le niveau chute d'un seul coup, brutalement, en une marche — pas en pente."
         },
         {
-          "t": 2.2,
+          "t": "2.2-3.2",
           "do": "Le teal du récipient se délave en gris sur toute sa hauteur."
         },
         {
-          "t": 3.2,
+          "t": "3.2-3.9",
           "do": "La tache au sol, elle, occupe déjà le tiers du cadre. Elle était là depuis le début."
         }
       ],
+      "camera": "fixe",
       "dod": "Le niveau tombe d'un coup, alors que la flaque était visible depuis longtemps.",
-      "turn": "Le niveau tombe d'un coup, alors que la flaque était visible depuis longtemps."
+      "turn": "Le niveau tombe d'un coup, alors que la flaque était visible depuis longtemps.",
+      "note": "Scène d'escalade — le retournement de S3 se répète, cadencé, froid."
     },
     {
       "id": "s5",
       "clarity": "Mesure la moyenne, pas le total.",
-      "cast": [
-        "récipient A",
-        "récipient B",
-        "règle sur la tache",
-        "règle sur le niveau"
-      ],
-      "duration_s": 5.43,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.2",
           "do": "Les deux récipients reviennent côte à côte."
         },
         {
-          "t": 1.2,
+          "t": "1.2-2.6",
           "do": "Une règle se pose sur la TACHE du gauche : elle mesure, elle reste teal, elle alerte tôt."
         },
         {
-          "t": 2.6,
+          "t": "2.6-3.6",
           "do": "Une règle se pose sur le NIVEAU du droit : elle ne mesure rien, elle se délave en gris."
         },
         {
-          "t": 3.6,
+          "t": "3.6-5.4",
           "do": "Image finale tenue ≥ 3 s. Une seule variable : ce qui a été mesuré."
         }
       ],
+      "camera": "fixe",
       "dod": "Mesurer la flaque prévient tôt, mesurer le niveau prévient trop tard.",
-      "fusil_decharge": "En S5, la tache est ce qu'il fallait mesurer ; le niveau ne le disait pas."
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin."
     }
-  ]
+  ],
+  "total": 24.8,
+  "caption": "Two traders keep the exact same win rate. One of them has been leaking for six weeks.\n\nThe balance looked fine the whole time, because it was being refilled at the same rate it drained. An edge rarely breaks — it leaks, silently, and the total is the last number to admit it. The average loss moves first.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #tradingedge #riskmanagement #propfirm",
+  "pinned_comment": "Track the average, not the total. Follow @kongrave_ — the mechanics nobody explains",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MECANIQUE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "PRÉSAGE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~24.8s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
 }

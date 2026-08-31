@@ -1,8 +1,9 @@
 {
   "id": "L97",
-  "title": "L97 — THE SETUP THEY BOTH SAW",
   "engine": "l97",
-  "total": 30.3,
+  "title": "L97 — THE SETUP THEY BOTH SAW",
+  "_cellule": "SIRD (Glacier) · Miroir · Ease · regard=autres traders · présent · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
   "voice": [
     "Two traders see the same setup at 9:31. One clicks buy. The other opens a second chart.",
     "The second chart says the same thing. So he opens a third. The price leaves without him.",
@@ -10,179 +11,170 @@
     "Not entering never gets marked wrong. It is the only trade that can't lose on paper.",
     "Waiting felt like discipline. Check what it costs. Follow KONGRAVE — the mechanics nobody explains"
   ],
-  "_cellule": "SIRD (Glacier) · Miroir · Ease/Effort · autres traders · présent · −−",
-  "_dispositif": "MONTAGE PARALLÈLE",
-  "_narrator": {
-    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
-    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
-  },
-  "_rules": {
-    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
-    "registre": "STRUCTURE",
-    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
-    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
-    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
-    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
-    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
-    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
-    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
-    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
-    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
-    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
-  },
-  "caption": "Two traders saw the same entry at the same second, and only one of them is in it.\n\nThe one who stayed out wasn't missing information. He had three charts saying the same thing. Staying out is the only position that never gets marked wrong — which is exactly why it feels safe.\n\nThe trade you never took still has a price.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "Two traders saw the same entry at the same second, and only one of them is in it.",
   "scenes": [
     {
       "id": "s1",
       "clarity": "Deux personnes voient la même chose. L'une pose son jeton, l'autre va chercher un autre écran.",
-      "cast": [
-        "figure gauche (encre)",
-        "figure droite (encre)",
-        "panneau setup (encre)",
-        "boule teal",
-        "deux sockets vides"
-      ],
-      "duration_s": 5.82,
+      "question": "WHY DOES THE SETUP LEAVE WITHOUT YOU?",
+      "emotion_lever": "RECONNAISSANCE DE SOI — deux sockets identiques, une seule se remplit ; l'œil cherche pourquoi",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "figure gauche (encre)"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure droite (encre)"
+        },
+        "c3": {
+          "type": "panel",
+          "note": "panneau setup (encre)"
+        },
+        "c4": {
+          "type": "ball",
+          "note": "boule teal"
+        },
+        "c5": {
+          "type": "socket",
+          "note": "deux sockets vides"
+        }
+      },
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-0.8",
           "do": "FRAME 0 EN TENSION : deux sockets vides côte à côte, un seul panneau setup au centre, la même forme visible par les deux figures. Rien ne bouge encore."
         },
         {
-          "t": 0.8,
+          "t": "0.8-2.6",
           "do": "Le bras de la figure gauche claque vers le panneau — snap 3 frames. Une boule teal tombe dans son socket, squash 7% à l'impact."
         },
         {
-          "t": 2.6,
+          "t": "2.6-4.2",
           "do": "Le bras de la figure droite tire un SECOND panneau par-dessus le premier. Le nouveau panneau porte exactement la même forme."
         },
         {
-          "t": 4.2,
+          "t": "4.2-5.8",
           "do": "La question pop ligne par ligne en haut du cadre. Le socket droit reste vide, cadré net."
         }
       ],
+      "camera": "fixe",
       "dod": "Le socket gauche est plein, le socket droit est vide, et un panneau de plus vient d'apparaître.",
-      "question": "WHY DOES THE SETUP LEAVE WITHOUT YOU?",
-      "fusil": "LE SOCKET — deux emplacements vides sous deux figures. L'un reçoit une boule teal en S1.",
-      "emotion_lever": "RECONNAISSANCE DE SOI — deux sockets identiques, une seule se remplit ; l'œil cherche pourquoi"
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux figures tournent toujours ensemble, en miroir, sur la même donnée."
     },
     {
       "id": "s2",
       "clarity": "Il ajoute des écrans qui disent tous la même chose, et le prix part sans lui.",
-      "cast": [
-        "panneaux empilés",
-        "boule teal",
-        "ligne de prix"
-      ],
-      "duration_s": 5.89,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.4",
           "do": "Un TROISIÈME panneau glisse sur la pile droite. Cadence lente puis pressée."
         },
         {
-          "t": 1.4,
+          "t": "1.4-3.0",
           "do": "Zoom court : les trois formes sont superposables. Aucune information neuve."
         },
         {
-          "t": 3.0,
+          "t": "3.0-4.6",
           "do": "À gauche, la boule teal monte le long d'une ligne qui sort du cadre par le haut."
         },
         {
-          "t": 4.6,
+          "t": "4.6-5.9",
           "do": "La pile droite reste immobile 1 s pendant que la ligne gauche continue. Le socket droit est toujours dans le cadre."
         }
       ],
+      "camera": "fixe",
       "dod": "Trois écrans identiques d'un côté, le jeton qui monte et s'échappe de l'autre.",
       "turn": "Trois écrans identiques d'un côté, le jeton qui monte et s'échappe de l'autre."
     },
     {
       "id": "s3",
       "clarity": "Il n'attendait pas une information, il attendait de ne pas avoir à décider.",
-      "cast": [
-        "pile de panneaux",
-        "socket vide",
-        "voile d'ombre"
-      ],
-      "duration_s": 6.42,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.5",
           "do": "La caméra recule. La pile de panneaux devient un mur derrière la figure droite."
         },
         {
-          "t": 1.5,
+          "t": "1.5-3.4",
           "do": "PIVOT : le mur se soulève d'un bloc et découvre le socket vide, intact, protégé sous lui."
         },
         {
-          "t": 3.4,
+          "t": "3.4-5.0",
           "do": "Le socket n'a aucune marque. Ni teal, ni gris. Rien ne s'y est jamais posé."
         },
         {
-          "t": 5.0,
+          "t": "5.0-6.4",
           "do": "Immobilité choc 1 s sur le socket nu."
         }
       ],
+      "camera": "fixe",
       "dod": "Les écrans servaient d'abri au vide, pas à la décision.",
       "turn": "Les écrans servaient d'abri au vide, pas à la décision."
     },
     {
       "id": "s4",
       "clarity": "Un emplacement vide ne peut jamais être marqué faux.",
-      "cast": [
-        "registre gauche",
-        "registre droit",
-        "marques teal",
-        "marques grises"
-      ],
-      "duration_s": 5.63,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-0.9",
           "do": "Deux registres apparaissent, une ligne par jour."
         },
         {
-          "t": 0.9,
+          "t": "0.9-3.2",
           "do": "Le registre gauche se remplit en cadence : teal, gris, teal, teal, gris — froid, régulier."
         },
         {
-          "t": 3.2,
+          "t": "3.2-4.6",
           "do": "Le registre droit reste vierge ligne après ligne, au même tempo."
         },
         {
-          "t": 4.6,
+          "t": "4.6-5.6",
           "do": "Un tampon FAUX passe sur les lignes grises de gauche. Il ne trouve rien à tamponner à droite."
         }
       ],
+      "camera": "fixe",
       "dod": "Un registre se remplit et se fait corriger, l'autre reste blanc et intouchable.",
-      "turn": "Un registre se remplit et se fait corriger, l'autre reste blanc et intouchable."
+      "turn": "Un registre se remplit et se fait corriger, l'autre reste blanc et intouchable.",
+      "note": "Scène d'escalade — le retournement de S3 se répète, cadencé, froid."
     },
     {
       "id": "s5",
       "clarity": "Ne pas jouer paraît sage, jusqu'à ce qu'on regarde ce que ça a coûté.",
-      "cast": [
-        "deux registres",
-        "socket teal",
-        "socket vide"
-      ],
-      "duration_s": 6.55,
       "beats": [
         {
-          "t": 0.0,
+          "t": "0.0-1.6",
           "do": "Les deux registres se rapprochent, une seule variable les sépare : le jeton posé ou non."
         },
         {
-          "t": 1.6,
+          "t": "1.6-3.4",
           "do": "Sous le registre droit, le socket vide se DÉLAVE teal → gris. Il n'a jamais été rempli, et il perd sa couleur."
         },
         {
-          "t": 3.4,
+          "t": "3.4-6.5",
           "do": "Image finale : socket plein à gauche, socket délavé à droite. Tenue ≥ 3 s."
         }
       ],
+      "camera": "fixe",
       "dod": "Le prix de l'attente est une case grise qu'on ne compte jamais.",
-      "fusil_decharge": "Le second socket est toujours vide en S5. C'est lui la réponse."
+      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin."
     }
-  ]
+  ],
+  "total": 30.3,
+  "caption": "Two traders saw the same entry at the same second, and only one of them is in it.\n\nThe one who stayed out wasn't missing information. He had three charts saying the same thing. Staying out is the only position that never gets marked wrong — which is exactly why it feels safe.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #patternrecognition #decisionmaking #tradingpsychology #propfirm",
+  "pinned_comment": "Waiting felt like discipline. Check what it costs. Follow @kongrave_ — the mechanics nobody explains",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
+    "caption_structure": "MOULE A révisé : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. CTA abonnement en clôture.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~30.3s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
+  }
 }
