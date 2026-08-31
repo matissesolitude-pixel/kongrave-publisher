@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L98 « THE ORDER AFTER THE LOSS » — IN MEDIAS RES (pas de fusil, pas de narrateur, émotion par objets seule).
+       S1 : frame 0 EN TENSION (levier TENSION) — une barre teal déjà entamée, un vide net qui respire dessous, et un BLOC
+       d'ordre deux fois plus large que l'empreinte fantôme précédente qui plane, lourd, au-dessus. Il tombe (chute libre),
+       impact sec, le vide dessous se réduit d'un cran. S2 : le nouvel ordre teal GLISSE par-dessus le bloc gris de la perte
+       précédente et cherche à le recouvrir — il n'y arrive jamais, le gris ressort des deux côtés (on ne couvre pas l'heure
+       d'avant). S3 : deux ordres, un petit et un double, arrivent des deux bords ; la LIGNE de fill reste parfaitement
+       droite, elle ne se courbe pour aucun — les deux se remplissent au même instant, même mécanique. S4 : escalade froide
+       — une règle mesure le vide sous la barre ; chaque bloc double le COUPE EN DEUX, jusqu'à ce que le trait touche le fond.
+       S5 : décharge (CTA abonnement) — même perte, deux barres : à gauche la taille fixée AVANT (un vide intact, teal) ;
+       à droite la taille fixée PAR la perte (la barre touche le fond, le teal se délave en gris). Une seule variable écrite.
+       Doctrine : aucun chiffre (tout par la HAUTEUR) ; perte = gris ; toi = teal ; pas de brun ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540, FL=1400;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // interpolation de couleur (teal → gris pour le délavage S5)
+    function hexrgb(c){return [parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];}
+    function blend(a,b,f){const A=hexrgb(a),B=hexrgb(b);return `rgb(${Math.round(lerp(A[0],B[0],f))},${Math.round(lerp(A[1],B[1],f))},${Math.round(lerp(A[2],B[2],f))})`;}
+
+    // ── PRIMITIVES DE L'ÉPISODE ──────────────────────────────────────────────
+    const floor   =mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const fillLine=mk('line',{stroke:YOU,'stroke-width':9,'stroke-linecap':'round',opacity:0});
+    const ruler   =mk('line',{stroke:INK,'stroke-width':5,opacity:0});
+    const TICKS=[]; for(let i=0;i<10;i++)TICKS.push(mk('line',{stroke:INK,'stroke-width':4,'stroke-linecap':'round',opacity:0}));
+    const GRAYS=[]; for(let i=0;i<4;i++)GRAYS.push(mk('rect',{rx:6,fill:DEAD,opacity:0}));
+    const BARS =[0,1].map(()=>mk('rect',{rx:6,fill:YOU,opacity:0}));
+    const OUT  =[]; for(let i=0;i<3;i++)OUT.push(mk('rect',{rx:6,fill:'none',stroke:DEAD,'stroke-dasharray':'14 10','stroke-width':4,opacity:0}));
+    const BLOCKS=[]; for(let i=0;i<6;i++)BLOCKS.push(mk('rect',{rx:8,fill:YOU,stroke:INK,'stroke-width':4,opacity:0}));
+    function setRect(el,x,y,w,h,op,fill){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));el.setAttribute('width',Math.max(1,w).toFixed(1));el.setAttribute('height',Math.max(1,h).toFixed(1));if(fill)el.setAttribute('fill',fill);setOp(el,op);}
+    function setFloor(x1,x2,y,op){floor.setAttribute('x1',x1);floor.setAttribute('x2',x2);floor.setAttribute('y1',y);floor.setAttribute('y2',y);setOp(floor,op);}
+    function hideAll(){setOp(floor,0);setOp(fillLine,0);setOp(ruler,0);for(const e of TICKS)setOp(e,0);for(const e of GRAYS)setOp(e,0);for(const e of BARS)setOp(e,0);for(const e of OUT)setOp(e,0);for(const e of BLOCKS)setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT DOES DOUBLING','REALLY BUY YOU'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap COPIÉ TEL QUEL depuis l26.html (MESURE réelle) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LE BLOC DOUBLE TOMBE SUR LA BARRE DÉJÀ ENTAMÉE ═══
+    // Verbe visuel : la CHUTE / l'impact (levier TENSION dès la frame 0).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideAll();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (TENSION) : barre teal déjà entamée + vide qui respire + bloc lourd qui plane, DÉJÀ tremblant ──
+      const barTop=820, barW=210, barX=CX-barW/2;
+      setFloor(160,920,FL,1);
+      const drop=clamp((u-3.0)/0.4,0,1);        // le bloc lâche et chute (ease-in)
+      const sink=clamp((u-3.4)/0.35,0,1);       // la barre s'enfonce d'un cran (le vide se réduit)
+      const breath=5*Math.sin(u*1.7)+3*Math.sin(u*2.9);
+      const barBottom=lerp(1080,1240,eOut(sink))+breath;    // vide 320 → 160
+      setRect(BARS[0],barX,barTop,barW,barBottom-barTop,1,YOU);
+      // empreinte fantôme du dernier ordre (moitié moins large) — la référence du « deux fois plus gros »
+      setRect(OUT[0],CX-52,barTop-72+2*Math.sin(u*2.1),105,68,clamp(1-drop*1.3,0,1)*0.7);
+      // le bloc double : plane (deux harmoniques), puis chute, squash à l'atterrissage, puis micro-vie sur la barre
+      const bob=9*Math.sin(u*1.55)+4*Math.sin(u*2.75);
+      const blkW=210;
+      const hoverB=700+bob, landB=barTop+3*Math.sin(u*2.3)+2*Math.sin(u*3.7);
+      const blkBottom=lerp(hoverB,landB,eIn(drop));
+      const blkH=140*(1-0.08*Math.sin(clamp((u-3.35)/0.16,0,1)*Math.PI));    // squash 8% 1 frame
+      setRect(BLOCKS[0],CX-blkW/2,blkBottom-blkH,blkW,blkH,1);
+      putCap(capA,'YOUR POSITION',250,1000,YOU,clamp((u-1.6)/0.5,0,1)*gf);
+      putCap(capB,'ROOM LEFT',830,1330,YOU,clamp((u-1.0)/0.5,0,1)*gf);
+      putCap(capE,'DOUBLE SIZE',820,650,DEAD,clamp((u-2.2)/0.5,0,1)*gf);
+    }
+
+    // ═══ S2 — IL ESSAIE DE RECOUVRIR LA PERTE ET N'Y ARRIVE PAS ═══
+    // Verbe visuel : le GLISSEMENT-recouvrement (l'ordre teal cherche à couvrir le gris, en vain).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const cy=1050;
+      // le bloc gris de la perte précédente : large, plat, IMMOBILE (c'est un fait)
+      const gW=320,gH=96;
+      setRect(GRAYS[0],CX-gW/2,cy-gH/2,gW,gH,1);
+      // le nouvel ordre teal (plus étroit que la perte) glisse d'un bord à l'autre : le gris ressort toujours
+      const tW=196,tH=150;
+      const slide=30*Math.sin(u*1.15)+14*Math.sin(u*1.9);
+      const vb=6*Math.sin(u*2.3)+3*Math.sin(u*3.5);
+      setRect(BLOCKS[0],CX-tW/2+slide,cy-tH/2+vb,tW,tH,1);
+      putCap(capA,'THE LOSS',250,1250,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'THE NEW ORDER',820,1250,YOU,clamp((u-0.9)/0.5,0,1));
+      putCap(capC,"CAN'T COVER IT",CX,760,INK,clamp((u-3.0)/0.6,0,1));
+    }
+
+    // ═══ S3 — LA LIGNE DE FILL NE SE COURBE POUR PERSONNE ═══
+    // Verbe visuel : l'ARRIVÉE symétrique sur une ligne parfaitement droite (les deux remplis pareil).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const LY=1000;
+      fillLine.setAttribute('x1',120);fillLine.setAttribute('x2',960);fillLine.setAttribute('y1',LY);fillLine.setAttribute('y2',LY);setOp(fillLine,1);
+      const arrive=clamp(u/1.6,0,1);
+      const smX=lerp(120,300,eOut(arrive));     // petit ordre, gauche
+      const bgX=lerp(950,780,eOut(arrive));     // gros ordre (double), droite
+      const smS=92, bgS=170;
+      const jit=4*Math.sin(u*2.2)+2*Math.sin(u*3.6);
+      const fillP=clamp((u-3.4)/0.2,0,1);
+      const smH=smS*(1-0.12*Math.sin(fillP*Math.PI));
+      const bgH=bgS*(1-0.12*Math.sin(fillP*Math.PI));
+      setRect(BLOCKS[0],smX-smS/2,LY-smH+jit,smS,smH,1);
+      setRect(BLOCKS[1],bgX-bgS/2,LY-bgH-jit,bgS,bgH,1);
+      // marques de fill symétriques : deux ticks teal sur la ligne, pulsés au même instant
+      const fap=clamp((u-3.3)/0.3,0,1)*(0.6+0.4*Math.sin(u*6));
+      for(const [i,x] of [[0,300],[1,780]]){TICKS[i].setAttribute('x1',x);TICKS[i].setAttribute('x2',x);TICKS[i].setAttribute('y1',LY-26);TICKS[i].setAttribute('y2',LY+26);TICKS[i].setAttribute('stroke',YOU);setOp(TICKS[i],fap);}
+      putCap(capA,'SMALL ORDER',230,1150,YOU,clamp((u-1.6)/0.5,0,1));
+      putCap(capB,'DOUBLE ORDER',800,1150,YOU,clamp((u-1.6)/0.5,0,1));
+      putCap(capC,'SAME LINE FOR BOTH',CX,705,INK,clamp((u-1.9)/0.6,0,1));
+      putCap(capD,'IT NEVER BENDS',CX,782,DEAD,clamp((u-3.0)/0.6,0,1));
+    }
+
+    // ═══ S4 — CHAQUE DOUBLEMENT COUPE LE VIDE EN DEUX ═══
+    // Verbe visuel : la MESURE + le demi-cran répété (règle à droite, cadence sèche, froide).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const barTop=700, barW=200, barX=CX-barW/2;
+      setFloor(150,930,FL,1);
+      const D=[0.6,1.8,3.0];                     // 3 doublements
+      let voidH=400;
+      for(let i=0;i<D.length;i++){voidH*=(1-0.5*eOut(clamp((u-D[i])/0.45,0,1)));}   // moitié à chaque coup
+      const breath=4*Math.sin(u*1.8)+2.5*Math.sin(u*3.1);
+      const barBottom=FL-voidH+breath;
+      setRect(BARS[0],barX,barTop,barW,barBottom-barTop,1,YOU);
+      // les blocs doubles tombent un à un puis sont absorbés dans la barre
+      for(let i=0;i<D.length;i++){
+        const fall=clamp((u-(D[i]-0.5))/0.5,0,1), gone=clamp((u-(D[i]+0.15))/0.2,0,1);
+        const bH=88, yb=lerp(560,barTop,eIn(fall));
+        setRect(BLOCKS[i],CX-105,yb-bH,210,bH,clamp(fall*1.3,0,1)*(1-gone));
+      }
+      // la règle mesure le vide sous la barre (elle rétrécit jusqu'à n'avoir plus rien à mesurer)
+      const rx=720, vib=2*Math.sin(u*5);
+      ruler.setAttribute('x1',rx+vib);ruler.setAttribute('x2',rx+vib);ruler.setAttribute('y1',barBottom);ruler.setAttribute('y2',FL);setOp(ruler,1);
+      const nT=Math.max(0,Math.min(8,Math.round((FL-barBottom)/44)));
+      for(let i=0;i<8;i++){const ty=FL-i*44;if(i<=nT&&ty>=barBottom-1){TICKS[i].setAttribute('x1',rx-16+vib);TICKS[i].setAttribute('x2',rx+16+vib);TICKS[i].setAttribute('y1',ty);TICKS[i].setAttribute('y2',ty);TICKS[i].setAttribute('stroke',INK);setOp(TICKS[i],1);}else setOp(TICKS[i],0);}
+      for(let i=8;i<10;i++)setOp(TICKS[i],0);
+      putCap(capA,'DOUBLE SIZE',250,790,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capC,'HALF EACH TIME',250,868,INK,clamp((u-1.4)/0.5,0,1));
+      putCap(capB,'ROOM LEFT',850,1300,YOU,clamp((u-0.8)/0.5,0,1));
+    }
+
+    // ═══ S5 — MÊME PERTE, DEUX HAUTEURS RESTANTES (décharge · CTA abonnement) ═══
+    // Verbe visuel : le DIPTYQUE — une seule variable écrite : quand la taille a été fixée.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideAll();
+      const barTop=820, barW=200, FLy=1380;
+      setFloor(120,960,FLy,1);
+      const div=eOut(clamp(u/0.9,0,1));
+      const brL=4*Math.sin(u*1.6)+2*Math.sin(u*2.7);
+      const brR=4*Math.sin(u*1.9+1)+2*Math.sin(u*3.0);
+      // GAUCHE — taille fixée AVANT : la barre s'arrête haut, un vide intact (teal) reste dessous
+      const LX=320-barW/2;
+      const lBottom=1180+brL;
+      setRect(BARS[0],LX,barTop,barW,lBottom-barTop,1,YOU);
+      setRect(OUT[0],LX,lBottom+8,barW,FLy-lBottom-16,clamp((u-0.4)/0.6,0,1));
+      OUT[0].setAttribute('stroke',YOU);
+      // repère qui dérive dans le vide = vie continue pendant la tenue longue
+      const midY=lerp(lBottom+34,FLy-30,0.5+0.35*Math.sin(u*1.4)+0.1*Math.sin(u*2.3));
+      TICKS[0].setAttribute('x1',LX+22);TICKS[0].setAttribute('x2',LX+barW-22);TICKS[0].setAttribute('y1',midY);TICKS[0].setAttribute('y2',midY);TICKS[0].setAttribute('stroke',YOU);setOp(TICKS[0],clamp((u-0.6)/0.6,0,1)*0.85);
+      for(let i=1;i<10;i++)setOp(TICKS[i],0);
+      // DROITE — taille fixée PAR la perte : la barre touche le fond, le teal se délave en gris
+      const RX=760-barW/2;
+      const rBottom=lerp(1180,FLy,div)+brR*0.35;
+      setRect(BARS[1],RX,barTop,barW,rBottom-barTop,1,blend(YOU,DEAD,div));
+      putCap(capB,'SAME LOSS — DIFFERENT ROOM',CX,662,INK,clamp((u-0.8)/0.6,0,1));
+      putCap(capA,'@kongrave_',CX,590,YOU,clamp((u-0.3)/0.6,0,1));
+      putCap(capC,'SET BEFORE THE LOSS',300,752,YOU,clamp((u-1.2)/0.6,0,1));
+      putCap(capD,'SET BY THE LOSS',760,752,DEAD,clamp((u-1.2)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
