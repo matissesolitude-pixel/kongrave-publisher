@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L97 « THE SETUP THEY BOTH SAW » — MONTAGE PARALLÈLE (pas de fusil). S1 : émotion frame 0 = levier RECONNAISSANCE DE SOI —
+       un panneau setup (une forme de prix reconnaissable) déjà vivant, DEUX sockets vides identiques dessous, deux figures fil-de-fer
+       qui le regardent : une seule des deux cases se remplira. Verbe : POSER contre EMPILER — l'arm gauche claque, une boule teal tombe
+       dans le socket gauche (squash) ; l'arm droit tire un SECOND panneau identique. S2 : ACCUMULATION + DÉPART — un 3e panneau glisse sur
+       la pile droite (trois formes superposables), et à gauche le prix (boule teal) grimpe une ligne et sort par le haut. S3 : PIVOT —
+       la pile devient un mur qui se soulève d'un bloc et découvre le socket droit intact, jamais marqué. S4 : ESCALADE cadencée — deux
+       registres : le gauche se remplit ligne par ligne (teal/gris, froid), un tampon FAUX passe sur ses lignes grises ; le registre droit
+       reste vierge, rien à tamponner. S5 : DÉCHARGE — socket plein à gauche, socket droit qui se DÉLAVE teal→gris (jamais rempli, et il
+       perd sa couleur) ; morale tenue + CTA @kongrave_. Doctrine : registre MENTAL, aucun chiffre, gris = perte, pas de brun, bas ~12% vide,
+       aucune intention prêtée. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // deux harmoniques : vie continue jamais figée aux extrêmes (§loi 9)
+    const h2=(u,a,b,w1,w2,p)=>a*Math.sin(w1*u+(p||0))+b*Math.sin(w2*u+(p||0));
+    // délavage d'une valeur qui se perd : teal → gris (jamais de brun)
+    function mix(c1,c2,f){f=clamp(f,0,1);
+      const A=[parseInt(c1.slice(1,3),16),parseInt(c1.slice(3,5),16),parseInt(c1.slice(5,7),16)];
+      const B=[parseInt(c2.slice(1,3),16),parseInt(c2.slice(3,5),16),parseInt(c2.slice(5,7),16)];
+      return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],f))).join(',')+')';}
+
+    // ── POOLS GÉNÉRIQUES (réinitialisés à chaque frame, comme le modèle l26) ──
+    const RECTS=[]; for(let i=0;i<52;i++)RECTS.push(mk('rect',{opacity:0}));
+    const LINES=[]; for(let i=0;i<44;i++)LINES.push(mk('line',{opacity:0}));
+    const CIRC =[]; for(let i=0;i<10;i++)CIRC.push(mk('circle',{opacity:0}));
+    const POLYS=[]; for(let i=0;i<22;i++)POLYS.push(mk('polyline',{fill:'none',opacity:0}));
+    const ball=mk('ellipse',{fill:YOU,opacity:0});          // TOI : le jeton posé (teal)
+    let ri,li,ci,pi;
+    function reset(){ri=li=ci=pi=0;}
+    function rct(x,y,w,h,fill,op,rx,stroke,sw){const e=RECTS[ri++];if(!e)return;
+      e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(0,w).toFixed(1));e.setAttribute('height',Math.max(0,h).toFixed(1));
+      e.setAttribute('rx',rx||0);e.setAttribute('fill',fill||'none');
+      e.setAttribute('stroke',stroke||'none');e.setAttribute('stroke-width',sw||0);setOp(e,op);}
+    function ln(x1,y1,x2,y2,stroke,sw,op,dash,doff){const e=LINES[li++];if(!e)return;
+      e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));
+      e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));
+      e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw);
+      e.setAttribute('stroke-linecap','round');
+      if(dash){e.setAttribute('stroke-dasharray',dash);e.setAttribute('stroke-dashoffset',(doff||0).toFixed(0));}
+      else{e.removeAttribute('stroke-dasharray');}setOp(e,op);}
+    function cir(cx,cy,r,fill,op,stroke,sw){const e=CIRC[ci++];if(!e)return;
+      e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));e.setAttribute('r',Math.max(0,r).toFixed(1));
+      e.setAttribute('fill',fill||'none');e.setAttribute('stroke',stroke||'none');e.setAttribute('stroke-width',sw||0);setOp(e,op);}
+    function ply(points,stroke,sw,op){const e=POLYS[pi++];if(!e)return;
+      e.setAttribute('points',points);e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw);
+      e.setAttribute('stroke-linejoin','round');e.setAttribute('stroke-linecap','round');setOp(e,op);}
+    function flush(){for(let i=ri;i<RECTS.length;i++)setOp(RECTS[i],0);for(let i=li;i<LINES.length;i++)setOp(LINES[i],0);
+      for(let i=ci;i<CIRC.length;i++)setOp(CIRC[i],0);for(let i=pi;i<POLYS.length;i++)setOp(POLYS[i],0);}
+
+    // la MÊME forme de setup dans chaque panneau (ils voient tous la même chose)
+    function setupShape(x,y,w,h){const fx=[0.08,0.24,0.40,0.52,0.68,0.80,0.94],fy=[0.60,0.78,0.44,0.70,0.30,0.52,0.16];
+      return fx.map((v,i)=>[(x+v*w).toFixed(1),(y+fy[i]*h).toFixed(1)].join(',')).join(' ');}
+    // un panneau setup : rect papier (occulte quand empilé) + bord encre + la forme de prix, tout respire
+    function panel(x,y,w,h,op,ph,u){const dx=h2(u,4,2,1.3,2.4,ph),dy=h2(u,3,2,1.6,2.9,ph);
+      rct(x+dx,y+dy,w,h,PAPER,op,8,INK,5);
+      ply(setupShape(x+dx+14,y+dy+18,w-28,h-36),INK,5,op);}
+    // socket : une case ouverte en haut (polyline en U). Une valeur peut s'y poser — ou jamais.
+    function socket(x,yTop,w,h,col,sw,op,u,ph){const dx=h2(u,3,1.5,1.2,2.3,ph||0);
+      ply([[x+dx,yTop],[x+dx,yTop+h],[x+dx+w,yTop+h],[x+dx+w,yTop]].map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' '),col,sw,op);}
+    // figure fil-de-fer minimale (tête ronde vide + colonne + jambes + bras qui tend)
+    function figure(cx,hy,sc,rx,ry,op,u,ph){const bx=cx+h2(u,3,1.5,1.1,2.0,ph);
+      cir(bx,hy,32*sc,'none',op,INK,6);
+      ln(bx,hy+32*sc,bx,hy+150*sc,INK,6,op);
+      ln(bx,hy+150*sc,bx-38*sc,hy+240*sc,INK,6,op);
+      ln(bx,hy+150*sc,bx+38*sc,hy+240*sc,INK,6,op);
+      ln(bx,hy+62*sc,rx,ry,INK,6,op);}
+
+    // ── QUESTION (§M15) — 1re ligne PLEINE dès la frame 0 (LOI) ──
+    const QLINES=['WHY DOES THE SETUP','LEAVE WITHOUT YOU'];
+    const FS=68,lineH=94,y0=190,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+70,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+    function drawQ(u,gf){
+      for(let k=0;k<qEls.length;k++){
+        const start=0.35+k*0.4;
+        const ap=(k===0)?1:clamp((u-start)/0.3,0,1),sc=(k===0)?1:0.75+0.25*backOut(ap);
+        setOp(qEls[k],ap*gf);
+        qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const map=clamp((u-1.0)/0.3,0,1),msc=0.6+0.4*backOut(map);setOp(qMark,map*gf);
+      qMark.setAttribute('transform',`translate(${(CX*(1-msc)).toFixed(2)} ${(QMY*(1-msc)).toFixed(2)}) scale(${msc.toFixed(3)})`);}
+
+    // ── ÉTIQUETTES (§M18) + putCap COPIÉ TEL QUEL depuis l26.html (MESURE, ne jamais estimer) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+    // le tampon FAUX (graphique dédié, pas une étiquette de nom) — mesuré et encadré
+    const stamp=mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':60,'letter-spacing':'3',fill:DEAD,opacity:0});stamp.textContent='FALSE';
+    function hideStamp(){setOp(stamp,0);}
+
+    // ═══ S1 — MÊME SETUP, DEUX CASES : l'un POSE, l'autre EMPILE ═══
+    // Verbe visuel : poser (la boule tombe dans une case) contre empiler (un second panneau glisse).
+    function s1(lf,t,s){
+      const u=t-s; reset(); hideCaps(); hideStamp();
+      const gf=clamp(1-(lf-0.9)/0.08,0,1);
+      drawQ(u,gf);
+      // panneau setup central, déjà vivant en frame 0 (levier RECONNAISSANCE DE SOI)
+      panel(430,560,220,150,1,0,u);
+      putCap(capA,'THE SAME SETUP',CX,540,INK,1);
+      // deux sockets vides identiques (la tension : une seule se remplira)
+      socket(270,1180,190,150,INK,7,1,u,0.4);
+      socket(620,1180,190,150,INK,7,1,u,1.3);
+      // figure gauche : le bras claque vers le panneau (snap ~0.8s)
+      const snap=eOut(clamp((u-0.8)/0.22,0,1));
+      figure(180,760,0.95,lerp(230,430,snap),lerp(910,640,snap),1,u,0.2);
+      // figure droite : le bras tire un SECOND panneau (~2.6s)
+      const pull=eOut(clamp((u-2.6)/0.4,0,1));
+      figure(900,760,0.95,lerp(850,650,pull),lerp(910,690,pull),1,u,1.1);
+      // la boule teal tombe dans le socket GAUCHE, squash 7% à l'impact
+      const drop=eIn(clamp((u-1.0)/0.45,0,1));
+      const rest=1276+h2(u,3,1.5,1.8,3.1,0);
+      const by=lerp(940,rest,drop);
+      const land=clamp(1-Math.abs(u-1.5)/0.16,0,1)*(u>1.34?1:0);
+      const sq=0.07*land;
+      ball.setAttribute('cx',(365).toFixed(1));ball.setAttribute('cy',by.toFixed(1));
+      ball.setAttribute('rx',(46*(1+sq*0.7)).toFixed(1));ball.setAttribute('ry',(46*(1-sq)).toFixed(1));
+      setOp(ball,clamp((u-0.95)/0.15,0,1));
+      // second panneau identique, glissé par la droite (empilement)
+      const slide=eOut(clamp((u-2.6)/0.5,0,1));
+      panel(lerp(760,500,slide),610,220,150,slide,2.0,u);
+      putCap(capC,'HE ENTERS',365,1400,YOU,clamp((u-1.6)/0.4,0,1));
+      putCap(capD,'HE WAITS',715,1400,DEAD,clamp((u-3.0)/0.5,0,1));
+      flush();
+    }
+
+    // ═══ S2 — TROIS ÉCRANS IDENTIQUES / LE PRIX PART SANS LUI ═══
+    // Verbe visuel : accumulation (la pile monte à trois) + départ (la boule grimpe et sort du cadre).
+    function s2(lf,t,s){
+      const u=t-s; reset(); hideQ(); hideCaps(); hideStamp();
+      // pile droite : deux panneaux pleins dès t=0, le TROISIÈME glisse (cadence lente puis pressée)
+      panel(470,580,220,150,1,0.0,u);
+      panel(500,616,220,150,1,1.4,u);
+      const third=eOut(clamp((u-0.2)/1.2,0,1));
+      panel(lerp(760,530,third),652,220,150,third,2.6,u);
+      putCap(capB,'THREE CHARTS. SAME THING.',CX,545,INK,clamp((u-1.2)/0.6,0,1));
+      // les deux sockets restent dans le cadre — le gauche désormais VIDE (le prix l'a quitté)
+      socket(270,1180,190,150,INK,7,1,u,0.4);
+      socket(620,1180,190,150,DEAD,7,1,u,1.3);
+      // ligne du prix à gauche : la boule grimpe et SORT par le haut (départ)
+      ln(365,1180,365,520,YOU,6,1,'18 12',-u*46);
+      const climb=eIn(clamp((u-0.8)/2.6,0,1));
+      const bx=365+h2(u,7,3,1.4,2.6,0), byv=lerp(1276,470,climb);
+      ball.setAttribute('cx',bx.toFixed(1));ball.setAttribute('cy',byv.toFixed(1));
+      ball.setAttribute('rx',44);ball.setAttribute('ry',44);
+      setOp(ball,byv>545?1:clamp((byv-470)/60,0,1));   // s'efface en sortant du cadre
+      putCap(capC,'THE PRICE LEAVES',255,1410,YOU,clamp((u-2.0)/0.6,0,1));
+      flush();
+    }
+
+    // ═══ S3 — PIVOT : la pile est un MUR ; il se soulève et découvre le socket intact ═══
+    // Verbe visuel : le soulèvement (un bloc monte d'un coup et révèle le vide protégé dessous).
+    function s3(lf,t,s){
+      const u=t-s; reset(); hideQ(); hideCaps(); hideStamp();setOp(ball,0);
+      // le socket découvert dessous — jamais marqué (dessiné AVANT le mur : le mur l'occulte)
+      socket(445,1150,190,150,INK,7,1,u,0.7);
+      // le MUR (la pile de panneaux fondue en bloc) se soulève d'un seul tenant et SORT par le haut
+      const rise=eInOut(clamp((u-1.4)/2.0,0,1));
+      const wdx=h2(u,2,1,1.1,2.0,0), wy=lerp(818,20,rise), wb=wy+472;
+      rct(410+wdx,wy,260,472,PAPER,1,10,INK,6);
+      for(let i=0;i<4;i++)ln(432+wdx,wy+70+i*104,648+wdx,wy+70+i*104,INK,4,0.8);   // les "écrans" du mur
+      ply(setupShape(432+wdx,wy+40,216,392),INK,4,0.5);
+      // étiquettes UNIQUEMENT dans des zones que le mur a dégagées (jamais dans sa colonne)
+      putCap(capA,'THE CHARTS WERE A SHELTER',CX,940,INK,clamp((880-wb)/60,0,1));      // sous le mur soulevé
+      putCap(capB,'NOTHING WAS EVER PLACED HERE',CX,1400,DEAD,clamp((u-3.4)/0.6,0,1));  // sous le socket nu
+      flush();
+    }
+
+    // ═══ S4 — DEUX REGISTRES : le gauche se remplit et se fait tamponner FAUX, le droit reste vierge ═══
+    // Verbe visuel : le remplissage cadencé (ligne par ligne) contre la case blanche intamponnable.
+    function s4(lf,t,s){
+      const u=t-s; reset(); hideQ(); hideCaps(); setOp(ball,0);
+      const PAT=[YOU,DEAD,YOU,YOU,DEAD,YOU];
+      // cadres des deux registres (pleins dès t=0)
+      rct(170,660,310,700,'none',1,10,INK,6);
+      rct(600,660,310,700,'none',1,10,INK,6);
+      putCap(capA,'HIS RECORD',325,625,INK,1);
+      putCap(capD,'STAYED OUT',755,625,DEAD,1);
+      for(let i=0;i<6;i++){
+        const ry=706+i*106, ap=clamp((u-(0.6+i*0.32))/0.42,0,1);
+        // GAUCHE : la ligne se remplit (grandit) au tempo, teal ou gris
+        const gh=64*eOut(ap);
+        rct(192,ry+(64-gh),266,gh,PAT[i],ap,6);
+        // DROITE : la ligne reste une case VIDE (contour seul), même tempo
+        const wob=h2(u,2,1,1.6,2.7,i*0.6);
+        rct(622+wob,ry,266,64,'none',ap,6,DEAD,4);}
+      // le tampon FAUX balaie les lignes GRISES de gauche (rien à tamponner à droite)
+      const sp=clamp((u-3.4)/1.8,0,1);
+      const sy=lerp(760,1300,sp), sx=325+h2(u,6,3,1.4,2.5,0);
+      const sop=clamp((u-3.4)/0.4,0,1);
+      rct(sx-118,sy-46,236,72,'none',sop*0.9,8,DEAD,5);
+      stamp.setAttribute('x',sx.toFixed(1));stamp.setAttribute('y',(sy+18).toFixed(1));
+      stamp.setAttribute('transform',`rotate(-8 ${sx.toFixed(1)} ${sy.toFixed(1)})`);setOp(stamp,sop);
+      putCap(capB,'EMPTY NEVER GETS MARKED WRONG',CX,1420,INK,clamp((u-1.6)/0.6,0,1));
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : socket plein à gauche, socket droit qui SE DÉLAVE teal→gris ═══
+    // Verbe visuel : le délavage (une valeur jamais posée perd quand même sa couleur) + tenue finale.
+    function s5(lf,t,s){
+      const u=t-s; reset(); hideQ(); hideCaps(); hideStamp();
+      // GAUCHE : le socket plein, la boule teal posée (bob continu)
+      socket(250,1120,200,160,INK,7,1,u,0.3);
+      const by=1236+h2(u,3,1.5,1.7,3.0,0);
+      ball.setAttribute('cx',(350).toFixed(1));ball.setAttribute('cy',by.toFixed(1));
+      ball.setAttribute('rx',48);ball.setAttribute('ry',48);setOp(ball,1);
+      // DROITE : le socket vide se délave teal → gris (jamais rempli, et il perd sa couleur)
+      const fade=eInOut(clamp((u-1.6)/1.8,0,1));
+      socket(630,1120,200,160,mix(YOU,DEAD,fade),7,1,u,1.2);
+      putCap(capC,'FILLED',350,1370,YOU,clamp((u-0.4)/0.5,0,1));
+      putCap(capE,'FADED',730,1370,DEAD,clamp((u-3.0)/0.6,0,1));
+      // morale (citable hors contexte) + CTA @kongrave_ affiché ET prononcé en S5
+      putCap(capB,'THE TRADE YOU NEVER TOOK',CX,650,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capA,'STILL HAS A PRICE',CX,724,INK,clamp((u-0.9)/0.6,0,1));
+      putCap(capD,'FOLLOW @KONGRAVE',CX,900,YOU,clamp((u-2.4)/0.6,0,1));
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
