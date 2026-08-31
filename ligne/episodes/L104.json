@@ -1,0 +1,191 @@
+{
+  "id": "L104",
+  "title": "L104 — THE IDEA THEY BOTH TOOK",
+  "engine": "l104",
+  "total": 26.95,
+  "voice": [
+    "Two traders take the same idea from the same post. One reads why. The other reads where.",
+    "Price moves against both. One knows which part of his reason broke.",
+    "A borrowed entry comes with no exit. The exit was never in the post.",
+    "You can copy a position. You cannot copy the reason someone holds it.",
+    "If you can't say why you're in, you can't say when you're out. Follow KONGRAVE — the mechanics nobody explains"
+  ],
+  "_cellule": "SETX (Sniper) · Communauté · Ease/Effort · autres traders · présent · −−",
+  "_dispositif": "MÉTAPHORE SEULE",
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  },
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "STRUCTURE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
+    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
+  },
+  "caption": "Two traders take the same idea from the same post. One reads why, the other reads where.\n\nWhen price goes against them, only one can name the part of his reason that broke. A borrowed entry arrives without an exit, because the exit was never in the post. You can copy a position — you cannot copy the reason someone holds it.\n\nNo reason in, no reason out.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "Two traders take the same idea from the same post. One reads why, the other reads where.",
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux personnes prennent la même flèche dans le même message. Une flèche a une queue, l'autre non.",
+      "cast": [
+        "panneau post",
+        "flèche A avec queue teal",
+        "flèche B sans queue",
+        "deux figures"
+      ],
+      "duration_s": 5.89,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "FRAME 0 EN TENSION : un panneau au centre, deux flèches identiques sorties de lui. L'une traîne une longue queue teal, l'autre est coupée net derrière la pointe."
+        },
+        {
+          "t": 1.4,
+          "do": "La figure gauche tire sa flèche AVEC la queue, qui se déroule depuis le panneau."
+        },
+        {
+          "t": 3.0,
+          "do": "La figure droite arrache la sienne d'un coup sec. La queue reste accrochée au panneau."
+        },
+        {
+          "t": 4.4,
+          "do": "La question pop ligne par ligne. La queue orpheline pend sur le panneau."
+        }
+      ],
+      "dod": "Deux flèches identiques, une seule a gardé son fil.",
+      "question": "WHERE IS THE EXIT ON A BORROWED TRADE?",
+      "fusil": "LA QUEUE DE LA FLÈCHE — le trait attaché derrière la flèche, présent sur une seule des deux en S1.",
+      "emotion_lever": "CURIOSITÉ — deux flèches identiques, une avec une queue, l'autre coupée net"
+    },
+    {
+      "id": "s2",
+      "clarity": "Le prix va contre les deux, et un seul sait quelle partie de sa raison a cassé.",
+      "cast": [
+        "flèche A",
+        "flèche B",
+        "ligne de prix descendante",
+        "segments de queue"
+      ],
+      "duration_s": 4.51,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "La ligne de prix descend contre les deux flèches, même angle, même vitesse."
+        },
+        {
+          "t": 1.2,
+          "do": "La queue de la flèche A est faite de segments. Le segment du milieu se rompt et devient gris."
+        },
+        {
+          "t": 2.6,
+          "do": "La flèche B n'a rien à rompre. Elle flotte, entière, sans repère."
+        },
+        {
+          "t": 3.8,
+          "do": "Tenue 0,7 s : un segment gris identifiable d'un côté, rien de l'autre."
+        }
+      ],
+      "dod": "Un fil se casse à un endroit précis, l'autre flèche n'a rien qui puisse casser.",
+      "turn": "Un fil se casse à un endroit précis, l'autre flèche n'a rien qui puisse casser."
+    },
+    {
+      "id": "s3",
+      "clarity": "Une entrée empruntée n'a pas de sortie. La sortie n'était pas dans le message.",
+      "cast": [
+        "panneau",
+        "queue orpheline",
+        "porte de sortie"
+      ],
+      "duration_s": 4.57,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Coupe franche sur le panneau et la queue restée accrochée."
+        },
+        {
+          "t": 1.2,
+          "do": "PIVOT : la queue se déplie et révèle une PORTE à son extrémité — la sortie était au bout du fil."
+        },
+        {
+          "t": 2.4,
+          "do": "La flèche B, hors du panneau, n'a aucune porte derrière elle. Le cadre est nu."
+        },
+        {
+          "t": 3.3,
+          "do": "Immobilité choc 0,8 s : une porte au bout d'un fil, et une flèche seule."
+        }
+      ],
+      "dod": "La porte de sortie était au bout du fil qu'il a laissé sur place.",
+      "turn": "La porte de sortie était au bout du fil qu'il a laissé sur place."
+    },
+    {
+      "id": "s4",
+      "clarity": "On copie une position, on ne copie pas la raison de la tenir.",
+      "cast": [
+        "trois flèches sans queue",
+        "trois cadres nus",
+        "compteur"
+      ],
+      "duration_s": 4.64,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Trois flèches sans queue arrivent en cadence, prises à trois panneaux différents."
+        },
+        {
+          "t": 1.2,
+          "do": "Chacune flotte, chacune se délave teal → gris, l'une après l'autre."
+        },
+        {
+          "t": 2.6,
+          "do": "Aucune porte n'apparaît derrière aucune des trois."
+        },
+        {
+          "t": 3.6,
+          "do": "Les trois pointes finissent alignées, grises, immobiles."
+        }
+      ],
+      "dod": "Trois entrées empruntées, trois flèches grises, aucune sortie.",
+      "turn": "Trois entrées empruntées, trois flèches grises, aucune sortie."
+    },
+    {
+      "id": "s5",
+      "clarity": "Si tu ne peux pas dire pourquoi tu es dedans, tu ne peux pas dire quand tu sors.",
+      "cast": [
+        "flèche avec queue",
+        "flèche sans queue",
+        "porte"
+      ],
+      "duration_s": 7.34,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Deux flèches côte à côte, pointes identiques."
+        },
+        {
+          "t": 1.6,
+          "do": "Gauche : la queue se déroule, la porte apparaît au bout, l'ensemble reste teal."
+        },
+        {
+          "t": 3.0,
+          "do": "Droite : rien derrière la pointe. La flèche se délave en gris."
+        },
+        {
+          "t": 4.0,
+          "do": "Image finale tenue ≥ 3 s. Une seule variable : le fil est venu avec, ou pas."
+        }
+      ],
+      "dod": "La flèche qui a gardé son fil a une porte, l'autre n'en aura jamais.",
+      "fusil_decharge": "En S5, la queue est ce qui portait la sortie. Sans elle, la flèche flotte."
+    }
+  ]
+}

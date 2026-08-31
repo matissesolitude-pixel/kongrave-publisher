@@ -1,0 +1,185 @@
+{
+  "id": "L102",
+  "title": "L102 — THE COURSE AFTER THE COURSE",
+  "engine": "l102",
+  "total": 25.5,
+  "voice": [
+    "Two traders finish the same course. One opens a chart. The other opens another course.",
+    "Six months later one has three hundred pages of notes and no sample.",
+    "Learning never asks you to be wrong. That's the whole appeal.",
+    "Every new method resets the clock and protects the last one from being tested.",
+    "A method you haven't tested is shelter. Follow KONGRAVE — the mechanics nobody explains"
+  ],
+  "_cellule": "SIRX (Glacier) · Miroir · Ease/Effort · famille · passé · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  },
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "STRUCTURE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
+    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
+  },
+  "caption": "Two traders finish the same course. One opens a chart, the other opens another course.\n\nSix months later, one of them has three hundred pages of notes and not a single tested sample. Learning never asks you to be wrong — that's the entire appeal. Every new method resets the clock and quietly protects the last one from ever being checked.\n\nAn untested method isn't knowledge, it's shelter.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "Two traders finish the same course. One opens a chart, the other opens another course.",
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux personnes sortent de la même porte. L'une ouvre une grille vide, l'autre ouvre une autre porte.",
+      "cast": [
+        "porte marquée",
+        "figure gauche",
+        "figure droite",
+        "grille vide ×2"
+      ],
+      "duration_s": 5.76,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "FRAME 0 EN TENSION : deux grilles vierges strictement identiques, côte à côte, cases nues."
+        },
+        {
+          "t": 1.2,
+          "do": "La figure gauche pose la main sur sa grille — la première case s'allume teal."
+        },
+        {
+          "t": 2.8,
+          "do": "La figure droite tourne le dos à la sienne et ouvre une SECONDE porte derrière elle."
+        },
+        {
+          "t": 4.2,
+          "do": "La question pop ligne par ligne. La grille droite reste intégralement blanche."
+        }
+      ],
+      "dod": "Deux grilles pareilles, une case qui s'allume à gauche, une porte qui s'ouvre à droite.",
+      "question": "WHY IS THE NEXT COURSE ALWAYS EASIER?",
+      "fusil": "LA GRILLE D'ÉCHANTILLON — une grille vide ouverte par chacune des deux figures en S1.",
+      "emotion_lever": "RECONNAISSANCE DE SOI — une grille vide à côté d'une grille qui se remplit"
+    },
+    {
+      "id": "s2",
+      "clarity": "Six mois après, l'un a des centaines de pages et aucune case remplie.",
+      "cast": [
+        "pile de pages",
+        "grille droite",
+        "grille gauche"
+      ],
+      "duration_s": 4.57,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Cadence d'accumulation : les pages tombent une à une à droite, lent puis pressé puis pluie."
+        },
+        {
+          "t": 2.0,
+          "do": "La pile dépasse la hauteur de la figure. La grille droite disparaît derrière elle."
+        },
+        {
+          "t": 3.2,
+          "do": "À gauche, les cases se marquent au tempo : teal, gris, teal, gris — froid, régulier."
+        },
+        {
+          "t": 4.2,
+          "do": "Coupe nette entre une pile haute sans grille et une grille basse pleine de marques."
+        }
+      ],
+      "dod": "Une montagne de pages qui cache une grille vide, et une grille marquée à côté.",
+      "turn": "Une montagne de pages qui cache une grille vide, et une grille marquée à côté."
+    },
+    {
+      "id": "s3",
+      "clarity": "Apprendre ne demande jamais d'avoir tort. C'est tout l'attrait.",
+      "cast": [
+        "grille blanche",
+        "tampon FAUX",
+        "voile"
+      ],
+      "duration_s": 4.11,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Coupe franche : la grille droite seule, extraite de sous la pile."
+        },
+        {
+          "t": 1.2,
+          "do": "PIVOT : un tampon FAUX descend et cherche une case à marquer."
+        },
+        {
+          "t": 2.4,
+          "do": "Il passe sur toute la grille sans trouver une seule case remplie. Il remonte, inutilisé."
+        },
+        {
+          "t": 3.3,
+          "do": "Immobilité choc 0,8 s sur la grille intacte."
+        }
+      ],
+      "dod": "Rien à corriger sur une grille vide — c'est pour ça qu'elle reste vide.",
+      "turn": "Rien à corriger sur une grille vide — c'est pour ça qu'elle reste vide."
+    },
+    {
+      "id": "s4",
+      "clarity": "Chaque méthode neuve remet le compteur à zéro et protège la précédente d'être testée.",
+      "cast": [
+        "portes",
+        "grilles empilées",
+        "compteur"
+      ],
+      "duration_s": 5.23,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Une nouvelle porte s'ouvre. Un compteur au-dessus revient à zéro d'un snap."
+        },
+        {
+          "t": 1.2,
+          "do": "La grille précédente se glisse SOUS la nouvelle, recouverte, jamais remplie."
+        },
+        {
+          "t": 2.4,
+          "do": "Répétition en cadence : porte, compteur à zéro, grille recouverte. Trois fois, de plus en plus vite."
+        },
+        {
+          "t": 3.8,
+          "do": "La pile de grilles blanches est haute. Toutes sont délavées en gris."
+        }
+      ],
+      "dod": "Chaque nouvelle porte enterre la grille d'avant sans l'avoir remplie.",
+      "turn": "Chaque nouvelle porte enterre la grille d'avant sans l'avoir remplie."
+    },
+    {
+      "id": "s5",
+      "clarity": "Une méthode non testée n'est pas du savoir, c'est un abri.",
+      "cast": [
+        "grille marquée",
+        "pile de grilles blanches"
+      ],
+      "duration_s": 5.82,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Deux objets côte à côte : une grille pleine de marques teal et grises, et une pile de grilles blanches."
+        },
+        {
+          "t": 1.4,
+          "do": "La grille marquée reste teal. La pile blanche se délave entièrement."
+        },
+        {
+          "t": 2.8,
+          "do": "Image finale tenue ≥ 3 s. Une seule variable : la grille a été remplie ou recouverte."
+        }
+      ],
+      "dod": "Des marques valent plus qu'une pile propre.",
+      "fusil_decharge": "En S5, une grille marquée face à une grille restée blanche sous une pile de pages."
+    }
+  ]
+}

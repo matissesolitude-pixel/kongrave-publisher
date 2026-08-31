@@ -1,0 +1,192 @@
+{
+  "id": "L103",
+  "title": "L103 — THE FOURTH GREEN DAY",
+  "engine": "l103",
+  "total": 25.43,
+  "voice": [
+    "Two traders are on their fourth green day. One closes the terminal. The other adds a screen.",
+    "Nothing is wrong. That's exactly when the pressure has nowhere left to go.",
+    "The blow-up isn't caused by the red day. It's paid for by the four before it.",
+    "Discipline held all week doesn't rest. It runs out.",
+    "Schedule the stop before you need it. Follow KONGRAVE — the mechanics nobody explains"
+  ],
+  "_cellule": "OITD (Circuit) · Story · Dream/Nightmare · collègues · futur · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "_narrator": {
+    "regle_unique": "Il n'y a plus de narrateur dans les reels. Aucun personnage n'est visible à l'écran. La voix de George raconte en off, et le schéma travaille seul.",
+    "note": "Si un moteur hérite d'un appel au narrateur, il doit l'ignorer. Mr Dollar vit uniquement dans les carrousels."
+  },
+  "_rules": {
+    "cta_keyword": "AUCUN — le reel est du TOFU, son seul CTA est l'abonnement.",
+    "registre": "STRUCTURE",
+    "loi_ouverture": "Règle mesurée sur 22 épisodes publiés entre le 11 et le 24 août. Les huit épisodes au-dessus de mille vues ouvrent tous de la même façon : deux TRADERS (jamais deux comptes ni deux plans), un geste CONCRET et visible, et une divergence annoncée dès la première phrase. Les deux duels qui ont échoué le montrent en creux : « two accounts take the same drawdown » a fait 177 vues parce que le sujet est un objet et non un humain, et « two traders are slipping at the same rate » a fait 214 vues parce que glisser n'est pas un geste que l'on peut voir.",
+    "interdits_ouverture": "La voix passive est interdite : « your plan is being followed » a produit 152 vues. Toute exigence adressée au spectateur avant la troisième seconde est interdite : « look at this frame, remember it » a produit 167 vues et « now answer one question » a produit 161 vues. Une abstraction en sujet est interdite : « every decision needs a second signature » a produit 202 vues.",
+    "cta_dans_la_video": "Le CTA d'abonnement est prononcé par la voix en scène 5 et affiché à l'écran au même moment. Le reel n'a jamais de mot-clé : sur mille sept cent trente-sept vues, un reel obtient un commentaire, alors qu'un carrousel en obtient trois pour cinquante-deux personnes atteintes.",
+    "caption_structure": "La caption est longue et porte une dizaine de hashtags, parce qu'une caption courte détruit la distribution : le test a donné deux cent deux vues contre sept cent cinquante-six à mille trois cent soixante-neuf le même jour. La première ligne porte le hook. Le CTA d'abonnement ferme la caption, juste avant les hashtags.",
+    "dispositif": "MONTAGE PARALLÈLE. Le fusil de Tchekhov n'est pas utilisé. Deux épisodes consécutifs ne portent jamais le même dispositif.",
+    "interdits": "Le gris signale la perte. Le brun n'est jamais utilisé. Le bas du cadre reste vide sur environ douze pour cent de la hauteur. On n'écrit jamais qu'un trader peut perdre plus que son dépôt. Aucune intention n'est prêtée aux institutionnels. Aucun chiffre de rendement n'est affiché.",
+    "palette": "Le papier est en #F2EFE7, l'encre en #20242A, le trader en teal #1E5F6E, et la perte en gris #474D50.",
+    "duree": "L'épisode dure environ trente secondes. Le format court a fait monter la rétention : trente pour cent de l'épisode est vu en moyenne sous quarante secondes, contre dix-neuf pour cent au-dessus de soixante. La valeur doit être entière avant la vingtième seconde.",
+    "circuit": "Les frames de contrôle sont produites avant le rendu complet.",
+    "_renumerotation": "Cet épisode a d'abord été écrit sous l'identifiant L88. Or un L88 différent, intitulé « THE STOP THAT KEPT MOVING », était déjà publié dans le dépôt. Il a donc été renuméroté en L96, premier identifiant libre au moment de la livraison, pour éviter d'écraser un JSON déjà sorti et de créer un doublon de moteur."
+  },
+  "caption": "Two traders are on their fourth green day. One closes the terminal, the other adds a screen.\n\nNothing is going wrong — which is exactly the problem. The pressure that ends a week isn't built by the red day, it's built by the four green ones before it. Discipline held all week doesn't rest between sessions. It runs out.\n\nThe good days are the ones filling the gauge.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "Two traders are on their fourth green day. One closes the terminal, the other adds a screen.",
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Quatre bonnes journées d'affilée, une jauge presque pleine, et deux réactions opposées.",
+      "cast": [
+        "jauge teal",
+        "quatre marques vertes",
+        "figure gauche",
+        "figure droite",
+        "volet"
+      ],
+      "duration_s": 6.15,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "FRAME 0 EN TENSION : la jauge teal est remplie au ras du bord et VIBRE. Quatre marques alignées en dessous."
+        },
+        {
+          "t": 1.4,
+          "do": "La figure gauche tire un volet devant son poste — snap 3 frames, le volet claque."
+        },
+        {
+          "t": 3.0,
+          "do": "La figure droite fait glisser un SECOND écran à côté du premier."
+        },
+        {
+          "t": 4.6,
+          "do": "La question pop ligne par ligne. La jauge vibre toujours, cadrée."
+        }
+      ],
+      "dod": "La jauge est pleine, l'un ferme, l'autre ajoute un écran.",
+      "question": "WHO PAYS FOR THE FIFTH DAY?",
+      "fusil": "LA JAUGE — une colonne teal presque pleine, présente dès la frame 0.",
+      "emotion_lever": "TENSION — une jauge pleine à craquer qui vibre, avant que quoi que ce soit ne casse"
+    },
+    {
+      "id": "s2",
+      "clarity": "Rien ne va mal — c'est justement là que la pression n'a plus de sortie.",
+      "cast": [
+        "jauge",
+        "marques vertes",
+        "parois"
+      ],
+      "duration_s": 4.97,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Une cinquième marque verte se pose. Cadence régulière, calme."
+        },
+        {
+          "t": 1.2,
+          "do": "La jauge monte encore. Les parois se cintrent légèrement vers l'extérieur."
+        },
+        {
+          "t": 2.8,
+          "do": "Aucune alarme, aucun rouge. Tout est vert et tout se tend."
+        },
+        {
+          "t": 4.0,
+          "do": "Tenue 0,8 s sur les parois cintrées."
+        }
+      ],
+      "dod": "Tout est vert, et les parois commencent à se déformer.",
+      "turn": "Tout est vert, et les parois commencent à se déformer."
+    },
+    {
+      "id": "s3",
+      "clarity": "L'explosion n'est pas causée par la journée rouge, elle est payée par les quatre d'avant.",
+      "cast": [
+        "jauge",
+        "quatre tubes",
+        "marque rouge"
+      ],
+      "duration_s": 5.17,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Coupe franche : la jauge seule."
+        },
+        {
+          "t": 1.2,
+          "do": "PIVOT : quatre tubes remontent des marques VERTES vers la jauge. Ce sont elles qui la remplissent."
+        },
+        {
+          "t": 2.6,
+          "do": "La marque rouge arrive et ne touche la jauge par aucun tube. Elle est juste là au moment où ça cède."
+        },
+        {
+          "t": 3.8,
+          "do": "Immobilité choc 0,9 s : quatre tubes verts pleins, un rouge sans tube."
+        }
+      ],
+      "dod": "Ce sont les journées vertes qui remplissaient la jauge, pas la rouge.",
+      "turn": "Ce sont les journées vertes qui remplissaient la jauge, pas la rouge."
+    },
+    {
+      "id": "s4",
+      "clarity": "La discipline tenue toute la semaine ne se repose pas, elle s'épuise.",
+      "cast": [
+        "jauge",
+        "réserve teal",
+        "marques"
+      ],
+      "duration_s": 3.46,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Une réserve teal apparaît à côté de la jauge, pleine."
+        },
+        {
+          "t": 1.0,
+          "do": "Chaque marque tenue prélève un cran dans la réserve. Cadence sèche, cinq fois."
+        },
+        {
+          "t": 2.4,
+          "do": "La réserve se délave teal → gris au fur et à mesure."
+        },
+        {
+          "t": 3.4,
+          "do": "Réserve vide. La jauge, elle, déborde par le haut — sans qu'aucune journée rouge soit dans le cadre."
+        }
+      ],
+      "dod": "Tenir coûte quelque chose à chaque fois, et la réserve finit à sec.",
+      "turn": "Tenir coûte quelque chose à chaque fois, et la réserve finit à sec."
+    },
+    {
+      "id": "s5",
+      "clarity": "Programme l'arrêt avant d'en avoir besoin.",
+      "cast": [
+        "jauge A",
+        "jauge B",
+        "vanne horaire",
+        "rupture"
+      ],
+      "duration_s": 5.69,
+      "beats": [
+        {
+          "t": 0.0,
+          "do": "Deux jauges identiques, même remplissage, même semaine."
+        },
+        {
+          "t": 1.2,
+          "do": "Gauche : une vanne s'ouvre à heure fixe, la jauge redescend proprement, elle reste teal."
+        },
+        {
+          "t": 2.4,
+          "do": "Droite : pas de vanne. La paroi cède d'un coup, le teal se délave en gris."
+        },
+        {
+          "t": 3.4,
+          "do": "Image finale tenue ≥ 3 s. Une seule variable : la vanne était programmée ou pas."
+        }
+      ],
+      "dod": "Une vanne prévue vide la jauge, sans vanne c'est la paroi qui cède.",
+      "fusil_decharge": "En S5, une jauge purgée à heure fixe face à une jauge qui a cédé toute seule."
+    }
+  ]
+}
