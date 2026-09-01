@@ -1,0 +1,160 @@
+{
+  "id": "L108",
+  "engine": "l108",
+  "title": "L108 — THE WIN THAT FELT LIKE SKILL",
+  "_cellule": "OERX (Assaillant) · Story · Ease · regard=collègues · présent · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "Two funded traders close the same trade for the same profit. One books it — the other doubles his size next.",
+    "Nothing about his method changed between those two trades. Only how he felt about it did.",
+    "Excitement and edge produce the exact same rush, and only one of them survives a losing streak.",
+    "A single win doesn't validate a system. It just makes the next mistake feel earned.",
+    "Check what actually changed before you size up. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders viennent de clôturer le même trade au même profit. L'un s'arrête, l'autre double sa taille.",
+      "question": "WHAT ACTUALLY CHANGED BETWEEN THE TWO TRADES?",
+      "emotion_lever": "CURIOSITÉ — même profit, même instant, deux tailles de position radicalement différentes ensuite",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "figure gauche"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure droite"
+        },
+        "c3": {
+          "type": "object",
+          "note": "profit identique affiché"
+        },
+        "c4": {
+          "type": "object",
+          "note": "bloc de taille double"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.2",
+          "do": "Deux traders viennent de clôturer le même trade au même profit. L'un s'arrête, l'autre double sa taille."
+        },
+        {
+          "t": "3.2-6.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.4-9.7",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Deux traders viennent de clôturer le même trade au même profit. L'un s'arrête, l'autre double sa taille.",
+      "dispositif_cle": "IN MEDIAS RES : on entre dans l'action déjà engagée, sans mise en place."
+    },
+    {
+      "id": "s2",
+      "clarity": "Rien n'a changé dans la méthode entre les deux trades. Seul le ressenti a changé.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "Rien n'a changé dans la méthode entre les deux trades. Seul le ressenti a changé."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Rien n'a changé dans la méthode entre les deux trades. Seul le ressenti a changé.",
+      "turn": "Rien n'a changé dans la méthode entre les deux trades. Seul le ressenti a changé."
+    },
+    {
+      "id": "s3",
+      "clarity": "L'excitation et l'edge produisent la même montée. Un seul des deux survit à une série de pertes.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "L'excitation et l'edge produisent la même montée. Un seul des deux survit à une série de pertes."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "L'excitation et l'edge produisent la même montée. Un seul des deux survit à une série de pertes.",
+      "turn": "L'excitation et l'edge produisent la même montée. Un seul des deux survit à une série de pertes."
+    },
+    {
+      "id": "s4",
+      "clarity": "Une victoire ne valide pas un système. Elle rend juste la prochaine erreur légitime.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "Une victoire ne valide pas un système. Elle rend juste la prochaine erreur légitime."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-6.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Une victoire ne valide pas un système. Elle rend juste la prochaine erreur légitime.",
+      "turn": "Une victoire ne valide pas un système. Elle rend juste la prochaine erreur légitime.",
+      "note": "Scene d'escalade — le retournement de s3 se repete, cadence, froid."
+    },
+    {
+      "id": "s5",
+      "clarity": "Vérifie ce qui a vraiment changé avant d'augmenter la taille. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Vérifie ce qui a vraiment changé avant d'augmenter la taille. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Vérifie ce qui a vraiment changé avant d'augmenter la taille. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 31.5,
+  "caption": "Two funded traders close the same trade for the same profit. One books it and moves on — the other doubles his size on the next one.\n\nNothing about his method changed between those two trades — only how he felt about it did. Excitement and edge produce the exact same rush, and only one of them survives a losing streak.\n\nA single win doesn't validate a system, it just makes the next mistake feel earned.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #overconfidence #tradingmindset #propfirm",
+  "pinned_comment": "Check what actually changed before you size up. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~31.5s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

@@ -2,6 +2,7 @@
   "id": "L104",
   "title": "THE IDEA THEY BOTH TOOK",
   "engine": "l104",
+  "total": 26.9,
   "voice": [
     "Two friends take the same idea from the same post. One reads why. The other reads where.",
     "Price moves against both. One knows which part of his reason broke.",
@@ -9,7 +10,8 @@
     "You can copy a position. You cannot copy the reason someone holds it.",
     "If you can't say why you're in, you can't say when you're out. Follow KONGRAVE — the mechanics nobody explains."
   ],
-  "total": 26.9,
+  "_cellule": "SETX (Sniper) · Communauté · Ease/Effort · autres traders · présent · −−",
+  "_dispositif": "MÉTAPHORE SEULE",
   "_narrator": {
     "voice_profile": "LIGNE — Coach (A2)",
     "voice_id": "0jNVx6MiRPvEBiq9DBhH",
@@ -23,6 +25,8 @@
     "signature_exact_voice4": true,
     "duree": "~26.9s (budget 485 car.). Valeur dense avant la 12e seconde."
   },
+  "caption": "Two friends take the same idea from the same post. One reads why, the other reads where.\n\nWhen price goes against them, only one can name the part of his reason that broke. A borrowed entry arrives without an exit, because the exit was never in the post. You can copy a position — you cannot copy the reason someone holds it.\n\nNo reason in, no reason out.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "If you can't say why you're in, you can't say when you're out. Follow @kongrave_ — the mechanics nobody explains.",
   "scenes": [
     {
       "id": "S1",
@@ -178,7 +182,5 @@
       "dod": "La flèche qui a gardé son fil a une porte, l'autre n'en aura jamais.",
       "fusil_decharge": "En S5, la queue est ce qui portait la sortie. Sans elle, la flèche flotte."
     }
-  ],
-  "caption": "Two friends take the same idea from the same post. One reads why, the other reads where.\n\nWhen price goes against them, only one can name the part of his reason that broke. A borrowed entry arrives without an exit, because the exit was never in the post. You can copy a position — you cannot copy the reason someone holds it.\n\nNo reason in, no reason out.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "If you can't say why you're in, you can't say when you're out. Follow @kongrave_ — the mechanics nobody explains."
+  ]
 }

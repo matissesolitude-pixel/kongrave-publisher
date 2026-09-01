@@ -1,0 +1,160 @@
+{
+  "id": "L106",
+  "engine": "l106",
+  "title": "L106 — THE STOP THAT NEVER EXISTED",
+  "_cellule": "OITX (Circuit) · Éducation · Risk · regard=desk · présent · −−",
+  "_dispositif": "PRÉSAGE",
+  "voice": [
+    "Two challengers take the same string of losses. One stops trading after the third — the other keeps going.",
+    "There's no rule telling him to stop, so nothing does, and the fourth loss becomes the fifth.",
+    "A losing streak doesn't need a plan to keep running. It only needs the absence of one.",
+    "The account survives every single loss on its own — it's the sequence that kills it.",
+    "A circuit breaker isn't caution. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders encaissent la même série de pertes. L'un s'arrête au bout de trois, l'autre continue.",
+      "question": "WHAT STOPS A LOSING STREAK, IF NOTHING DOES?",
+      "emotion_lever": "CHOC — un compteur de pertes qui continue de tourner sans qu'aucune main ne l'arrête",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "figure gauche"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure droite"
+        },
+        "c3": {
+          "type": "ledger",
+          "note": "registre de pertes"
+        },
+        "c4": {
+          "type": "button",
+          "note": "bouton stop absent"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "Deux traders encaissent la même série de pertes. L'un s'arrête au bout de trois, l'autre continue."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.6",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Deux traders encaissent la même série de pertes. L'un s'arrête au bout de trois, l'autre continue.",
+      "dispositif_cle": "PRÉSAGE : un détail discret posé en S1 annonce ce qui se joue en S3-S4."
+    },
+    {
+      "id": "s2",
+      "clarity": "Aucune règle ne dit stop, alors rien ne s'arrête, et la perte suivante s'ajoute.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "Aucune règle ne dit stop, alors rien ne s'arrête, et la perte suivante s'ajoute."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.7",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Aucune règle ne dit stop, alors rien ne s'arrête, et la perte suivante s'ajoute.",
+      "turn": "Aucune règle ne dit stop, alors rien ne s'arrête, et la perte suivante s'ajoute."
+    },
+    {
+      "id": "s3",
+      "clarity": "Une série n'a pas besoin d'un plan pour continuer. Il lui suffit qu'il n'y en ait pas.",
+      "beats": [
+        {
+          "t": "0.0-2.1",
+          "do": "Une série n'a pas besoin d'un plan pour continuer. Il lui suffit qu'il n'y en ait pas."
+        },
+        {
+          "t": "2.1-4.2",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.2-6.3",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Une série n'a pas besoin d'un plan pour continuer. Il lui suffit qu'il n'y en ait pas.",
+      "turn": "Une série n'a pas besoin d'un plan pour continuer. Il lui suffit qu'il n'y en ait pas."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le compte survit à chaque perte seule. C'est la séquence qui tue.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "Le compte survit à chaque perte seule. C'est la séquence qui tue."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-6.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le compte survit à chaque perte seule. C'est la séquence qui tue.",
+      "turn": "Le compte survit à chaque perte seule. C'est la séquence qui tue.",
+      "note": "Scene d'escalade — le retournement de s3 se repete, cadence, froid."
+    },
+    {
+      "id": "s5",
+      "clarity": "Un coupe-circuit n'est pas de la prudence. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "Un coupe-circuit n'est pas de la prudence. CTA abonnement."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-5.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Un coupe-circuit n'est pas de la prudence. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 30.0,
+  "caption": "Two challengers take the same string of losses. One stops after the third — the other has no rule telling him to.\n\nA losing streak doesn't need a plan to keep running. It only needs the absence of one. The account survives every single loss on its own — it's the sequence that kills it.\n\nA stop that doesn't exist can't be missed, until it's needed.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #riskmanagement #losingstreak #propfirm",
+  "pinned_comment": "A circuit breaker isn't caution. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MECANIQUE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "PRÉSAGE — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~30.0s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

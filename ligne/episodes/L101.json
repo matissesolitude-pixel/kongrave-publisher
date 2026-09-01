@@ -2,6 +2,7 @@
   "id": "L101",
   "title": "THE LEAK NOBODY HEARS",
   "engine": "l101",
+  "total": 25.3,
   "voice": [
     "Two funded traders keep the same win rate. One checks his average loss. The other checks his balance.",
     "The balance still looks fine. The average loss has grown for six weeks.",
@@ -9,7 +10,8 @@
     "By the time the balance shows it, the leak is months old.",
     "Track the average, not the total. Follow KONGRAVE — the mechanics nobody explains."
   ],
-  "total": 25.3,
+  "_cellule": "OERD (Assaillant) · Éducation · Likelihood/Risk · desk · présent · −−",
+  "_dispositif": "PRÉSAGE",
   "_narrator": {
     "voice_profile": "LIGNE — Coach (A2)",
     "voice_id": "0jNVx6MiRPvEBiq9DBhH",
@@ -23,6 +25,8 @@
     "signature_exact_voice4": true,
     "duree": "~25.3s (budget 485 car.). Valeur dense avant la 12e seconde."
   },
+  "caption": "Two funded traders keep the exact same win rate. One of them has been leaking for six weeks.\n\nThe balance looked fine the whole time, because it was being refilled at the same rate it drained. An edge rarely breaks — it leaks, silently, and the total is the last number to admit it. The average loss moves first.\n\nThe total is the last number to tell you the truth.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "Track the average, not the total. Follow @kongrave_ — the mechanics nobody explains.",
   "scenes": [
     {
       "id": "S1",
@@ -180,7 +184,5 @@
       "dod": "Mesurer la flaque prévient tôt, mesurer le niveau prévient trop tard.",
       "fusil_decharge": "En S5, la tache est ce qu'il fallait mesurer ; le niveau ne le disait pas."
     }
-  ],
-  "caption": "Two funded traders keep the exact same win rate. One of them has been leaking for six weeks.\n\nThe balance looked fine the whole time, because it was being refilled at the same rate it drained. An edge rarely breaks — it leaks, silently, and the total is the last number to admit it. The average loss moves first.\n\nThe total is the last number to tell you the truth.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "Track the average, not the total. Follow @kongrave_ — the mechanics nobody explains."
+  ]
 }

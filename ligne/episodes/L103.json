@@ -2,6 +2,7 @@
   "id": "L103",
   "title": "THE FOURTH GREEN DAY",
   "engine": "l103",
+  "total": 25.9,
   "voice": [
     "Two traders are on their fourth green day. One closes the terminal. The other adds a screen.",
     "Nothing is wrong, and that's exactly when the pressure has nowhere left to go.",
@@ -9,7 +10,8 @@
     "Discipline held all week doesn't rest — it runs out.",
     "Schedule the stop before you need it. Follow KONGRAVE — the mechanics nobody explains."
   ],
-  "total": 25.9,
+  "_cellule": "OITD (Circuit) · Story · Dream/Nightmare · collègues · futur · −−",
+  "_dispositif": "IN MEDIAS RES",
   "_narrator": {
     "voice_profile": "LIGNE — Coach (A2)",
     "voice_id": "0jNVx6MiRPvEBiq9DBhH",
@@ -23,6 +25,8 @@
     "signature_exact_voice4": true,
     "duree": "~25.9s (budget 485 car.). Valeur dense avant la 12e seconde."
   },
+  "caption": "Two traders are on their fourth green day. One closes the terminal, the other adds a screen.\n\nNothing is going wrong — which is exactly the problem. The pressure that ends a week isn't built by the red day, it's built by the four green ones before it. Discipline held all week doesn't rest between sessions. It runs out.\n\nThe good days are the ones filling the gauge.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "Schedule the stop before you need it. Follow @kongrave_ — the mechanics nobody explains.",
   "scenes": [
     {
       "id": "S1",
@@ -179,7 +183,5 @@
       "dod": "Une vanne prévue vide la jauge, sans vanne c'est la paroi qui cède.",
       "fusil_decharge": "En S5, une jauge purgée à heure fixe face à une jauge qui a cédé toute seule."
     }
-  ],
-  "caption": "Two traders are on their fourth green day. One closes the terminal, the other adds a screen.\n\nNothing is going wrong — which is exactly the problem. The pressure that ends a week isn't built by the red day, it's built by the four green ones before it. Discipline held all week doesn't rest between sessions. It runs out.\n\nThe good days are the ones filling the gauge.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
-  "pinned_comment": "Schedule the stop before you need it. Follow @kongrave_ — the mechanics nobody explains."
+  ]
 }

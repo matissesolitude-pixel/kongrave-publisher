@@ -1,0 +1,160 @@
+{
+  "id": "L105",
+  "engine": "l105",
+  "title": "L105 — THE FIFTH CONFIRMATION",
+  "_cellule": "SITD (Glacier) · Autorité · Risk · regard=prospect · présent · −−",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "Two traders see the same signal fire. One takes it in under a minute, but the other is still checking.",
+    "A fourth confirmation appears, then a fifth, and the setup is already gone by the time he's satisfied.",
+    "He isn't checking because the signal is unclear. He's checking because acting on it feels irreversible.",
+    "Certainty was never the missing piece — it was the excuse that kept arriving on time.",
+    "The fifth confirmation never comes free. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders voient le même signal. L'un agit vite, l'autre empile les confirmations.",
+      "question": "WHAT IS HE ACTUALLY WAITING FOR?",
+      "emotion_lever": "TENSION — un signal déjà déclenché, un compteur de confirmations qui continue de monter",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "figure gauche (encre)"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure droite (encre)"
+        },
+        "c3": {
+          "type": "panel",
+          "note": "panneau signal"
+        },
+        "c4": {
+          "type": "counter",
+          "note": "compteur de confirmations"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-2.4",
+          "do": "Deux traders voient le même signal. L'un agit vite, l'autre empile les confirmations."
+        },
+        {
+          "t": "2.4-4.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.8-7.3",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Deux traders voient le même signal. L'un agit vite, l'autre empile les confirmations.",
+      "dispositif_cle": "HARENG ROUGE : une fausse piste occupe l'attention avant que le vrai mécanisme n'apparaisse."
+    },
+    {
+      "id": "s2",
+      "clarity": "Une quatrième puis une cinquième confirmation apparaissent, le setup s'efface pendant ce temps.",
+      "beats": [
+        {
+          "t": "0.0-2.4",
+          "do": "Une quatrième puis une cinquième confirmation apparaissent, le setup s'efface pendant ce temps."
+        },
+        {
+          "t": "2.4-4.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.8-7.3",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Une quatrième puis une cinquième confirmation apparaissent, le setup s'efface pendant ce temps.",
+      "turn": "Une quatrième puis une cinquième confirmation apparaissent, le setup s'efface pendant ce temps."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le signal n'est pas flou. C'est l'action qui semble irréversible.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "Le signal n'est pas flou. C'est l'action qui semble irréversible."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.4",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le signal n'est pas flou. C'est l'action qui semble irréversible.",
+      "turn": "Le signal n'est pas flou. C'est l'action qui semble irréversible."
+    },
+    {
+      "id": "s4",
+      "clarity": "La certitude n'a jamais manqué. C'était une excuse qui arrivait toujours à temps.",
+      "beats": [
+        {
+          "t": "0.0-2.1",
+          "do": "La certitude n'a jamais manqué. C'était une excuse qui arrivait toujours à temps."
+        },
+        {
+          "t": "2.1-4.2",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.2-6.2",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La certitude n'a jamais manqué. C'était une excuse qui arrivait toujours à temps.",
+      "turn": "La certitude n'a jamais manqué. C'était une excuse qui arrivait toujours à temps.",
+      "note": "Scene d'escalade — le retournement de s3 se repete, cadence, froid."
+    },
+    {
+      "id": "s5",
+      "clarity": "La cinquième confirmation a un prix. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "La cinquième confirmation a un prix. CTA abonnement."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La cinquième confirmation a un prix. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 32.1,
+  "caption": "Two traders see the same signal. One takes it in under a minute — the other is still checking a fifth confirmation when it's already gone.\n\nHe isn't waiting because the signal is unclear. He's waiting because acting on it feels irreversible, and one more check always feels safer than the click. Certainty was never the missing piece.\n\nThe fifth confirmation never comes free.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #analysisparalysis #tradingpsychology #propfirm",
+  "pinned_comment": "The fifth confirmation never comes free. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "HARENG ROUGE — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~32.1s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

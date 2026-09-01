@@ -1,0 +1,164 @@
+{
+  "id": "L107",
+  "engine": "l107",
+  "title": "L107 — THE HAND THAT KNOWS",
+  "_cellule": "SETD (Sniper) · Miroir · Risk · regard=autres traders · présent · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two students draw the same setup. One releases clean — the other's hand shakes right before the click.",
+    "Both saw the same signal form. Only one of them let it go without checking who was watching.",
+    "The shake isn't in the analysis. It's in being wrong where someone can see it.",
+    "An audience turns a decision into a performance, and a performance can fail in front of people.",
+    "Trade like nobody's watching. On your account, nobody is. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders tirent le même arc. L'un relâche net, l'autre tremble juste avant.",
+      "question": "WHY DOES THE SAME SETUP SHAKE ONE HAND AND NOT THE OTHER?",
+      "emotion_lever": "RECONNAISSANCE DE SOI — deux gestes identiques, un seul tremble à l'instant du clic",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "figure gauche (encre)"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure droite (encre)"
+        },
+        "c3": {
+          "type": "bow",
+          "note": "arc"
+        },
+        "c4": {
+          "type": "object",
+          "note": "flèche"
+        },
+        "c5": {
+          "type": "object",
+          "note": "main qui tremble"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-2.4",
+          "do": "Deux traders tirent le même arc. L'un relâche net, l'autre tremble juste avant."
+        },
+        {
+          "t": "2.4-4.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.8-7.3",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Deux traders tirent le même arc. L'un relâche net, l'autre tremble juste avant.",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux figures tournent toujours ensemble, en miroir, sur la même donnée."
+    },
+    {
+      "id": "s2",
+      "clarity": "Les deux ont vu le même signal. Un seul a agi sans vérifier qui regardait.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "Les deux ont vu le même signal. Un seul a agi sans vérifier qui regardait."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.7",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les deux ont vu le même signal. Un seul a agi sans vérifier qui regardait.",
+      "turn": "Les deux ont vu le même signal. Un seul a agi sans vérifier qui regardait."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le tremblement n'est pas dans l'analyse, déjà finie. Il est dans le fait d'avoir tort devant quelqu'un.",
+      "beats": [
+        {
+          "t": "0.0-2.6",
+          "do": "Le tremblement n'est pas dans l'analyse, déjà finie. Il est dans le fait d'avoir tort devant quelqu'un."
+        },
+        {
+          "t": "2.6-5.2",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.2-7.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le tremblement n'est pas dans l'analyse, déjà finie. Il est dans le fait d'avoir tort devant quelqu'un.",
+      "turn": "Le tremblement n'est pas dans l'analyse, déjà finie. Il est dans le fait d'avoir tort devant quelqu'un."
+    },
+    {
+      "id": "s4",
+      "clarity": "Un public transforme une décision en performance, et une performance peut échouer devant du monde.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Un public transforme une décision en performance, et une performance peut échouer devant du monde."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Un public transforme une décision en performance, et une performance peut échouer devant du monde.",
+      "turn": "Un public transforme une décision en performance, et une performance peut échouer devant du monde.",
+      "note": "Scene d'escalade — le retournement de s3 se repete, cadence, froid."
+    },
+    {
+      "id": "s5",
+      "clarity": "Trader comme si personne ne regardait, parce que sur ton compte, c'est vrai. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.9",
+          "do": "Trader comme si personne ne regardait, parce que sur ton compte, c'est vrai. CTA abonnement."
+        },
+        {
+          "t": "2.9-5.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.8-8.7",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Trader comme si personne ne regardait, parce que sur ton compte, c'est vrai. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 31.6,
+  "caption": "Two students draw the exact same setup. One releases clean. The other's hand shakes right before the click.\n\nThe shake isn't in the analysis — that part was already finished. It's in the fear of being wrong where someone else can see it. An audience turns a decision into a performance, and performances can fail in front of people.\n\nTrade like nobody's watching, because on your account, nobody is.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #tradingdiscipline #performanceanxiety #tradereducation",
+  "pinned_comment": "Trade like nobody's watching, because on your account, nobody actually is. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "MENTAL",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~31.6s (budget 485 car.). Valeur dense avant la 12e seconde.",
+    "circuit": "M24 frames DoD d'abord."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}
