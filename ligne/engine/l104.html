@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L104 « THE IDEA THEY BOTH TOOK » — objet-fusil : LA QUEUE DE LA FLÈCHE (le fil teal derrière la flèche = la RAISON ;
+       au bout du fil, une PORTE = la sortie). S1 : émotion frame 0 = CURIOSITÉ — un panneau central, deux flèches DÉJÀ sorties
+       de lui, en mouvement ; l'une traîne un long fil teal jusqu'au panneau, l'autre est coupée net et son fil pend, orphelin,
+       sur le panneau. S2 : le prix descend contre les deux ; le fil de A est fait de segments, le segment du milieu SE ROMPT et
+       devient gris (il sait quelle partie a cassé) ; B flotte, entière, rien à rompre. S3 : PIVOT — le fil de A se déplie et
+       révèle une PORTE à son bout (la sortie était au bout du fil) ; B, hors panneau, n'a qu'un cadre nu derrière. S4 : trois
+       flèches sans queue arrivent en cadence de trois panneaux, chacune se délave teal→gris l'une après l'autre, AUCUNE porte
+       derrière elles, pointes alignées grises. S5 : diptyque — gauche garde son fil et sa porte, tout reste teal ; droite, rien
+       derrière la pointe, se délave en gris. Une seule variable : le fil est venu avec, ou pas. Doctrine : aucun chiffre, aucun
+       narrateur ; teal = la raison portée (à toi) ; gris = ce qui se perd ; pas de brun, pas de rouge ; bas du cadre vide. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // teal (0) -> gris (1) : une valeur qui se perd SE DÉLAVE, elle ne brunit jamais.
+    function mixCol(f){f=clamp(f,0,1);const a=[0x1E,0x5F,0x6E],b=[0x47,0x4D,0x50];return 'rgb('+a.map((v,i)=>Math.round(lerp(v,b[i],f))).join(',')+')';}
+
+    // ── LES OBJETS (pools) ─────────────────────────────────────────────────────────
+    // Flèches (les entrées prises) : hampe (line) + pointe (polygon).
+    const SH=[0,1,2].map(()=>mk('line',{fill:'none','stroke-linecap':'round',opacity:0}));
+    const HD=[0,1,2].map(()=>mk('polygon',{opacity:0}));
+    // Fils/queues (la raison) : segments réutilisables — permet de casser UN segment (S2).
+    const SEGS=[]; for(let i=0;i<22;i++)SEGS.push(mk('line',{'stroke-linecap':'round',opacity:0}));
+    // Panneaux (les posts) : plaque + poteau + deux traits « texte ».
+    const SIGN_B=[0,1,2].map(()=>mk('rect',{rx:12,fill:PAPER,stroke:INK,'stroke-width':5,opacity:0}));
+    const SIGN_P=[0,1,2].map(()=>mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}));
+    const SIGN_T=[]; for(let i=0;i<6;i++)SIGN_T.push(mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    // Porte (la sortie) : cadre + jambage + poignée.
+    const DR=mk('rect',{rx:8,fill:PAPER,'stroke-width':7,opacity:0});
+    const DJ=mk('line',{'stroke-width':5,'stroke-linecap':'round',opacity:0});
+    const DK=mk('circle',{r:8,opacity:0});
+    // Prix (S2) + cadre nu (S3) + compteur (S4).
+    const PRICE=mk('polyline',{fill:'none',stroke:DEAD,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const BARE=mk('rect',{rx:8,fill:'none',stroke:DEAD,'stroke-width':5,'stroke-dasharray':'12 12',opacity:0});
+    const TICKS=[0,1,2].map(()=>mk('rect',{rx:5,opacity:0}));
+
+    let sk=0;
+    function resetPools(){sk=0;}
+    function seg(x1,y1,x2,y2,col,op,w){const e=SEGS[sk++];if(!e)return;
+      e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));
+      e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));
+      e.setAttribute('stroke',col);e.setAttribute('stroke-width',w||9);setOp(e,op);}
+    function flushPools(){for(let i=sk;i<SEGS.length;i++)setOp(SEGS[i],0);}
+    // fil ondulé (deux harmoniques → jamais figé aux extrêmes) entre deux points
+    function cordPts(x0,y0,x1,y1,n,amp,ph){const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,px=-dy/L,py=dx/L,pts=[];
+      for(let i=0;i<=n;i++){const f=i/n,bx=lerp(x0,x1,f),by=lerp(y0,y1,f);
+        const w=(amp*Math.sin(f*3.3+ph)+amp*0.55*Math.sin(f*6.6+ph*1.6))*Math.sin(Math.PI*f);
+        pts.push([bx+px*w,by+py*w]);}return pts;}
+    function drawCord(pts,col,op,w,brk,brkShift,brkCol){for(let i=0;i<pts.length-1;i++){
+      let ax=pts[i][0],ay=pts[i][1],bx=pts[i+1][0],by=pts[i+1][1],c=col;
+      if(brk!=null&&i===brk){c=brkCol||DEAD;ax+=brkShift;bx+=brkShift;ay-=brkShift*0.4;by-=brkShift*0.4;}
+      seg(ax,ay,bx,by,c,op,w);}}
+    // flèche : (bx,by) = arrière, (hx,hy) = pointe
+    function arrow(i,bx,by,hx,hy,col,op,sw){const sh=SH[i],hd=HD[i];
+      const dx=hx-bx,dy=hy-by,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,nx=-uy,ny=ux;
+      const hb=Math.min(52,L*0.45),jx=hx-ux*hb,jy=hy-uy*hb;
+      sh.setAttribute('x1',bx.toFixed(1));sh.setAttribute('y1',by.toFixed(1));
+      sh.setAttribute('x2',jx.toFixed(1));sh.setAttribute('y2',jy.toFixed(1));
+      sh.setAttribute('stroke',col);sh.setAttribute('stroke-width',sw||18);setOp(sh,op);
+      const hw=(sw||18)*0.85+12;
+      hd.setAttribute('points',[[hx,hy],[jx+nx*hw,jy+ny*hw],[jx-nx*hw,jy-ny*hw]].map(q=>q[0].toFixed(1)+','+q[1].toFixed(1)).join(' '));
+      hd.setAttribute('fill',col);setOp(hd,op);}
+    // panneau : plaque (i) au centre cx, haut topY
+    function sign(i,cx,topY,w,h,op){const b=SIGN_B[i];
+      b.setAttribute('x',(cx-w/2).toFixed(1));b.setAttribute('y',topY.toFixed(1));b.setAttribute('width',w);b.setAttribute('height',h);setOp(b,op);
+      const p=SIGN_P[i];p.setAttribute('x1',cx);p.setAttribute('x2',cx);p.setAttribute('y1',(topY+h).toFixed(1));p.setAttribute('y2',(topY+h+78).toFixed(1));setOp(p,op);
+      const t1=SIGN_T[i*2],t2=SIGN_T[i*2+1];
+      t1.setAttribute('x1',(cx-w/2+18).toFixed(1));t1.setAttribute('x2',(cx+w/2-18).toFixed(1));t1.setAttribute('y1',(topY+h*0.40).toFixed(1));t1.setAttribute('y2',(topY+h*0.40).toFixed(1));setOp(t1,op*0.8);
+      t2.setAttribute('x1',(cx-w/2+18).toFixed(1));t2.setAttribute('x2',(cx+w/2-42).toFixed(1));t2.setAttribute('y1',(topY+h*0.64).toFixed(1));t2.setAttribute('y2',(topY+h*0.64).toFixed(1));setOp(t2,op*0.8);}
+    // porte : centrée (cx,cy)
+    function door(cx,cy,w,h,col,op){
+      DR.setAttribute('x',(cx-w/2).toFixed(1));DR.setAttribute('y',(cy-h/2).toFixed(1));DR.setAttribute('width',w);DR.setAttribute('height',h);DR.setAttribute('stroke',col);setOp(DR,op);
+      DJ.setAttribute('x1',(cx-w/2+w*0.72).toFixed(1));DJ.setAttribute('x2',(cx-w/2+w*0.72).toFixed(1));DJ.setAttribute('y1',(cy-h/2+8).toFixed(1));DJ.setAttribute('y2',(cy+h/2-8).toFixed(1));DJ.setAttribute('stroke',col);setOp(DJ,op);
+      DK.setAttribute('cx',(cx-w/2+w*0.6).toFixed(1));DK.setAttribute('cy',cy.toFixed(1));DK.setAttribute('fill',col);setOp(DK,op);}
+    function hideAll(){[...SH,...HD,...SEGS,...SIGN_B,...SIGN_P,...SIGN_T,DR,DJ,DK,PRICE,BARE,...TICKS].forEach(e=>setOp(e,0));}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHERE IS THE EXIT','ON A BORROWED TRADE'];
+    const FS=64,lineH=90,y0=180,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ── putCap COPIÉ TEL QUEL depuis l26 (MESURE la largeur réelle) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(36),capG=caption(34),capH=caption(40);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF,capG,capH])setOp(e,0);}
+
+    // ═══ S1 — DEUX FLÈCHES, UN SEUL FIL GARDÉ ═══
+    // Verbe visuel : l'énigme / la divergence (deux objets identiques, un seul a gardé son fil).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetPools(); hideAll();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (CURIOSITÉ) : le panneau et les DEUX flèches sont DÉJÀ là, en mouvement.
+      //    A traîne un long fil teal jusqu'au panneau ; B est coupée net, son fil pend orphelin sur le panneau.
+      const bb=3*Math.sin(u*1.3)+1.5*Math.sin(u*2.4);
+      sign(0,540,680+bb,170,120,1);
+      const aA=6*Math.sin(u*1.5)+3*Math.sin(u*2.7);
+      arrow(0, 360, 1030+aA, 250, 1200+aA, YOU, 1, 18);                 // flèche A (avec fil), part en bas-gauche
+      drawCord(cordPts(470,802+bb, 360,1030+aA, 6, 16, u*1.1), YOU, 1, 10);
+      const stubSw=4*Math.sin(u*1.8+1);
+      drawCord(cordPts(610,802+bb, 648+stubSw,948+stubSw, 3, 10, u*1.4), YOU, 0.9, 9); // fil orphelin (abandonné sur le panneau)
+      const aB=6*Math.sin(u*1.4+2)+3*Math.sin(u*2.5+1);
+      arrow(1, 730, 1030+aB, 840, 1200+aB, INK, 1, 18);                 // flèche B (coupée net, rien derrière)
+      flushPools();
+      putCap(capA,'THE SAME POST',540,620,INK,clamp((u-0.7)/0.5,0,1)*gf);
+      putCap(capB,'READ WHY',210,912,YOU,clamp((u-1.4)/0.5,0,1)*gf);
+      putCap(capC,'READ WHERE',858,912,DEAD,clamp((u-1.8)/0.5,0,1)*gf);
+    }
+
+    // ═══ S2 — LE PRIX DESCEND : un seul fil peut casser à un endroit précis ═══
+    // Verbe visuel : la RUPTURE localisée (un segment du fil cède et devient gris).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      // le prix descend contre les deux, même angle, même vitesse (il glisse vers le bas)
+      const desc=18*u, wob=6*Math.sin(u*2.0)+3*Math.sin(u*3.4), pp=[];
+      for(let i=0;i<=6;i++){const f=i/6,x=lerp(150,960,f),y=lerp(800,1060,f)+desc+wob*Math.sin(f*3+u);pp.push(x.toFixed(1)+','+y.toFixed(1));}
+      PRICE.setAttribute('points',pp.join(' '));setOp(PRICE,1);
+      // flèche A (teal) + fil segmenté : le segment du MILIEU se rompt et devient gris
+      const aA=5*Math.sin(u*1.6)+3*Math.sin(u*2.8);
+      arrow(0,330,1000+aA,330,1180+aA,YOU,1,18);
+      const brk=(u>1.2)?2:null, brkShift=clamp((u-1.2)/0.5,0,1)*26;
+      drawCord(cordPts(330,1000+aA, 392,790, 5, 14, u*1.2), YOU, 1, 9, brk, brkShift, DEAD);
+      // flèche B (encre) : rien à rompre, elle flotte, sans repère
+      const bx=8*Math.sin(u*1.3+1)+4*Math.sin(u*2.3), by=6*Math.sin(u*1.7)+3*Math.sin(u*2.9+1);
+      arrow(1,760+bx,1000+by,760+bx,1180+by,INK,1,18);
+      flushPools();
+      putCap(capA,'PRICE TURNS ON BOTH',540,690,INK,1);
+      putCap(capB,'KNOWS THE SPOT',330,1340,YOU,clamp((u-1.5)/0.6,0,1));
+      putCap(capC,'NOTHING TO NAME',770,1340,DEAD,clamp((u-2.2)/0.6,0,1));
+    }
+
+    // ═══ S3 — PIVOT : le fil se déplie et révèle une PORTE à son bout ═══
+    // Verbe visuel : la révélation-pivot (la sortie apparaît au bout du fil).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const bb=3*Math.sin(u*1.3)+1.5*Math.sin(u*2.5);
+      sign(0,330,660+bb,160,110,1);
+      const aA=5*Math.sin(u*1.5)+2.5*Math.sin(u*2.6);
+      arrow(0,380,930+aA,300,770+aA,YOU,1,18);                          // flèche A restée près du panneau
+      const dy0=clamp((u-1.2)/0.9,0,1), doorY=1300-120*eOut(dy0), doorOp=clamp((u-1.2)/0.5,0,1), dk=3*Math.sin(u*1.7);
+      drawCord(cordPts(380,930+aA, 560,doorY-72+dk, 6, 14, u*1.1), YOU, 1, 9);
+      door(560,doorY+dk,74,150,YOU,doorOp);                             // la PORTE monte se poser au bout du fil
+      const bF=6*Math.sin(u*1.4+1)+3*Math.sin(u*2.4);
+      arrow(1,830,1140+bF,830,960+bF,DEAD,1,18);                        // flèche B, hors panneau
+      BARE.setAttribute('x',793);BARE.setAttribute('y',1170);BARE.setAttribute('width',74);BARE.setAttribute('height',150);setOp(BARE,0.9); // cadre nu
+      flushPools();
+      putCap(capA,'EXIT ON THE CORD',500,1400,YOU,clamp((u-1.6)/0.6,0,1));
+      putCap(capB,'NO DOOR BEHIND',845,1352,DEAD,clamp((u-2.2)/0.6,0,1));
+    }
+
+    // ═══ S4 — TROIS COPIES SANS FIL : chacune se délave, aucune porte derrière ═══
+    // Verbe visuel : l'accumulation cadencée + le délavage sériel.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      const X=[270,540,810], ARR=[0.15,0.85,1.55];
+      for(let i=0;i<3;i++){
+        const bb=3*Math.sin(u*1.3+i)+1.5*Math.sin(u*2.4+i);
+        sign(i, X[i], 610+bb, 118, 78, 1);
+        const arv=clamp((u-ARR[i])/0.5,0,1), bob=-(1-eOut(arv))*80;      // tombe du panneau puis se pose
+        const br=5*Math.sin(u*1.6+i*1.1)+2.5*Math.sin(u*2.7+i);
+        const fade=clamp((u-(ARR[i]+0.5))/0.9,0,1), col=mixCol(fade);
+        arrow(i, X[i], 1050+bob+br, X[i], 1240+bob+br, col, 1, 17);      // flèche sans queue
+        const tk=TICKS[i]; tk.setAttribute('x',(486+i*36).toFixed(1));tk.setAttribute('y',556);tk.setAttribute('width',24);tk.setAttribute('height',24);tk.setAttribute('fill',mixCol(fade));setOp(tk,0.35+0.6*arv);
+      }
+      flushPools();
+      putCap(capB,'NONE BROUGHT A REASON',540,1360,DEAD,clamp((u-1.8)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : le fil venu avec, ou pas — une seule variable ═══
+    // Verbe visuel : le diptyque contrasté (garder / perdre le fil).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetPools(); hideAll();
+      // GAUCHE — garde son fil et sa porte, tout reste teal
+      const aL=4*Math.sin(u*1.4)+2*Math.sin(u*2.5), dk=3*Math.sin(u*1.6);
+      arrow(0,360,980+aL,360,1160+aL,YOU,1,18);
+      drawCord(cordPts(360,980+aL, 320,802+dk, 5, 12, u*1.05), YOU, 1, 9);
+      door(320,760+dk,66,140,YOU,1);
+      // DROITE — rien derrière la pointe, elle se délave en gris
+      const fade=clamp((u-1.0)/1.4,0,1), aR=4*Math.sin(u*1.3+1)+2*Math.sin(u*2.6+1);
+      arrow(1,740,980+aR,740,1160+aR,mixCol(fade),1,18);
+      flushPools();
+      putCap(capE,'REASON KEPT',300,1300,YOU,clamp((u-1.4)/0.6,0,1));
+      putCap(capF,'REASON LOST',780,1300,DEAD,clamp((u-2.0)/0.6,0,1));
+      putCap(capH,"CAN'T SAY WHY — CAN'T SAY WHEN",540,1410,INK,clamp((u-3.0)/0.8,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[(s.id||'').toLowerCase()]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
