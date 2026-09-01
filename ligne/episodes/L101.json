@@ -5,11 +5,11 @@
   "voice": [
     "Two funded traders keep the same win rate. One checks his average loss. The other checks his balance.",
     "The balance still looks fine. The average loss has grown for six weeks.",
-    "An edge doesn't break. It leaks. And a leak makes no sound at all.",
+    "An edge doesn't break, it leaks, and a leak makes no sound at all.",
     "By the time the balance shows it, the leak is months old.",
     "Track the average, not the total. Follow KONGRAVE — the mechanics nobody explains."
   ],
-  "total": 25.2,
+  "total": 25.3,
   "_narrator": {
     "voice_profile": "LIGNE — Coach (A2)",
     "voice_id": "0jNVx6MiRPvEBiq9DBhH",
@@ -21,7 +21,7 @@
     "no_emoji": true,
     "no_amount_promise": true,
     "signature_exact_voice4": true,
-    "duree": "~25.2s (budget 485 car.). Valeur dense avant la 12e seconde."
+    "duree": "~25.3s (budget 485 car.). Valeur dense avant la 12e seconde."
   },
   "scenes": [
     {

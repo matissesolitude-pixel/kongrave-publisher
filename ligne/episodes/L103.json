@@ -4,12 +4,12 @@
   "engine": "l103",
   "voice": [
     "Two traders are on their fourth green day. One closes the terminal. The other adds a screen.",
-    "Nothing is wrong. That's exactly when the pressure has nowhere left to go.",
-    "The blow-up isn't caused by the red day. It's paid for by the four before it.",
-    "Discipline held all week doesn't rest. It runs out.",
+    "Nothing is wrong, and that's exactly when the pressure has nowhere left to go.",
+    "The blow-up isn't caused by the red day — it's paid for by the four before it.",
+    "Discipline held all week doesn't rest — it runs out.",
     "Schedule the stop before you need it. Follow KONGRAVE — the mechanics nobody explains."
   ],
-  "total": 25.4,
+  "total": 25.9,
   "_narrator": {
     "voice_profile": "LIGNE — Coach (A2)",
     "voice_id": "0jNVx6MiRPvEBiq9DBhH",
@@ -21,7 +21,7 @@
     "no_emoji": true,
     "no_amount_promise": true,
     "signature_exact_voice4": true,
-    "duree": "~25.4s (budget 485 car.). Valeur dense avant la 12e seconde."
+    "duree": "~25.9s (budget 485 car.). Valeur dense avant la 12e seconde."
   },
   "scenes": [
     {

@@ -77,3 +77,32 @@ fragments télégraphiques. Le reel reste du TOFU sans mot-clé, son seul appel 
 prononcé en scène 5 et affiché au même moment. Il n'y a plus de narrateur : ne jamais écrire de
 champ `_narrator` ni de `hook_gag`. Enfin, la loi de la première seconde et le seuil de skip à 52 %
 restent le juge unique de la portée.
+
+## LE CONTRAT TECHNIQUE — deux champs, sinon l'épisode n'existe pas
+
+Ces deux-là ne sont pas de la mise en forme : sans eux, l'épisode est **ignoré
+en silence**, sans erreur ni alerte, et la file se vide sans qu'on sache pourquoi.
+Constaté trois fois entre le 31/08 et le 01/09/2026 sur le lot L97-L104.
+
+- **`"engine": "lNN"`** — le NOM NU du moteur, en minuscules, rien d'autre.
+  Pas de chemin, pas d'extension. Le code construit lui-même
+  `ligne/engine/<engine>.html` ; `"ligne/engines/l101.html"` donne un chemin
+  inexistant, donc `_engine_path()` renvoie None, donc `autoprod_ligne.py`
+  saute l'épisode définitivement.
+- **`"total"`** — la durée en secondes, un nombre. `build_ligne.py` la lit.
+
+## LA LÉGENDE A CINQ BLOCS, PAS QUATRE
+
+Décision PO du 31/08/2026, redemandée deux fois depuis :
+
+```
+1. l'accroche          (la seule ligne visible avant « … plus »)
+2. le corps
+3. LA PHRASE-MORALE    seule, le principe en une ligne, sans préfixe THE LINE
+4. Follow @kongrave_ — the mechanics nobody explains.
+5. ~10 hashtags
+```
+
+La morale est **obligatoire** : c'est la seule ligne citable hors contexte, et
+la seule qu'un lecteur emporte sans le corps du texte. Une légende à quatre
+blocs est un épisode à refaire.

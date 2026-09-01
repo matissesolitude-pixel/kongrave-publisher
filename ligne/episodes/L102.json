@@ -5,11 +5,11 @@
   "voice": [
     "Two students finish the same course. One opens a chart. The other opens another course.",
     "Six months later one has three hundred pages of notes and no sample.",
-    "Learning never asks you to be wrong. That's the whole appeal.",
+    "Learning never asks you to be wrong — that's the whole appeal.",
     "Every new method resets the clock and protects the last one from being tested.",
     "A method you haven't tested is shelter. Follow KONGRAVE — the mechanics nobody explains."
   ],
-  "total": 25.6,
+  "total": 25.7,
   "_narrator": {
     "voice_profile": "LIGNE — Coach (A2)",
     "voice_id": "0jNVx6MiRPvEBiq9DBhH",
@@ -21,7 +21,7 @@
     "no_emoji": true,
     "no_amount_promise": true,
     "signature_exact_voice4": true,
-    "duree": "~25.6s (budget 485 car.). Valeur dense avant la 12e seconde."
+    "duree": "~25.7s (budget 485 car.). Valeur dense avant la 12e seconde."
   },
   "scenes": [
     {
