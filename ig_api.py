@@ -237,6 +237,38 @@ def create_video_item(video_url: str) -> str:
     return container_id
 
 
+def create_story_item(image_url: str) -> str:
+    """
+    Crée un conteneur STORIES à partir d'une image déjà hébergée en HTTPS public.
+    Retourne le container_id, à publier ensuite avec publish().
+
+    Même principe que create_image_item : l'API Graph va CHERCHER le fichier à
+    l'URL fournie (aucun upload binaire possible) et n'accepte que du JPEG.
+
+    Différence structurelle avec un carrousel : une story n'a PAS de conteneur
+    parent qui agrège des enfants — chaque slide est un media_publish à part
+    entière. Et une story publiée ne se supprime PAS par l'API : c'est
+    publish_story.py, pas ce client bas niveau, qui porte la garde qui en
+    découle (créer TOUS les conteneurs et attendre TOUS les FINISHED avant
+    d'en publier UN SEUL).
+    """
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
+    resp = _request(
+        "POST",
+        url,
+        data={
+            "media_type": "STORIES",
+            "image_url": image_url,
+            "access_token": _access_token(),
+        },
+    )
+    payload = _raise_for_api_error(resp, f"Conteneur story ({image_url})")
+    container_id = payload.get("id")
+    if not container_id:
+        raise IgApiError(f"Réponse sans id de conteneur story : {payload}")
+    return container_id
+
+
 def create_carousel(children: list, caption: str) -> str:
     """
     Crée le conteneur CAROUSEL qui agrège les conteneurs enfants, dans l'ordre donné.

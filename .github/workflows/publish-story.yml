@@ -1,0 +1,141 @@
+name: STORY auto-publish (file)
+
+# Publie une séquence de STORIES KONGRAVE depuis une FILE (story/queue/), sur @kongrave_.
+#
+# Contrainte propre aux stories, absente de LIGNE et du carrousel : une story ne se
+# supprime PAS par l'API. Une séquence de dix slides fait dix conteneurs et dix
+# media_publish distincts — si la quatrième échoue après que les trois premières
+# sont parties, il reste une demi-séquence en ligne pour toujours. D'où la RÈGLE
+# D'OR appliquée dans publish_story.py : tous les conteneurs sont créés et attendus
+# FINISHED avant qu'aucune publication n'ait lieu.
+#
+# Les slides ne sont PAS dans ce repo : l'API Graph ne reçoit pas de binaire pour une
+# image, elle va la CHERCHER à une URL publique. Les JPEG sont hébergés sur le GitHub
+# Pages de disruptive-legal ; ce workflow ne transmet que leur racine.
+#
+# La FILE est le garde-fou éditorial : rien ne part si aucun manifeste n'y est.
+
+on:
+  schedule:
+    - cron: "15 */6 * * *"     # 4 sondages/jour : la cadence est en heures, pas un créneau fixe
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "Publier CETTE séquence tout de suite (laisser vide = mode file)"
+        required: false
+        default: ""
+      base_url:
+        description: "Racine publique des slides, sans slash final"
+        required: true
+        default: "https://matissesolitude-pixel.github.io/disruptive-legal/media/story"
+      dry_run:
+        description: "Dry-run : crée tous les conteneurs, attend FINISHED, NE PUBLIE PAS"
+        type: boolean
+        default: true
+      force:
+        description: "Ignore pause + cadence (le quota reste vérifié)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: story-publish
+  cancel-in-progress: false
+
+# Nécessaire pour committer le déplacement queue->published + le journal.
+permissions:
+  contents: write
+
+jobs:
+  # SONDAGE — tranche les portes qui ne demandent pas Instagram (pause, cadence,
+  # file vide), avec un checkout partiel : le dépôt pèse 8,7 Go dont l'essentiel
+  # ne sert à rien pour ce sondage. Le quota réel reste vérifié par le script complet.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.verdict.outputs.go }}
+    steps:
+      - name: Checkout partiel — config, journal et file seulement
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            story/config.json
+            story/journal.jsonl
+            story/precheck.py
+            story/queue
+          sparse-checkout-cone-mode: false
+
+      - name: Court-circuit — pause, cadence, file
+        id: verdict
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ] || [ -n "${{ github.event.inputs.id }}" ]; then
+            echo "Force ou identifiant explicite — aucune porte n'est évaluée ici."
+            echo "go=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          verdict=$(/usr/bin/python3 story/precheck.py)
+          echo "$verdict"
+          case "$verdict" in
+            GO*) echo "go=true"  >> "$GITHUB_OUTPUT" ;;
+            *)   echo "go=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+  publish:
+    needs: check
+    if: needs.check.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Dépendances
+        run: pip install requests python-dotenv
+
+      - name: Publier la séquence de stories
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          GRAPH_VERSION: v20.0
+        run: |
+          BASE="${{ github.event.inputs.base_url }}"
+          if [ -z "$BASE" ]; then
+            BASE="https://matissesolitude-pixel.github.io/disruptive-legal/media/story"
+          fi
+          ARGS=""
+          if [ -n "${{ github.event.inputs.id }}" ]; then
+            TARGET="${{ github.event.inputs.id }}"
+          else
+            TARGET="--queue"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          echo "publish_story.py $TARGET $ARGS"
+          python publish_story.py $TARGET --base-url "$BASE" $ARGS
+
+      - name: Persister le déplacement + le journal
+        if: ${{ github.event.inputs.dry_run != 'true' && always() }}
+        run: |
+          if [ -z "$(git status --porcelain story/)" ]; then
+            echo "Aucune publication — rien à committer."; exit 0
+          fi
+          git config user.name  "kongrave-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A story/
+          git commit -m "story: publication $(date -u +%FT%TZ) [skip ci]"
+          # PUSH RÉSILIENT — même leçon que LIGNE et le carrousel : sans ça une
+          # collision rejette le push APRÈS la publication IG réelle, la file
+          # n'est pas vidée, et la séquence repart au prochain créneau. Double
+          # publication — pire encore ici, puisqu'une story ne se retire pas.
+          for i in 1 2 3 4 5; do
+            if git push; then echo "push ok (essai $i)"; exit 0; fi
+            echo "push rejeté (essai $i) — pull --rebase puis retry…"
+            git pull --rebase --autostash origin main || true
+            sleep 3
+          done
+          echo "::error::push échoué après 5 essais — publication faite mais file/journal NON persistés (réparer à la main)"
+          exit 1
