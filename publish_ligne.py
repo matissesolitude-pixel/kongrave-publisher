@@ -245,7 +245,13 @@ def _oldest_episode(exclude: frozenset = frozenset()) -> Optional[Path]:
             for p in subs:
                 if p.name == name:
                     return p
-    return sorted(subs, key=lambda p: p.name)[0]
+    # TRI NATUREL, pas alphabétique. Depuis L100 le tri de chaînes ment : 'L100' < 'L99',
+    # donc le « plus ancien » n'était plus le premier. Constaté le 01/09/2026 — L100 est parti
+    # avant L99, qui serait sorti bon dernier du lot. On trie sur le NOMBRE, pas sur le texte.
+    def _rang(path):
+        m = re.search(r"(\d+)", path.name)
+        return (int(m.group(1)) if m else 0, path.name)
+    return sorted(subs, key=_rang)[0]
 
 
 def _fail_counts() -> dict:
