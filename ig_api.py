@@ -209,6 +209,34 @@ def create_image_item(image_url: str) -> str:
     return container_id
 
 
+def create_video_item(video_url: str) -> str:
+    """
+    Crée un conteneur VIDEO destiné à un carrousel (is_carousel_item=true).
+
+    Même principe que l'image — Meta va CHERCHER le fichier à l'URL publique — mais
+    deux différences qui font échouer les publications quand on les oublie :
+      · il faut `media_type=VIDEO`, sinon Meta interprète le paramètre comme un Reel ;
+      · le conteneur reste IN_PROGRESS le temps de l'encodage côté Meta, souvent
+        30 à 90 secondes. Il faut attendre FINISHED avant d'assembler le carrousel.
+    """
+    url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
+    resp = _request(
+        "POST",
+        url,
+        data={
+            "media_type": "VIDEO",
+            "video_url": video_url,
+            "is_carousel_item": "true",
+            "access_token": _access_token(),
+        },
+    )
+    payload = _raise_for_api_error(resp, f"Conteneur vidéo ({video_url})")
+    container_id = payload.get("id")
+    if not container_id:
+        raise IgApiError(f"Réponse sans id de conteneur vidéo : {payload}")
+    return container_id
+
+
 def create_carousel(children: list, caption: str) -> str:
     """
     Crée le conteneur CAROUSEL qui agrège les conteneurs enfants, dans l'ordre donné.

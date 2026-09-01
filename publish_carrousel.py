@@ -50,6 +50,7 @@ CADENCE_HOURS = 20              # entre deux carrousels (anti double-déclenchem
 
 POLL_INTERVAL = 4
 POLL_TIMEOUT = 180
+VIDEO_TIMEOUT = 600   # encodage vidéo chez Meta : compter 30 à 90 s, on laisse large
 
 
 def log(msg):
@@ -61,9 +62,10 @@ def skip(reason):
     sys.exit(0)
 
 
-def wait_finished(container_id, label):
-    """Un conteneur image passe FINISHED en quelques secondes. ERROR = Meta a refusé le fichier."""
-    deadline = time.time() + POLL_TIMEOUT
+def wait_finished(container_id, label, timeout=None):
+    """Un conteneur image passe FINISHED en quelques secondes ; une vidéo demande le
+    temps de son encodage chez Meta. ERROR = Meta a refusé le fichier."""
+    deadline = time.time() + (timeout or POLL_TIMEOUT)
     while time.time() < deadline:
         status = ig_api.get_status(container_id)
         if status in (ig_api.STATUS_FINISHED, ig_api.STATUS_PUBLISHED):
@@ -224,17 +226,31 @@ def main():
         sys.exit(f"[ERREUR] {man_path.name} : manifeste sans caption")
 
     base = args.base_url.rstrip("/")
-    urls = [f"{base}/{cid}/slide_{n}.jpg" for n in slides]
+    # media_types : {"2": "VIDEO"} écrit par prepare_publish.py. Absent = tout en image,
+    # donc les carrousels déjà en file continuent de marcher sans être retouchés.
+    types = {str(k): v for k, v in (man.get("media_types") or {}).items()}
+    urls = []
+    for n in slides:
+        est_video = types.get(str(n)) == "VIDEO"
+        ext = "mp4" if est_video else "jpg"
+        urls.append((n, est_video, f"{base}/{cid}/slide_{n}.{ext}"))
 
     log(f"[carrousel] {cid} ({man_path.name}) — {len(urls)} slides" + ("  (DRY-RUN)" if args.dry_run else ""))
 
     # 1) un conteneur par image
     children = []
-    for i, url in enumerate(urls, 1):
-        container = ig_api.create_image_item(url)
-        wait_finished(container, f"slide {slides[i - 1]}")
+    for i, (n, est_video, url) in enumerate(urls, 1):
+        if est_video:
+            container = ig_api.create_video_item(url)
+            # l'encodage côté Meta est bien plus long qu'une image : on lui laisse
+            # le temps prévu par VIDEO_TIMEOUT au lieu du POLL_TIMEOUT des images.
+            wait_finished(container, f"slide {n} (vidéo)", timeout=VIDEO_TIMEOUT)
+            log(f"[{i}/{len(urls)}] conteneur VIDÉO OK  {container}")
+        else:
+            container = ig_api.create_image_item(url)
+            wait_finished(container, f"slide {n}")
+            log(f"[{i}/{len(urls)}] conteneur image OK  {container}")
         children.append(container)
-        log(f"[{i}/{len(urls)}] conteneur image OK  {container}")
 
     # 2) le conteneur carrousel
     carousel_id = ig_api.create_carousel(children, caption)
