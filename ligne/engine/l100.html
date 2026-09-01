@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L100 « THE RULES THAT KEPT RUNNING » — dispositif HARENG ROUGE (pas de fusil). S1 : émotion frame 0 = levier CHOC —
+       une machine à tampon RECONNAISSABLE, tête DÉJÀ en plein coup, qui frappe une carte de règles teal, et le bac de sortie
+       sous elle est absolument VIDE. La question pop ligne par ligne, une figure regarde le bac. S2 : la fausse piste — on change
+       les pièces une par une (le cadran INDICATOR, la plaque SESSION, la plaque PAIR) ; snap à chaque fois, le tampon repart à
+       cadence IDENTIQUE, le bac reste vide. S3 : PIVOT — recul, le SOL sous la machine porte une ligne de bascule ; une carte
+       remonte et se retourne, au dos une DATE (glyphe-tampon, jamais un chiffre) qui tombe DERRIÈRE la bascule, du côté THEN.
+       S4 : escalade froide — le sol défile sans fin, la machine tamponne pareil, les cartes éjectées se délavent teal→gris en
+       glissant. S5 : décharge A/B — deux cartes recto identique, retournement simultané : l'une porte une date et reste teal,
+       l'autre est nue et se délave gris ; la ligne de bascule passe entre les deux. Moral + CTA abonnement KONGRAVE, tenu.
+       Doctrine : aucun chiffre (la date = un glyphe) ; teal = tes règles ; gris = la règle morte ; pas de brun ; bas ~12% vide ;
+       pas de narrateur ; les rôles se lisent dans la FORME. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    function setRect(el,x,y,w,h){el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y.toFixed(1));el.setAttribute('width',Math.max(0.1,w).toFixed(1));el.setAttribute('height',Math.max(0.1,h).toFixed(1));}
+    function mixHex(a,b,f){f=clamp(f,0,1);const pa=[1,3,5].map(i=>parseInt(a.substr(i,2),16)),pb=[1,3,5].map(i=>parseInt(b.substr(i,2),16));
+      return '#'+pa.map((v,i)=>Math.round(v+(pb[i]-v)*f).toString(16).padStart(2,'0')).join('');}
+
+    // ── LA MACHINE À TAMPON — bâti (derrière) + tête & face (devant, pour frapper la carte) ──
+    const machineFrameG=mk('g',{opacity:0});
+    const mPostL=mk('rect',{fill:INK,rx:5},machineFrameG);
+    const mPostR=mk('rect',{fill:INK,rx:5},machineFrameG);
+    const mTop  =mk('rect',{fill:INK,rx:7},machineFrameG);
+    const mPlaten=mk('rect',{fill:INK,rx:4},machineFrameG);
+    // ── LE BAC DE SORTIE (vide) ──
+    const tray=mk('polyline',{fill:'none',stroke:INK,'stroke-width':11,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    // ── LE SOL & LA LIGNE DE BASCULE ──
+    const floor=mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0});
+    const tipLine=mk('line',{stroke:YOU,'stroke-width':11,'stroke-linecap':'round',opacity:0});
+    // ── LA FIGURE (fil-de-fer, rôle : le trader qui regarde) ──
+    const figG=mk('g',{opacity:0});
+    const figHead=mk('circle',{fill:'none',stroke:INK,'stroke-width':7},figG);
+    const figBody=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},figG);
+    const figArm =mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},figG);
+    const figLegL=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},figG);
+    const figLegR=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},figG);
+    // ── LES PIÈCES INTERCHANGEABLES (S2) : cadran + deux plaques + une main qui vient les changer ──
+    const dial=mk('circle',{fill:'none',stroke:INK,'stroke-width':7,opacity:0});
+    const dialTick=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const plateA=mk('rect',{fill:INK,rx:6,opacity:0});
+    const plateB=mk('rect',{fill:INK,rx:6,opacity:0});
+    const handG=mk('g',{opacity:0});
+    const handArm=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round'},handG);
+    const handDot=mk('circle',{fill:INK},handG);
+    // ── LES CARTES DE RÈGLES (pool) : rect teal + 3 traits (le texte) + un badge-date au dos ──
+    const CARDS=[];
+    for(let i=0;i<8;i++){
+      const g=mk('g',{opacity:0});
+      const rect=mk('rect',{rx:9},g);
+      const l1=mk('line',{stroke:PAPER,'stroke-width':6,'stroke-linecap':'round'},g);
+      const l2=mk('line',{stroke:PAPER,'stroke-width':6,'stroke-linecap':'round'},g);
+      const l3=mk('line',{stroke:PAPER,'stroke-width':6,'stroke-linecap':'round'},g);
+      const mbox=mk('rect',{fill:PAPER,stroke:INK,'stroke-width':5,rx:7},g);
+      const mt1=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round'},g);
+      const mt2=mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round'},g);
+      CARDS.push({g,rect,l1,l2,l3,mbox,mt1,mt2});
+    }
+    // ── LA TÊTE & LA FACE DU TAMPON (devant les cartes) ──
+    const mHead=mk('rect',{fill:INK,rx:8,opacity:0});
+    const mFace=mk('rect',{fill:INK,rx:4,opacity:0});
+    // ── LE BADGE-DATE qui se détache et tombe (S3) : un glyphe de tampon, JAMAIS un chiffre ──
+    const dateG=mk('g',{opacity:0});
+    const dgBox=mk('rect',{x:-36,y:-25,width:72,height:50,rx:8,fill:PAPER,stroke:INK,'stroke-width':5},dateG);
+    const dgT1=mk('line',{x1:-19,y1:-5,x2:19,y2:-5,stroke:INK,'stroke-width':5,'stroke-linecap':'round'},dateG);
+    const dgT2=mk('line',{x1:-19,y1:10,x2:19,y2:10,stroke:INK,'stroke-width':5,'stroke-linecap':'round'},dateG);
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHEN DID YOUR PLAN','STOP BEING TRUE'];
+    const FS=70,lineH=94,y0=180,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ HELPERS DE DESSIN ═══
+    const MCX=540, MPY=980;                                        // machine de référence (centre / haut du plateau)
+    // tampon toujours en mouvement : phase décalée pour que la FRAME 0 tombe en plein coup (tension max)
+    const SR=1.7, SPH=0.30;
+    function stampDip(u){const ph=((u*SR)+SPH)%1;return ph<0.36? eIn(ph/0.36) : 1-eOut((ph-0.36)/0.64);}
+    function drawMachine(dip,op,o){
+      o=o||{}; const sc=(o.sc==null?1:o.sc), dx=(o.dx||0), dy=(o.dy||0);
+      const tr=`translate(${(MCX+dx).toFixed(1)} ${(MPY+dy).toFixed(1)}) scale(${sc.toFixed(3)}) translate(${(-MCX).toFixed(1)} ${(-MPY).toFixed(1)})`;
+      machineFrameG.setAttribute('transform',tr);   // head/face sont hors groupe → même transform appliqué plus bas
+      setOp(machineFrameG,op);
+      setRect(mTop,   MCX-182, MPY-404, 364, 24);
+      setRect(mPostL, MCX-176, MPY-404, 26, 404);
+      setRect(mPostR, MCX+150, MPY-404, 26, 404);
+      setRect(mPlaten,MCX-182, MPY, 364, 18);
+      const headTop=MPY-360, headBot=MPY-108, hy=headTop+dip*(headBot-headTop);
+      setRect(mHead, MCX-142, hy, 284, 40);
+      setRect(mFace, MCX-62, hy+40, 124, 30);
+      mHead.setAttribute('transform',tr); mFace.setAttribute('transform',tr);
+      setOp(mHead,op); setOp(mFace,op);
+    }
+    function drawCard(c,cx,cy,w,h,color,op,sx,mode){
+      setOp(c.g,op);
+      c.g.setAttribute('transform',`translate(${cx.toFixed(1)} ${cy.toFixed(1)}) scale(${(sx==null?1:sx).toFixed(3)} 1) translate(${(-cx).toFixed(1)} ${(-cy).toFixed(1)})`);
+      setRect(c.rect,cx-w/2,cy-h/2,w,h); c.rect.setAttribute('fill',color);
+      const front=(mode==='front'), back=(mode==='back');
+      const lx1=cx-w*0.30, lx2=cx+w*0.30;
+      [c.l1,c.l2,c.l3].forEach((ln,i)=>{const ly=cy-h*0.20+i*h*0.20;
+        ln.setAttribute('x1',lx1.toFixed(1));ln.setAttribute('x2',lx2.toFixed(1));ln.setAttribute('y1',ly.toFixed(1));ln.setAttribute('y2',ly.toFixed(1));
+        setOp(ln, front?1:0);});
+      const mw=w*0.52,mh=h*0.30;
+      setRect(c.mbox,cx-mw/2,cy-mh/2,mw,mh);
+      c.mt1.setAttribute('x1',(cx-mw*0.30).toFixed(1));c.mt1.setAttribute('x2',(cx+mw*0.30).toFixed(1));c.mt1.setAttribute('y1',(cy-mh*0.14).toFixed(1));c.mt1.setAttribute('y2',(cy-mh*0.14).toFixed(1));
+      c.mt2.setAttribute('x1',(cx-mw*0.30).toFixed(1));c.mt2.setAttribute('x2',(cx+mw*0.30).toFixed(1));c.mt2.setAttribute('y1',(cy+mh*0.20).toFixed(1));c.mt2.setAttribute('y2',(cy+mh*0.20).toFixed(1));
+      setOp(c.mbox,back?1:0);setOp(c.mt1,back?1:0);setOp(c.mt2,back?1:0);
+    }
+    function drawTray(cx,topY,w,h,op){setOp(tray,op);const l=cx-w/2,r=cx+w/2,b=topY+h;
+      tray.setAttribute('points',`${l},${topY} ${l},${b} ${r},${b} ${r},${topY}`);}
+    function drawFigure(x,baseY,sway,op){
+      setOp(figG,op); figG.setAttribute('transform',`translate(0 ${sway.toFixed(1)})`);
+      figHead.setAttribute('cx',x);figHead.setAttribute('cy',baseY-150);figHead.setAttribute('r',30);
+      figBody.setAttribute('x1',x);figBody.setAttribute('y1',baseY-120);figBody.setAttribute('x2',x);figBody.setAttribute('y2',baseY-34);
+      figArm.setAttribute('x1',x);figArm.setAttribute('y1',baseY-102);figArm.setAttribute('x2',x+50);figArm.setAttribute('y2',baseY-58);
+      figLegL.setAttribute('x1',x);figLegL.setAttribute('y1',baseY-34);figLegL.setAttribute('x2',x-26);figLegL.setAttribute('y2',baseY+34);
+      figLegR.setAttribute('x1',x);figLegR.setAttribute('y1',baseY-34);figLegR.setAttribute('x2',x+26);figLegR.setAttribute('y2',baseY+34);
+    }
+    function drawPlate(el,cx,cy,w,h,sy,op){setRect(el,cx-w/2,cy-h/2,w,h);setOp(el,op);
+      el.setAttribute('transform',`translate(0 ${cy}) scale(1 ${sy.toFixed(3)}) translate(0 ${-cy})`);}
+    function flipScale(u,start,dur){const p=(u-start)/dur;if(p<=0||p>=1)return 1;return Math.abs(Math.cos(p*Math.PI));}
+    function drawDate(x,y,op){setOp(dateG,op);dateG.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);}
+
+    function hideAll(){
+      setOp(machineFrameG,0);setOp(mHead,0);setOp(mFace,0);
+      setOp(tray,0);setOp(floor,0);setOp(tipLine,0);setOp(figG,0);
+      setOp(dial,0);setOp(dialTick,0);setOp(plateA,0);setOp(plateB,0);setOp(handG,0);setOp(dateG,0);
+      for(const c of CARDS)setOp(c.g,0);
+    }
+
+    // ═══ S1 — CHOC : la machine frappe, le bac est vide ═══
+    // Verbe visuel : le coup de tampon répété dans le vide.
+    function s1(lf,t,s){
+      const u=t-s; hideAll(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const dip=stampDip(u);
+      drawMachine(dip,1,{});
+      const bump=6*Math.max(0,dip-0.72)/0.28;                          // la carte s'enfonce au coup
+      drawCard(CARDS[0],540,958+bump,208,46,YOU,1,1,'front');
+      drawTray(540,1066,300,168,1);                                    // le bac VIDE (le choc)
+      drawFigure(180,1090,4*Math.sin(u*1.3)+2*Math.sin(u*2.1),1);       // il regarde le bac (vie continue)
+      putCap(capA,'YOUR RULES',860,905,YOU,clamp((u-0.5)/0.5,0,1)*gf);
+      putCap(capB,'OUTPUT',540,1300,DEAD,clamp((u-1.6)/0.6,0,1)*gf);
+    }
+
+    // ═══ S2 — HARENG ROUGE : on change chaque pièce, rien ne change ═══
+    // Verbe visuel : l'échange en série (cadran, plaque, plaque) sur une cadence identique.
+    function s2(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      const dip=stampDip(u);
+      drawMachine(dip,1,{});
+      drawCard(CARDS[0],540,958+6*Math.max(0,dip-0.72)/0.28,208,46,YOU,1,1,'front');
+      drawTray(540,1066,300,168,1);
+      // cadran INDICATOR : tourne en continu, coup de snap sur son beat
+      setOp(dial,1);dial.setAttribute('cx',210);dial.setAttribute('cy',720);dial.setAttribute('r',52);
+      const dAng=(u*46)+180*eInOut(clamp((u-0.1)/0.6,0,1));
+      const ar=dAng*Math.PI/180;
+      setOp(dialTick,1);dialTick.setAttribute('x1',210);dialTick.setAttribute('y1',720);
+      dialTick.setAttribute('x2',(210+46*Math.cos(ar)).toFixed(1));dialTick.setAttribute('y2',(720+46*Math.sin(ar)).toFixed(1));
+      // plaques SESSION / PAIR : elles se retournent (flip) sur leur beat
+      drawPlate(plateA,210,912,112,72,flipScale(u,1.2,0.5),1);
+      drawPlate(plateB,210,1092,112,72,flipScale(u,2.4,0.5),1);
+      // la main vient changer la pièce active
+      let hx=null,hy=null,hp=0,seg;
+      if(u>=0.1&&u<1.15){hx=210;hy=720;seg=(u-0.1)/1.05;}
+      else if(u>=1.2&&u<2.35){hx=210;hy=912;seg=(u-1.2)/1.15;}
+      else if(u>=2.4&&u<3.6){hx=210;hy=1092;seg=(u-2.4)/1.2;}
+      if(hx!==null){hp=Math.sin(clamp(seg,0,1)*Math.PI);const reach=lerp(40,hx+68,eOut(hp));
+        setOp(handG,clamp(hp*1.4,0,1));
+        handArm.setAttribute('x1',30);handArm.setAttribute('y1',hy);handArm.setAttribute('x2',reach.toFixed(1));handArm.setAttribute('y2',hy);
+        handDot.setAttribute('cx',reach.toFixed(1));handDot.setAttribute('cy',hy);handDot.setAttribute('r',12);}
+      putCap(capC,'INDICATOR',205,648,INK,clamp((u-0.1)/0.4,0,1));
+      putCap(capD,'SESSION',205,838,INK,clamp((u-1.25)/0.4,0,1));
+      putCap(capE,'PAIR',205,1018,INK,clamp((u-2.45)/0.4,0,1));
+      putCap(capB,'STILL EMPTY',540,1300,DEAD,clamp((u-3.3)/0.6,0,1));
+    }
+
+    // ═══ S3 — PIVOT : le sol a bougé, la règle porte une date d'avant ═══
+    // Verbe visuel : la carte remonte, se retourne, sa date tombe DERRIÈRE la bascule.
+    function s3(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      const dip=stampDip(u);
+      drawMachine(dip,1,{sc:0.72,dy:-100});                            // recul : la machine rétrécit, on voit le sol
+      setOp(floor,clamp(u/0.5,0,1));
+      floor.setAttribute('points','120,1120 430,1120 430,1180 760,1180');
+      setOp(tipLine,clamp((u-0.2)/0.8,0,1));
+      tipLine.setAttribute('x1',430);tipLine.setAttribute('x2',430);tipLine.setAttribute('y1',1118);tipLine.setAttribute('y2',1182);
+      // la carte : sur le plateau → monte → arc vers la droite → flip
+      const rise=clamp((u-0.3)/0.7,0,1), arc=clamp((u-1.1)/0.9,0,1);
+      const cx=lerp(540,820,eInOut(arc)), cy=lerp(lerp(840,760,rise),740,eInOut(arc));
+      const flip=clamp((u-1.7)/0.9,0,1);
+      const sx=(flip<1)?Math.abs(Math.cos(flip*Math.PI)):1;
+      const det=clamp((u-2.9)/1.0,0,1);
+      const mode=(flip<0.5)?'front':(det>0.06?'bare':'back');
+      drawCard(CARDS[1],cx,cy,182,120,YOU,1,sx,mode);
+      // la date se détache et tombe côté THEN (gauche de la bascule)
+      if(det>0){const bx=lerp(820,330,eInOut(det)),by=lerp(740,1088,eIn(det));drawDate(bx,by,1);}
+      // « ITS DATE » n'accompagne QUE la révélation ; il s'efface quand la date quitte la carte
+      putCap(capA,'ITS DATE',830,648,INK,clamp((u-2.0)/0.5,0,1)*(1-clamp((u-2.9)/0.5,0,1)));
+      putCap(capC,'THEN',175,1092,DEAD,clamp((u-3.2)/0.5,0,1));
+      putCap(capD,'NOW',705,1256,YOU,clamp((u-3.2)/0.5,0,1));
+    }
+
+    // ═══ S4 — ESCALADE : le sol défile, les règles pâlissent, le tampon ne change pas ═══
+    // Verbe visuel : le défilé continu du sol + les cartes éjectées qui se délavent.
+    function s4(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      const dip=stampDip(u);
+      drawMachine(dip,1,{});
+      // sol en escalier qui défile vers la gauche (vie continue par translation)
+      const yA=1300,yB=1256,W=170,off=-((u*46)%(2*W));
+      let pts=[],yy=yA;
+      for(let x=-2*W;x<1200;x+=W){pts.push([x,yy]);const ny=(yy===yA)?yB:yA;pts.push([x+W,yy]);pts.push([x+W,ny]);yy=ny;}
+      setOp(floor,1);floor.setAttribute('points',pts.map(p=>[(p[0]+off).toFixed(1),p[1]].join(',')).join(' '));
+      // cartes éjectées : elles glissent vers la droite ET se délavent teal→gris
+      const N=5,gap=0.72,dur=1.4;
+      for(let i=0;i<N;i++){const p=clamp((u-i*gap)/dur,0,1);if(p<=0)continue;
+        const cx=lerp(600,806,eOut(p)),cy=lerp(936,1030,eIn(p));
+        drawCard(CARDS[1+i],cx,cy,150,96,mixHex(YOU,DEAD,p),1,1,'front');}
+      // étiquettes EMPILÉES et centrées, sous le couloir de vol des cartes (y max 1030) et au-dessus
+      // du sol : jamais par-dessus un objet animé, jamais deux étiquettes collées côte à côte (bug L27)
+      putCap(capB,'THE GROUND MOVED',540,1158,INK,clamp((u-0.6)/0.6,0,1));
+      putCap(capC,'THE RULES GO GREY',540,1212,DEAD,clamp((u-1.9)/0.6,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE A/B : datée = vraie (teal), nue = supposition (gris) ═══
+    // Verbe visuel : le double retournement simultané, la bascule qui tranche entre les deux.
+    function s5(lf,t,s){
+      const u=t-s; hideAll(); hideCaps(); hideQ();
+      // retournement quasi simultané, mais DÉCALÉ de ~0.18s pour qu'aucun instant ne montre les
+      // deux cartes à scaleX=0 en même temps (sinon l'écran devient nu une frame) — et un plancher
+      // de scale garde toujours un peu d'encre.
+      const flipL=clamp((u-1.20)/0.9,0,1), flipR=clamp((u-1.38)/0.9,0,1);
+      const sxL=Math.max(0.06,Math.abs(Math.cos(flipL*Math.PI))), sxR=Math.max(0.06,Math.abs(Math.cos(flipR*Math.PI)));
+      const modeL=(flipL<0.5)?'front':'back';
+      const modeR=(flipR<0.5)?'front':'bare';
+      const bobL=6*Math.sin(u*1.4)+3*Math.sin(u*2.3);
+      const bobR=6*Math.sin(u*1.4+1.1)+3*Math.sin(u*2.3+0.7);
+      const grey=clamp((u-2.4)/1.0,0,1);
+      drawCard(CARDS[1],300,1000+bobL,236,318,YOU,1,sxL,modeL);
+      drawCard(CARDS[2],780,1000+bobR,236,318,mixHex(YOU,DEAD,grey),1,sxR,modeR);
+      const tsx=540+4*Math.sin(u*1.2)+2*Math.sin(u*2.5);
+      setOp(tipLine,clamp((u-2.0)/0.6,0,1));
+      tipLine.setAttribute('x1',tsx.toFixed(1));tipLine.setAttribute('x2',tsx.toFixed(1));tipLine.setAttribute('y1',822);tipLine.setAttribute('y2',1198);
+      putCap(capC,'DATED',300,1312,YOU,clamp((u-1.9)/0.5,0,1));
+      putCap(capD,'UNDATED',780,1312,DEAD,clamp((u-1.9)/0.5,0,1));
+      putCap(capA,'DATE YOUR RULES',540,640,INK,clamp((u-2.8)/0.6,0,1));
+      putCap(capB,'FOLLOW KONGRAVE',540,716,YOU,clamp((u-3.7)/0.6,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
