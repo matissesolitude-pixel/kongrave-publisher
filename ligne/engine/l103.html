@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L103 « THE FOURTH GREEN DAY » — S1 : émotion frame 0 = levier TENSION — une cuve teal SCELLÉE, pleine au ras du bord, qui VIBRE
+       déjà (jitter deux harmoniques). Quatre marques teal (les bonnes journées) alignées dessous. À gauche une figure fil-de-fer tire un
+       VOLET sur son poste (elle ferme), à droite une figure fait GLISSER un second écran (elle en rajoute). S2 : une cinquième marque se
+       pose, la cuve monte, les PAROIS se cintrent vers l'extérieur — tout est teal, rien de rouge, et tout se tend. S3 : coupe franche, la
+       cuve seule ; PIVOT — quatre TUBES remontent des marques teal vers la cuve, ce sont ELLES qui la remplissent ; la marque grise (la
+       journée rouge) arrive sans aucun tube, juste présente au moment où ça cède. S4 : escalade — une RÉSERVE teal apparaît à côté, pleine ;
+       chaque tenue prélève un cran, la réserve se délave teal→gris cran par cran, et quand elle est vide la cuve DÉBORDE par le haut, sans
+       qu'aucune journée rouge soit dans le cadre. S5 : décharge — deux cuves identiques ; à gauche une VANNE s'ouvre à heure fixe et la cuve
+       redescend proprement en restant teal ; à droite pas de vanne, la paroi cède et le teal se délave en gris ; une seule variable, la vanne
+       programmée ou pas. CTA abonnement @KONGRAVE_ affiché. Doctrine : aucun chiffre ; teal = toi/tes bonnes journées ; gris = la perte ;
+       pas de brun ; bas du cadre vide ; aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    const mixHex=(a,b,f)=>{f=clamp(f,0,1);const pa=[parseInt(a.slice(1,3),16),parseInt(a.slice(3,5),16),parseInt(a.slice(5,7),16)],pb=[parseInt(b.slice(1,3),16),parseInt(b.slice(3,5),16),parseInt(b.slice(5,7),16)];return '#'+pa.map((v,i)=>Math.round(lerp(v,pb[i],f)).toString(16).padStart(2,'0')).join('');};
+
+    // ── LA CUVE (contour ink + fond teal) — deux exemplaires (S5 en montre deux) ──
+    const GF=[]; for(let i=0;i<2;i++)GF.push(mk('path',{stroke:'none',opacity:0}));      // fond (dessous)
+    const GO=[]; for(let i=0;i<2;i++)GO.push(mk('path',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    // ── POOLS GÉNÉRIQUES (marques, tubes, réserve, volets, écrans, membres des figures) ──
+    const RECTS=[]; for(let i=0;i<24;i++)RECTS.push(mk('rect',{rx:4,opacity:0}));
+    const LINES=[]; for(let i=0;i<14;i++)LINES.push(mk('line',{'stroke-linecap':'round',opacity:0}));
+    const CIRC=[]; for(let i=0;i<4;i++)CIRC.push(mk('circle',{fill:'none',opacity:0}));
+    let ir=0,il=0,ic=0;
+    function reset(){ir=0;il=0;ic=0;}
+    function rct(x,y,w,h,fill,op,rx){const e=RECTS[ir++];if(!e)return null;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));e.setAttribute('rx',(rx==null?4:rx));
+      e.setAttribute('fill',fill);e.setAttribute('stroke','none');setOp(e,op);return e;}
+    function ol(x,y,w,h,stroke,sw,op,rx){const e=RECTS[ir++];if(!e)return null;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));e.setAttribute('rx',(rx==null?6:rx));
+      e.setAttribute('fill','none');e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',sw);setOp(e,op);return e;}
+    function lin(x1,y1,x2,y2,st,sw,op,dash,doff){const e=LINES[il++];if(!e)return null;e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));
+      e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));e.setAttribute('stroke',st);e.setAttribute('stroke-width',sw);
+      e.setAttribute('stroke-dasharray',dash||'');e.setAttribute('stroke-dashoffset',doff==null?0:doff.toFixed(0));setOp(e,op);return e;}
+    function cir(cx,cy,r,st,sw,op){const e=CIRC[ic++];if(!e)return null;e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));
+      e.setAttribute('r',r.toFixed(1));e.setAttribute('stroke',st);e.setAttribute('stroke-width',sw);e.setAttribute('fill','none');setOp(e,op);return e;}
+    function flush(){for(let i=ir;i<RECTS.length;i++)setOp(RECTS[i],0);for(let i=il;i<LINES.length;i++)setOp(LINES[i],0);for(let i=ic;i<CIRC.length;i++)setOp(CIRC[i],0);}
+    function hideG(){for(const e of GO)setOp(e,0);for(const e of GF)setOp(e,0);}
+
+    // Une cuve SCELLÉE : parois qui peuvent se cintrer vers l'extérieur (bow), base plate.
+    function vessel(cx,topY,botY,hw,bow){const my=(topY+botY)/2;
+      return `M ${(cx-hw).toFixed(1)} ${topY.toFixed(1)} Q ${(cx-hw-bow).toFixed(1)} ${my.toFixed(1)} ${(cx-hw).toFixed(1)} ${botY.toFixed(1)} `
+           + `L ${(cx+hw).toFixed(1)} ${botY.toFixed(1)} Q ${(cx+hw+bow).toFixed(1)} ${my.toFixed(1)} ${(cx+hw).toFixed(1)} ${topY.toFixed(1)} Z`;}
+    function drawGauge(gi,cx,topY,botY,hw,bow,fillFrac,jx,jy,fillCol,op){
+      const oe=GO[gi],fe=GF[gi],tr=`translate(${jx.toFixed(1)} ${jy.toFixed(1)})`;
+      oe.setAttribute('d',vessel(cx,topY,botY,hw,bow));oe.setAttribute('transform',tr);setOp(oe,op);
+      const ff=clamp(fillFrac,0,1),ftop=botY-ff*(botY-topY);
+      fe.setAttribute('d',vessel(cx,ftop,botY,hw,bow));fe.setAttribute('transform',tr);fe.setAttribute('fill',fillCol);setOp(fe,op*0.92);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHO PAYS FOR','THE FIFTH DAY'];
+    const FS=76,lineH=100,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+70,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap COPIÉ TEL QUEL depuis l26.html (mesure réelle, jamais estimation) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(44),capC=caption(38),capD=caption(38),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // Une figure fil-de-fer (rond + corps + bras) — POSITION et geste seuls la distinguent.
+    function figure(fx,topY,reachX,op){
+      cir(fx,topY,26,INK,7,op);                       // tête
+      lin(fx,topY+26,fx,topY+120,INK,7,op);           // corps
+      const ay=topY+58;                               // épaule
+      lin(fx,ay,reachX,ay+6,INK,7,op);                // bras qui tend
+      lin(fx,topY+120,fx-24,topY+180,INK,7,op);       // jambe
+      lin(fx,topY+120,fx+24,topY+180,INK,7,op);       // jambe
+    }
+
+    // géométrie de la cuve principale (S1→S4)
+    const GCX=540, GTOP=610, GBOT=1120, GHW=115;
+    const MX=[454,512,570,628];                        // 4 marques teal (bonnes journées)
+
+    // ═══ S1 — IN MEDIAS RES : la cuve pleine VIBRE, l'un ferme, l'autre ajoute un écran ═══
+    // Verbe visuel : les deux réactions opposées autour d'une cuve déjà sous tension.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); reset(); hideG();
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      // question — 1re ligne pleine dès t=0 (loi frame 0)
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.35+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (TENSION) : la cuve teal est pleine au ras et VIBRE dès t=0 (jitter deux harmoniques) ──
+      const jx=5.5*Math.sin(u*10.0)+3*Math.sin(u*16.0), jy=3*Math.sin(u*12.0)+1.6*Math.sin(u*19.0);
+      const bow=9+2.5*Math.sin(u*4.0)+1.5*Math.sin(u*6.7);
+      drawGauge(0,GCX,GTOP,GBOT,GHW,bow,0.985,jx,jy,YOU,1);
+      // 4 marques teal, déjà là, qui frémissent (deux harmoniques)
+      for(let i=0;i<4;i++){const bob=4*Math.sin(u*1.9-i*0.7)+2*Math.sin(u*3.3-i*0.5);
+        rct(MX[i]-22,1224+bob,44,44,YOU,1,6);}
+      putCap(capB,'FOUR GREEN DAYS',CX,1340,INK,clamp((u-0.5)/0.7,0,1)*gf);
+      // GAUCHE — la figure FERME : un volet descend sur son poste (snap ~3 frames à u≈1.4)
+      const scr=ol(150,1078,120,92,INK,6,1,8);           // poste
+      figure(210,1040,150,1);
+      const drop=clamp((u-1.4)/0.12,0,1);                // volet qui claque
+      rct(150,1078,120,4+88*eIn(drop),INK,drop>0?0.9:0,4);
+      putCap(capC,'CLOSES',210,1260,YOU,clamp((u-1.7)/0.5,0,1)*gf);
+      // DROITE — la figure AJOUTE : un second écran glisse à côté du premier (u≈3.0)
+      figure(880,1040,830,1);
+      ol(760,1078,110,92,INK,6,1,8);                     // écran 1
+      const slide=clamp((u-3.0)/0.5,0,1);
+      const sx=lerp(1010,884,eOut(slide));               // le 2e écran glisse depuis la droite
+      ol(sx,1078,110,92,INK,6,slide,8);                  // écran 2
+      putCap(capD,'ADDS A SCREEN',865,1260,DEAD,slide*gf);
+      flush();
+    }
+
+    // ═══ S2 — RIEN NE VA MAL : une 5e marque, la cuve monte, les parois se cintrent ═══
+    // Verbe visuel : l'accumulation qui DÉFORME (les parois bombent vers l'extérieur).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); hideG();
+      const gf=clamp(1-(lf-0.88)/0.10,0,1);
+      const prog=clamp(u/2.4,0,1);
+      const jx=3*Math.sin(u*7.5)+1.6*Math.sin(u*11.0), jy=1.6*Math.sin(u*9.0);
+      const bow=10+prog*22+2*Math.sin(u*3.1)+1.3*Math.sin(u*5.2);   // les parois se cintrent de plus en plus
+      const fillFrac=lerp(0.985,1.0,prog);
+      drawGauge(0,GCX,GTOP,GBOT,GHW,bow,fillFrac,jx,jy,YOU,1);
+      putCap(capA,'THE PRESSURE',CX,566,INK,gf);
+      // 5 marques teal : la 5e SE POSE (glisse depuis le haut) à cadence calme
+      for(let i=0;i<5;i++){const bob=4*Math.sin(u*1.8-i*0.6)+2*Math.sin(u*3.1-i*0.5);
+        const cx=418+i*61;
+        let y=1224+bob;
+        if(i===4){const land=clamp((u-0.4)/0.7,0,1);y=lerp(1080,1224+bob,eOut(land));rct(cx-22,y,44,44,YOU,land,6);}
+        else rct(cx-22,y,44,44,YOU,1,6);}
+      putCap(capB,'ALL GREEN — STILL RISING',CX,1350,DEAD,clamp((u-1.6)/0.7,0,1)*gf);
+      flush();
+    }
+
+    // ═══ S3 — PIVOT : ce sont les journées vertes qui remplissaient la cuve ═══
+    // Verbe visuel : la révélation par TUBES (les marques teal alimentent la cuve, la grise non).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); hideG();
+      const gf=clamp(1-(lf-0.90)/0.08,0,1);
+      const jx=2.4*Math.sin(u*6.5)+1.3*Math.sin(u*10.0), jy=1.3*Math.sin(u*8.0);
+      const bow=14+2*Math.sin(u*3.0)+1.2*Math.sin(u*5.0);
+      drawGauge(0,GCX,GTOP,GBOT,GHW,bow,0.99,jx,jy,YOU,1);
+      putCap(capA,'THE GREEN DAYS FILLED IT',CX,566,INK,clamp((u-1.3)/0.7,0,1)*gf);
+      // les 4 marques teal (dès t=0, en bas) + tubes qui REMONTENT vers la cuve (pivot à u≈1.2)
+      const MY=1300;
+      for(let i=0;i<4;i++){const cx=MX[i];const bob=3*Math.sin(u*2.0-i*0.6)+1.6*Math.sin(u*3.4-i*0.4);
+        rct(cx-22,MY+bob,44,44,YOU,1,6);
+        const grow=clamp((u-(1.2+i*0.18))/0.5,0,1);
+        const yTop=lerp(MY,GBOT+jy,eOut(grow));
+        if(grow>0.02)lin(cx+jx*0.4,MY+bob,cx+jx*0.4,yTop,YOU,18,grow,'20 12',-u*34);}
+      // la marque GRISE (journée rouge) arrive à droite, SANS tube — juste présente au moment où ça cède
+      const arr=clamp((u-2.6)/0.6,0,1);
+      const gx=lerp(1010,760,eOut(arr));
+      rct(gx-24,MY-2,48,48,DEAD,arr,6);
+      putCap(capD,'THIS ONE JUST SHOWED UP',760,1420,DEAD,arr*gf);
+      flush();
+    }
+
+    // ═══ S4 — ESCALADE : la discipline tenue s'ÉPUISE, cran par cran ═══
+    // Verbe visuel : la réserve teal qui se vide et se délave (teal→gris), puis la cuve déborde.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); hideG();
+      const gf=clamp(1-(lf-0.90)/0.08,0,1);
+      const jx=3.4*Math.sin(u*8.0)+1.8*Math.sin(u*12.5), jy=1.8*Math.sin(u*10.0);
+      // cadence sèche : 5 crans prélevés
+      const STEP=[0.6,1.2,1.8,2.4,3.0];
+      let taken=0; for(const s0 of STEP) if(u>=s0) taken++;
+      const drain=taken/5;
+      const bow=12+drain*16+2*Math.sin(u*3.4)+1.3*Math.sin(u*5.5);
+      const over=clamp((u-3.1)/0.7,0,1);                 // débordement final
+      const fillFrac=lerp(0.9,1.0,drain);
+      drawGauge(0,GCX,GTOP,GBOT,GHW,bow,fillFrac,jx,jy,YOU,1);
+      // débordement par le haut (teal qui coule sur la paroi — mouvement)
+      if(over>0){
+        rct(GCX-GHW-4+jx, GTOP-14+jy, 2*GHW+8, 16, YOU, over, 4);
+        for(let d=0;d<2;d++){const side=d?1:-1;const dy=((u*140)%150);
+          rct(GCX+side*GHW-6+jx, GTOP+dy+jy, 12, 26, YOU, over*clamp(1-dy/150,0,1), 4);}
+      }
+      // RÉSERVE teal à droite, en 5 segments — chaque cran prélevé disparaît, le reste se délave
+      const RX=744, RW=74, RTOP=690, RBOT=1120, seg=(RBOT-RTOP)/5;
+      for(let i=0;i<5;i++){                              // i=0 en bas
+        const gone=(i>=5-taken);
+        const col=mixHex(YOU,DEAD,drain);
+        const bob=2*Math.sin(u*2.2-i*0.7)+1*Math.sin(u*3.6-i*0.5);
+        if(!gone)rct(RX,RTOP+(4-i)*seg+3+bob,RW,seg-6,col,1,5);}
+      ol(RX-6,RTOP-6,RW+12,RBOT-RTOP+12,INK,5,1,8);      // contour de la réserve
+      putCap(capD,'DISCIPLINE',781,1210,mixHex(YOU,DEAD,drain),1);
+      putCap(capA,'HOLDING COSTS EVERY TIME',CX,566,INK,clamp((u-0.6)/0.7,0,1)*gf);
+      putCap(capB,'THE RESERVE RUNS DRY',CX,1300,DEAD,clamp((u-2.8)/0.7,0,1)*gf);
+      flush();
+    }
+
+    // ═══ S5 — DÉCHARGE : une seule variable, la vanne programmée ou pas ═══
+    // Verbe visuel : le diptyque (vanne qui vide proprement vs paroi qui cède).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); reset(); hideG();
+      const gf=clamp(1-(lf-0.95)/0.05,0,1);
+      const TOP=650,BOT=1180,HW=95;
+      // GAUCHE — VANNE à heure fixe : la cuve redescend proprement, reste teal
+      const LCX=288;
+      const vopen=clamp((u-1.2)/0.5,0,1);
+      const lFill=lerp(0.98,0.5,eInOut(vopen));
+      const ljx=1.4*Math.sin(u*5.0)+0.8*Math.sin(u*8.0);
+      drawGauge(0,LCX,TOP,BOT,HW,10,lFill,ljx,0,YOU,1);
+      // la vanne : un bec sur le flanc bas gauche + un jet teal qui coule DANS LA GOUTTIÈRE (loin des étiquettes)
+      lin(LCX-HW,BOT-34,LCX-HW-22,BOT-34,INK,7,1);
+      if(vopen>0){const flowY=BOT-26+((u*200)%66);
+        lin(LCX-HW-18,BOT-30,LCX-HW-40,BOT+36,YOU,13,vopen*0.9,'14 10',-u*40);
+        rct(LCX-HW-46,flowY,12,20,YOU,vopen*clamp(1-((u*200)%66)/66,0,1),4);}
+      putCap(capC,'VALVE SCHEDULED',LCX,1268,YOU,1);
+      putCap(capE,'DRAINS CLEAN',LCX,1320,DEAD,clamp((u-1.4)/0.6,0,1)*gf);
+      // DROITE — PAS de vanne : la paroi cède, le teal se délave en gris
+      const RCX=792;
+      const brk=clamp((u-2.4)/0.7,0,1);
+      const rjx=(brk>0?(1-brk)*10*Math.sin(u*22):0)+1.2*Math.sin(u*5.5);   // secousse à la rupture
+      const rbow=12+brk*40;
+      const rcol=mixHex(YOU,DEAD,brk);
+      drawGauge(1,RCX,TOP,BOT,HW,rbow,lerp(0.98,1.06,brk),rjx,0,rcol,1);
+      if(brk>0){for(let d=0;d<2;d++){const side=d?1:-1;const dy=((u*160)%140);
+        rct(RCX+side*(HW+rbow*0.4)-7+rjx, TOP+40+dy, 14, 24, mixHex(YOU,DEAD,brk), brk*clamp(1-dy/140,0,1),4);}}
+      putCap(capD,'NO VALVE',RCX,1268,mixHex(INK,DEAD,brk),1);
+      putCap(capF,'WALL GIVES WAY',RCX,1320,DEAD,brk*gf);
+      // morale + CTA abonnement (@KONGRAVE_ affiché)
+      putCap(capB,'ONE VARIABLE: THE VALVE',CX,566,INK,clamp((u-0.4)/0.7,0,1)*gf);
+      const cta=clamp((u-2.9)/0.7,0,1),csc=0.9+0.1*backOut(cta)+0.014*Math.sin(u*2.2);
+      putCap(capA,'@KONGRAVE_',CX,1430,YOU,cta*gf);
+      capA.setAttribute('transform',`translate(${(CX*(1-csc)).toFixed(2)} ${(1430*(1-csc)).toFixed(2)}) scale(${csc.toFixed(3)})`);
+      flush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
