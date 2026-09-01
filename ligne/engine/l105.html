@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L105 « THE FIFTH CONFIRMATION » — dispositif HARENG ROUGE (pas de fusil) : la PILE de confirmations est la fausse piste ;
+       le vrai motif (l'irréversibilité) est dévoilé DESSOUS en S3. S1 : émotion frame 0 = TENSION — le SIGNAL est DÉJÀ allumé et
+       pulse au centre, à gauche une figure a DÉJÀ agi (un point teal file de sa main vers le signal, en boucle), à droite l'autre
+       figure empile : le compteur de confirmations MONTE déjà (3 puis 4, 5, 6). S2 : le setup est une FENÊTRE ouverte qui se REFERME
+       (deux barres qui glissent l'une vers l'autre) pendant que la 4e puis la 5e confirmation tombent — « GONE » quand elle est close.
+       S3 : PIVOT — la pile de confirmations glisse vers le HAUT et sort, dévoilant un SEUIL À SENS UNIQUE (flèche + chevron teal) que
+       la figure hésite à franchir ; ce n'était pas flou, c'est irréversible. S4 : escalade froide — trois setups en file, à chaque fois
+       l'excuse (une confirmation grise) tombe PILE quand la fenêtre se ferme, un battement teal donne la cadence. S5 : diptyque — gauche
+       a AGI (une ligne teal qui monte, le trade est parti), droite a empilé 5 (gris, fenêtre vide, setup parti) ; une seule variable :
+       agir avant que l'excuse arrive. Morale + CTA @KONGRAVE_ tenu. Doctrine : aucun chiffre ; teal = toi/l'action juste ; gris = la
+       perte/l'attente ; pas de brun ; bas du cadre vide ; aucune intention prêtée aux institutionnels ; aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ═══ LES OBJETS ═══
+    // SIGNAL (pastille teal qui pulse) + l'action (point teal + check)
+    const sigPill=mk('rect',{rx:52,fill:YOU,opacity:0});
+    const actDot=mk('circle',{r:16,fill:YOU,opacity:0});
+    const actChk=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+
+    // LE SEUIL À SENS UNIQUE (S3) + la ligne du trade parti (S5) + le battement (S4)
+    const thr=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0});
+    const arrShaft=mk('line',{stroke:INK,'stroke-width':7,'stroke-linecap':'round',opacity:0});
+    const arrHead=mk('polyline',{fill:'none',stroke:INK,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const chev=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const moveLine=mk('polyline',{fill:'none',stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
+    const beat=mk('circle',{r:14,fill:YOU,opacity:0});
+
+    // LES FENÊTRES-SETUP (deux barres + remplissage teal) — jusqu'à 3 en file (S4)
+    function mkWin(){return{l:mk('line',{stroke:INK,'stroke-width':11,'stroke-linecap':'round',opacity:0}),
+      r:mk('line',{stroke:INK,'stroke-width':11,'stroke-linecap':'round',opacity:0}),
+      fill:mk('rect',{fill:YOU,rx:6,opacity:0})};}
+    const WIN=[mkWin(),mkWin(),mkWin()];
+    function drawWin(W,cx,halfW,yT,yB,fillOp,op){
+      const lx=cx-halfW, rx=cx+halfW;
+      W.l.setAttribute('x1',lx.toFixed(1));W.l.setAttribute('x2',lx.toFixed(1));W.l.setAttribute('y1',yT);W.l.setAttribute('y2',yB);setOp(W.l,op);
+      W.r.setAttribute('x1',rx.toFixed(1));W.r.setAttribute('x2',rx.toFixed(1));W.r.setAttribute('y1',yT);W.r.setAttribute('y2',yB);setOp(W.r,op);
+      W.fill.setAttribute('x',(lx+6).toFixed(1));W.fill.setAttribute('width',Math.max(0,2*halfW-12).toFixed(1));
+      W.fill.setAttribute('y',yT);W.fill.setAttribute('height',(yB-yT).toFixed(1));setOp(W.fill,fillOp);}
+    function hideWin(W){setOp(W.l,0);setOp(W.r,0);setOp(W.fill,0);}
+
+    // LES CONFIRMATIONS (checks empilés) — pool
+    const TICKS=[]; for(let i=0;i<16;i++)TICKS.push(mk('polyline',{fill:'none','stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0}));
+    let tk=0; function resetTicks(){tk=0;}
+    function tick(cx,cy,s,color,op){const e=TICKS[tk++];if(!e)return;
+      e.setAttribute('points',`${(cx-20*s).toFixed(1)},${cy.toFixed(1)} ${(cx-4*s).toFixed(1)},${(cy+18*s).toFixed(1)} ${(cx+24*s).toFixed(1)},${(cy-16*s).toFixed(1)}`);
+      e.setAttribute('stroke',color);setOp(e,op);}
+    function flushTicks(){for(let i=tk;i<TICKS.length;i++)setOp(TICKS[i],0);}
+
+    // LES DEUX TRADERS (figures fil-de-fer : tête + torse + bras + jambes)
+    function mkFig(){return{head:mk('circle',{fill:'none',stroke:INK,'stroke-width':8,opacity:0}),
+      spine:mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linecap':'round',opacity:0}),
+      arms:mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0}),
+      legs:mk('polyline',{fill:'none',stroke:INK,'stroke-width':8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0})};}
+    const FL=mkFig(), FR=mkFig();
+    function figure(F,cx,footY,s,hl,hr,op){
+      const hipY=footY-70*s, neckY=footY-150*s, headCy=footY-178*s;
+      F.head.setAttribute('cx',cx.toFixed(1));F.head.setAttribute('cy',headCy.toFixed(1));F.head.setAttribute('r',(26*s).toFixed(1));setOp(F.head,op);
+      F.spine.setAttribute('points',`${cx.toFixed(1)},${neckY.toFixed(1)} ${cx.toFixed(1)},${hipY.toFixed(1)}`);setOp(F.spine,op);
+      F.legs.setAttribute('points',`${(cx-32*s).toFixed(1)},${footY.toFixed(1)} ${cx.toFixed(1)},${hipY.toFixed(1)} ${(cx+32*s).toFixed(1)},${footY.toFixed(1)}`);setOp(F.legs,op);
+      F.arms.setAttribute('points',`${hl[0].toFixed(1)},${hl[1].toFixed(1)} ${cx.toFixed(1)},${(neckY+16*s).toFixed(1)} ${hr[0].toFixed(1)},${hr[1].toFixed(1)}`);setOp(F.arms,op);}
+    function hideFig(F){setOp(F.head,0);setOp(F.spine,0);setOp(F.arms,0);setOp(F.legs,0);}
+
+    function hideStatics(){hideFig(FL);hideFig(FR);setOp(sigPill,0);setOp(actDot,0);setOp(actChk,0);
+      for(const W of WIN)hideWin(W);setOp(thr,0);setOp(arrShaft,0);setOp(arrHead,0);setOp(chev,0);setOp(moveLine,0);setOp(beat,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT IS HE ACTUALLY','WAITING FOR'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(48),capB=caption(44),capC=caption(40),capD=caption(38),capE=caption(36),capF=caption(36);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — LE SIGNAL EST DÉJÀ ALLUMÉ : l'un agit, l'autre empile ═══
+    // Verbe visuel : le DUEL — clic instantané à gauche vs compteur qui grimpe à droite.
+    function s1(lf,t,s){
+      const u=t-s; hideStatics(); hideCaps(); resetTicks();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.15+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (TENSION) : le SIGNAL pulse, DÉJÀ allumé ; rien ne se construit ──
+      const rx=150+11*Math.sin(u*1.7)+5*Math.sin(u*2.9), ry=46+4*Math.sin(u*1.7+1)+2*Math.sin(u*3.05);
+      sigPill.setAttribute('x',(CX-rx).toFixed(1));sigPill.setAttribute('y',(670-ry).toFixed(1));sigPill.setAttribute('width',(2*rx).toFixed(1));sigPill.setAttribute('height',(2*ry).toFixed(1));setOp(sigPill,1);
+      putCap(capC,'SIGNAL',CX,585,YOU,1);
+      // figure gauche : elle a DÉJÀ agi — un point teal file de sa main vers le signal, en boucle
+      const bl=4*Math.sin(u*1.5)+2*Math.sin(u*2.6);
+      figure(FL,230,1240,1,[150,1130+bl],[432,1092-bl],1);
+      putCap(capD,'TOOK IT',230,1330,YOU,1);
+      const p=(u%1.7)/1.7, e=eInOut(p);
+      if(p>0.03){const dx=lerp(432,CX,e), dy=lerp(1090,706,e);actDot.setAttribute('cx',dx.toFixed(1));actDot.setAttribute('cy',dy.toFixed(1));setOp(actDot,clamp((p-0.03)/0.1,0,1)*clamp((0.95-p)/0.1,0,1));}
+      if(p>0.82){actChk.setAttribute('points',`${CX-22},706 ${CX-6},722 ${CX+26},694`);setOp(actChk,clamp((p-0.82)/0.08,0,1));}
+      // figure droite : elle empile — le compteur MONTE (frame 0 : déjà 3, ça grimpe)
+      const br=4*Math.sin(u*1.4+1)+2*Math.sin(u*2.7+1);
+      figure(FR,850,1240,1,[792,1004+br],[908,1004+br],1);
+      putCap(capE,'STILL CHECKING',850,1330,DEAD,1);
+      const cnt=Math.min(6,3+Math.floor(u/1.5));
+      for(let i=0;i<cnt;i++){const cy=978-i*74+3*Math.sin(u*2.2-i*0.7)+1.5*Math.sin(u*3.3-i);
+        const pop=(i<3)?1:clamp((u-(i-2)*1.5)/0.3,0,1), sc=0.7+0.3*(i<3?1:backOut(pop));
+        tick(850,cy,sc,INK,1);}
+      flushTicks();
+    }
+
+    // ═══ S2 — LA 4e PUIS LA 5e CONFIRMATION : la FENÊTRE-SETUP se referme pendant ce temps ═══
+    // Verbe visuel : deux barres qui GLISSENT l'une vers l'autre et closent (le setup s'efface).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideStatics(); hideCaps(); resetTicks();
+      const t4=clamp((u-2.2)/0.9,0,1), t5=clamp((u-3.6)/0.9,0,1);
+      const close=clamp((u-1.4)/3.2,0,1);                      // fermeture monotone = mouvement de POSITION
+      const jx=3*Math.sin(u*1.9)+1.5*Math.sin(u*3.3);
+      const halfW=lerp(150,7,eInOut(close))+4*Math.sin(u*3.1);
+      const yT=812,yB=1188;
+      drawWin(WIN[0], 520+jx, Math.max(4,halfW), yT, yB, clamp(1-close,0,1)*0.9, 1);
+      putCap(capC,'THE SETUP',520,764,YOU,clamp(1-close,0,1));
+      // le compteur : 3 puis 4 puis 5, à droite, il monte
+      const cnt=3+(t4>0.5?1:0)+(t5>0.5?1:0);
+      for(let i=0;i<cnt;i++){const cy=1150-i*76+3*Math.sin(u*2.3-i*0.7)+1.5*Math.sin(u*3.4-i);
+        const pop=(i===3&&t4<1)?t4:(i===4&&t5<1)?t5:1, sc=0.7+0.3*(pop<1?backOut(pop):1);
+        tick(810,cy,sc,INK,1);}
+      putCap(capD,'CONFIRMATIONS',810,1300,DEAD,1);
+      putCap(capB,'GONE',520,1340,DEAD,clamp((close-0.9)/0.1,0,1));
+      flushTicks();
+    }
+
+    // ═══ S3 — CE N'EST PAS FLOU : la pile s'en va et dévoile un SEUIL À SENS UNIQUE ═══
+    // Verbe visuel : la RÉVÉLATION DESSOUS (la fausse piste glisse en haut, l'irréversibilité apparaît).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideStatics(); hideCaps(); resetTicks();
+      // la PILE (fausse piste) se déplace vers le HAUT-GAUCHE et se GRISE : elle est MISE DE CÔTÉ,
+      //    pas supprimée — elle n'était pas la vraie raison. Elle continue de frémir (vie continue).
+      const rise=clamp((u-0.5)/1.6,0,1), er=eInOut(rise);
+      for(let i=0;i<5;i++){const bx=lerp(540,235,er), by=lerp(1060-i*74, 800-i*58, er), sc=lerp(1,0.62,er);
+        const cy=by+3*Math.sin(u*2.1-i*0.6)+1.5*Math.sin(u*3.2-i);
+        tick(bx, cy, sc, DEAD, lerp(0.9,0.5,er));}
+      putCap(capA,'NOT UNCLEAR',235,905,DEAD,clamp((u-1.4)/0.6,0,1));
+      // le seuil teal (présent dès la frame 0, dévoilé par le départ de la pile) — tirets qui marchent
+      //    en continu (vitesse constante, jamais nulle : garantit la progression même si la voix s'étire)
+      thr.setAttribute('x1',300);thr.setAttribute('x2',900);thr.setAttribute('y1',1250);thr.setAttribute('y2',1250);
+      thr.setAttribute('stroke-dasharray','20 14');thr.setAttribute('stroke-dashoffset',(-u*46).toFixed(1));setOp(thr,1);
+      // la figure hésite au bord — s'avance et se retire (deux harmoniques, ample)
+      const sway=13*Math.sin(u*1.25)+6*Math.sin(u*2.1);
+      figure(FR,480+sway,1250,1,[410+sway,1118],[550+sway,1118],1);
+      // flèche à SENS UNIQUE : on peut franchir en avant, jamais revenir ; un chevron teal glisse
+      arrShaft.setAttribute('x1',620);arrShaft.setAttribute('x2',860);arrShaft.setAttribute('y1',1200);arrShaft.setAttribute('y2',1200);setOp(arrShaft,1);
+      arrHead.setAttribute('points','828,1178 860,1200 828,1222');setOp(arrHead,1);
+      const cp=(u%1.3)/1.3, cx0=lerp(635,835,cp);
+      chev.setAttribute('points',`${(cx0-16).toFixed(1)},1188 ${cx0.toFixed(1)},1200 ${(cx0-16).toFixed(1)},1212`);setOp(chev,clamp((cp-0.05)/0.1,0,1)*clamp((0.95-cp)/0.1,0,1));
+      putCap(capE,'ONE WAY',760,1158,YOU,clamp((u-1.6)/0.6,0,1));
+      putCap(capB,'IT FEELS IRREVERSIBLE',CX,1410,INK,clamp((u-2.4)/0.7,0,1));
+      flushTicks();
+    }
+
+    // ═══ S4 — L'ESCALADE FROIDE : l'excuse arrive PILE à chaque fermeture, cadencée ═══
+    // Verbe visuel : trois setups en file, un battement teal donne le tempo, une confirmation tombe à chaque close.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideStatics(); hideCaps(); resetTicks();
+      const cxs=[250,540,830], phase=[0.0,1.4,2.8], yT=930, yB=1210;
+      for(let k=0;k<3;k++){
+        const lu=u-phase[k];
+        const close=clamp(lu/1.1,0,1);
+        const jx=2.5*Math.sin(u*2.0+k*1.1);
+        const halfW=lerp(120,7,eInOut(close))+3*Math.sin(u*3.0+k);
+        drawWin(WIN[k], cxs[k]+jx, Math.max(4,halfW), yT, yB, clamp(1-close,0,1)*0.85, 1);
+        // l'excuse (confirmation grise) tombe PILE au moment de la fermeture
+        const fall=clamp((lu-0.75)/0.35,0,1), ty=lerp(848, yT-34, eInOut(fall));
+        if(lu>0.6) tick(cxs[k], ty+2*Math.sin(u*3+k), 0.9, DEAD, clamp((lu-0.6)/0.2,0,1));
+      }
+      // le battement qui donne la cadence : un point teal passe d'un setup à l'autre
+      const seg=(u%4.2), bi=seg<1.4?0:seg<2.8?1:2, bfrac=(seg-bi*1.4)/1.4;
+      const bx=lerp(cxs[bi], cxs[Math.min(2,bi+1)], eInOut(clamp(bfrac,0,1)));
+      beat.setAttribute('cx',bx.toFixed(1));beat.setAttribute('cy',(872+6*Math.sin(u*4)).toFixed(1));setOp(beat,1);
+      putCap(capB,'THE EXCUSE ARRIVES ON TIME',CX,762,INK,clamp((u-0.6)/0.7,0,1));
+      putCap(capA,'CERTAINTY WAS NEVER MISSING',CX,1360,DEAD,clamp((u-2.6)/0.8,0,1));
+      flushTicks();
+    }
+
+    // ═══ S5 — DIPTYQUE : il a AGI vs il VÉRIFIE ENCORE — une seule variable ═══
+    // Verbe visuel : la comparaison finale — une ligne teal qui monte vs une pile grise et une fenêtre vide.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideStatics(); hideCaps(); resetTicks();
+      // GAUCHE — il a AGI : le trade est parti, une ligne teal qui monte et ondule
+      const bl=3*Math.sin(u*1.5)+1.5*Math.sin(u*2.6);
+      figure(FL,200,1200,1,[130,1088+bl],[300,1050-bl],1);
+      const pts=[]; for(let i=0;i<=7;i++){const px=300+i*30, py=1058-i*30 + 9*Math.sin(u*1.4+i*0.5)+4*Math.sin(u*2.5+i*0.7); pts.push(`${px.toFixed(1)},${py.toFixed(1)}`);}
+      moveLine.setAttribute('points',pts.join(' '));setOp(moveLine,1);
+      putCap(capC,'ACTED',200,1300,YOU,1);
+      // DROITE — il VÉRIFIE ENCORE : 5 confirmations grises + la fenêtre VIDE (setup parti)
+      const br=3*Math.sin(u*1.4+1)+1.5*Math.sin(u*2.7+1);
+      figure(FR,850,1200,1,[792,972+br],[908,972+br],1);
+      for(let i=0;i<5;i++){const cy=1118-i*70+3*Math.sin(u*2.2-i*0.6)+1.5*Math.sin(u*3.3-i);tick(690,cy,0.95,DEAD,1);}
+      const jx=2*Math.sin(u*2.1)+1*Math.sin(u*3.3);
+      drawWin(WIN[0], 986+jx, 8, 980, 1220, 0, 1);
+      putCap(capD,'STILL CHECKING',850,1300,DEAD,1);
+      // morale + CTA abonnement (@KONGRAVE_ affiché, tenu ≥3 s)
+      putCap(capB,'THE FIFTH CONFIRMATION NEVER COMES FREE',CX,662,INK,clamp((u-0.8)/0.8,0,1));
+      putCap(capA,'@KONGRAVE_',CX,1430,YOU,clamp((u-1.6)/0.7,0,1));
+      flushTicks();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[(s.id||'').toLowerCase()]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
