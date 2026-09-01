@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L101 « THE LEAK NOBODY HEARS » — S1 : émotion frame 0 = levier CURIOSITÉ. Deux récipients teal remplis au MÊME trait, deux jauges
+       (taux de réussite) IDENTIQUES au-dessus — et sous celui de droite une petite tache grise, nette. Le liquide ondule dès t=0 (deux
+       harmoniques). Rien ne se construit : l'asymétrie est entière dès la première frame. La question pop ligne par ligne. S2 : coupe
+       franche, focus sur le récipient qui fuit. La jauge reste FIGÉE tandis que six semaines défilent et que la tache DOUBLE — le compteur
+       du haut ne bouge pas pendant que la flaque du bas grandit. S3 : PIVOT. Un filet entre par le haut, une goutte sort par le bas, MÊME
+       débit — le niveau ne bouge donc jamais, le récipient a l'air plein et se vide en continu. S4 : ESCALADE. Le filet se pince, le niveau
+       tombe d'un COUP (une marche, pas une pente), le teal se délave en gris, et la tache occupe déjà le tiers du cadre — elle était là
+       depuis le début. S5 : LEÇON. Deux récipients : une règle mesure la TACHE du gauche (teal, alerte tôt), une règle mesure le NIVEAU du
+       droit (gris, trop tard). Morale « TRACK THE AVERAGE, NOT THE TOTAL » + CTA @kongrave_ affiché, tenu ≥3 s. Doctrine : aucun chiffre ;
+       teal = à toi ; gris = la perte ; pas de brun ; bas du cadre vide ; aucun narrateur ; aucune intention prêtée. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // délavage teal → gris (une valeur qui se perd SE DÉLAVE, elle ne brunit jamais)
+    function hx(n){return ('0'+Math.round(clamp(n,0,255)).toString(16)).slice(-2);}
+    function mixCol(a,b,f){const pa=[1,3,5].map(i=>parseInt(a.substr(i,2),16)),pb=[1,3,5].map(i=>parseInt(b.substr(i,2),16));
+      return '#'+pa.map((v,i)=>hx(lerp(v,pb[i],f))).join('');}
+
+    // ── LES OBJETS : récipients (contour) + liquide (rempli) + jauges + taches + flux + repères + règles ──
+    const FLOOR=mk('line',{stroke:INK,'stroke-width':4,'stroke-linecap':'round',opacity:0});
+    const SHALO=[0,1].map(()=>mk('ellipse',{fill:DEAD,'fill-opacity':0.26,opacity:0}));
+    const SCORE=[0,1].map(()=>mk('ellipse',{fill:DEAD,'fill-opacity':0.62,opacity:0}));
+    const LIQ=[0,1].map(()=>mk('path',{stroke:'none',opacity:0}));
+    const VESS=[0,1].map(()=>mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    const INFLOW=mk('line',{stroke:YOU,'stroke-width':11,'stroke-linecap':'round','stroke-dasharray':'4 20',opacity:0});
+    const OUTFLOW=mk('line',{stroke:YOU,'stroke-width':9,'stroke-linecap':'round','stroke-dasharray':'4 18',opacity:0});
+    const DROPS=[]; for(let i=0;i<5;i++)DROPS.push(mk('ellipse',{fill:YOU,opacity:0}));
+    const GBG=[0,1].map(()=>mk('rect',{fill:'none',stroke:INK,'stroke-width':5,rx:15,opacity:0}));
+    const GFILL=[0,1].map(()=>mk('rect',{fill:YOU,rx:11,opacity:0}));
+    const GTICK=[0,1].map(()=>mk('rect',{fill:INK,opacity:0}));
+    const MARKS=[]; for(let i=0;i<6;i++)MARKS.push(mk('rect',{fill:INK,rx:2,opacity:0}));
+    const RULER=[0,1].map(()=>mk('line',{stroke:INK,'stroke-width':5,'stroke-linecap':'round',opacity:0}));
+    const RTICK=[]; for(let i=0;i<16;i++)RTICK.push(mk('rect',{fill:INK,rx:1,opacity:0}));
+
+    function hideObj(){
+      for(const e of [FLOOR,INFLOW,OUTFLOW])setOp(e,0);
+      for(const a of [VESS,LIQ,GBG,GFILL,GTICK,SHALO,SCORE,RULER])for(const e of a)setOp(e,0);
+      for(const e of DROPS)setOp(e,0);for(const e of MARKS)setOp(e,0);for(const e of RTICK)setOp(e,0);
+    }
+    function floor(x1,x2,y,op){FLOOR.setAttribute('x1',x1);FLOOR.setAttribute('x2',x2);FLOOR.setAttribute('y1',y);FLOOR.setAttribute('y2',y);setOp(FLOOR,op);}
+    function vesselD(cx,topY,w,h){const l=cx-w/2,r=cx+w/2,b=topY+h,rad=26;
+      return `M ${l} ${topY} L ${l} ${b-rad} Q ${l} ${b} ${l+rad} ${b} L ${r-rad} ${b} Q ${r} ${b} ${r} ${b-rad} L ${r} ${topY}`;}
+    function drawVessel(i,cx,topY,w,h,op){VESS[i].setAttribute('d',vesselD(cx,topY,w,h));setOp(VESS[i],op);}
+    function drawLiquid(i,cx,topY,w,h,surfY,u,ph,color,op){
+      const l=cx-w/2+4,r=cx+w/2-4,b=topY+h-4,rad=22,N=8,sp=[];
+      for(let k=0;k<=N;k++){const x=l+(r-l)*k/N;
+        const y=surfY+7*Math.sin(u*2.0+k*0.85+ph)+3.2*Math.sin(u*3.4+k*1.6+ph*1.3);sp.push([x,y]);}
+      let d=`M ${l.toFixed(1)} ${(b-rad).toFixed(1)} Q ${l} ${b} ${(l+rad).toFixed(1)} ${b} L ${(r-rad).toFixed(1)} ${b} Q ${r} ${b} ${r} ${(b-rad).toFixed(1)} L ${sp[N][0].toFixed(1)} ${sp[N][1].toFixed(1)}`;
+      for(let k=N-1;k>=0;k--)d+=` L ${sp[k][0].toFixed(1)} ${sp[k][1].toFixed(1)}`;
+      d+=' Z';
+      LIQ[i].setAttribute('d',d);LIQ[i].setAttribute('fill',color);setOp(LIQ[i],op);}
+    function drawGauge(i,cx,gy,gw,f,op){const gh=26,fw=(gw-8)*f;
+      GBG[i].setAttribute('x',cx-gw/2);GBG[i].setAttribute('y',gy);GBG[i].setAttribute('width',gw);GBG[i].setAttribute('height',gh);setOp(GBG[i],op);
+      GFILL[i].setAttribute('x',cx-gw/2+4);GFILL[i].setAttribute('y',gy+4);GFILL[i].setAttribute('width',Math.max(2,fw));GFILL[i].setAttribute('height',gh-8);setOp(GFILL[i],op);
+      GTICK[i].setAttribute('x',cx-gw/2+4+fw-2.5);GTICK[i].setAttribute('y',gy-6);GTICK[i].setAttribute('width',5);GTICK[i].setAttribute('height',gh+12);setOp(GTICK[i],op);}
+    function drawStain(i,cx,fy,rx,ry,op){
+      SHALO[i].setAttribute('cx',cx);SHALO[i].setAttribute('cy',fy);SHALO[i].setAttribute('rx',rx.toFixed(1));SHALO[i].setAttribute('ry',ry.toFixed(1));setOp(SHALO[i],op);
+      SCORE[i].setAttribute('cx',cx);SCORE[i].setAttribute('cy',fy);SCORE[i].setAttribute('rx',(rx*0.6).toFixed(1));SCORE[i].setAttribute('ry',(ry*0.6).toFixed(1));setOp(SCORE[i],op);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHERE DOES AN EDGE','GO WHEN IT LEAVES'];
+    const FS=68,lineH=94,y0=210,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié tel quel depuis l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(44),capB=caption(40),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — DEUX RÉCIPIENTS IDENTIQUES, UNE TACHE SOUS UN SEUL (émotion frame 0 = CURIOSITÉ) ═══
+    // Verbe visuel : la révélation de l'asymétrie (tout est pareil, sauf une tache qu'on ne regarde pas).
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); hideObj();
+      const gf=clamp(1-(lf-0.85)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 : les deux récipients sont PLEINS et ONDULENT dès t=0, les jauges sont posées, l'énigme
+      //    (la tache sous celui de droite) est entière. Rien ne se construit sous nos yeux.
+      const w=280,topY=780,h=340,surf=topY+0.20*h;
+      floor(150,930,topY+h,0.45);
+      drawVessel(0,315,topY,w,h,1); drawVessel(1,765,topY,w,h,1);
+      drawLiquid(0,315,topY,w,h,surf,u,0.0,YOU,1);
+      drawLiquid(1,765,topY,w,h,surf,u,1.1,YOU,1);
+      drawGauge(0,315,696,224,0.62,1); drawGauge(1,765,696,224,0.62,1);
+      // la tache : présente et vivante (deux harmoniques), jamais commentée
+      const sr=34+3*Math.sin(u*1.3)+2*Math.sin(u*2.1), syr=15+1.5*Math.sin(u*1.7)+1*Math.sin(u*2.6);
+      drawStain(1,765,topY+h+30,sr,syr,0.9);
+      putCap(capA,'SAME WIN RATE',CX,645,INK,gf);
+    }
+
+    // ═══ S2 — LA JAUGE FIGÉE, LA TACHE QUI DOUBLE EN SIX SEMAINES ═══
+    // Verbe visuel : l'accumulation cadencée (six repères tombent, la tache grossit d'un cran à chacun).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObj();
+      const cx=540,w=300,topY=792,h=336,surf=topY+0.20*h;
+      floor(210,870,topY+h,0.45);
+      drawVessel(0,cx,topY,w,h,1);
+      drawLiquid(0,cx,topY,w,h,surf,u,0.0,YOU,1);
+      drawGauge(0,cx,690,240,0.62,1);                                  // FIGÉE : le compteur ne bouge pas
+      // six semaines qui défilent en cadence sèche, sous la jauge
+      let shown=0;
+      for(let i=0;i<6;i++){const ap=clamp((u-(0.6+i*0.34))/0.28,0,1);
+        const x=372+i*66; MARKS[i].setAttribute('x',x);MARKS[i].setAttribute('y',742-2*Math.sin(u*2.2-i*0.7));
+        MARKS[i].setAttribute('width',6);MARKS[i].setAttribute('height',30);setOp(MARKS[i],ap*0.9); if(ap>0.5)shown=i+1;}
+      // la tache double au fil des semaines (position + taille), plus une vie continue
+      const g=shown/6;
+      const sr=32+g*80+3*Math.sin(u*1.5)+2*Math.sin(u*2.3), syr=15+g*30+1.5*Math.sin(u*1.9);
+      drawStain(0,cx,topY+h+40,sr,syr,0.9);
+      putCap(capA,'WIN RATE — UNCHANGED',CX,650,INK,1);
+      putCap(capB,'SIX WEEKS',870,754,INK,clamp((u-0.5)/0.5,0,1));
+      putCap(capD,'BALANCE',210,900,YOU,clamp((u-0.9)/0.6,0,1));
+      putCap(capC,'AVERAGE LOSS',214,1188,DEAD,clamp((u-1.6)/0.6,0,1));
+    }
+
+    // ═══ S3 — PIVOT : IL SE REMPLIT AUSSI VITE QU'IL FUIT, LE NIVEAU MENT ═══
+    // Verbe visuel : le flux traversant (un filet entre, une goutte sort, même débit — le niveau ne bouge jamais).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObj();
+      const cx=540,w=300,topY=770,h=350,surf=topY+0.20*h,b=topY+h;
+      floor(200,880,b,0.45);
+      drawVessel(0,cx,topY,w,h,1);
+      drawLiquid(0,cx,topY,w,h,surf,u,0.0,YOU,1);                       // NIVEAU CONSTANT
+      // filet d'entrée (haut) — dashes qui descendent
+      INFLOW.setAttribute('stroke-width',11);
+      INFLOW.setAttribute('x1',cx);INFLOW.setAttribute('y1',706);INFLOW.setAttribute('x2',cx);INFLOW.setAttribute('y2',surf+8);
+      INFLOW.setAttribute('stroke-dashoffset',(-u*90).toFixed(0)); setOp(INFLOW,clamp((u-0.3)/0.5,0,1));
+      // fuite (bas) — dashes qui descendent vers la tache
+      OUTFLOW.setAttribute('stroke-width',9);
+      OUTFLOW.setAttribute('x1',cx);OUTFLOW.setAttribute('y1',b-2);OUTFLOW.setAttribute('x2',cx);OUTFLOW.setAttribute('y2',b+58);
+      OUTFLOW.setAttribute('stroke-dashoffset',(-u*90).toFixed(0)); const of=clamp((u-0.7)/0.5,0,1); setOp(OUTFLOW,of);
+      for(let i=0;i<4;i++){const dv=((u*0.55+i/4)%1); const y=(b-2)+dv*60; const x=cx+(i%2?7:-7)*Math.sin(u*3+i);
+        DROPS[i].setAttribute('cx',x);DROPS[i].setAttribute('cy',y);DROPS[i].setAttribute('rx',7);DROPS[i].setAttribute('ry',10);setOp(DROPS[i],of*0.9);}
+      const g=clamp(u/3.5,0,1);
+      drawStain(0,cx,b+72,40+g*44+3*Math.sin(u*1.5),18+g*15+2*Math.sin(u*1.9),0.9);
+      putCap(capA,'IT REFILLS AS FAST AS IT LEAKS',CX,650,INK,clamp((u-0.3)/0.6,0,1));
+      putCap(capD,'BALANCE',205,884,YOU,clamp((u-1.0)/0.6,0,1));
+      putCap(capC,'AVERAGE LOSS',210,1214,DEAD,clamp((u-1.7)/0.6,0,1));
+    }
+
+    // ═══ S4 — ESCALADE : LE NIVEAU TOMBE D'UN COUP, LA FLAQUE ÉTAIT DÉJÀ LÀ ═══
+    // Verbe visuel : la chute en marche (le niveau plonge d'un cran unique, le teal se délave, la tache occupe le tiers du cadre).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObj();
+      const cx=540,w=300,topY=770,h=350,b=topY+h,fullSurf=topY+0.20*h,lowSurf=topY+0.60*h;
+      const drop=eIn(clamp((u-1.0)/0.4,0,1)); const surf=lerp(fullSurf,lowSurf,drop);
+      const de=clamp((u-1.6)/0.7,0,1); const col=mixCol(YOU,DEAD,de);
+      floor(200,880,b,0.45);
+      drawVessel(0,cx,topY,w,h,1);
+      drawLiquid(0,cx,topY,w,h,surf,u,0.0,col,1);
+      // le filet d'entrée se pince
+      const pinch=clamp(u/1.0,0,1);
+      INFLOW.setAttribute('stroke-width',(11-8*pinch).toFixed(1));
+      INFLOW.setAttribute('x1',cx);INFLOW.setAttribute('y1',694);INFLOW.setAttribute('x2',cx);INFLOW.setAttribute('y2',fullSurf+8);
+      INFLOW.setAttribute('stroke-dashoffset',(-u*70).toFixed(0)); setOp(INFLOW,1);
+      // la tache : déjà énorme (un tiers du cadre), elle était là depuis le début
+      const g=clamp(u/2.5,0,1);
+      drawStain(0,cx,b+96,92+g*88+4*Math.sin(u*1.3),34+g*30+2*Math.sin(u*1.7),0.92);
+      putCap(capA,'IT ONLY SHOWS NOW',CX,650,INK,clamp((u-0.2)/0.5,0,1));
+      putCap(capB,'BALANCE',205,988,DEAD,clamp((u-1.2)/0.5,0,1));
+      putCap(capC,'THE LEAK WAS MONTHS OLD',CX,1408,DEAD,clamp((u-2.2)/0.6,0,1));
+    }
+
+    // ═══ S5 — LEÇON : MESURE LA MOYENNE (la tache), PAS LE TOTAL (le niveau) ═══
+    // Verbe visuel : le diptyque de mesure (une règle sur la tache alerte tôt ; une règle sur le niveau prévient trop tard).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideObj();
+      const w=270,topY=800,h=320,surf=topY+0.20*h,b=topY+h,LCX=310,RCX=770;
+      floor(120,960,b,0.45);
+      // GAUCHE — on mesure la tache : reste teal, alerte tôt
+      drawVessel(0,LCX,topY,w,h,1);
+      drawLiquid(0,LCX,topY,w,h,surf,u,0.0,YOU,1);
+      drawStain(0,LCX,b+30,58+2*Math.sin(u*1.4),26+1.5*Math.sin(u*1.9),0.9);
+      const la=clamp((u-1.2)/0.6,0,1);
+      RULER[0].setAttribute('x1',LCX-72);RULER[0].setAttribute('x2',LCX+72);RULER[0].setAttribute('y1',b+30);RULER[0].setAttribute('y2',b+30);
+      RULER[0].setAttribute('stroke',YOU);setOp(RULER[0],la);
+      for(let i=0;i<7;i++){const x=LCX-60+i*20;RTICK[i].setAttribute('x',x);RTICK[i].setAttribute('y',b+16);RTICK[i].setAttribute('width',3);RTICK[i].setAttribute('height',13);RTICK[i].setAttribute('fill',YOU);setOp(RTICK[i],la);}
+      // DROITE — on mesure le niveau : se délave en gris, prévient trop tard
+      const de=clamp((u-2.4)/0.8,0,1);
+      drawVessel(1,RCX,topY,w,h,1);
+      drawLiquid(1,RCX,topY,w,h,surf,u,1.0,mixCol(YOU,DEAD,de),1);
+      drawStain(1,RCX,b+30,58+2*Math.sin(u*1.6),26+1.5*Math.sin(u*2.1),0.9);
+      const ra=clamp((u-2.6)/0.6,0,1);
+      RULER[1].setAttribute('x1',RCX+w/2+30);RULER[1].setAttribute('x2',RCX+w/2+30);RULER[1].setAttribute('y1',topY);RULER[1].setAttribute('y2',b);
+      RULER[1].setAttribute('stroke',DEAD);setOp(RULER[1],ra);
+      for(let i=0;i<8;i++){const y=topY+8+i*42;RTICK[8+i].setAttribute('x',RCX+w/2+18);RTICK[8+i].setAttribute('y',y);RTICK[8+i].setAttribute('width',13);RTICK[8+i].setAttribute('height',3);RTICK[8+i].setAttribute('fill',DEAD);setOp(RTICK[8+i],ra);}
+      putCap(capA,'TRACK THE AVERAGE, NOT THE TOTAL',CX,648,INK,clamp((u-0.3)/0.7,0,1));
+      putCap(capC,'THE AVERAGE',LCX,1300,YOU,clamp((u-1.4)/0.6,0,1));
+      putCap(capD,'THE TOTAL',RCX,1300,DEAD,clamp((u-2.8)/0.6,0,1));
+      putCap(capB,'@kongrave_',CX,1412,INK,clamp((u-3.4)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
