@@ -1,0 +1,847 @@
+{
+  "_meta": {
+    "version": 1,
+    "devise": "EUR",
+    "avertissement": "Fourchettes de prix INDICATIVES (marché 2025-2026, hors pic exceptionnel). Un empty leg ne se devine pas : le prix affiché par l'opérateur fait foi. Les codes aéroports servent à remplir les formulaires d'alerte, pas à réserver.",
+    "bases_depart": {
+      "principale": [
+        {
+          "iata": "LBG",
+          "oaci": "LFPB",
+          "nom": "Paris-Le Bourget",
+          "note": "1er aéroport d'affaires d'Europe — la quasi-totalite des empty legs parisiens partent d'ici"
+        }
+      ],
+      "secondaires": [
+        {
+          "iata": "CDG",
+          "oaci": "LFPG",
+          "nom": "Paris-Charles de Gaulle",
+          "note": "terminal d'aviation d'affaires, surtout long-courrier"
+        },
+        {
+          "iata": "ORY",
+          "oaci": "LFPO",
+          "nom": "Paris-Orly",
+          "note": "quelques opérateurs, créneaux contraints"
+        },
+        {
+          "iata": "TLS",
+          "oaci": "LFBO",
+          "nom": "Toulouse-Blagnac",
+          "note": "flux constructeur, empty legs opportunistes"
+        }
+      ],
+      "elargies": [
+        {
+          "iata": "GVA",
+          "oaci": "LSGG",
+          "nom": "Genève",
+          "note": "2h50 de Paris en TGV — 2e vivier d'empty legs d'Europe, à mettre dans TOUTES les alertes"
+        },
+        {
+          "iata": "NCE",
+          "oaci": "LFMN",
+          "nom": "Nice-Côte d'Azur",
+          "note": "vivier n°1 l'été vers Ibiza, Italie, Balkans, Grèce"
+        },
+        {
+          "iata": "BRU",
+          "oaci": "EBBR",
+          "nom": "Bruxelles",
+          "note": "1h30 de Paris en Thalys"
+        },
+        {
+          "iata": "LUX",
+          "oaci": "ELLX",
+          "nom": "Luxembourg",
+          "note": "base Luxaviation, positionnements fréquents"
+        },
+        {
+          "iata": "LTN",
+          "oaci": "EGGW",
+          "nom": "Londres-Luton",
+          "note": "à considérer comme point de départ pour le long-courrier (Dubaï, Golfe)"
+        }
+      ],
+      "note_rayon": "Régler le rayon d'alerte sur 300 km minimum autour de Paris : un empty leg au départ de Genève, Bruxelles ou Luxembourg reste rentable si le trajet d'approche coûte 150 € de train."
+    },
+    "mois_forts_definition": "Mois où l'offre d'empty legs sur cette destination est réellement alimentée. Hors de ces mois, l'alerte reste posée mais ne produit presque rien."
+  },
+  "destinations": [
+    {
+      "id": "londres",
+      "nom": "Londres",
+      "zone": "Europe de l'Ouest",
+      "aeroports": [
+        {
+          "iata": "LTN",
+          "oaci": "EGGW",
+          "nom": "Luton",
+          "note": "LE hub des jets d'affaires britanniques — 60 % des empty legs londoniens"
+        },
+        {
+          "iata": "FAB",
+          "oaci": "EGLF",
+          "nom": "Farnborough",
+          "note": "100 % aviation d'affaires, sud-ouest de Londres"
+        },
+        {
+          "iata": "BQH",
+          "oaci": "EGKB",
+          "nom": "Biggin Hill",
+          "note": "sud-est, accès rapide à la City"
+        },
+        {
+          "iata": "LCY",
+          "oaci": "EGLC",
+          "nom": "London City",
+          "note": "approche à forte pente : seuls certains appareils y sont certifiés"
+        },
+        {
+          "iata": "STN",
+          "oaci": "EGSS",
+          "nom": "Stansted",
+          "note": "terminal d'affaires + long-courrier"
+        }
+      ],
+      "densite_empty_legs": 5,
+      "saison_haute": "toute l'année",
+      "jours_forts": [
+        "jeudi",
+        "vendredi",
+        "dimanche soir",
+        "lundi matin"
+      ],
+      "categorie_avion": "very light / light jet (Phenom 300, CJ3, Citation XLS)",
+      "duree_vol_h": 1.25,
+      "prix_charter_eur": [
+        6000,
+        9000
+      ],
+      "prix_empty_leg_eur": [
+        1800,
+        4000
+      ],
+      "plateformes_prioritaires": [
+        "victor",
+        "privatefly",
+        "xo",
+        "skyaccess"
+      ],
+      "plan_b": "Eurostar Business Premier (~250-450 €, 2h20 centre à centre) — le plan B le plus solide de toute la liste, à réserver en tarif flexible.",
+      "notes": "L'axe Paris-Londres est le plus dense d'Europe : c'est la route sur laquelle apprendre le réflexe empty leg avant de viser plus loin. Décote réelle observée : -60 à -75 %.",
+      "mois_forts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "madrid",
+      "nom": "Madrid",
+      "zone": "Péninsule ibérique",
+      "aeroports": [
+        {
+          "iata": "MAD",
+          "oaci": "LEMD",
+          "nom": "Barajas",
+          "note": "terminal exécutif, tous types d'appareils"
+        },
+        {
+          "iata": "—",
+          "oaci": "LECU",
+          "nom": "Cuatro Vientos",
+          "note": "aviation générale, jets légers uniquement"
+        },
+        {
+          "iata": "—",
+          "oaci": "LETO",
+          "nom": "Torrejón",
+          "note": "base militaire ouverte à certains vols d'affaires"
+        }
+      ],
+      "densite_empty_legs": 3,
+      "saison_haute": "septembre-juin (le business madrilène s'arrête en août)",
+      "jours_forts": [
+        "lundi matin",
+        "jeudi soir"
+      ],
+      "categorie_avion": "light / midsize (Citation XLS+, Learjet 75)",
+      "duree_vol_h": 2.0,
+      "prix_charter_eur": [
+        9000,
+        14000
+      ],
+      "prix_empty_leg_eur": [
+        3000,
+        6500
+      ],
+      "plateformes_prioritaires": [
+        "victor",
+        "privatefly",
+        "skyaccess",
+        "xo"
+      ],
+      "plan_b": "Vol de ligne Air France / Iberia (2h05, plusieurs rotations/jour) — abondant et bon marché, donc empty leg à ne prendre que sous 3 500 €.",
+      "notes": "Route d'affaires, pas de route de loisir : les positionnements suivent la semaine ouvrée. Beaucoup d'empty legs Madrid-Ibiza et Madrid-Marrakech transitent par Paris ou Genève en aller-retour.",
+      "mois_forts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "ibiza",
+      "nom": "Ibiza",
+      "zone": "Baléares",
+      "aeroports": [
+        {
+          "iata": "IBZ",
+          "oaci": "LEIB",
+          "nom": "Ibiza",
+          "note": "slots saturés en juillet-août, créneaux imposés"
+        },
+        {
+          "iata": "PMI",
+          "oaci": "LEPA",
+          "nom": "Palma de Majorque",
+          "note": "repli à 30 min de ferry/vol — souvent 40 % moins cher"
+        }
+      ],
+      "densite_empty_legs": 5,
+      "saison_haute": "juin à septembre (pic mi-juillet / mi-août)",
+      "jours_forts": [
+        "vendredi",
+        "samedi",
+        "dimanche",
+        "lundi matin (retours à vide)"
+      ],
+      "categorie_avion": "light / midsize (Phenom 300, Citation XLS, Learjet 60)",
+      "duree_vol_h": 2.0,
+      "prix_charter_eur": [
+        12000,
+        19000
+      ],
+      "prix_empty_leg_eur": [
+        4000,
+        9000
+      ],
+      "plateformes_prioritaires": [
+        "xo",
+        "victor",
+        "welojets",
+        "privatefly",
+        "skyaccess"
+      ],
+      "plan_b": "Vol de ligne + ferry depuis Barcelone/Palma. En août, réserver le plan B AVANT de guetter l'empty leg : l'île se remplit.",
+      "notes": "La meilleure route d'Europe pour un empty leg d'été : le trafic est massif, asymétrique (arrivées le vendredi, départs le lundi) et les retours à vide sont systématiques. Guetter dans les deux sens : Paris/Nice/Genève -> IBZ le jeudi-vendredi, IBZ -> Paris le lundi-mardi.",
+      "mois_forts": [
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "italie",
+      "nom": "Italie",
+      "zone": "Europe du Sud",
+      "aeroports": [
+        {
+          "iata": "LIN",
+          "oaci": "LIML",
+          "nom": "Milan-Linate",
+          "note": "terminal Prime Aviation, cœur du business italien"
+        },
+        {
+          "iata": "MXP",
+          "oaci": "LIMC",
+          "nom": "Milan-Malpensa",
+          "note": "long-courrier et gros porteurs"
+        },
+        {
+          "iata": "CIA",
+          "oaci": "LIRA",
+          "nom": "Rome-Ciampino",
+          "note": "aéroport d'affaires de Rome"
+        },
+        {
+          "iata": "FLR",
+          "oaci": "LIRQ",
+          "nom": "Florence",
+          "note": "piste courte, appareils légers"
+        },
+        {
+          "iata": "OLB",
+          "oaci": "LIEO",
+          "nom": "Olbia (Costa Smeralda)",
+          "note": "explosion d'empty legs en juillet-août"
+        },
+        {
+          "iata": "NAP",
+          "oaci": "LIRN",
+          "nom": "Naples",
+          "note": "porte de Capri et de la côte amalfitaine"
+        },
+        {
+          "iata": "VCE",
+          "oaci": "LIPZ",
+          "nom": "Venise",
+          "note": "pics sur la Biennale et le carnaval"
+        }
+      ],
+      "densite_empty_legs": 5,
+      "saison_haute": "juin-septembre (Sardaigne, Capri) et toute l'année sur Milan",
+      "jours_forts": [
+        "vendredi",
+        "dimanche",
+        "lundi matin"
+      ],
+      "categorie_avion": "very light / light jet (CJ2, Phenom 300, Mustang)",
+      "duree_vol_h": 1.5,
+      "prix_charter_eur": [
+        8000,
+        18000
+      ],
+      "prix_empty_leg_eur": [
+        3000,
+        8000
+      ],
+      "plateformes_prioritaires": [
+        "xo",
+        "victor",
+        "welojets",
+        "privatefly",
+        "skyaccess"
+      ],
+      "plan_b": "Vols de ligne très denses (Milan, Rome, Naples) + train intérieur Frecciarossa. Sur la Sardaigne l'été, le plan B doit être réservé d'avance.",
+      "notes": "Configurer une alerte PAR aéroport, pas une alerte 'Italie' : Milan est une route d'affaires (toute l'année, en semaine), Olbia/Naples des routes de loisir (été, week-end). Les deux ne se guettent pas aux mêmes dates.",
+      "mois_forts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "athenes",
+      "nom": "Athènes et les Cyclades",
+      "zone": "Méditerranée orientale",
+      "aeroports": [
+        {
+          "iata": "ATH",
+          "oaci": "LGAV",
+          "nom": "Athènes-Elefthérios-Venizélos",
+          "note": "point de bascule de tout le trafic grec"
+        },
+        {
+          "iata": "JMK",
+          "oaci": "LGMK",
+          "nom": "Mykonos",
+          "note": "slots très contraints en août"
+        },
+        {
+          "iata": "JTR",
+          "oaci": "LGSR",
+          "nom": "Santorin",
+          "note": "piste courte : jets légers seulement"
+        },
+        {
+          "iata": "CFU",
+          "oaci": "LGKR",
+          "nom": "Corfou",
+          "note": "flux depuis l'Italie et les Balkans"
+        }
+      ],
+      "densite_empty_legs": 4,
+      "saison_haute": "juin à mi-septembre",
+      "jours_forts": [
+        "jeudi",
+        "vendredi",
+        "dimanche"
+      ],
+      "categorie_avion": "midsize / super-midsize (Citation Latitude, Challenger 350)",
+      "duree_vol_h": 3.25,
+      "prix_charter_eur": [
+        18000,
+        28000
+      ],
+      "prix_empty_leg_eur": [
+        6000,
+        13000
+      ],
+      "plateformes_prioritaires": [
+        "xo",
+        "victor",
+        "privatefly",
+        "skyaccess",
+        "welojets"
+      ],
+      "plan_b": "Vol de ligne direct Paris-Athènes (3h20) puis ferry ou vol domestique vers les îles.",
+      "notes": "Le vivier n'est pas Paris mais Nice, Genève, Milan et Londres : la clientèle des Cyclades y est basée. Élargir impérativement le rayon d'alerte. En août, beaucoup d'empty legs ATH -> Europe le lundi (retours à vide).",
+      "mois_forts": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "balkans",
+      "nom": "Balkans",
+      "zone": "Europe du Sud-Est",
+      "aeroports": [
+        {
+          "iata": "TIV",
+          "oaci": "LYTV",
+          "nom": "Tivat (Monténégro)",
+          "note": "Porto Montenegro — forte densité de jets l'été"
+        },
+        {
+          "iata": "SPU",
+          "oaci": "LDSP",
+          "nom": "Split (Croatie)",
+          "note": "pic juillet-août, slots tendus"
+        },
+        {
+          "iata": "DBV",
+          "oaci": "LDDU",
+          "nom": "Dubrovnik (Croatie)",
+          "note": "route yachting"
+        },
+        {
+          "iata": "BEG",
+          "oaci": "LYBE",
+          "nom": "Belgrade (Serbie)",
+          "note": "route d'affaires, toute l'année"
+        },
+        {
+          "iata": "TIA",
+          "oaci": "LATI",
+          "nom": "Tirana (Albanie)",
+          "note": "marché en croissance rapide"
+        },
+        {
+          "iata": "SJJ",
+          "oaci": "LQSA",
+          "nom": "Sarajevo (Bosnie)",
+          "note": "trafic mince, empty legs rares"
+        }
+      ],
+      "densite_empty_legs": 3,
+      "saison_haute": "mi-juin à début septembre (côte adriatique)",
+      "jours_forts": [
+        "vendredi",
+        "samedi",
+        "lundi"
+      ],
+      "categorie_avion": "light / midsize",
+      "duree_vol_h": 2.25,
+      "prix_charter_eur": [
+        13000,
+        21000
+      ],
+      "prix_empty_leg_eur": [
+        4500,
+        9500
+      ],
+      "plateformes_prioritaires": [
+        "victor",
+        "xo",
+        "skyaccess",
+        "privatefly"
+      ],
+      "plan_b": "Vols de ligne saisonniers (Split, Dubrovnik, Tivat via Belgrade) — se raréfient fortement hors saison.",
+      "notes": "Marché saisonnier et concentré : hors juin-septembre, la densité tombe presque à zéro sauf sur Belgrade. Le flux dominant vient de Vienne, Munich, Milan et Genève, pas de Paris.",
+      "mois_forts": [
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "lisbonne",
+      "nom": "Lisbonne",
+      "zone": "Péninsule ibérique",
+      "aeroports": [
+        {
+          "iata": "LIS",
+          "oaci": "LPPT",
+          "nom": "Lisbonne-Portela",
+          "note": "terminal exécutif"
+        },
+        {
+          "iata": "CAT",
+          "oaci": "LPCS",
+          "nom": "Cascais-Tires",
+          "note": "aéroport d'affaires dédié, 25 min du centre"
+        },
+        {
+          "iata": "OPO",
+          "oaci": "LPPR",
+          "nom": "Porto",
+          "note": "route secondaire"
+        },
+        {
+          "iata": "FAO",
+          "oaci": "LPFR",
+          "nom": "Faro (Algarve)",
+          "note": "forte saisonnalité golf/été"
+        }
+      ],
+      "densite_empty_legs": 3,
+      "saison_haute": "avril-octobre, plus les vagues d'affaires (Web Summit en novembre)",
+      "jours_forts": [
+        "jeudi",
+        "vendredi",
+        "dimanche"
+      ],
+      "categorie_avion": "midsize (Citation XLS+, Learjet 60)",
+      "duree_vol_h": 2.5,
+      "prix_charter_eur": [
+        13000,
+        20000
+      ],
+      "prix_empty_leg_eur": [
+        4500,
+        9000
+      ],
+      "plateformes_prioritaires": [
+        "victor",
+        "privatefly",
+        "skyaccess",
+        "xo"
+      ],
+      "plan_b": "Vol de ligne direct (2h40), offre abondante et peu chère — l'empty leg ne se justifie ici que sous 5 000 €.",
+      "notes": "Penser Cascais (LPCS) autant que Lisbonne : beaucoup d'opérateurs y basent leurs appareils et repositionnent depuis là. Bon couloir de correspondance vers le Maroc.",
+      "mois_forts": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    {
+      "id": "maroc",
+      "nom": "Maroc",
+      "zone": "Afrique du Nord",
+      "aeroports": [
+        {
+          "iata": "RAK",
+          "oaci": "GMMX",
+          "nom": "Marrakech-Menara",
+          "note": "1re destination empty leg du Maroc"
+        },
+        {
+          "iata": "CMN",
+          "oaci": "GMMN",
+          "nom": "Casablanca-Mohammed V",
+          "note": "route d'affaires"
+        },
+        {
+          "iata": "TNG",
+          "oaci": "GMTT",
+          "nom": "Tanger-Ibn Battouta",
+          "note": "courte traversée depuis l'Espagne"
+        },
+        {
+          "iata": "RBA",
+          "oaci": "GMME",
+          "nom": "Rabat-Salé",
+          "note": "trafic institutionnel"
+        },
+        {
+          "iata": "ESU",
+          "oaci": "GMMI",
+          "nom": "Essaouira",
+          "note": "piste courte, appareils légers"
+        }
+      ],
+      "densite_empty_legs": 4,
+      "saison_haute": "octobre à avril (inverse de la saison européenne), pic vacances de Noël et de février",
+      "jours_forts": [
+        "jeudi",
+        "vendredi",
+        "dimanche",
+        "lundi"
+      ],
+      "categorie_avion": "midsize / super-midsize (Challenger 350, Falcon 2000)",
+      "duree_vol_h": 3.0,
+      "prix_charter_eur": [
+        20000,
+        30000
+      ],
+      "prix_empty_leg_eur": [
+        7000,
+        14000
+      ],
+      "plateformes_prioritaires": [
+        "victor",
+        "xo",
+        "welojets",
+        "privatefly",
+        "skyaccess"
+      ],
+      "plan_b": "Vols de ligne directs Paris-Marrakech très denses (3h15). Prévoir la douane : formalités d'entrée classiques, mais l'aviation d'affaires passe par des terminaux dédiés (FBO).",
+      "notes": "Contre-saison parfaite : quand l'Europe se vide en hiver, les jets descendent sur Marrakech et remontent à vide. La fenêtre décembre-février est la meilleure de l'année sur cette route.",
+      "mois_forts": [
+        1,
+        2,
+        3,
+        4,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "dubai",
+      "nom": "Dubaï / Émirats",
+      "zone": "Golfe",
+      "aeroports": [
+        {
+          "iata": "DWC",
+          "oaci": "OMDW",
+          "nom": "Dubaï-Al Maktoum",
+          "note": "hub officiel de l'aviation d'affaires à Dubaï"
+        },
+        {
+          "iata": "DXB",
+          "oaci": "OMDB",
+          "nom": "Dubaï International",
+          "note": "terminal exécutif, slots chers et contraints"
+        },
+        {
+          "iata": "AZI",
+          "oaci": "OMAD",
+          "nom": "Abu Dhabi-Al Bateen",
+          "note": "100 % aviation d'affaires, 1h de Dubaï en voiture"
+        },
+        {
+          "iata": "SHJ",
+          "oaci": "OMSJ",
+          "nom": "Sharjah",
+          "note": "repli économique"
+        }
+      ],
+      "densite_empty_legs": 3,
+      "saison_haute": "novembre à avril (pics : GITEX, Art Dubai, Grand Prix d'Abu Dhabi, fêtes de fin d'année)",
+      "jours_forts": [
+        "dimanche",
+        "lundi",
+        "jeudi"
+      ],
+      "categorie_avion": "heavy / long-range (Falcon 7X, Global 6000, G550)",
+      "duree_vol_h": 6.5,
+      "prix_charter_eur": [
+        65000,
+        95000
+      ],
+      "prix_empty_leg_eur": [
+        22000,
+        45000
+      ],
+      "plateformes_prioritaires": [
+        "xo",
+        "victor",
+        "jettly",
+        "skyaccess",
+        "privatefly"
+      ],
+      "plan_b": "Vol de ligne Paris-Dubaï en business (7h) — souvent MOINS cher que l'empty leg si vous voyagez à moins de 4. L'empty leg ne devient rationnel qu'à partir de 5-6 passagers.",
+      "notes": "Route long-courrier : les empty legs existent (positionnements Europe <-> Golfe des gros porteurs) mais sont rares et partent souvent de Londres, Genève ou Nice. Élargir le rayon à toute l'Europe de l'Ouest et accepter un départ depuis LTN ou GVA.",
+      "mois_forts": [
+        1,
+        2,
+        3,
+        4,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "georgie",
+      "nom": "Géorgie",
+      "zone": "Caucase",
+      "aeroports": [
+        {
+          "iata": "TBS",
+          "oaci": "UGTB",
+          "nom": "Tbilissi",
+          "note": "point d'entrée principal"
+        },
+        {
+          "iata": "BUS",
+          "oaci": "UGSB",
+          "nom": "Batoumi",
+          "note": "saison estivale mer Noire"
+        },
+        {
+          "iata": "KUT",
+          "oaci": "UGKO",
+          "nom": "Koutaïssi",
+          "note": "trafic low-cost, peu d'aviation d'affaires"
+        }
+      ],
+      "densite_empty_legs": 1,
+      "saison_haute": "mai-octobre",
+      "jours_forts": [
+        "variable — trafic trop mince pour un motif fiable"
+      ],
+      "categorie_avion": "midsize / heavy selon l'opérateur",
+      "duree_vol_h": 5.0,
+      "prix_charter_eur": [
+        40000,
+        60000
+      ],
+      "prix_empty_leg_eur": [
+        15000,
+        28000
+      ],
+      "plateformes_prioritaires": [
+        "jettly",
+        "skyaccess",
+        "xo",
+        "victor"
+      ],
+      "plan_b": "Vol de ligne via Istanbul, Vienne ou Varsovie (5-8h avec escale). C'est le trajet normal ici, pas le plan B.",
+      "notes": "Densité quasi nulle depuis l'Europe de l'Ouest. Les rares empty legs vers Tbilissi partent de Dubaï, d'Istanbul ou d'Europe centrale. Poser l'alerte, ne rien attendre, et considérer tout résultat comme un coup de chance.",
+      "mois_forts": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "id": "medellin",
+      "nom": "Medellín",
+      "zone": "Amérique du Sud",
+      "aeroports": [
+        {
+          "iata": "MDE",
+          "oaci": "SKRG",
+          "nom": "Rionegro-José María Córdova",
+          "note": "seul aéroport de la zone acceptant les jets long-courriers"
+        },
+        {
+          "iata": "EOH",
+          "oaci": "SKMD",
+          "nom": "Olaya Herrera (centre-ville)",
+          "note": "piste courte en altitude : turbopropulseurs et jets très légers uniquement"
+        },
+        {
+          "iata": "BOG",
+          "oaci": "SKBO",
+          "nom": "Bogotá",
+          "note": "point de bascule national, puis 35 min de vol"
+        },
+        {
+          "iata": "CTG",
+          "oaci": "SKCG",
+          "nom": "Carthagène",
+          "note": "route empty leg bien plus dense depuis la Floride"
+        }
+      ],
+      "densite_empty_legs": 2,
+      "saison_haute": "décembre-janvier et juillet-août (Feria de las Flores)",
+      "jours_forts": [
+        "jeudi",
+        "dimanche"
+      ],
+      "categorie_avion": "midsize depuis la Floride / ultra-long-range depuis l'Europe",
+      "duree_vol_h": 11.0,
+      "prix_charter_eur": [
+        130000,
+        180000
+      ],
+      "prix_empty_leg_eur": [
+        45000,
+        80000
+      ],
+      "plateformes_prioritaires": [
+        "xo",
+        "jettly",
+        "skyaccess"
+      ],
+      "plan_b": "Vol de ligne Paris -> Bogotá/Medellín (direct ou via Madrid/Miami). C'est la solution normale : l'empty leg transatlantique est ici un bonus, jamais un plan.",
+      "notes": "Depuis l'Europe : quasi inexistant (un jet ultra-long-courrier ne repositionne presque jamais Paris -> Medellín à vide). La vraie route empty leg est Miami/Fort Lauderdale -> MDE/CTG, très active et 3 à 5 fois moins chère. Stratégie réaliste : ligne jusqu'en Floride, puis alerte empty leg sur le tronçon FLL/MIA -> MDE (8 000 - 18 000 € l'appareil entier).",
+      "mois_forts": [
+        1,
+        7,
+        8,
+        12
+      ]
+    },
+    {
+      "id": "iran",
+      "nom": "Iran",
+      "zone": "Moyen-Orient",
+      "aeroports": [
+        {
+          "iata": "IKA",
+          "oaci": "OIIE",
+          "nom": "Téhéran-Imam Khomeini",
+          "note": "international"
+        },
+        {
+          "iata": "THR",
+          "oaci": "OIII",
+          "nom": "Téhéran-Mehrabad",
+          "note": "domestique et vols d'État"
+        },
+        {
+          "iata": "IFN",
+          "oaci": "OIFM",
+          "nom": "Ispahan",
+          "note": "domestique"
+        }
+      ],
+      "densite_empty_legs": 0,
+      "saison_haute": "sans objet",
+      "jours_forts": [],
+      "categorie_avion": "sans objet",
+      "duree_vol_h": 6.0,
+      "prix_charter_eur": null,
+      "prix_empty_leg_eur": null,
+      "plateformes_prioritaires": [],
+      "plan_b": "Vol de ligne via Istanbul (Turkish Airlines) ou Dubaï. Visa obligatoire pour les ressortissants français, et cartes bancaires occidentales inopérantes sur place : prévoir des espèces.",
+      "notes": "À traiter à part : les sanctions internationales visant l'aviation iranienne font qu'aucun opérateur ni courtier occidental (XO, Victor, PrivateFly, Jettly...) ne vend de vol vers l'Iran — ni plein tarif, ni empty leg. Aucune alerte à configurer : les plateformes ne référencent pas ces routes. Toute offre qui apparaîtrait sur cette route est un signal d'alerte (intermédiaire non conforme), pas une bonne affaire. Vérifier l'état des sanctions et les conseils aux voyageurs avant tout projet.",
+      "mois_forts": []
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "_meta": {
+    "version": 1,
+    "principe": "Le marché de l'empty leg est fragmenté : aucune plateforme ne voit plus de 30 % de l'offre. La seule stratégie qui marche est de configurer LA MÊME alerte sur 4 à 6 plateformes en parallèle et de laisser la notification push faire le travail.",
+    "avertissement": "Tarifs d'abonnement et fonctionnalités relevés à titre indicatif — à revérifier sur chaque site au moment de l'inscription."
+  },
+  "plateformes": [
+    {
+      "id": "xo",
+      "nom": "XO (groupe Vista)",
+      "type": "place de marché + flotte propre",
+      "priorite": 1,
+      "cout": "compte gratuit ; adhésions payantes optionnelles",
+      "canal_alerte": "notification push (app iOS/Android) + e-mail",
+      "granularite": "route précise, avec rayon autour de l'aéroport et fenêtre de dates",
+      "zone_forte": "Amérique du Nord et Europe de l'Ouest",
+      "configuration": [
+        "Installer l'app XO, créer le compte, valider le numéro de téléphone",
+        "Autoriser les notifications push AU NIVEAU DU SYSTÈME (sans ça, les alertes n'arrivent jamais à temps)",
+        "Section « Deals » / « Empty Legs » : créer une alerte par route de la liste",
+        "Régler le rayon sur 300 km autour de Paris et cocher les aéroports secondaires (GVA, NCE, BRU, LUX)",
+        "Fenêtre de dates : la plus large possible (l'empty leg impose sa date, pas l'inverse)"
+      ],
+      "forces": "Alertes en temps réel les plus rapides du marché ; section « Current Jet Deals » lisible ; réservation directe sans passer par un courtier.",
+      "limites": "Offre européenne moins profonde que l'offre américaine ; certaines places sont vendues au siège, pas à l'appareil entier."
+    },
+    {
+      "id": "victor",
+      "nom": "Victor",
+      "type": "courtier premium avec place de marché",
+      "priorite": 1,
+      "cout": "gratuit, commission incluse dans le prix affiché",
+      "canal_alerte": "e-mail + suivi par un courtier dédié",
+      "granularite": "route + fenêtre de dates, affinée par le courtier",
+      "zone_forte": "Europe, axe Royaume-Uni / Méditerranée",
+      "configuration": [
+        "Créer le compte sur flyvictor.com et renseigner les routes récurrentes",
+        "Demander explicitement au courtier assigné d'être placé sur la liste de diffusion « empty legs » des routes voulues",
+        "Donner au courtier la liste des aéroports de départ acceptés (LBG, GVA, NCE, BRU, LUX) : il cherche dans Avinode, ce que le site public ne montre pas",
+        "Fixer un prix plafond par route pour ne recevoir que les offres pertinentes"
+      ],
+      "forces": "Réseau d'opérateurs premium et vérifiés ; le courtier va chercher des empty legs non publiés ; excellent sur Europe et Méditerranée.",
+      "limites": "Moins instantané qu'une notification push ; le passage par l'humain coûte quelques heures — parfois fatal sur une offre à -70 %."
+    },
+    {
+      "id": "privatefly",
+      "nom": "PrivateFly (groupe Directional Aviation)",
+      "type": "courtier avec app de géolocalisation",
+      "priorite": 2,
+      "cout": "gratuit",
+      "canal_alerte": "push + e-mail",
+      "granularite": "route ou rayon géographique autour de la position",
+      "zone_forte": "Europe, forte implantation Royaume-Uni et France",
+      "configuration": [
+        "Installer l'app, activer la géolocalisation et les notifications",
+        "Enregistrer chaque route en alerte ; activer l'affichage des jets disponibles autour de soi",
+        "Utiliser la vue carte au moment du déclenchement (J-2) pour repérer les appareils déjà positionnés près de Paris"
+      ],
+      "forces": "Géolocalisation en temps réel des appareils disponibles ; devis rapide 24/7 ; bonne couverture des aéroports régionaux français.",
+      "limites": "L'inventaire empty leg public est plus mince que celui de XO ; nécessite souvent une demande de devis pour connaître le vrai prix."
+    },
+    {
+      "id": "skyaccess",
+      "nom": "SkyAccess",
+      "type": "agrégateur de listings bruts",
+      "priorite": 2,
+      "cout": "gratuit",
+      "canal_alerte": "e-mail",
+      "granularite": "listing brut par route et par date",
+      "zone_forte": "agrégation multi-opérateurs, sans filtre commercial",
+      "configuration": [
+        "Créer le compte et saisir les routes ; activer les alertes e-mail",
+        "Créer un filtre dans la boîte mail (label + notification) pour que ces e-mails ne se noient pas",
+        "S'en servir comme second avis : si une offre vue ailleurs n'apparaît pas ici, c'est qu'elle est déjà partie ou qu'elle est exclusive"
+      ],
+      "forces": "Transparence maximale : listings bruts, sans habillage marketing. Utile pour vérifier un prix annoncé ailleurs.",
+      "limites": "Pas de push, pas d'accompagnement ; l'information peut être périmée au moment où vous la lisez."
+    },
+    {
+      "id": "welojets",
+      "nom": "Welojets",
+      "type": "carte interactive de disponibilités",
+      "priorite": 2,
+      "cout": "gratuit",
+      "canal_alerte": "e-mail + consultation directe de la carte",
+      "granularite": "carte en direct des vols à vide, filtrable par zone",
+      "zone_forte": "France et Europe de l'Ouest, opérateurs francophones",
+      "configuration": [
+        "Créer le compte et enregistrer les routes",
+        "Mettre la carte en favori sur mobile : c'est l'outil de la fenêtre J-2/J-1, à consulter matin et soir",
+        "Filtrer sur les Baléares, l'Italie et le Maroc en saison — c'est là que la carte est la plus fournie"
+      ],
+      "forces": "Carte interactive en direct, très lisible ; bon relais des opérateurs français que les plateformes anglo-saxonnes référencent mal.",
+      "limites": "Couverture long-courrier faible (Dubaï, Medellín, Géorgie : peu ou pas de résultats)."
+    },
+    {
+      "id": "jettly",
+      "nom": "Jettly",
+      "type": "abonnement — accès aux prix de gros",
+      "priorite": 3,
+      "cout": "environ 370 $/mois (≈ 340 €) — à ne souscrire que si le volume le justifie",
+      "canal_alerte": "alertes membres + demandes de devis illimitées",
+      "granularite": "requête par route auprès du réseau d'opérateurs",
+      "zone_forte": "couverture mondiale, utile sur les routes que les plateformes européennes ne voient pas",
+      "configuration": [
+        "NE PAS s'abonner d'emblée : commencer par les plateformes gratuites pendant 4 à 6 semaines",
+        "Souscrire seulement si le rythme dépasse ~1 vol/mois, ou pour couvrir une fenêtre précise (Dubaï, Géorgie, Medellín)",
+        "Une fois abonné : soumettre les routes long-courrier en demandes ouvertes, c'est là que l'abonnement se rentabilise",
+        "Résilier dès que la fenêtre de voyage est passée : c'est un abonnement mensuel, pas un engagement annuel"
+      ],
+      "forces": "Prix de gros sans commission ; pertinent sur les routes exotiques où les courtiers classiques n'ont pas d'inventaire.",
+      "limites": "≈ 340 €/mois : il faut économiser au moins un vol pour le rentabiliser. Inutile pour un voyageur occasionnel."
+    },
+    {
+      "id": "lunajets",
+      "nom": "LunaJets (complément Europe)",
+      "type": "courtier suisse, gros volume d'empty legs",
+      "priorite": 3,
+      "cout": "gratuit",
+      "canal_alerte": "e-mail + newsletter empty legs",
+      "granularite": "route, avec un inventaire d'empty legs publié en continu",
+      "zone_forte": "Genève, Nice, Méditerranée — exactement le vivier de départ élargi",
+      "configuration": [
+        "S'inscrire à la newsletter empty legs et enregistrer les routes",
+        "Prioriser les alertes au départ de GVA et NCE : c'est le point fort de la maison"
+      ],
+      "forces": "Un des inventaires d'empty legs les plus fournis d'Europe continentale ; couvre le vivier Genève/Nice que les plateformes britanniques voient mal.",
+      "limites": "Hors du périmètre initial ; à ajouter seulement une fois les six premières plateformes en place."
+    }
+  ]
+}
