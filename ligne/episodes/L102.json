@@ -1,176 +1,178 @@
 {
   "id": "L102",
+  "title": "THE COURSE AFTER THE COURSE",
   "engine": "l102",
-  "title": "L102 — THE COURSE AFTER THE COURSE",
-  "_cellule": "SIRX (Glacier) · Miroir · Ease · regard=famille · passé · −−",
-  "_dispositif": "MONTAGE PARALLÈLE",
   "voice": [
-    "Two traders finish the same course. One opens a chart. The other opens another course.",
+    "Two students finish the same course. One opens a chart. The other opens another course.",
     "Six months later one has three hundred pages of notes and no sample.",
     "Learning never asks you to be wrong. That's the whole appeal.",
     "Every new method resets the clock and protects the last one from being tested.",
-    "A method you haven't tested is shelter. Follow KONGRAVE — the mechanics nobody explains"
+    "A method you haven't tested is shelter. Follow KONGRAVE — the mechanics nobody explains."
   ],
+  "total": 25.6,
+  "_narrator": {
+    "voice_profile": "LIGNE — Coach (A2)",
+    "voice_id": "0jNVx6MiRPvEBiq9DBhH",
+    "setting": "SETTINGS"
+  },
+  "_rules": {
+    "budget_485": true,
+    "no_keyword_tofu": true,
+    "no_emoji": true,
+    "no_amount_promise": true,
+    "signature_exact_voice4": true,
+    "duree": "~25.6s (budget 485 car.). Valeur dense avant la 12e seconde."
+  },
   "scenes": [
     {
-      "id": "s1",
+      "id": "S1",
       "clarity": "Deux personnes sortent de la même porte. L'une ouvre une grille vide, l'autre ouvre une autre porte.",
-      "question": "WHY IS THE NEXT COURSE ALWAYS EASIER?",
-      "emotion_lever": "RECONNAISSANCE DE SOI — une grille vide à côté d'une grille qui se remplit",
-      "cast": {
-        "c1": {
-          "type": "door",
-          "note": "porte marquée"
-        },
-        "c2": {
-          "type": "figure",
-          "note": "figure gauche"
-        },
-        "c3": {
-          "type": "figure",
-          "note": "figure droite"
-        },
-        "c4": {
-          "type": "grid",
-          "note": "grille vide ×2"
-        }
-      },
+      "cast": [
+        "porte marquée",
+        "figure gauche",
+        "figure droite",
+        "grille vide ×2"
+      ],
+      "duration_s": 5.76,
       "beats": [
         {
-          "t": "0.0-1.2",
+          "t": 0.0,
           "do": "FRAME 0 EN TENSION : deux grilles vierges strictement identiques, côte à côte, cases nues."
         },
         {
-          "t": "1.2-2.8",
+          "t": 1.2,
           "do": "La figure gauche pose la main sur sa grille — la première case s'allume teal."
         },
         {
-          "t": "2.8-4.2",
+          "t": 2.8,
           "do": "La figure droite tourne le dos à la sienne et ouvre une SECONDE porte derrière elle."
         },
         {
-          "t": "4.2-5.8",
+          "t": 4.2,
           "do": "La question pop ligne par ligne. La grille droite reste intégralement blanche."
         }
       ],
-      "camera": "fixe",
       "dod": "Deux grilles pareilles, une case qui s'allume à gauche, une porte qui s'ouvre à droite.",
-      "dispositif_cle": "MONTAGE PARALLÈLE : les deux figures tournent toujours ensemble, en miroir, sur la même donnée."
+      "question": "WHY IS THE NEXT COURSE ALWAYS EASIER?",
+      "emotion_frame0": "RECONNAISSANCE DE SOI — une grille vide à côté d'une grille qui se remplit",
+      "fusil": "LA GRILLE D'ÉCHANTILLON — une grille vide ouverte par chacune des deux figures en S1."
     },
     {
-      "id": "s2",
+      "id": "S2",
       "clarity": "Six mois après, l'un a des centaines de pages et aucune case remplie.",
+      "cast": [
+        "pile de pages",
+        "grille droite",
+        "grille gauche"
+      ],
+      "duration_s": 4.57,
       "beats": [
         {
-          "t": "0.0-2.0",
+          "t": 0.0,
           "do": "Cadence d'accumulation : les pages tombent une à une à droite, lent puis pressé puis pluie."
         },
         {
-          "t": "2.0-3.2",
+          "t": 2.0,
           "do": "La pile dépasse la hauteur de la figure. La grille droite disparaît derrière elle."
         },
         {
-          "t": "3.2-4.2",
+          "t": 3.2,
           "do": "À gauche, les cases se marquent au tempo : teal, gris, teal, gris — froid, régulier."
         },
         {
-          "t": "4.2-4.7",
+          "t": 4.2,
           "do": "Coupe nette entre une pile haute sans grille et une grille basse pleine de marques."
         }
       ],
-      "camera": "fixe",
       "dod": "Une montagne de pages qui cache une grille vide, et une grille marquée à côté.",
       "turn": "Une montagne de pages qui cache une grille vide, et une grille marquée à côté."
     },
     {
-      "id": "s3",
+      "id": "S3",
       "clarity": "Apprendre ne demande jamais d'avoir tort. C'est tout l'attrait.",
+      "cast": [
+        "grille blanche",
+        "tampon FAUX",
+        "voile"
+      ],
+      "duration_s": 4.11,
       "beats": [
         {
-          "t": "0.0-1.2",
+          "t": 0.0,
           "do": "Coupe franche : la grille droite seule, extraite de sous la pile."
         },
         {
-          "t": "1.2-2.4",
+          "t": 1.2,
           "do": "PIVOT : un tampon FAUX descend et cherche une case à marquer."
         },
         {
-          "t": "2.4-3.3",
+          "t": 2.4,
           "do": "Il passe sur toute la grille sans trouver une seule case remplie. Il remonte, inutilisé."
         },
         {
-          "t": "3.3-4.1",
+          "t": 3.3,
           "do": "Immobilité choc 0,8 s sur la grille intacte."
         }
       ],
-      "camera": "fixe",
       "dod": "Rien à corriger sur une grille vide — c'est pour ça qu'elle reste vide.",
       "turn": "Rien à corriger sur une grille vide — c'est pour ça qu'elle reste vide."
     },
     {
-      "id": "s4",
+      "id": "S4",
       "clarity": "Chaque méthode neuve remet le compteur à zéro et protège la précédente d'être testée.",
+      "cast": [
+        "portes",
+        "grilles empilées",
+        "compteur"
+      ],
+      "duration_s": 5.23,
       "beats": [
         {
-          "t": "0.0-1.2",
+          "t": 0.0,
           "do": "Une nouvelle porte s'ouvre. Un compteur au-dessus revient à zéro d'un snap."
         },
         {
-          "t": "1.2-2.4",
+          "t": 1.2,
           "do": "La grille précédente se glisse SOUS la nouvelle, recouverte, jamais remplie."
         },
         {
-          "t": "2.4-3.8",
+          "t": 2.4,
           "do": "Répétition en cadence : porte, compteur à zéro, grille recouverte. Trois fois, de plus en plus vite."
         },
         {
-          "t": "3.8-5.2",
+          "t": 3.8,
           "do": "La pile de grilles blanches est haute. Toutes sont délavées en gris."
         }
       ],
-      "camera": "fixe",
       "dod": "Chaque nouvelle porte enterre la grille d'avant sans l'avoir remplie.",
-      "turn": "Chaque nouvelle porte enterre la grille d'avant sans l'avoir remplie.",
-      "note": "Scène d'escalade — le retournement de S3 se répète, cadencé, froid."
+      "turn": "Chaque nouvelle porte enterre la grille d'avant sans l'avoir remplie."
     },
     {
-      "id": "s5",
+      "id": "S5",
       "clarity": "Une méthode non testée n'est pas du savoir, c'est un abri.",
+      "cast": [
+        "grille marquée",
+        "pile de grilles blanches"
+      ],
+      "duration_s": 5.82,
       "beats": [
         {
-          "t": "0.0-1.4",
+          "t": 0.0,
           "do": "Deux objets côte à côte : une grille pleine de marques teal et grises, et une pile de grilles blanches."
         },
         {
-          "t": "1.4-2.8",
+          "t": 1.4,
           "do": "La grille marquée reste teal. La pile blanche se délave entièrement."
         },
         {
-          "t": "2.8-5.8",
+          "t": 2.8,
           "do": "Image finale tenue ≥ 3 s. Une seule variable : la grille a été remplie ou recouverte."
         }
       ],
-      "camera": "fixe",
       "dod": "Des marques valent plus qu'une pile propre.",
-      "note": "⚠️ CTA ABONNEMENT en S5, tenu jusqu'à la fin."
+      "fusil_decharge": "En S5, une grille marquée face à une grille restée blanche sous une pile de pages."
     }
   ],
-  "total": 25.5,
-  "caption": "Two traders finish the same course. One opens a chart, the other opens another course.\n\nSix months later, one of them has three hundred pages of notes and not a single tested sample. Learning never asks you to be wrong — that's the entire appeal. Every new method resets the clock and quietly protects the last one from ever being checked.\n\nAn untested method isn't knowledge, it's shelter.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #tradingeducation #paralysisbyanalysis #tradereducation",
-  "pinned_comment": "A method you haven't tested is shelter. Follow @kongrave_ — the mechanics nobody explains",
-  "_rules": {
-    "cta_keyword": "AUCUN — TOFU (abonnement)",
-    "registre": "META",
-    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-clé. CTA unique @kongrave_, prononcé ET affiché en S5.",
-    "caption_structure": "MOULE A révisé : ligne 1 = LE HOOK, puis le corps, puis LA PHRASE-MORALE seule (le principe en une ligne, sans préfixe THE LINE), puis le CTA d'abonnement en clôture, puis ~10 hashtags. La morale est OBLIGATOIRE : c'est la seule ligne citable hors contexte.",
-    "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux épisodes consécutifs sur le même dispositif.",
-    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son dépôt'. Aucune intention prêtée aux institutionnels. Aucun chiffre de rendement affiché.",
-    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "duree": "~25.5s (budget 485 car.). Valeur dense avant la 12e seconde.",
-    "circuit": "M24 frames DoD d'abord."
-  },
-  "_narrator": {
-    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
-    "note": "Si un moteur hérite d'un appel narrateur, l'IGNORER."
-  }
+  "caption": "Two students finish the same course. One opens a chart, the other opens another course.\n\nSix months later, one of them has three hundred pages of notes and not a single tested sample. Learning never asks you to be wrong — that's the entire appeal. Every new method resets the clock and quietly protects the last one from ever being checked.\n\nAn untested method isn't knowledge, it's shelter.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #tradingpsychology #daytrading #priceaction #riskmanagement #tradingmindset #forextrader #tradingdiscipline #tradingtips",
+  "pinned_comment": "A method you haven't tested is shelter. Follow @kongrave_ — the mechanics nobody explains."
 }
