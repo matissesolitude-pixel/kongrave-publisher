@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L102 « THE COURSE AFTER THE COURSE » — MONTAGE PARALLÈLE (méta, pas de fusil, pas de narrateur).
+       Objet central : la GRILLE (le carnet / le relevé de trades) qui se REMPLIT de marques (teal = testé/juste,
+       gris = testé/faux) VS qui reste blanche pendant qu'une nouvelle PORTE (un nouveau cours) s'ouvre.
+       S1 : émotion frame 0 = RECONNAISSANCE DE SOI — deux grilles identiques côte à côte, mais la gauche a DÉJÀ
+       une case teal qui pulse : une grille qui se remplit à côté d'une grille vide. La droite tourne le dos et
+       ouvre une seconde porte. S2 : à droite, les pages tombent en cadence (lent→pressé→pluie) et la pile enterre
+       la grille droite ; à gauche les cases se marquent, froid, teal/gris. S3 : PIVOT — un tampon WRONG descend et
+       balaie la grille vide, ne trouve aucune case à corriger, remonte inutilisé (apprendre ne demande jamais
+       d'avoir tort). S4 : escalade — porte, compteur (jauge) qui SNAPE à zéro, grille précédente glissée sous la
+       neuve, ×3 de plus en plus vite, pile de grilles blanches délavée gris. S5 : diptyque final — grille marquée
+       (teal tenu) vs pile de grilles blanches qui se délave ; une seule variable ; CTA @KONGRAVE_ affiché.
+       Doctrine : aucun chiffre à l'écran ; teal = à toi / testé ; gris = perte / recouvert ; pas de brun ;
+       bas du cadre vide ; étiquettes gauche cx≤380 / droite cx≥700, jamais par-dessus un dessin. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50', LEAF='#E4DFD3';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    // vie continue : deux harmoniques (jamais une sinusoïde seule — vitesse nulle aux extrêmes)
+    const bx=(u,g)=>6*Math.sin(u*0.9+g)+3*Math.sin(u*1.7+g);
+    const by=(u,g)=>5*Math.sin(u*1.3+g)+2.5*Math.sin(u*2.35+g);
+
+    // ── POOLS ──────────────────────────────────────────────────────────────
+    function pool(n,attrs){const a=[];for(let i=0;i<n;i++)a.push(mk('rect',Object.assign({opacity:0},attrs)));return a;}
+    const STACK=pool(60,{rx:6,fill:'none',stroke:DEAD,'stroke-width':4});   // grilles enterrées / pile de feuilles
+    const GRIDA=mk('path',{fill:'none',stroke:INK,'stroke-width':4,'stroke-linejoin':'round',opacity:0});
+    const GRIDB=mk('path',{fill:'none',stroke:INK,'stroke-width':4,'stroke-linejoin':'round',opacity:0});
+    const GRIDC=mk('path',{fill:'none',stroke:INK,'stroke-width':4,'stroke-linejoin':'round',opacity:0});
+    const CELLS=pool(96,{rx:8});                                            // marques (teal/gris) dans les cases
+    const PAGES=pool(40,{rx:3,fill:PAPER,stroke:INK,'stroke-width':3});     // pages qui tombent
+    // porte : cadre + battant (battant = largeur qui rétrécit en s'ouvrant)
+    const DOORF=mk('rect',{fill:'none',stroke:INK,'stroke-width':6,opacity:0});
+    const DOORL=mk('rect',{fill:LEAF,stroke:INK,'stroke-width':4,opacity:0});
+    const DOORK=mk('circle',{fill:INK,opacity:0});
+    // compteur (jauge, AUCUN chiffre)
+    const GTRK=mk('rect',{fill:'none',stroke:INK,'stroke-width':4,rx:14,opacity:0});
+    const GFIL=mk('rect',{fill:YOU,rx:10,opacity:0});
+    // tampon WRONG
+    const STAMPB=mk('rect',{fill:PAPER,stroke:INK,'stroke-width':5,rx:10,opacity:0});
+    const STAMPT=mk('text',{'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':46,'letter-spacing':'2',opacity:0});STAMPT.textContent='WRONG';
+
+    // ── FIGURES fil-de-fer ──
+    function figNew(){return{
+      head:mk('circle',{fill:'none',stroke:INK,'stroke-width':7,opacity:0}),
+      spine:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}),
+      legL:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}),
+      legR:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}),
+      armL:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0}),
+      armR:mk('line',{stroke:INK,'stroke-width':9,'stroke-linecap':'round',opacity:0})};}
+    const FIGL=figNew(), FIGR=figNew();
+
+    // ── SETTERS ──
+    function setRect(e,x,y,w,h){e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));e.setAttribute('width',Math.max(0,w).toFixed(1));e.setAttribute('height',Math.max(0,h).toFixed(1));}
+    function setLine(e,x1,y1,x2,y2,op){e.setAttribute('x1',x1.toFixed(1));e.setAttribute('y1',y1.toFixed(1));e.setAttribute('x2',x2.toFixed(1));e.setAttribute('y2',y2.toFixed(1));setOp(e,op);}
+    function setCircle(e,cx,cy,r,op){e.setAttribute('cx',cx.toFixed(1));e.setAttribute('cy',cy.toFixed(1));e.setAttribute('r',r.toFixed(1));setOp(e,op);}
+
+    let ci_=0,pi_=0,si_=0;
+    function poolsReset(){ci_=0;pi_=0;si_=0;}
+    function cellR(x,y,w,h,color,op){const e=CELLS[ci_++];if(!e)return;setRect(e,x,y,w,h);e.setAttribute('fill',color);setOp(e,op);}
+    function pageR(x,y,w,h,op){const e=PAGES[pi_++];if(!e)return;setRect(e,x,y,w,h);setOp(e,op);}
+    function stackR(x,y,w,h,color,op){const e=STACK[si_++];if(!e)return;setRect(e,x,y,w,h);e.setAttribute('stroke',color);setOp(e,op);}
+    function poolsFlush(){for(let i=ci_;i<CELLS.length;i++)setOp(CELLS[i],0);for(let i=pi_;i<PAGES.length;i++)setOp(PAGES[i],0);for(let i=si_;i<STACK.length;i++)setOp(STACK[i],0);}
+
+    function lattice(x0,y0,cols,rows,cw,ch){let d='';const W=cols*cw,H=rows*ch;
+      for(let c=0;c<=cols;c++){const x=(x0+c*cw).toFixed(1);d+=`M${x} ${y0.toFixed(1)}L${x} ${(y0+H).toFixed(1)}`;}
+      for(let r=0;r<=rows;r++){const y=(y0+r*ch).toFixed(1);d+=`M${x0.toFixed(1)} ${y}L${(x0+W).toFixed(1)} ${y}`;}return d;}
+    function drawGrid(el,x0,y0,cols,rows,cw,ch,op,tx,ty,stroke){el.setAttribute('d',lattice(x0,y0,cols,rows,cw,ch));el.setAttribute('transform',`translate(${(tx||0).toFixed(1)} ${(ty||0).toFixed(1)})`);el.setAttribute('stroke',stroke||INK);setOp(el,op);}
+    function markCell(x0,y0,cw,ch,c,r,color,op,tx,ty){const pad=13;cellR(x0+c*cw+pad+(tx||0),y0+r*ch+pad+(ty||0),cw-2*pad,ch-2*pad,color,op);}
+
+    function drawFigure(f,cx,feetY,h,hx,hy,ph,op){
+      const hr=0.11*h, hcy=feetY-h+hr, hip=feetY-0.40*h, sh=feetY-0.72*h;
+      const sway=4*Math.sin(ph*1.1)+2*Math.sin(ph*2.0);
+      setCircle(f.head,cx+sway*0.3,hcy,hr,op);
+      setLine(f.spine,cx+sway*0.3,hcy+hr,cx,hip,op);
+      setLine(f.legL,cx,hip,cx-0.14*h+sway,feetY,op);
+      setLine(f.legR,cx,hip,cx+0.14*h-sway,feetY,op);
+      setLine(f.armR,cx,sh,hx,hy,op);
+      setLine(f.armL,cx,sh,cx-0.15*h,hip+0.06*h+sway,op);}
+    function hideFigs(){for(const f of [FIGL,FIGR])for(const k in f)setOp(f[k],0);}
+
+    function drawDoor(x,y,w,h,openDeg,op){
+      setRect(DOORF,x,y,w,h);setOp(DOORF,op);
+      const lw=w*Math.cos(clamp(openDeg,0,90)*Math.PI/180);
+      setRect(DOORL,x,y,lw,h);setOp(DOORL,op);
+      setCircle(DOORK,x+lw-16,y+h*0.52,7,op*clamp(lw/w,0,1));}
+    function hideDoor(){setOp(DOORF,0);setOp(DOORL,0);setOp(DOORK,0);}
+
+    function drawGauge(x,y,w,h,level,op){setRect(GTRK,x,y,w,h);setOp(GTRK,op);setRect(GFIL,x+4,y+4,(w-8)*clamp(level,0,1),h-8);setOp(GFIL,op*clamp(level*6,0,1));}
+    function hideGauge(){setOp(GTRK,0);setOp(GFIL,0);}
+
+    function drawStamp(cx,cy,op){setRect(STAMPB,cx-110,cy-46,220,92);setOp(STAMPB,op);STAMPB.setAttribute('rx',10);STAMPT.setAttribute('x',cx.toFixed(1));STAMPT.setAttribute('y',(cy+16).toFixed(1));setOp(STAMPT,op);}
+    function hideStamp(){setOp(STAMPB,0);setOp(STAMPT,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY IS THE NEXT','COURSE ALWAYS EASIER'];
+    const FS=68,lineH=94,y0q=210,qY=QLINES.map((s,li)=>y0q+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0q+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function drawQ(u,gf){
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);}
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur (getComputedTextLength), copié TEL QUEL de l26 ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(42),capB=caption(46),capC=caption(38),capD=caption(38),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function frameReset(){poolsReset();setOp(GRIDA,0);setOp(GRIDB,0);setOp(GRIDC,0);hideFigs();hideDoor();hideGauge();hideStamp();hideCaps();}
+
+    // ═══ S1 — DEUX GRILLES IDENTIQUES : l'une se marque, l'autre ouvre une autre porte ═══
+    // Verbe visuel : le MIROIR qui diverge (les deux figures partent ensemble, l'une bifurque).
+    function s1(lf,t,s){
+      const u=t-s; frameReset();
+      const gf=clamp(1-(lf-0.86)/0.10,0,1);
+      drawQ(u,gf);
+      const cols=3,rows=4,cw=104,ch=90;
+      const LX=180,LY=650,RX=588,RY=650;
+      drawGrid(GRIDA,LX,LY,cols,rows,cw,ch,1,bx(u,0),by(u,0));
+      drawGrid(GRIDB,RX,RY,cols,rows,cw,ch,1,bx(u,2.1),by(u,2.1));
+      // frame-0 : la gauche a DÉJÀ une case teal qui pulse — contraste teal/vide instantané
+      const p0=u<1.2 ? 0.55+0.45*Math.abs(Math.sin(u*3.1)) : 1;
+      markCell(LX,LY,cw,ch,0,0,YOU,p0,bx(u,0),by(u,0));
+      if(u>2.0) markCell(LX,LY,cw,ch,1,0,YOU,clamp((u-2.0)/0.6,0,1),bx(u,0),by(u,0));
+      if(u>3.4) markCell(LX,LY,cw,ch,0,1,YOU,clamp((u-3.4)/0.6,0,1),bx(u,0),by(u,0));
+      // figure gauche : la main posée sur SA grille
+      drawFigure(FIGL,300,1250,206, LX+cw*0.7+bx(u,0), LY+rows*ch-24, u, 1);
+      // figure droite : miroir, puis se tourne (u>2.8) et ouvre une seconde porte derrière
+      const turn=clamp((u-2.8)/0.9,0,1);
+      const rhx=lerp(RX+cw*1.4, 946, turn), rhy=lerp(RY+rows*ch-24, 900, turn);
+      drawFigure(FIGR,700,1250,206, rhx, rhy, u+1.3, 1);
+      drawDoor(900,720,96,360, turn*80, clamp((u-2.6)/0.5,0,1));
+      // deux étiquettes gauche/droite — cx≤380 / cx≥700, vrai écart au centre (fs34, non collées)
+      putCap(capE,'FILLS ITS GRID',280,1345,YOU,clamp((u-1.2)/0.6,0,1)*gf);
+      putCap(capF,'OPENS ANOTHER DOOR',800,1345,DEAD,turn*gf);
+      poolsFlush();
+    }
+
+    // ═══ S2 — SIX MOIS APRÈS : une pile de pages qui cache une grille vide, une grille marquée à côté ═══
+    // Verbe visuel : l'ACCUMULATION (les pages tombent en cadence lent→pressé→pluie).
+    function s2(lf,t,s){
+      const u=t-s; frameReset(); hideQ();
+      const cols=3,rows=4,cw=100,ch=90;
+      // GAUCHE — la grille se marque au tempo, froid, teal/gris
+      const LX=140,LY=650;
+      drawGrid(GRIDA,LX,LY,cols,rows,cw,ch,1,bx(u,0),by(u,0));
+      const nfill=Math.floor(clamp((u-0.4)/3.4,0,1)*12+1e-4);
+      for(let k=0;k<nfill;k++){const c=k%cols,r=Math.floor(k/cols);markCell(LX,LY,cw,ch,c,r,(k%2?DEAD:YOU),1,bx(u,0),by(u,0));}
+      drawFigure(FIGL,300,1250,196, LX+cw*0.7+bx(u,0), LY+rows*ch-24, u, 1);
+      // DROITE — la grille (derrière, petite) disparaît sous la pile de pages
+      const RX=675,RY=790;
+      drawGrid(GRIDB,RX,RY,3,3,58,66,1,bx(u,3.0),by(u,3.0));
+      const baseY=1150,colX=648,pw=205,ph=24,gap=30,NP=16;
+      for(let i=0;i<NP;i++){
+        const ti=i*i*0.010+i*0.05;
+        const prog=clamp((u-ti)/0.32,0,1); if(prog<=0)continue;
+        const restY=baseY-i*gap;
+        const y=lerp(-70,restY,eOut(prog));
+        const wob=(1-prog)*30*Math.sin(u*3.2+i*1.4);
+        pageR(colX+wob,y,pw,ph,0.5+0.5*prog);}
+      // figure droite : debout, à droite de la pile ; la pile la dépasse (haut ~700 vs tête ~1054)
+      drawFigure(FIGR,912,1250,196, 912+18*Math.sin(u*1.4), 1030, u+1.1, 1);
+      putCap(capA,'TESTED SAMPLES',300,1345,YOU,clamp((u-1.0)/0.6,0,1));
+      putCap(capB,'PAGES, NO SAMPLE',800,608,DEAD,clamp((u-0.8)/0.6,0,1));
+      poolsFlush();
+    }
+
+    // ═══ S3 — PIVOT : rien à corriger sur une grille vide ═══
+    // Verbe visuel : le BALAYAGE (un tampon WRONG cherche une case, n'en trouve aucune, remonte).
+    function s3(lf,t,s){
+      const u=t-s; frameReset(); hideQ();
+      const cols=4,rows=5,cw=100,ch=90;
+      const GX=340,GY=680;
+      drawGrid(GRIDA,GX,GY,cols,rows,cw,ch,1,bx(u,0),by(u,0));   // grille intacte, respire
+      // le tampon apparaît, balaie de haut en bas en cherchant, puis remonte inutilisé
+      const app=clamp((u-1.0)/0.3,0,1);
+      const scan=clamp((u-1.2)/2.0,0,1);
+      const sy=lerp(GY-30, GY+rows*ch-30, eInOut(scan));
+      const sx=CX+150*Math.sin(u*3.0);
+      const rise=clamp((u-3.3)/0.4,0,1);
+      const fx=lerp(sx, CX, rise), fy=lerp(sy, GY-90, eOut(rise));
+      // il remonte INUTILISÉ et s'efface — l'immobilité choc se joue sur la grille SEULE
+      // (jamais le tampon par-dessus l'étiquette du haut).
+      drawStamp(fx,fy,app*(1-clamp(rise*1.3,0,1)));
+      putCap(capA,'NOTHING TO CORRECT',CX,624,INK,clamp((u-1.4)/0.6,0,1));
+      putCap(capB,'AN EMPTY GRID STAYS CLEAN',CX,1250,DEAD,clamp((u-2.6)/0.6,0,1));
+      poolsFlush();
+    }
+
+    // ═══ S4 — ESCALADE : chaque porte enterre la grille d'avant sans l'avoir remplie ═══
+    // Verbe visuel : le RECOUVREMENT cadencé (porte + compteur à zéro + grille glissée dessous, ×3).
+    function s4(lf,t,s){
+      const u=t-s; frameReset(); hideQ();
+      const cyc=[0.15,1.55,2.60,3.45];
+      let cid=0; for(let k=0;k<cyc.length;k++){ if(u>=cyc[k]) cid=k; }
+      const since=u-cyc[cid];
+      const span=(cyc[cid+1]||(u+1.2))-cyc[cid];
+      const level=clamp(since/span,0,1)*0.82;
+      // compteur (jauge, aucun chiffre) — SNAPE à zéro à chaque nouvelle porte
+      drawGauge(340,650,400,26,level,1);
+      // porte à gauche — s'ouvre d'un coup à chaque cycle
+      const openD=clamp(since/0.34,0,1)*80;
+      drawDoor(140,760,100,360, openD, 1);
+      // grilles enterrées (glissées SOUS la neuve), délavées gris, la plus récente glisse en place
+      const cols=3,rows=4,cw=95,ch=85,GX=400,GY=740,gW=cols*cw,gH=rows*ch;
+      for(let k=0;k<cid;k++){
+        const isTop=(k===cid-1);
+        const slide=isTop?eOut(clamp(since/0.4,0,1)):1;
+        const ox=GX+(k+1)*9*slide, oy=GY+(k+1)*17*slide;
+        stackR(ox,oy,gW,gH,DEAD,0.85);}
+      // grille courante, neuve — vide ; se délave gris à la toute fin
+      const grayN=u>3.9?clamp((u-3.9)/0.9,0,1):0;
+      drawGrid(GRIDA,GX,GY,cols,rows,cw,ch,1,bx(u,0),by(u,0), grayN>0.5?DEAD:INK);
+      putCap(capA,'A NEW METHOD',250,1210,INK,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'NEVER FILLED',805,1210,DEAD,clamp((u-1.4)/0.6,0,1));
+      putCap(capB,'EACH COURSE RESETS THE COUNT',CX,606,INK,clamp((u-2.4)/0.6,0,1));
+      poolsFlush();
+    }
+
+    // ═══ S5 — LEÇON : des marques valent plus qu'une pile propre ═══
+    // Verbe visuel : le DIPTYQUE (une seule variable — remplie ou recouverte).
+    function s5(lf,t,s){
+      const u=t-s; frameReset(); hideQ();
+      const gf=clamp(1-(lf-0.94)/0.06,0,1);
+      // GAUCHE — grille pleine de marques : teal tenu
+      const cols=3,rows=4,cw=100,ch=90,LX=120,LY=680;
+      drawGrid(GRIDA,LX,LY,cols,rows,cw,ch,1,bx(u,0),by(u,0));
+      const pat=[YOU,DEAD,YOU,YOU,DEAD,YOU,YOU,DEAD,YOU,YOU,YOU,DEAD];
+      for(let k=0;k<12;k++){const c=k%cols,r=Math.floor(k/cols);
+        const pulse=1-0.10*Math.abs(Math.sin(u*1.6+k*0.5));
+        markCell(LX,LY,cw,ch,c,r,pat[k],pat[k]===YOU?pulse:0.85,bx(u,0),by(u,0));}
+      putCap(capC,'FILLED',270,1150,YOU,1);
+      // DROITE — pile de grilles blanches qui se délave entièrement
+      const RX=600,base=1050,sheets=8,sw=300,sh=44;
+      const fade=clamp((u-1.4)/1.4,0,1);
+      for(let k=0;k<sheets;k++){
+        const dx=8*Math.sin(u*0.85+k*0.6)+4*Math.sin(u*1.9+k*0.4);
+        const dy=3*Math.sin(u*1.15+k*0.7);
+        stackR(RX+dx+k*4, base-k*sh+dy, sw, sh-6, DEAD, lerp(0.9,0.42,fade));}
+      putCap(capD,'COVERED',770,1150,DEAD,1);
+      // morale + CTA abonnement (@KONGRAVE_ affiché)
+      putCap(capB,'AN UNTESTED METHOD IS SHELTER',CX,606,INK,clamp((u-0.4)/0.7,0,1)*gf);
+      const cta=clamp((u-2.4)/0.7,0,1),csc=0.9+0.1*backOut(cta)+0.015*Math.sin(u*2.2);
+      putCap(capA,'@KONGRAVE_',CX,1330,YOU,cta*gf);
+      capA.setAttribute('transform',`translate(${(CX*(1-csc)).toFixed(2)} ${(1330*(1-csc)).toFixed(2)}) scale(${csc.toFixed(3)})`);
+      poolsFlush();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
