@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L106 « THE STOP THAT NEVER EXISTED » — dispositif PRÉSAGE (pas de fusil). Deux challengers encaissent la MÊME série de
+       pertes (tuiles grises = drawdown qui descend colonne par colonne). L'un a un coupe-circuit (une règle qui coupe au 3e),
+       l'autre non. S1 : émotion frame 0 = CHOC — deux colonnes de pertes identiques déjà en mouvement, la droite continue de
+       tomber, aucune main ne l'arrête ; PRÉSAGE = une fine ligne teal sous la colonne gauche (la règle, discrète). S2 : la colonne
+       droite S'ÉTEND (4e→5e), la gauche est arrêtée ; le bouton STOP absent (dashed vide) = rien à presser. S3 : le coupe-circuit
+       teal TRIPE sur la gauche (il tranche la série) ; à droite, sans règle, la chaîne court jusqu'au bas. S4 : une perte SEULE
+       survit (au-dessus du sol), mais la SÉQUENCE empilée sombre sous le sol = compte mort. S5 : diptyque — AVEC coupe-circuit
+       (tient au-dessus du sol) vs SANS (traverse le sol) ; CTA « FOLLOW KONGRAVE » tenu. Doctrine : gris = perte ; teal = à toi /
+       la règle qui protège ; aucun chiffre ; pas de brun ; pas de narrateur ; bas du cadre vide ; aucune intention prêtée. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── LA GÉOMÉTRIE DES DEUX REGISTRES (colonnes de pertes = drawdown qui descend) ──
+    const LX=310, RX=770, W=200, H=64, STEP=76, TOPY=830, STARTY=TOPY-50;
+    function lossY(i){return TOPY+i*STEP;}
+    function bob(i,u){return 5*Math.sin(u*2.3-i*0.7)+3*Math.sin(u*3.4-i*0.45);}   // deux harmoniques (vie continue)
+    function enter(slotY,p){return lerp(slotY-46, slotY, eOut(clamp(p,0,1)));}     // entrée courte, pas de longue chute
+
+    // ── LES PERTES (tuiles grises, pool réutilisé) ──
+    const LOSS=[]; for(let i=0;i<32;i++)LOSS.push(mk('rect',{rx:7,fill:DEAD,opacity:0}));
+    let li=0; function resetLoss(){li=0;}
+    function lossTile(cx,cy,op,w,h){w=w||W;h=h||H;const e=LOSS[li++];if(!e)return;
+      e.setAttribute('x',(cx-w/2).toFixed(1));e.setAttribute('y',(cy-h/2).toFixed(1));
+      e.setAttribute('width',w.toFixed(1));e.setAttribute('height',h.toFixed(1));setOp(e,op);}
+    function flushLoss(){for(let i=li;i<LOSS.length;i++)setOp(LOSS[i],0);}
+
+    // ── LES OBJETS TEAL (à toi / la règle) + le sol + le bouton absent ──
+    const startL=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});   // équité de départ (gauche)
+    const startR=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});   // équité de départ (droite)
+    const breakerL=mk('line',{stroke:YOU,'stroke-width':8,'stroke-linecap':'round',opacity:0}); // le coupe-circuit
+    const held=mk('rect',{fill:'none',stroke:YOU,'stroke-width':6,rx:12,opacity:0});             // « il tient » (survie)
+    const floor=mk('line',{stroke:DEAD,'stroke-width':5,'stroke-dasharray':'16 12','stroke-linecap':'round',opacity:0}); // le sol (blow-up)
+    const btn=mk('rect',{fill:'none',stroke:DEAD,'stroke-width':4,'stroke-dasharray':'11 11',rx:16,opacity:0});          // le stop absent
+    function hideExtras(){for(const e of [startL,startR,breakerL,held,floor,btn])setOp(e,0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT STOPS A LOSING STREAK','IF NOTHING DOES'];
+    const FS=68,lineH=94,y0=200,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+92,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    // AUTO-AJUSTEMENT de la question : une ligne trop longue est réduite pour tenir dans le cadre.
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap TEL QUEL depuis l26.html (MESURE réelle, borne le centre) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(44),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      // MESURE réelle (getComputedTextLength inclut le letter-spacing, que l'ancienne estimation
+      // ignorait — cause du débordement live sur L23/L25). On réduit la police tant que le texte
+      // dépasse la zone sûre, puis on borne le CENTRE par la demi-largeur MESURÉE : un texte ne
+      // peut PLUS être coupé au bord. NB : ça ne gère PAS le recouvrement d'un dessin — c'est au
+      // placement (cx, y) de viser une zone vide (voir doctrine « voies libres »).
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;   // repli si la mesure échoue : estimation LARGE (>0.66) — jamais pire qu'avant
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    function startLine(el,cx,op){el.setAttribute('x1',cx-W/2-10);el.setAttribute('x2',cx+W/2+10);el.setAttribute('y1',STARTY);el.setAttribute('y2',STARTY);setOp(el,op);}
+
+    // ═══ S1 — MÊMES TROIS PERTES : l'un s'arrête, l'autre continue ═══
+    // Verbe visuel : la FOURCHE — deux colonnes identiques, la droite bascule d'un cran de plus.
+    function s1(lf,t,s){
+      const u=t-s; hideCaps(); resetLoss(); hideExtras();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.30)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      // ── ÉMOTION FRAME 0 (levier CHOC) : les deux registres sont DÉJÀ pleins de la même série, la 3e perte se pose,
+      //    la droite s'apprête à tomber d'un cran de plus. Rien ne se construit : les deux colonnes existent dès t=0. ──
+      startLine(startL,LX,gf); startLine(startR,RX,gf);
+      const set3=clamp(u/0.55,0,1);
+      for(let c=0;c<2;c++){ const cx=(c===0?LX:RX);
+        for(let i=0;i<3;i++){
+          let cy=lossY(i)+bob(i+c*0.4,u), op=1;
+          if(i===2){ cy=enter(lossY(2),set3)+bob(2+c*0.4,u)*set3; op=clamp(set3*1.5,0,1); }
+          lossTile(cx+2.5*Math.sin(u*1.7-i*0.4-c), cy, op);
+        }
+      }
+      // GAUCHE s'arrête — PRÉSAGE : une fine ligne teal se pose sous la 3e perte (la règle, discrète)
+      const by=lossY(2)+STEP/2;
+      breakerL.setAttribute('x1',LX-W/2-14);breakerL.setAttribute('x2',LX+W/2+14);breakerL.setAttribute('y1',by);breakerL.setAttribute('y2',by);
+      setOp(breakerL,(0.15+0.05*Math.sin(u*1.6))*clamp((u-1.4)/0.8,0,1)*gf);
+      // DROITE continue — une 4e perte tombe d'un cran
+      const g4=clamp((u-1.8)/0.7,0,1);
+      if(g4>0.01){ const cy=enter(lossY(3),g4)+bob(3.4,u)*g4; lossTile(RX+2*Math.sin(u*1.7-1.2), cy, g4); }
+      putCap(capB,'THE SAME THREE LOSSES',CX,600,INK,clamp((u-0.6)/0.6,0,1)*gf);
+      putCap(capC,'ONE STOPS HERE',LX,724,YOU,clamp((u-1.5)/0.6,0,1)*gf);
+      putCap(capD,'ONE KEEPS GOING',RX,724,DEAD,clamp((u-2.2)/0.6,0,1)*gf);
+      flushLoss();
+    }
+
+    // ═══ S2 — AUCUNE RÈGLE NE DIT STOP : la série s'étend, le bouton n'existe pas ═══
+    // Verbe visuel : l'EXTENSION — la colonne droite pousse d'un cran, puis d'un autre ; un stop vide qu'on ne presse jamais.
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetLoss(); hideExtras();
+      startLine(startL,LX,1); startLine(startR,RX,1);
+      // GAUCHE — arrêtée à trois, la règle teal tient sous elle
+      for(let i=0;i<3;i++) lossTile(LX+2*Math.sin(u*1.6-i*0.4), lossY(i)+bob(i,u), 1);
+      const by=lossY(2)+STEP/2;
+      breakerL.setAttribute('x1',LX-W/2-14);breakerL.setAttribute('x2',LX+W/2+14);breakerL.setAttribute('y1',by);breakerL.setAttribute('y2',by);
+      setOp(breakerL,0.5+0.08*Math.sin(u*1.6));
+      putCap(capC,'HE STOPPED',LX,724,YOU,1);
+      // DROITE — sans règle : la 4e devient la 5e
+      for(let i=0;i<3;i++) lossTile(RX+2*Math.sin(u*1.6-i*0.3), lossY(i)+bob(i+0.4,u), 1);
+      const g4=clamp((u-0.6)/0.6,0,1), g5=clamp((u-2.4)/0.6,0,1);
+      if(g4>0.01) lossTile(RX, enter(lossY(3),g4)+bob(3.4,u)*g4, g4);
+      if(g5>0.01) lossTile(RX, enter(lossY(4),g5)+bob(4.4,u)*g5, g5);
+      putCap(capD,'HE DID NOT',RX,724,DEAD,1);
+      // LE STOP ABSENT — bouton vide (dashed) dans la gouttière centrale : rien à presser
+      const bw=250,bh=88,bx=CX,byb=1120;
+      btn.setAttribute('x',bx-bw/2);btn.setAttribute('y',byb-bh/2);btn.setAttribute('width',bw);btn.setAttribute('height',bh);
+      setOp(btn,(0.6+0.08*Math.sin(u*1.8))*clamp((u-0.3)/0.5,0,1));
+      putCap(capE,'NO STOP',bx,byb+11,DEAD,clamp((u-0.6)/0.5,0,1));
+      putCap(capB,'NOTHING TELLS HIM TO STOP',CX,600,INK,clamp((u-1.4)/0.7,0,1));
+      flushLoss();
+    }
+
+    // ═══ S3 — UNE SÉRIE N'A BESOIN QUE DE L'ABSENCE D'UNE RÈGLE ═══
+    // Verbe visuel : la COUPE — le coupe-circuit teal trippe et tranche à gauche ; à droite, rien ne coupe, ça court.
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetLoss(); hideExtras();
+      startLine(startL,LX,1); startLine(startR,RX,1);
+      // GAUCHE — trois pertes, puis LA COUPE (snap)
+      for(let i=0;i<3;i++) lossTile(LX+2*Math.sin(u*1.6-i*0.4), lossY(i)+bob(i,u), 1);
+      const by=lossY(2)+STEP/2;
+      const cut=clamp((u-0.7)/0.35,0,1), snap=backOut(cut);
+      breakerL.setAttribute('x1',LX-W/2-14-16*snap);breakerL.setAttribute('x2',LX+W/2+14+16*snap);
+      breakerL.setAttribute('y1',by);breakerL.setAttribute('y2',by);
+      breakerL.setAttribute('stroke-width',(8+7*snap).toFixed(1));
+      setOp(breakerL,lerp(0.5,1,cut));
+      // une 4e perte tentée à gauche, REPOUSSÉE par la coupe
+      const w4=clamp((u-0.15)/0.4,0,1);
+      if(w4>0.01 && cut<0.98){ lossTile(LX, enter(by-30,w4), (1-cut)*0.6); }
+      // « il tient » : cadre teal sous la coupe (au-dessus du sol)
+      held.setAttribute('x',LX-W/2-12);held.setAttribute('y',by+24);held.setAttribute('width',W+24);held.setAttribute('height',150);setOp(held,cut*0.85);
+      putCap(capC,'THE RULE CUTS IT',LX,724,YOU,clamp((u-0.9)/0.5,0,1));
+      // DROITE — sans règle, la chaîne court jusqu'en bas
+      for(let i=0;i<5;i++) lossTile(RX+2*Math.sin(u*1.6-i*0.3), lossY(i)+bob(i+0.4,u), 1);
+      const g6=clamp((u-0.6)/0.6,0,1), g7=clamp((u-1.8)/0.6,0,1), g8=clamp((u-2.8)/0.6,0,1);
+      if(g6>0.01) lossTile(RX, enter(lossY(5),g6)+bob(5.4,u)*g6, g6);
+      if(g7>0.01) lossTile(RX, enter(lossY(6),g7)+bob(6.4,u)*g7, g7);
+      if(g8>0.01) lossTile(RX, enter(lossY(7),g8)+bob(7.4,u)*g8, g8);
+      putCap(capD,'NO RULE — IT RUNS',RX,724,DEAD,clamp((u-1.1)/0.6,0,1));
+      putCap(capB,'A STREAK ONLY NEEDS NO RULE',CX,600,INK,clamp((u-2.8)/0.7,0,1));
+      flushLoss();
+    }
+
+    // ═══ S4 — CHAQUE PERTE SURVIT SEULE ; C'EST LA SÉQUENCE QUI TUE ═══
+    // Verbe visuel : le FRANCHISSEMENT — une perte seule reste au-dessus du sol, la pile entière sombre dessous.
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetLoss(); hideExtras();
+      const cx=CX, w=210, h=64, step=76, top=810, flY=1280;
+      floor.setAttribute('x1',180);floor.setAttribute('x2',900);floor.setAttribute('y1',flY);floor.setAttribute('y2',flY);setOp(floor,clamp((u-0.15)/0.5,0,1));
+      // RÉFÉRENCE (gauche) : UNE perte seule, bien au-dessus du sol — elle survit
+      const rx=250, ry=1010;
+      lossTile(rx+3*Math.sin(u*1.9), ry+(4*Math.sin(u*2.4)+3*Math.sin(u*3.5)), 1, 150, h);
+      held.setAttribute('x',rx-95);held.setAttribute('y',ry-52);held.setAttribute('width',190);held.setAttribute('height',104);setOp(held,clamp((u-0.6)/0.5,0,1)*0.85);
+      putCap(capC,'ONE SURVIVES',rx,ry+96,YOU,clamp((u-0.7)/0.5,0,1));
+      // LA SÉQUENCE (centre) : la pile complète, déjà là, sombre sous le sol (cadence lente → pesée)
+      const sink=eInOut(clamp((u-1.0)/1.7,0,1))*46;
+      for(let i=0;i<7;i++){ const extra=(i>=3?((i-2)/4)*sink:0);
+        const cy=top+i*step+extra+(4*Math.sin(u*2.3-i*0.7)+3*Math.sin(u*3.4-i*0.45));
+        lossTile(cx+2*Math.sin(u*1.7-i*0.3), cy, 1, w, h);
+      }
+      const gone=clamp((u-2.4)/0.5,0,1);
+      putCap(capE,'THE FLOOR',250,flY-22,DEAD,clamp((u-0.4)/0.5,0,1));
+      putCap(capD,'THE SEQUENCE KILLS',820,700,DEAD,clamp((u-1.9)/0.6,0,1));
+      putCap(capB,'EACH SURVIVES — THE ROW DOES NOT',CX,600,INK,clamp((u-2.2)/0.7,0,1));
+      putCap(capF,'ACCOUNT GONE',cx,flY+60+sink,DEAD,gone);
+      flushLoss();
+    }
+
+    // ═══ S5 — UN COUPE-CIRCUIT N'EST PAS DE LA PRUDENCE ═══
+    // Verbe visuel : le DIPTYQUE — une variable change (la règle). Avec : ça tient au-dessus du sol. Sans : ça le traverse.
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); resetLoss(); hideExtras();
+      const flY=1280;
+      floor.setAttribute('x1',180);floor.setAttribute('x2',900);floor.setAttribute('y1',flY);floor.setAttribute('y2',flY);setOp(floor,1);
+      // GAUCHE — AVEC coupe-circuit : trois pertes, la coupe teal, ça tient au-dessus du sol
+      startLine(startL,LX,1);
+      for(let i=0;i<3;i++) lossTile(LX+2*Math.sin(u*1.6-i*0.4), lossY(i)+bob(i,u), 1);
+      const by=lossY(2)+STEP/2;
+      breakerL.setAttribute('x1',LX-W/2-14);breakerL.setAttribute('x2',LX+W/2+14);breakerL.setAttribute('y1',by);breakerL.setAttribute('y2',by);
+      breakerL.setAttribute('stroke-width',(9+2*Math.sin(u*1.8)).toFixed(1));setOp(breakerL,1);
+      held.setAttribute('x',LX-W/2-12);held.setAttribute('y',by+24);held.setAttribute('width',W+24);held.setAttribute('height',(flY-10-(by+24)).toFixed(1));setOp(held,clamp((u-0.6)/0.5,0,1)*0.85);
+      putCap(capC,'WITH A BREAKER',LX,724,YOU,1);
+      putCap(capE,'IT HOLDS',LX,by+110,YOU,clamp((u-0.9)/0.5,0,1));
+      // DROITE — SANS : sept pertes, la dernière traverse le sol
+      startLine(startR,RX,1);
+      const sink=eInOut(clamp((u-0.6)/1.4,0,1))*30;
+      for(let i=0;i<7;i++){ const extra=(i>=4?((i-3)/3)*sink:0);
+        lossTile(RX+2*Math.sin(u*1.6-i*0.3), lossY(i)+extra+bob(i+0.4,u), 1);
+      }
+      putCap(capD,'WITHOUT ONE',RX,724,DEAD,1);
+      putCap(capF,'IT DOES NOT',RX,1385,DEAD,clamp((u-1.1)/0.5,0,1));
+      // MORALE + CTA tenu jusqu'à la fin (prononcé ET affiché en S5)
+      putCap(capA,'A CIRCUIT BREAKER IS NOT CAUTION',CX,604,INK,clamp((u-1.4)/0.7,0,1));
+      putCap(capB,'FOLLOW KONGRAVE',CX,676,YOU,clamp((u-2.2)/0.7,0,1));
+      flushLoss();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
