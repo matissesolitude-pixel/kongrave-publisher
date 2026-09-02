@@ -12,8 +12,9 @@ name: LIGNE auto-publish (file)
 
 on:
   schedule:
-    - cron: "30 */2 * * *"     # 12 sondages/jour. Le court-circuit rend un sondage a vide quasi gratuit,
-                               # et sonder souvent est la seule protection contre un creneau que GitHub abandonne.
+    - cron: "30 * * * *"       # TOUTES LES HEURES. GitHub n en declenche qu un sur trois environ ;
+                               # multiplier les occasions est la seule parade, et le sondage court-circuite
+                               # en 7 secondes, donc depuis le passage en depot public ca ne coute rien.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -35,7 +36,7 @@ permissions:
   contents: write
 
 jobs:
-  # SONDAGE — le job bon marché, celui qui tourne 12 fois par jour pour rien.
+  # SONDAGE — le job bon marché, celui qui tourne pour rien la plupart du temps.
   # Il ne récupère PAS ligne/published, qui pèse 3,7 Go de masters déjà en ligne :
   # un checkout complet coûtait deux minutes de runner à chaque sondage à vide.
   # Il rejoue les trois premières portes de publish_ligne.py — pause, cadence,
