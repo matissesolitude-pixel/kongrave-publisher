@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L107 « THE HAND THAT KNOWS » — MONTAGE PARALLÈLE (mental, pas de fusil). Deux archers fil-de-fer, en MIROIR,
+       bandent le MÊME arc sur le MÊME signal teal au centre. S1 : émotion frame 0 = levier RECONNAISSANCE DE SOI —
+       les deux arcs sont DÉJÀ à pleine tension dès t=0, mais la main de LÂCHER de droite TREMBLE (jitter deux
+       harmoniques, forte amplitude) quand celle de gauche est nette. S2 : la gauche LÂCHE net (flèche teal droit au
+       signal) ; la droite ne lâche pas — sa tête se tourne vers un PUBLIC (des yeux gris qui apparaissent, cadence)
+       « sans vérifier qui regardait ». S3 : la VISÉE est identique et FINIE (deux traits de visée teal, immobiles) —
+       le tremblement n'est pas dans l'analyse mais dans la main, ISOLÉE. S4 (escalade) : le public se MULTIPLIE,
+       froid, cadencé ; à chaque œil le tremblement grossit ; la flèche part et RATE, se délave teal→gris (la perte).
+       S5 (décharge) : les yeux se DISSOLVENT (dérive de position + fondu), l'archer reste SEUL, la main se calme
+       (tremblement→0), lâche NET, flèche teal plantée dans le signal. Tenue finale ≥3s + CTA @KONGRAVE_.
+       Doctrine : figures en ENCRE (TOI n'est jamais une figure) ; le signal/flèche propre = teal ; le public/perte =
+       gris ; aucun chiffre ; pas de brun ; pas de narrateur ; bas du cadre vide ; aucune intention prêtée. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+    function setLine(el,x1,y1,x2,y2,op){el.setAttribute('x1',x1.toFixed(1));el.setAttribute('y1',y1.toFixed(1));el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));setOp(el,op);}
+
+    // ── LE SIGNAL AU CENTRE (le setup — teal) ──
+    const aimY=1020, TX=540;
+    const signal=mk('polygon',{fill:YOU,opacity:0});
+    function drawSignal(u,op){const dx=6*Math.sin(u*1.1)+3*Math.sin(u*1.9),dy=5*Math.sin(u*1.4)+2.5*Math.sin(u*2.3);
+      const r=27+2*Math.sin(u*2.0),cx=TX+dx,cy=aimY+dy;
+      signal.setAttribute('points',`${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}`);setOp(signal,op);}
+
+    // ── LES DEUX ARCHERS (fil-de-fer, encre) ──
+    function makeArcher(){return{
+      head:mk('circle',{r:26,fill:'none',stroke:INK,'stroke-width':6,opacity:0}),
+      spine:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      leg1:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      leg2:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      bowArm:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      drawArm:mk('line',{stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      bow:mk('path',{fill:'none',stroke:INK,'stroke-width':6,'stroke-linecap':'round',opacity:0}),
+      str1:mk('line',{stroke:INK,'stroke-width':3,opacity:0}),
+      str2:mk('line',{stroke:INK,'stroke-width':3,opacity:0}),
+      aim:mk('line',{stroke:YOU,'stroke-width':4,'stroke-dasharray':'14 9',opacity:0}),
+      arrow:mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0})
+    };}
+    const A=makeArcher(), B=makeArcher();     // A = gauche (net) · B = droite (tremble)
+
+    // breathing partagé (montage parallèle : ils bougent ensemble)
+    function breath(u){return{sx:5*Math.sin(u*1.1)+2.5*Math.sin(u*1.9), sy:3*Math.sin(u*1.3)+1.5*Math.sin(u*2.1)};}
+    // main de lâcher : tremblement (deux harmoniques). amp grande = tremble, amp petite = net.
+    function jitter(u,amp,ph){return{jx:amp*(Math.sin(u*11+ph)+0.6*Math.sin(u*17+ph)), jy:amp*0.8*(Math.sin(u*13+ph*1.3)+0.6*Math.sin(u*19+ph))};}
+
+    // dessine un archer. bx=abscisse corps · d=+1 vise à droite / -1 à gauche · pull∈[0,1] (1=pleine tension)
+    // txn,tyn = décalage de la main de lâcher (tremblement) · gazeX = vers où la tête regarde (nudge)
+    function drawArcher(a,bx,d,pull,txn,tyn,op,showArrow,arrColor,aimOp,gazeX){
+      const bowHandX=bx+d*95, nockX=bowHandX - d*165*pull + txn, nockY=aimY + tyn;
+      const gx=(gazeX!=null)?clamp((gazeX-bx)*0.10,-10,10):0;
+      a.head.setAttribute('cx',(bx+gx).toFixed(1)); a.head.setAttribute('cy',(aimY-66).toFixed(1)); setOp(a.head,op);
+      setLine(a.spine,bx,aimY-40,bx,aimY+140,op);
+      setLine(a.leg1,bx,aimY+140,bx-30,aimY+240,op);
+      setLine(a.leg2,bx,aimY+140,bx+30,aimY+240,op);
+      setLine(a.bowArm,bx,aimY-10,bowHandX,aimY,op);
+      setLine(a.drawArm,bx,aimY-10,nockX,nockY,op);
+      a.bow.setAttribute('d',`M ${(bowHandX).toFixed(1)} ${aimY-72} Q ${(bowHandX+d*46).toFixed(1)} ${aimY} ${(bowHandX).toFixed(1)} ${aimY+72}`);setOp(a.bow,op);
+      setLine(a.str1,bowHandX,aimY-72,nockX,nockY,op);
+      setLine(a.str2,bowHandX,aimY+72,nockX,nockY,op);
+      if(aimOp>0){a.aim.setAttribute('stroke-dashoffset',(-d*txn).toFixed(0));setLine(a.aim,bowHandX+d*40,aimY,TX-d*30,aimY,aimOp);}else setOp(a.aim,0);
+      if(showArrow&&pull>0.55){a.arrow.setAttribute('stroke',arrColor||YOU);setLine(a.arrow,nockX,nockY,bowHandX+d*40,aimY,op);}else setOp(a.arrow,0);
+      return {bowHandX,nockX,nockY};
+    }
+    function hideArcher(a){for(const k in a)setOp(a[k],0);}
+
+    // ── FLÈCHE EN VOL (physique : trajectoire droite, vitesse quasi constante) ──
+    const fly=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    const fly2=mk('line',{stroke:YOU,'stroke-width':6,'stroke-linecap':'round',opacity:0});
+    function drawFly(el,fromX,fromY,toX,toY,p,color,op){
+      const ex=lerp(fromX,toX,eOut(p)),ey=lerp(fromY,toY,eOut(p));
+      let ux=toX-fromX,uy=toY-fromY;const L=Math.hypot(ux,uy)||1;ux/=L;uy/=L;
+      el.setAttribute('stroke',color);setLine(el,ex-ux*48,ey-uy*48,ex,ey,op);}
+
+    // ── LE PUBLIC (des yeux gris qui regardent — position mobile, jamais que de l'opacité) ──
+    const EYEBASE=[[905,620],[985,600],[1008,690],[915,712],[996,772],[905,812],[1008,872],[942,910],[1000,978],[908,1012]];
+    const EYES=EYEBASE.map(()=>({e:mk('ellipse',{rx:16,ry:9,fill:'none',stroke:DEAD,'stroke-width':4,opacity:0}),
+                                 p:mk('circle',{r:4.5,fill:DEAD,opacity:0})}));
+    function drawEyes(u,count,op,spread){
+      for(let i=0;i<EYES.length;i++){const o=EYES[i];
+        if(i>=count){setOp(o.e,0);setOp(o.p,0);continue;}
+        const bx=EYEBASE[i][0],by=EYEBASE[i][1];
+        const dx=6*Math.sin(u*1.2+i)+3*Math.sin(u*2.1+i*1.3)+ (spread||0)*(bx-960)*0.5;
+        const dy=5*Math.sin(u*1.5+i*0.7)+2.5*Math.sin(u*2.6+i)+ (spread||0)*40;
+        const cx=bx+dx, cy=by+dy;
+        o.e.setAttribute('cx',cx.toFixed(1));o.e.setAttribute('cy',cy.toFixed(1));setOp(o.e,op);
+        const px=cx+3*Math.sin(u*2.4+i*1.7), py=cy+2*Math.sin(u*3.1+i);
+        o.p.setAttribute('cx',px.toFixed(1));o.p.setAttribute('cy',py.toFixed(1));setOp(o.p,op);}
+    }
+    function hideEyes(){for(const o of EYES){setOp(o.e,0);setOp(o.p,0);}}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DOES THE SAME SETUP','SHAKE ONE HAND','AND NOT THE OTHER'];
+    const FS=64,lineH=88,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+3*lineH+58,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':140,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.66));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE (copié TEL QUEL de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(40),capB=caption(46),capC=caption(36),capD=caption(36),capE=caption(34),capF=caption(34);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    const BX_A=300, BX_B=780;   // corps gauche / droite
+
+    // ═══ S1 — MÊME ARC, MÊME SIGNAL : une seule main tremble ═══
+    // Verbe visuel : le miroir révélateur (deux gestes identiques, un seul tremble à l'instant du lâcher).
+    function s1(lf,t,s){
+      const u=t-s; hideEyes(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.05+k*0.26)),ap=clamp(qt/0.18,0,1),sc=0.72+0.28*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-1.0,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+      const b=breath(u);
+      drawSignal(u,1);
+      // ÉMOTION FRAME 0 : les deux arcs sont DÉJÀ pleins (pull=1), le signal est posé — et la main droite tremble.
+      const jA=jitter(u,2.0,0), jB=jitter(u,6.5,1.7);
+      drawArcher(A,BX_A+b.sx,+1,1,jA.jx,jA.jy,1,true,YOU,0,null);
+      drawArcher(B,BX_B+b.sx,-1,1,jB.jx,jB.jy,1,true,YOU,0,null);
+      const la=clamp((u-1.4)/0.6,0,1)*gf;
+      putCap(capB,'SAME SETUP — SAME SIGNAL',CX,672,INK,clamp((u-0.5)/0.6,0,1)*gf);
+      putCap(capC,'RELEASES CLEAN',238,1372,INK,la);
+      putCap(capD,'HAND SHAKES',842,1372,DEAD,la);
+    }
+
+    // ═══ S2 — L'UN LÂCHE, L'AUTRE REGARDE LA SALLE ═══
+    // Verbe visuel : le regard qui se détourne (la gauche libère la flèche, la droite vérifie qui regarde).
+    function s2(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      const b=breath(u);
+      drawSignal(u,1);
+      // GAUCHE : lâcher net à u≈1.3 → flèche teal droit au signal
+      const rel=clamp((u-1.3)/0.5,0,1);           // 1 = relâché
+      const pullA=1-rel;
+      const jA=jitter(u,2.0,0);
+      const gA=drawArcher(A,BX_A+b.sx,+1,pullA,jA.jx,jA.jy,1,true,YOU,0,null);
+      if(rel>0){const p=clamp((u-1.55)/0.7,0,1);drawFly(fly,gA.bowHandX+40,aimY,TX-24,aimY,p,YOU,1);}else setOp(fly,0);
+      // DROITE : ne lâche pas, tremble plus, tête tournée vers le public
+      const eyes=Math.round(clamp((u-0.6)/2.4,0,1)*7);   // le public apparaît, cadencé
+      drawEyes(u,eyes,clamp((u-0.6)/0.5,0,1),0);
+      const jB=jitter(u,8.5,1.7);
+      drawArcher(B,BX_B+b.sx,-1,1,jB.jx,jB.jy,1,true,INK,0,960);
+      putCap(capB,'ONE LETS IT GO',CX,644,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capC,'CLEAN',300,1372,YOU,clamp((u-1.7)/0.6,0,1));
+      putCap(capD,'THE OTHER CHECKS THE ROOM',840,1372,DEAD,clamp((u-2.0)/0.7,0,1));
+    }
+
+    // ═══ S3 — LE TREMBLEMENT ISOLÉ : la visée est finie, identique ═══
+    // Verbe visuel : isoler (deux traits de visée teal, immobiles ; seule la main de lâcher tremble).
+    function s3(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); setOp(fly,0);
+      const b=breath(u);
+      drawSignal(u,1);
+      const aimOp=clamp((u-0.5)/0.6,0,1);
+      const jA=jitter(u,1.8,0), jB=jitter(u,10.5,1.7);
+      drawArcher(A,BX_A+b.sx,+1,1,jA.jx,jA.jy,1,false,YOU,aimOp,null);
+      drawArcher(B,BX_B+b.sx,-1,1,jB.jx,jB.jy,1,false,INK,aimOp,null);
+      // le public reste présent, immobile-vivant à droite
+      drawEyes(u,7,1,0);
+      putCap(capB,'THE ANALYSIS IS FINISHED',CX,636,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capC,'SAME AIM',282,1372,YOU,clamp((u-1.8)/0.6,0,1));
+      putCap(capD,'THE SHAKE IS HERE',840,1372,DEAD,clamp((u-2.4)/0.7,0,1));
+    }
+
+    // ═══ S4 — ESCALADE : le public se multiplie, la flèche rate ═══
+    // Verbe visuel : l'accumulation cadencée (chaque œil de plus fait grossir le tremblement).
+    function s4(lf,t,s){
+      const u=t-s; hideQ(); hideCaps();
+      const b=breath(u);
+      drawSignal(u,1);
+      const eyes=Math.min(EYES.length, 4+Math.round(clamp(u/2.6,0,1)*6));   // ouvre plein, puis multiplie
+      drawEyes(u,eyes,1,0);
+      const amp=8.5+eyes*0.9;                                               // le tremblement grossit
+      const jB=jitter(u,amp,1.7);
+      // la droite lâche à u≈2.0 et RATE (la flèche dérive et se délave teal→gris)
+      const rel=clamp((u-2.0)/0.5,0,1), pullB=1-rel;
+      const gB=drawArcher(B,BX_B+b.sx,-1,pullB,jB.jx,jB.jy,1,true,INK,0,960);
+      if(rel>0){const p=clamp((u-2.25)/0.9,0,1);
+        const missY=aimY-120*eOut(p);                                       // passe AU-DESSUS du signal → rate
+        const col=(p<0.5)?YOU:DEAD;                                         // se délave (perte)
+        drawFly(fly,gB.bowHandX-40,aimY,140,missY,p,col,clamp(1-(p-0.75)/0.25,0,1));}else setOp(fly,0);
+      hideArcher(A);                                                        // la gauche a déjà lâché net (S2) : on isole le performeur
+      // label court, décalé à gauche du public (le public possède la moitié droite) → aucune étiquette sur un œil
+      putCap(capB,"NOW IT'S A PERFORMANCE",470,628,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capD,'IT CAN FAIL IN FRONT OF THEM',842,1372,DEAD,clamp((u-1.4)/0.7,0,1));
+    }
+
+    // ═══ S5 — DÉCHARGE : le public se dissout, la main se calme, lâcher net ═══
+    // Verbe visuel : la résolution (les yeux dérivent et s'effacent ; seul, l'archer lâche net).
+    function s5(lf,t,s){
+      const u=t-s; hideQ(); hideCaps(); hideArcher(A);
+      const b=breath(u);
+      drawSignal(u,1);
+      // les yeux se dissolvent : dérive de POSITION vers l'extérieur + fondu
+      const diss=clamp(u/1.6,0,1);
+      drawEyes(u, EYES.length, clamp(1-diss,0,1), diss*2.2);
+      // le tremblement décroît à mesure que le public disparaît
+      const amp=lerp(9.0,1.6,clamp(u/1.8,0,1));
+      const jB=jitter(u,amp,1.7);
+      // seul, il lâche NET à u≈2.6 → flèche teal droit dans le signal, puis tenue
+      const rel=clamp((u-2.6)/0.5,0,1), pullB=1-rel;
+      const gB=drawArcher(B,BX_B+b.sx,-1,pullB,jB.jx,jB.jy,1,true,YOU,0,null);
+      if(rel>0){const p=clamp((u-2.85)/0.7,0,1);
+        if(p<1) drawFly(fly,gB.bowHandX-40,aimY,TX+22,aimY,p,YOU,1); else setOp(fly,0);}
+      else setOp(fly,0);
+      // flèche plantée dans le signal, vibration résiduelle (la tenue reste vivante)
+      const planted=clamp((u-3.35)/0.3,0,1);
+      if(planted>0){const vx=2.5*Math.sin(u*3.0)+1.2*Math.sin(u*4.7);
+        setLine(fly2,TX-46+vx,aimY,TX+18+vx,aimY,planted);}else setOp(fly2,0);
+      putCap(capB,"TRADE LIKE NOBODY'S WATCHING",CX,700,INK,clamp((u-0.4)/0.6,0,1));
+      putCap(capA,'ON YOUR ACCOUNT, NOBODY IS',CX,772,DEAD,clamp((u-1.4)/0.7,0,1));
+      putCap(capC,'@KONGRAVE_',CX,1372,YOU,clamp((u-2.2)/0.7,0,1));
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
