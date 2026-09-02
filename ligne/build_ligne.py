@@ -42,6 +42,8 @@ DUREE_MAX_TEST = 36.0
 H = {"xi-api-key": KEY}
 
 TAIL = 0.12                              # respiration de transition par scène (dernier segment un peu +)
+PAD_MAX = 1.0                            # rallonge de fin maximale (voir timeline) — au-delà, c'est un vide
+QUEUE_MAX = 2.0                          # silence toléré après le dernier mot ; au-delà = échec du scan
 WATERMARK = ROOT / "assets" / "watermark_dark.png"
 WM_Y, WM_OPACITY = 1545, 0.05           # décision PO : 5% + dérive (anti-crop)
 
@@ -148,12 +150,21 @@ def timeline(durs, total=None):
         tail = TAIL if i < len(durs) - 1 else TAIL + 0.35
         dd = d + tail
         sc.append({"s": round(t, 3), "d": round(dd, 3), "v": round(d, 3)}); t += dd
-    if total and total > t:                       # scène avec longs silences (ex. S4) : on étend la fin
+    # RALLONGE DE FIN — PLAFONNÉE. Le champ `total` du JSON est une ESTIMATION de
+    # l'auteur, calculée sur un budget de caractères ; la voix réelle est presque
+    # toujours plus courte. Avant le 02/09/2026, tout l'écart (jusqu'à 6s) était
+    # collé à la dernière scène : L99 est parti avec 4,5s de silence en fin, soit
+    # 17% de l'épisode, et le scan ne l'a pas vu — il ne mesure le mouvement que
+    # PENDANT les fenêtres de voix. On garde la rallonge, qui sert aux scènes à
+    # silence voulu, mais on la borne à PAD_MAX : de quoi laisser le CTA de S5
+    # s'afficher, pas de quoi créer un vide.
+    if total and total > t:
         pad = total - t
-        if pad > 6.0:                             # >6s d'écart = surestimation de l'auteur -> IGNORÉ (règle durée=voix)
-            print(f"[timeline] total={total:.1f}s dépasse la voix de {pad:.1f}s (>6s) — IGNORÉ, durée=voix ({t:.1f}s).")
-        else:
-            sc[-1]["d"] = round(sc[-1]["d"] + pad, 3); t = total
+        if pad > PAD_MAX:
+            print(f"[timeline] total={total:.1f}s dépasse la voix de {pad:.1f}s — "
+                  f"rallonge PLAFONNÉE à {PAD_MAX:.1f}s (durée ≈ voix).")
+            pad = PAD_MAX
+        sc[-1]["d"] = round(sc[-1]["d"] + pad, 3); t += pad
     return {"sc": sc, "total": round(t, 3)}
 
 
@@ -337,6 +348,16 @@ def scan_progression(anim, tl, rend):
             brun = None
     if brun and brun[1] - brun[0] > 0.4:
         dead.append(("vide", tuple(brun)))
+    # QUEUE MUETTE — le dernier mot ne doit pas tomber loin de la fin. Le scan ci-dessus
+    # ne mesure QUE pendant les fenêtres de voix : tout ce qui suit le dernier mot était
+    # hors de son champ, et L99 est parti avec 4,5s de vide sans que rien ne proteste.
+    # La rallonge est désormais plafonnée en amont ; ce contrôle attrape les autres causes
+    # (un segment de voix vide, une durée forcée à la main).
+    fin_voix = max(b for a, b in voice)
+    queue = tl["total"] - fin_voix
+    if queue > QUEUE_MAX:
+        dead.append(("queue muette", (round(fin_voix, 2), round(tl["total"], 2))))
+
     for f in fs:
         f.unlink()
     tmp.rmdir()
@@ -345,9 +366,12 @@ def scan_progression(anim, tl, rend):
         print("\n" + "=" * 60 + "\n[FAIL-LOUD] le build ÉCHOUE (doctrine = test) :")
         for kind, (a, b) in dead:
             sc = next((k + 1 for k in range(len(tl["sc"])) if voice[k][0] <= a <= voice[k][1]), "?")
-            tag = "SANS PROGRESSION" if kind == "gel" else "ÉCRAN QUASI-VIDE"
+            tag = {"gel": "SANS PROGRESSION",
+                   "vide": "ÉCRAN QUASI-VIDE",
+                   "queue muette": "SILENCE APRÈS LE DERNIER MOT"}.get(kind, kind.upper())
             print(f"   S{sc}  {a:.1f}s -> {b:.1f}s  ({b - a:.1f}s) — {tag}")
-        print("Corrige : un élément AVANCE, ou la scène N+1 se construit avant la fin de N (jamais de vide).\n" + "=" * 60)
+        print("Corrige : un élément AVANCE, ou la scène N+1 se construit avant la fin de N (jamais de vide).")
+        print("Silence après le dernier mot : la voix est plus courte que prévu — raccourcis `total`.\n" + "=" * 60)
         sys.exit(1)
     print("[scan] progression continue + jamais d'écran vide ✓")
 
