@@ -46,7 +46,9 @@ PUBLISHED_DIR = CARROUSEL_DIR / "published"
 JOURNAL = CARROUSEL_DIR / "journal.jsonl"
 
 MIN_SPACING = 2                 # posts depuis le dernier carrousel — LA règle
-CADENCE_HOURS = 20              # entre deux carrousels (anti double-déclenchement)
+CADENCE_HOURS = 18              # anti double-declenchement seulement. Le rythme est impose par
+                                # MIN_SPACING (2 posts depuis le dernier carrousel) : a 2 reels
+                                # par jour, ca fait exactement 1 carrousel par jour, meme colonne.
 
 POLL_INTERVAL = 4
 POLL_TIMEOUT = 180

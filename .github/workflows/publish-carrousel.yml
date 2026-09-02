@@ -4,12 +4,15 @@ name: CARROUSEL auto-publish (file)
 #
 # PAS DE FENÊTRE HORAIRE (décision PO du 03/08) : la position dans la grille dépend de
 # l'ORDRE des posts, pas de l'heure. Publier à midi ou à 21h donne la même colonne.
-# La seule règle est l'espacement : un carrousel tous les 5 posts.
+# La seule règle est l'espacement : MIN_SPACING = 2 posts depuis le dernier carrousel,
+# donc un carrousel tous les TROIS posts.
+#
+# OBJECTIF PO du 02/09/2026 : 2 reels + 1 carrousel par jour, soit 3 posts. Un carrousel
+# tous les 3 posts tombe alors exactement une fois par jour ET toujours dans la même
+# colonne, la grille faisant 3 de large. Le rythme et la colonne sont la même règle.
 #
 # ESPACEMENT — le script compte les posts depuis le dernier carrousel EN INTERROGEANT
-# INSTAGRAM, pas un compteur local. Cycle de 6 (1 carrousel + 5 reels) : 6 est multiple
-# de 3, donc tous les carrousels retombent dans la même colonne. Aucun couplage avec le
-# publisher de LA LIGNE — on ne touche pas à une chaîne qui tourne.
+# INSTAGRAM, pas un compteur local. Aucun couplage avec le publisher de LA LIGNE.
 #
 # Les slides ne sont PAS dans ce repo : l'API Graph ne reçoit pas de binaire pour une
 # image, elle va la CHERCHER à une URL publique. Les JPEG sont hébergés sur le GitHub
@@ -19,7 +22,7 @@ name: CARROUSEL auto-publish (file)
 
 on:
   schedule:
-    - cron: "5 */6 * * *"      # 4 sondages/jour : l espacement est un nombre de posts, pas une heure
+    - cron: "5 * * * *"        # toutes les heures : GitHub n en declenche qu un sur trois,
   workflow_dispatch:
     inputs:
       id:
@@ -53,7 +56,7 @@ permissions:
 
 jobs:
   # SONDAGE — tranche les deux portes qui ne demandent pas Instagram, la file
-  # vide et la cadence de 20h, avec un checkout partiel : le dépôt pèse 5,6 Go
+  # vide et la cadence, avec un checkout partiel : le dépôt pèse 5,6 Go
   # dont 3,7 Go de masters LIGNE dont ce workflow n'a aucun besoin.
   # L'espacement réel de la grille reste vérifié par le script complet.
   check:

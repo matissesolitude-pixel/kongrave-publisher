@@ -22,7 +22,7 @@ CARROUSEL_DIR = pathlib.Path(__file__).resolve().parent
 JOURNAL = CARROUSEL_DIR / "journal.jsonl"
 QUEUE_DIR = CARROUSEL_DIR / "queue"
 
-CADENCE_HOURS = 20.0       # doit rester aligné sur publish_carrousel.py
+CADENCE_HOURS = 18.0       # doit rester aligné sur publish_carrousel.py
 
 
 def _dernier_publie():
