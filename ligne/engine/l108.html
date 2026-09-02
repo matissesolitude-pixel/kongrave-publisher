@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L108 « THE WIN THAT FELT LIKE SKILL » — IN MEDIAS RES, pas de fusil. S1 : émotion frame 0 = levier CURIOSITÉ —
+       deux profits IDENTIQUES (barres teal même hauteur), déjà là, qui respirent ; sous eux, la taille du trade SUIVANT :
+       l'un garde la même, l'autre DOUBLE. Même gain, deux tailles. Pourquoi ? S2 : comparaison A/B — la MÉTHODE est le même
+       signal (tracé ink identique deux fois), seule la jauge de RESSENTI diverge (calme vs chargée). S3 : dédoublement sous
+       stress — EXCITATION et EDGE surgissent à l'identique (même rush) ; une série de pertes (blocs gris qui tombent) frappe
+       les deux, l'excitation s'effondre et se délave en gris, l'edge tient teal. S4 : escalade froide — une victoire, puis
+       chaque erreur (blocs gris qui grossissent, empilés) reçoit un tampon « validé », cadence. S5 : décharge/leçon — on
+       compare ce qui a changé (MÉTHODE inchangée / RESSENTI changé) ; comme seul le ressenti a bougé, le SIZE-UP reste tenu
+       sous une barre ; CTA abonnement KONGRAVE, affiché et tenu. Doctrine : aucun chiffre à l'écran (les tailles par la
+       HAUTEUR/LARGEUR) ; teal = toi/l'edge ; gris = ce qui se perd/l'excitation morte ; pas de brun ; aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── POOLS génériques (aucune brique visuelle héritée d'un épisode précédent) ──
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // un petit signal « méthode » : tracé de prix minimal, IDENTIQUE si même phase (pour dire « rien n'a changé »)
+    function signalPts(cx,cy,w,amp,ph,seg){const pts=[];seg=seg||14;
+      for(let i=0;i<=seg;i++){const fx=i/seg,x=cx-w/2+fx*w,
+        y=cy - amp*Math.sin(fx*6.2832*1.5+ph) - 0.42*amp*Math.sin(fx*6.2832*3.0+ph*1.3);pts.push([x,y]);}return pts;}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHAT ACTUALLY CHANGED','BETWEEN THE TWO TRADES'];
+    const FS=66,lineH=92,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (§M18) — putCap MESURE la largeur réelle (copié TEL QUEL de l26.html) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — MEDIAS RES : deux profits identiques, deux tailles suivantes qui DIVERGENT ═══
+    // Verbe visuel : le diptyque divergent (même gain → l'un garde, l'autre double).
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      const Lc=320,Rc=760,barW=150,pBase=1150;
+      // ÉMOTION FRAME 0 : les deux profits sont DÉJÀ pleins, même hauteur, ils respirent ensemble (deux harmoniques).
+      const throb=10*Math.sin(u*1.5)+5*Math.sin(u*2.6), pH=300+throb;
+      bar(Lc-barW/2, pBase-pH, barW, pH, YOU, 1);
+      bar(Rc-barW/2, pBase-pH, barW, pH, YOU, 1);
+      bar(150, pBase, 780, 5, INK, 0.9, 0);                                   // le sol commun (même marché)
+      // marqueur trader au sommet de chaque profit (bouge avec la barre)
+      ring(Lc, pBase-pH-30, 22, INK, 1); ring(Rc, pBase-pH-30, 22, INK, 1);
+      putCap(capA,'SAME PROFIT',CX,742,YOU,1);
+      // sous le sol : la taille du trade SUIVANT — l'énigme de la divergence
+      const sTop=1224, pw=4*Math.sin(u*1.9);
+      bar(Lc-75+pw, sTop, 150-2*pw, 70+3*Math.sin(u*2.3), YOU, 1);            // garde la même taille
+      const dH=140+7*Math.sin(u*1.7)+4*Math.sin(u*3.1);
+      bar(Rc-88, sTop, 176, dH, YOU, 1);                                       // DOUBLE
+      putCap(capC,'BOOKS THE SAME',Lc,1338,INK,clamp((u-0.9)/0.6,0,1));
+      putCap(capD,'DOUBLES NEXT',Rc,sTop+dH+42,INK,clamp((u-1.6)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S2 — MÊME MÉTHODE, RESSENTI DIFFÉRENT ═══
+    // Verbe visuel : comparaison A/B — le tracé méthode IDENTIQUE, la jauge de ressenti DIVERGE.
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const ph=0.6+0.55*Math.sin(u*1.35)+0.28*Math.sin(u*2.2);                // même phase → deux tracés strictement identiques
+      path(signalPts(300,860,250,58,ph),INK,1);
+      path(signalPts(780,860,250,58,ph),INK,1);
+      putCap(capB,'SAME METHOD BOTH TIMES',CX,656,INK,1);
+      putCap(capC,'METHOD',300,968,INK,clamp((u-0.6)/0.6,0,1));
+      putCap(capD,'METHOD',780,968,INK,clamp((u-0.6)/0.6,0,1));
+      // jauges de RESSENTI : piste grise + remplissage teal (le haut du remplissage bouge → vie continue)
+      const gY=1030,gH=290,gW=120;
+      bar(320-gW/2,gY,gW,gH,DEAD,0.22); bar(760-gW/2,gY,gW,gH,DEAD,0.22);
+      const fL=0.20+0.05*Math.sin(u*2.1)+0.02*Math.sin(u*3.4);                // calme
+      const fR=0.86+0.06*Math.sin(u*2.4)+0.03*Math.sin(u*3.7);               // chargé
+      bar(320-gW/2,gY+gH*(1-fL),gW,gH*fL,YOU,1);
+      bar(760-gW/2,gY+gH*(1-fR),gW,gH*fR,YOU,1);
+      putCap(capE,'CALM',320,1384,INK,clamp((u-1.6)/0.6,0,1));
+      putCap(capA,'CHARGED',760,1384,YOU,clamp((u-2.4)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S3 — MÊME RUSH, UN SEUL SURVIT À LA SÉRIE DE PERTES ═══
+    // Verbe visuel : dédoublement puis stress — l'excitation s'effondre en gris, l'edge tient.
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const Lc=320,Rc=760,bW=124,base=1250;
+      const rush=14*Math.sin(u*3.0)+7*Math.sin(u*5.1);                        // le rush pulse fort (identique au départ)
+      const decay=clamp((u-2.4)/2.4,0,1);                                     // la série ronge l'excitation
+      const lH=Math.max(70,(380+rush)*(1-0.80*decay));
+      const rH=380+rush;
+      const lCol=(decay>0.5)?DEAD:YOU;
+      bar(Lc-bW/2, base-lH, bW, lH, lCol, 1);
+      bar(Rc-bW/2, base-rH, bW, rH, YOU, 1);
+      bar(150, base, 780, 5, INK, 0.9, 0);
+      putCap(capB,'SAME RUSH',CX,686,INK,clamp(1-(u-2.4)/0.5,0,1));
+      // la série de pertes : blocs gris qui tombent en cadence et frappent le sommet des barres
+      const HITS=[1.0,1.55,2.1,2.65,3.2,3.75], hx=[Lc,Rc,Lc,Rc,Lc,Rc];
+      for(let i=0;i<HITS.length;i++){const hu=u-HITS[i];if(hu<0||hu>0.55)continue;
+        const fall=clamp(hu/0.34,0,1),hy=600+fall*260;
+        bar(hx[i]-46, hy, 92, 40, DEAD, (1-clamp((hu-0.34)/0.21,0,1))*0.95);}
+      putCap(capA,'A LOSING STREAK',CX,640,DEAD,clamp((u-1.0)/0.6,0,1)*clamp(1-(u-4.4)/0.6,0,1));
+      putCap(capC,'EXCITEMENT',Lc,1330,(decay>0.5?DEAD:INK),1);
+      putCap(capD,'EDGE',Rc,1330,YOU,1);
+      flushAll();
+    }
+
+    // ═══ S4 — ESCALADE : une victoire, puis chaque erreur se sent « légitime » ═══
+    // Verbe visuel : l'empilement cadencé — blocs gris qui grossissent, chacun tamponné.
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      putCap(capB,'EACH MISTAKE FEELS EARNED',CX,676,INK,clamp((u-0.4)/0.6,0,1));
+      // la victoire fondatrice (teal), en bas — pleine dès la frame 0
+      const wW=200+6*Math.sin(u*2.2), wy=1288;
+      bar(CX-wW/2, wy, wW, 92, YOU, 1);
+      putCap(capC,'ONE WIN',770,wy+58,YOU,1);
+      // les erreurs : la pile est DÉJÀ là (frame 0 pleine) ; la cadence GROSSIT chaque bloc et pose le tampon
+      const CAD=[0.7,1.5,2.3], baseW=[300,380,452];
+      for(let i=0;i<CAD.length;i++){const grow=clamp((u-CAD[i])/0.55,0,1);
+        const w=baseW[i]*(0.72+0.28*eOut(grow))+7*Math.sin(u*2.3-i),h=92,
+              by=wy-(i+1)*106+3*Math.sin(u*1.9-i*0.7);
+        bar(CX-w/2, by, w, h, DEAD, 0.95);
+        // le tampon « validé » (anneau teal + coche), à droite, dans la voie libre, en cadence
+        const sx=858,sy=by+h/2,sap=clamp((u-CAD[i]-0.15)/0.4,0,1),sc=0.85+0.15*Math.sin(u*3.0-i);
+        ring(sx,sy,26*sc,YOU,sap); path([[sx-13,sy],[sx-3,sy+12],[sx+16,sy-15]],YOU,sap,7);}
+      flushAll();
+    }
+
+    // ═══ S5 — DÉCHARGE : compare ce qui a changé avant d'augmenter la taille ═══
+    // Verbe visuel : le comparateur/verrou — méthode inchangée, ressenti changé → le size-up reste TENU.
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      // colonne gauche : ce qu'on vérifie
+      // MÉTHODE — deux marques identiques (inchangée)
+      const mY=812, mw=4*Math.sin(u*2.1);
+      putCap(capC,'METHOD',300,mY+14,INK,1);
+      bar(392+mw,mY-34,74,64,INK,1); bar(486-mw,mY-34,74,64,INK,1);
+      // RESSENTI — petit puis grand (changé), teal
+      const fY=1000;
+      putCap(capD,'FEELING',300,fY+14,INK,clamp((u-0.5)/0.6,0,1));
+      bar(392,fY-30,56,56,YOU,clamp((u-0.5)/0.6,0,1));
+      const bigW=96+6*Math.sin(u*2.5),bigH=96+6*Math.sin(u*2.5);
+      bar(486,fY+2-bigH,bigW,bigH,YOU,clamp((u-1.0)/0.6,0,1));
+      // droite : le SIZE-UP tenu sous une barre (seul le ressenti a bougé → on ne libère pas)
+      const rc=782,blkW=210,blkH=224,jit=3*Math.sin(u*2.7)+2*Math.sin(u*4.1);
+      bar(rc-blkW/2, 1010+jit, blkW, blkH, YOU, 1);
+      bar(rc-blkW/2-16, 996+jit, blkW+32, 20, INK, 1, 4);                     // le verrou (barre ink) qui retient
+      putCap(capE,'SIZE UP — ON HOLD',rc,1288,INK,clamp((u-1.2)/0.6,0,1));
+      // CTA tenu (TOFU : pas de mot-clé, abonnement KONGRAVE)
+      putCap(capA,'CHECK WHAT CHANGED',CX,1372,INK,clamp((u-2.0)/0.7,0,1));
+      putCap(capF,'FOLLOW @KONGRAVE_',CX,1442,YOU,clamp((u-2.8)/0.7,0,1));
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t),lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
