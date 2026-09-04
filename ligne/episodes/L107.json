@@ -6,10 +6,10 @@
   "_dispositif": "MONTAGE PARALLÈLE",
   "voice": [
     "Two students draw the same setup. One releases clean — the other's hand shakes right before the click.",
-    "Both saw the same signal form. Only one of them let it go without checking who was watching.",
-    "The shake isn't in the analysis. It's in being wrong where someone can see it.",
-    "An audience turns a decision into a performance, and a performance can fail in front of people.",
-    "Trade like nobody's watching. On your account, nobody is. Follow KONGRAVE — the mechanics nobody explains."
+    "He finished the analysis two minutes ago.",
+    "Every extra check costs the price he was looking at, because the level he decided on has already been traded through.",
+    "He is not paying for certainty. He is paying the distance between the price he chose and the price he gets.",
+    "Hesitation is not free, it is priced in the fill. Follow KONGRAVE — the mechanics nobody explains."
   ],
   "scenes": [
     {
@@ -143,8 +143,8 @@
       "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
     }
   ],
-  "total": 31.6,
-  "caption": "Two students draw the exact same setup. One releases clean. The other's hand shakes right before the click.\n\nThe shake isn't in the analysis — that part was already finished. It's in the fear of being wrong where someone else can see it. An audience turns a decision into a performance, and performances can fail in front of people.\n\nTrade like nobody's watching, because on your account, nobody is.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #tradingdiscipline #performanceanxiety #tradereducation",
+  "total": 42.7,
+  "caption": "Two students draw the exact same setup. One releases clean. The other's hand shakes right before the click.\n\nThe shake isn't in the analysis — that part was already finished. It's in the fear of being wrong where someone else can see it. An audience turns a decision into a performance, and performances can fail in front of people.\n\nHesitation is not free, it is priced in the fill.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #tradingdiscipline #performanceanxiety #tradereducation",
   "pinned_comment": "Trade like nobody's watching, because on your account, nobody actually is. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -154,8 +154,11 @@
     "dispositif": "MONTAGE PARALLÈLE — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "duree": "~31.6s (budget 485 car.). Valeur dense avant la 12e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "duree": "~42.7s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable. Mesure du 04/09/2026 : les 3 meilleurs episodes ont un seg3 de 118 car. en moyenne, le lot L105-L108 en avait 252.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin, pas une formule. Regle : « Size follows the account, never the last result. » Formule : « The fifth confirmation never comes free. »",
+    "duel": "Ouverture en duel (Two…) : 33 % d un lot au MAXIMUM. Le duel n est pas mauvais — skip median 44,2 % contre 46,9 % pour l accusation — c est une regle de lassitude, pas de performance. Les deux tiers restants ouvrent sur « You » + un geste que le spectateur a fait."
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",

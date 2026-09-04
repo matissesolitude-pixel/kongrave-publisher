@@ -6,10 +6,10 @@
   "_dispositif": "IN MEDIAS RES",
   "voice": [
     "Two funded traders close the same trade for the same profit. One books it — the other doubles his size next.",
-    "Nothing about his method changed between those two trades. Only how he felt about it did.",
-    "Excitement and edge produce the exact same rush, and only one of them survives a losing streak.",
-    "A single win doesn't validate a system. It just makes the next mistake feel earned.",
-    "Check what actually changed before you size up. Follow KONGRAVE — the mechanics nobody explains."
+    "The trade closed thirty seconds ago, and already feels like proof of something.",
+    "The second position is sized from the profit, while the loss it can take is still sized from the account.",
+    "One win doubled the size and changed nothing about the method that produced it.",
+    "Size follows the account, never the last result. Follow KONGRAVE — the mechanics nobody explains."
   ],
   "scenes": [
     {
@@ -139,8 +139,8 @@
       "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
     }
   ],
-  "total": 31.5,
-  "caption": "Two funded traders close the same trade for the same profit. One books it and moves on — the other doubles his size on the next one.\n\nNothing about his method changed between those two trades — only how he felt about it did. Excitement and edge produce the exact same rush, and only one of them survives a losing streak.\n\nA single win doesn't validate a system, it just makes the next mistake feel earned.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #overconfidence #tradingmindset #propfirm",
+  "total": 40.8,
+  "caption": "Two funded traders close the same trade for the same profit. One books it and moves on — the other doubles his size on the next one.\n\nNothing about his method changed between those two trades — only how he felt about it did. Excitement and edge produce the exact same rush, and only one of them survives a losing streak.\n\nSize follows the account, never the last result.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #overconfidence #tradingmindset #propfirm",
   "pinned_comment": "Check what actually changed before you size up. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -150,8 +150,11 @@
     "dispositif": "IN MEDIAS RES — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "duree": "~31.5s (budget 485 car.). Valeur dense avant la 12e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "duree": "~40.8s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable. Mesure du 04/09/2026 : les 3 meilleurs episodes ont un seg3 de 118 car. en moyenne, le lot L105-L108 en avait 252.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin, pas une formule. Regle : « Size follows the account, never the last result. » Formule : « The fifth confirmation never comes free. »",
+    "duel": "Ouverture en duel (Two…) : 33 % d un lot au MAXIMUM. Le duel n est pas mauvais — skip median 44,2 % contre 46,9 % pour l accusation — c est une regle de lassitude, pas de performance. Les deux tiers restants ouvrent sur « You » + un geste que le spectateur a fait."
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",

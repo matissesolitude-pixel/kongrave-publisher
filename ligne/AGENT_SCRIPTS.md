@@ -106,3 +106,62 @@ Décision PO du 31/08/2026, redemandée deux fois depuis :
 La morale est **obligatoire** : c'est la seule ligne citable hors contexte, et
 la seule qu'un lecteur emporte sans le corps du texte. Une légende à quatre
 blocs est un épisode à refaire.
+
+## LA MÉCANIQUE, PAS LA PSYCHOLOGIE — mesuré le 04/09/2026
+
+Le compte s'appelle « the mechanics nobody explains ». Un épisode qui décrit un
+ressenti au lieu d'un mécanisme fait mentir sa propre signature.
+
+Comparaison entre les trois meilleurs épisodes publiés (skip 33 à 39 %) et le
+lot L105-L108 :
+
+```
+                        car. seg 3   phrases seg 3   total
+tes 3 meilleurs             118           1,7          538
+lot L105-L108               252           3,5          632
+```
+
+**Le segment 3 avait doublé.** C'est là que l'épisode se perd : au lieu d'un
+fait, il livrait un commentaire sur l'état intérieur du personnage.
+
+### Les trois règles qui en découlent
+
+1. **Le segment 3 tient en UNE phrase, sous 130 caractères**, et il porte un
+   FAIT DE MARCHÉ vérifiable. Pas deux phrases, pas de commentaire.
+   - Bon : « Le second trader a pris trois instruments qui bougent ensemble, et
+     le marché les traite comme un seul. »
+   - Faux : « La certitude n'a jamais manqué après le deuxième. Ça semblait
+     juste plus sûr de continuer à chercher que d'être celui qui clique. »
+
+2. **Chaque épisode contient au moins un mécanisme extérieur et vérifiable** :
+   un stop a besoin d'un marché pour s'exécuter, trois instruments corrélés
+   font un seul risque, la seconde position est dimensionnée sur le profit
+   quand la perte l'est encore sur le compte. Un épisode entièrement composé
+   d'anxiété sociale n'a pas sa place ici.
+
+3. **La morale du segment 5 est une RÈGLE, pas une formule.** On doit pouvoir
+   l'appliquer demain matin.
+   - Règle : « Count your exposure, not your tickets. » · « A stop needs a
+     market to work. » · « Size follows the account, never the last result. »
+   - Formule : « The fifth confirmation never comes free. »
+
+## LE DUEL : UN ÉPISODE SUR TROIS AU MAXIMUM
+
+Décision PO du 04/09/2026. L'ouverture en duel — « Two traders… » — ne doit pas
+dépasser **33 % d'un lot**. Vingt et un épisodes consécutifs l'ont utilisée.
+
+Une précision pour que personne ne « corrige » cette règle plus tard en
+regardant les chiffres : **le duel n'est pas mauvais, il est le meilleur.**
+Mesuré sur les épisodes publiés, skip médian par type d'ouverture :
+
+```
+DUEL (Two…)          n=21    44,2 %    1 205 vues médianes
+ACCUSATION (You…)    n=13    46,9 %    1 341 vues médianes
+autre                n= 9    48,3 %    1 279 vues médianes
+```
+
+Le plafond n'est donc pas une correction de performance, c'est une règle de
+lassitude : la LOI de la brique neuve interdit de rejouer indéfiniment le même
+archétype, aussi efficace soit-il. Les deux tiers restants ouvrent sur
+l'ACCUSATION — « You » suivi d'un geste que le spectateur a fait — qui est la
+règle 2 de la LOI 1ter et l'ouverture des huit meilleurs épisodes de la série.

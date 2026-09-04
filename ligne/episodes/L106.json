@@ -6,10 +6,10 @@
   "_dispositif": "PRÉSAGE",
   "voice": [
     "Two challengers take the same string of losses. One stops trading after the third — the other keeps going.",
-    "There's no rule telling him to stop, so nothing does, and the fourth loss becomes the fifth.",
-    "A losing streak doesn't need a plan to keep running. It only needs the absence of one.",
-    "The account survives every single loss on its own — it's the sequence that kills it.",
-    "A circuit breaker isn't caution. Follow KONGRAVE — the mechanics nobody explains."
+    "First there's no rule for a fourth loss, because three was never supposed to happen either.",
+    "Nothing in the market closes an account for you, so a streak runs until a rule outside the market stops it.",
+    "By the sixth, the losses are not six mistakes. They are one mistake, repeated because nothing interrupted it.",
+    "A limit set before the session is the only thing that can end a streak. Follow KONGRAVE — the mechanics nobody explains."
   ],
   "scenes": [
     {
@@ -139,8 +139,8 @@
       "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
     }
   ],
-  "total": 30.0,
-  "caption": "Two challengers take the same string of losses. One stops after the third — the other has no rule telling him to.\n\nA losing streak doesn't need a plan to keep running. It only needs the absence of one. The account survives every single loss on its own — it's the sequence that kills it.\n\nA stop that doesn't exist can't be missed, until it's needed.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #riskmanagement #losingstreak #propfirm",
+  "total": 44.0,
+  "caption": "Two challengers take the same string of losses. One stops after the third — the other has no rule telling him to.\n\nA losing streak doesn't need a plan to keep running. It only needs the absence of one. The account survives every single loss on its own — it's the sequence that kills it.\n\nA limit set before the session is the only thing that can end a streak.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #riskmanagement #losingstreak #propfirm",
   "pinned_comment": "A circuit breaker isn't caution. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -150,8 +150,11 @@
     "dispositif": "PRÉSAGE — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
-    "duree": "~30.0s (budget 485 car.). Valeur dense avant la 12e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "duree": "~44.0s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable. Mesure du 04/09/2026 : les 3 meilleurs episodes ont un seg3 de 118 car. en moyenne, le lot L105-L108 en avait 252.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin, pas une formule. Regle : « Size follows the account, never the last result. » Formule : « The fifth confirmation never comes free. »",
+    "duel": "Ouverture en duel (Two…) : 33 % d un lot au MAXIMUM. Le duel n est pas mauvais — skip median 44,2 % contre 46,9 % pour l accusation — c est une regle de lassitude, pas de performance. Les deux tiers restants ouvrent sur « You » + un geste que le spectateur a fait."
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
