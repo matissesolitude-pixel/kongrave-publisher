@@ -7,9 +7,9 @@
   "voice": [
     "Two traders see the same signal fire. One takes it in under a minute, but the other is still checking.",
     "A fourth confirmation appears, then a fifth, and the setup is already gone by the time he's satisfied.",
-    "He isn't checking because the signal is unclear. He's checking because acting on it feels irreversible.",
+    "Every confirmation arrives after the move that produced it, so each one he waits for is paid in distance already travelled.",
     "Certainty was never the missing piece — it was the excuse that kept arriving on time.",
-    "The fifth confirmation never comes free. Follow KONGRAVE — the mechanics nobody explains."
+    "Set how many confirmations count before the session, not during it. Follow KONGRAVE — the mechanics nobody explains."
   ],
   "scenes": [
     {
@@ -140,7 +140,7 @@
     }
   ],
   "total": 32.1,
-  "caption": "Two traders see the same signal. One takes it in under a minute — the other is still checking a fifth confirmation when it's already gone.\n\nHe isn't waiting because the signal is unclear. He's waiting because acting on it feels irreversible, and one more check always feels safer than the click. Certainty was never the missing piece.\n\nThe fifth confirmation never comes free.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #analysisparalysis #tradingpsychology #propfirm",
+  "caption": "Two traders see the same signal. One takes it in under a minute — the other is still checking a fifth confirmation when it's already gone.\n\nHe isn't waiting because the signal is unclear. He's waiting because acting on it feels irreversible, and one more check always feels safer than the click. Certainty was never the missing piece.\n\nSet how many confirmations count before the session, not during it.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #daytrading #priceaction #tradingmindset #tradingdiscipline #analysisparalysis #tradingpsychology #propfirm",
   "pinned_comment": "The fifth confirmation never comes free. Follow @kongrave_ — the mechanics nobody explains.",
   "_rules": {
     "cta_keyword": "AUCUN — TOFU (abonnement)",
@@ -151,7 +151,9 @@
     "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
     "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
     "duree": "~32.1s (budget 485 car.). Valeur dense avant la 12e seconde.",
-    "circuit": "M24 frames DoD d'abord."
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable — pas un etat interieur. Mesure du 04/09/2026.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin, pas une formule."
   },
   "_narrator": {
     "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
