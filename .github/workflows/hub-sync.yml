@@ -1,0 +1,86 @@
+# HUB IA (HUB-15 / HUB-16) : envoie au hub l'état de la file et des publications.
+# Lecture seule sur ce dépôt : ce workflow ne publie rien, ne déplace rien, ne pousse rien.
+# Il tourne après chaque changement de file ou de journal, et chaque heure en filet de sécurité.
+name: Synchro hub
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ligne/queue/**"
+      - "ligne/published/**"
+      - "ligne/publish_log.json"
+      - "story/queue/**"
+      - "story/journal.jsonl"
+      - "carrousel/queue/**"
+  schedule:
+    - cron: "40 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: hub-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ligne/queue
+            ligne/publish_log.json
+            story/queue
+            story/journal.jsonl
+            carrousel/queue
+      - name: Envoyer l'état au hub
+        env:
+          HUB_INGEST_TOKEN: ${{ secrets.HUB_INGEST_TOKEN }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, pathlib, urllib.request
+
+          def dossiers(chemin):
+              p = pathlib.Path(chemin)
+              if not p.is_dir():
+                  return []
+              return sorted(x.name.removesuffix(".json") for x in p.iterdir() if not x.name.startswith("."))
+
+          pubs = []
+          for i, nom in enumerate(dossiers("ligne/queue")):
+              pubs.append({"type": "reel", "nom": nom, "etat": "programme", "ordre": i})
+          for i, nom in enumerate(dossiers("story/queue")):
+              pubs.append({"type": "story", "nom": nom, "etat": "programme", "ordre": i})
+          for i, nom in enumerate(dossiers("carrousel/queue")):
+              pubs.append({"type": "carrousel", "nom": nom, "etat": "programme", "ordre": i})
+
+          log = pathlib.Path("ligne/publish_log.json")
+          if log.exists():
+              for e in json.loads(log.read_text())[-120:]:
+                  if e.get("status") == "success" and e.get("episode"):
+                      pubs.append({"type": "reel", "nom": e["episode"], "etat": "publie",
+                                   "publie_le": e.get("published_at"), "media_id": e.get("media_id")})
+
+          journal = pathlib.Path("story/journal.jsonl")
+          if journal.exists():
+              for ligne in journal.read_text().splitlines()[-120:]:
+                  try:
+                      e = json.loads(ligne)
+                  except ValueError:
+                      continue
+                  if e.get("event") == "published" and e.get("id"):
+                      media = (e.get("media") or [{}])[0].get("media_id")
+                      pubs.append({"type": "story", "nom": e["id"], "etat": "publie",
+                                   "publie_le": e.get("at"), "media_id": media})
+
+          req = urllib.request.Request(
+              "https://hub-ia-inky.vercel.app/api/ingest/publication",
+              data=json.dumps({"publications": pubs}).encode(),
+              headers={"Content-Type": "application/json",
+                       "Authorization": "Bearer " + os.environ["HUB_INGEST_TOKEN"]},
+              method="POST",
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              print("hub :", r.status, r.read().decode())
+          EOF
