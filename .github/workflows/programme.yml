@@ -6,12 +6,14 @@
 # Il ne touche à rien d'autre. Pour arrêter un post (le « Stop » de M), on retire son dossier de programme/ avant l'heure.
 # Le Stop de M dans le hub (« Prêt à partir ») est lu avant chaque départ : un post arrêté reste dans programme/.
 # La pause de chaque type (ligne/config.json, story/config.json) est respectée : en pause, le post reste dans programme/.
+# Si le créneau suivant tombe dans les 5 h 45, le run l'attend puis le fait partir à l'heure ; sinon il s'arrête aussitôt.
 # Le déplacement se fait par l'API git (le dépôt pèse plusieurs Go, aucun checkout).
 name: Calendrier programmé
 
 on:
   schedule:
-    - cron: "*/15 * * * *"     # GitHub saute beaucoup de déclenchements ; plus d'occasions = moins de retard
+    - cron: "7,22,37,52 * * * *"   # GitHub saute la plupart des crons sur ce dépôt (30/09 : un cron horaire tourne ~toutes les 6 h).
+                                   # D'où l'attente ci-dessous : un seul déclenchement dans les 5 h 45 avant un créneau suffit.
   workflow_dispatch:
 
 concurrency:
@@ -25,7 +27,7 @@ permissions:
 jobs:
   deplacer-et-publier:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 355
     steps:
       - name: Déplacer les posts arrivés à leur créneau
         id: move
@@ -80,21 +82,31 @@ jobs:
               msg = "programme : " + ", ".join(n for _, n in dus) + " passent en file à leur créneau [skip ci]"
               c = api("POST", "git/commits", {"message": msg, "tree": tree, "parents": [head]})["sha"]
               api("PATCH", "git/refs/heads/main", {"sha": c})
+          import subprocess
+          for k, n in dus:
+              cmd = (["gh", "workflow", "run", "publish-ligne.yml", "-R", R, "-f", "dry_run=false", "-f", "force=true"] if k == "ligne"
+                     else ["gh", "workflow", "run", "publish-story.yml", "-R", R, "-f", f"id={n}", "-f", "dry_run=false", "-f", "force=true"])
+              print("Publication déclenchée :", k, n, "code", subprocess.run(cmd).returncode)
+          # Prochain créneau : s'il tombe dans les 5 h 45 qui viennent, on l'attend ici et on le fait partir à l'heure exacte.
+          # Sinon on s'arrête tout de suite. Aucun relais, aucune veille permanente (M, 30/09 : 2 h de retard au plus, pas 6).
+          futurs = []
+          for d in api("GET", "contents/programme") or []:
+              m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})_(\d{2})h(\d{2})__(ligne|story)__(.+)", d["name"])
+              if m:
+                  futurs.append(datetime.strptime(f"{m[1]} {m[2]}:{m[3]}", "%Y-%m-%d %H:%M").replace(tzinfo=ZoneInfo("Europe/Paris")))
+          futurs = [q for q in futurs if q > datetime.now(ZoneInfo("Europe/Paris"))]
+          attente = (min(futurs) - datetime.now(ZoneInfo("Europe/Paris"))).total_seconds() if futurs else None
           with open(os.environ["GITHUB_OUTPUT"], "a") as o:
-              o.write("dus=" + " ".join(f"{k}:{n}" for k, n in dus) + "\n")
+              o.write(f"attente={int(attente) + 30 if attente is not None and attente <= 345 * 60 else ''}\n")
+          print(f"prochain créneau dans {attente / 60:.0f} min" if attente is not None else "aucun créneau à venir")
           EOF
-      - name: Déclencher les publications
-        if: steps.move.outputs.dus != ''
+      - name: Attendre le prochain créneau s'il est proche
+        if: steps.move.outputs.attente != ''
+        run: |
+          echo "Attente de ${{ steps.move.outputs.attente }} s jusqu'au créneau"
+          sleep ${{ steps.move.outputs.attente }}
+      - name: Faire partir le créneau à l'heure
+        if: steps.move.outputs.attente != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          DUS: ${{ steps.move.outputs.dus }}
-        run: |
-          for kn in $DUS; do
-            kind=${kn%%:*}; nom=${kn#*:}
-            if [ "$kind" = ligne ]; then
-              gh workflow run publish-ligne.yml -R "$GITHUB_REPOSITORY" -f dry_run=false -f force=true
-            else
-              gh workflow run publish-story.yml -R "$GITHUB_REPOSITORY" -f id="$nom" -f dry_run=false -f force=true
-            fi
-            echo "Publication déclenchée : $kind $nom"
-          done
+        run: gh workflow run programme.yml -R "$GITHUB_REPOSITORY" && echo "Passage déclenché à l'heure du créneau."
