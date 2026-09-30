@@ -4,6 +4,7 @@
 #   programme/2026-10-01_17h00__story__kongrave-edu-2026-10-01/   (le manifeste <id>.json, comme dans story/queue)
 # Quand le créneau est passé, ce workflow déplace le post dans la file de son type, puis déclenche sa publication.
 # Il ne touche à rien d'autre. Pour arrêter un post (le « Stop » de M), on retire son dossier de programme/ avant l'heure.
+# Le Stop de M dans le hub (« Prêt à partir ») est lu avant chaque départ : un post arrêté reste dans programme/.
 # La pause de chaque type (ligne/config.json, story/config.json) est respectée : en pause, le post reste dans programme/.
 # Le déplacement se fait par l'API git (le dépôt pèse plusieurs Go, aucun checkout).
 name: Calendrier programmé
@@ -31,6 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          HUB_TOKEN: ${{ secrets.HUB_INGEST_TOKEN }}
         run: |
           python3 - <<'EOF'
           import base64, json, os, re, urllib.request, urllib.error
@@ -50,6 +52,11 @@ jobs:
               c = api("GET", f"contents/{kind}/config.json")
               return bool(c and json.loads(base64.b64decode(c["content"])).get("paused"))
           now = datetime.now(ZoneInfo("Europe/Paris"))
+          try:
+              req = urllib.request.Request("https://hub-ia-inky.vercel.app/api/ingest/media", headers={"Authorization": f"Bearer {os.environ['HUB_TOKEN']}"})
+              arretes = set(json.load(urllib.request.urlopen(req, timeout=30))["arretes"])
+          except Exception as e:
+              arretes = None; print(f"hub injoignable ({e}) : on attend le passage suivant, sauf créneau dépassé de plus de 3 h")
           dus, entries = [], []
           for d in sorted(api("GET", "contents/programme") or [], key=lambda x: x["name"]):
               m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})_(\d{2})h(\d{2})__(ligne|story)__(.+)", d["name"])
@@ -58,6 +65,9 @@ jobs:
               kind, nom = m[4], m[5]
               if quand > now: print(f"en attente : {d['name']}"); continue
               if any(k == kind for k, _ in dus): print(f"un {kind} déjà parti à ce passage, {d['name']} au suivant"); continue
+              if arretes is not None and f"{'reel' if kind == 'ligne' else 'story'}:{nom}" in arretes:
+                  print(f"STOP de M dans le hub : {d['name']} ne part pas"); continue
+              if arretes is None and (now - quand).total_seconds() < 3 * 3600: continue
               if paused(kind): print(f"{kind} en pause : {d['name']} reste en attente"); continue
               for f in api("GET", f"contents/{d['path']}"):
                   dst = f"ligne/queue/{nom}/{f['name']}" if kind == "ligne" else f"story/queue/{f['name']}"
