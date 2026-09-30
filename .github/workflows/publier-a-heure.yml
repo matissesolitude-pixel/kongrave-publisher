@@ -1,0 +1,46 @@
+# Publication à heure fixe, sans le Mac (demande de M, 30/09 : « mets-les en file dans le cloud pour que je puisse fermer l'ordi »).
+# Ce workflow ne publie rien lui-même : il attend l'heure demandée, puis déclenche le workflow de publication indiqué
+# (publish-story.yml, publish-ligne.yml…) avec ses entrées. Pour annuler un départ, il suffit d'annuler ce run avant l'heure.
+name: Publication à heure fixe
+
+on:
+  workflow_dispatch:
+    inputs:
+      workflow:
+        description: "Workflow à déclencher (ex. publish-story.yml)"
+        required: true
+      heure_utc:
+        description: "Heure de départ en UTC, format AAAA-MM-JJTHH:MM (Paris = UTC+2 l'été)"
+        required: true
+      champs:
+        description: "Entrées du workflow, clé=valeur séparées par des espaces"
+        required: false
+        default: ""
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  attendre-puis-declencher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Attendre l'heure
+        env:
+          HEURE: ${{ inputs.heure_utc }}
+        run: |
+          cible=$(date -u -d "$HEURE" +%s)
+          echo "Départ prévu : $HEURE UTC"
+          while [ "$(date -u +%s)" -lt "$cible" ]; do sleep 30; done
+      - name: Déclencher la publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WORKFLOW: ${{ inputs.workflow }}
+          CHAMPS: ${{ inputs.champs }}
+        run: |
+          set -f
+          args=()
+          for kv in $CHAMPS; do args+=(-f "$kv"); done
+          gh workflow run "$WORKFLOW" -R "$GITHUB_REPOSITORY" "${args[@]}"
+          echo "Déclenché : $WORKFLOW ${CHAMPS}"
