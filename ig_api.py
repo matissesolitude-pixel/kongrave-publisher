@@ -253,15 +253,25 @@ def create_story_item(image_url: str) -> str:
     d'en publier UN SEUL).
     """
     url = f"{GRAPH_HOST}/{GRAPH_VERSION}/{_ig_user_id()}/media"
-    resp = _request(
-        "POST",
-        url,
-        data={
-            "media_type": "STORIES",
-            "image_url": image_url,
-            "access_token": _access_token(),
-        },
-    )
+    # Meta répond parfois « Only photo or video can be accepted as media type » sur un JPEG valide :
+    # son robot n'a pas réussi à chercher l'image. Constaté le 30/09 sur la slide 2 d'une séquence,
+    # la relance suivante est passée. On retente donc trois fois avant d'abandonner (rien n'est publié
+    # à ce stade : ce ne sont que des conteneurs).
+    for tentative in range(1, 4):
+        resp = _request(
+            "POST",
+            url,
+            data={
+                "media_type": "STORIES",
+                "image_url": image_url,
+                "access_token": _access_token(),
+            },
+        )
+        if resp.status_code == 400 and "Only photo or video" in resp.text and tentative < 3:
+            print(f"[story] Meta n'a pas pu lire {image_url} (tentative {tentative}/3), relance dans 20 s")
+            time.sleep(20)
+            continue
+        break
     payload = _raise_for_api_error(resp, f"Conteneur story ({image_url})")
     container_id = payload.get("id")
     if not container_id:
