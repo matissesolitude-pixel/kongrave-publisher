@@ -1,0 +1,90 @@
+# Le calendrier éditorial dans le cloud (demande de M, 30/09 : « rien du calendrier ne doit passer à la trappe », Mac fermé).
+# Un post monté à l'avance attend dans programme/, dans un dossier nommé par son créneau, à l'heure de Paris :
+#   programme/2026-10-03_18h00__ligne__WB06-revenge-trade/   (le mp4 et caption.txt, comme dans ligne/queue)
+#   programme/2026-10-01_17h00__story__kongrave-edu-2026-10-01/   (le manifeste <id>.json, comme dans story/queue)
+# Quand le créneau est passé, ce workflow déplace le post dans la file de son type, puis déclenche sa publication.
+# Il ne touche à rien d'autre. Pour arrêter un post (le « Stop » de M), on retire son dossier de programme/ avant l'heure.
+# La pause de chaque type (ligne/config.json, story/config.json) est respectée : en pause, le post reste dans programme/.
+# Le déplacement se fait par l'API git (le dépôt pèse plusieurs Go, aucun checkout).
+name: Calendrier programmé
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"     # GitHub saute beaucoup de déclenchements ; plus d'occasions = moins de retard
+  workflow_dispatch:
+
+concurrency:
+  group: programme
+  cancel-in-progress: false
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  deplacer-et-publier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Déplacer les posts arrivés à leur créneau
+        id: move
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'EOF'
+          import base64, json, os, re, urllib.request, urllib.error
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          R, TOK = os.environ["REPO"], os.environ["GH_TOKEN"]
+          def api(method, path, body=None):
+              req = urllib.request.Request(f"https://api.github.com/repos/{R}/{path}", method=method,
+                  data=json.dumps(body).encode() if body is not None else None,
+                  headers={"Authorization": f"Bearer {TOK}", "Accept": "application/vnd.github+json"})
+              try:
+                  return json.load(urllib.request.urlopen(req, timeout=60))
+              except urllib.error.HTTPError as e:
+                  if e.code == 404: return None
+                  raise
+          def paused(kind):
+              c = api("GET", f"contents/{kind}/config.json")
+              return bool(c and json.loads(base64.b64decode(c["content"])).get("paused"))
+          now = datetime.now(ZoneInfo("Europe/Paris"))
+          dus, entries = [], []
+          for d in sorted(api("GET", "contents/programme") or [], key=lambda x: x["name"]):
+              m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})_(\d{2})h(\d{2})__(ligne|story)__(.+)", d["name"])
+              if d["type"] != "dir" or not m: continue
+              quand = datetime.strptime(f"{m[1]} {m[2]}:{m[3]}", "%Y-%m-%d %H:%M").replace(tzinfo=ZoneInfo("Europe/Paris"))
+              kind, nom = m[4], m[5]
+              if quand > now: print(f"en attente : {d['name']}"); continue
+              if any(k == kind for k, _ in dus): print(f"un {kind} déjà parti à ce passage, {d['name']} au suivant"); continue
+              if paused(kind): print(f"{kind} en pause : {d['name']} reste en attente"); continue
+              for f in api("GET", f"contents/{d['path']}"):
+                  dst = f"ligne/queue/{nom}/{f['name']}" if kind == "ligne" else f"story/queue/{f['name']}"
+                  entries += [{"path": dst, "mode": "100644", "type": "blob", "sha": f["sha"]},
+                              {"path": f["path"], "mode": "100644", "type": "blob", "sha": None}]
+              dus.append((kind, nom)); print(f"créneau arrivé : {d['name']} -> file {kind}")
+          if dus:
+              head = api("GET", "git/ref/heads/main")["object"]["sha"]
+              tree = api("POST", "git/trees", {"base_tree": api("GET", f"git/commits/{head}")["tree"]["sha"], "tree": entries})["sha"]
+              msg = "programme : " + ", ".join(n for _, n in dus) + " passent en file à leur créneau [skip ci]"
+              c = api("POST", "git/commits", {"message": msg, "tree": tree, "parents": [head]})["sha"]
+              api("PATCH", "git/refs/heads/main", {"sha": c})
+          with open(os.environ["GITHUB_OUTPUT"], "a") as o:
+              o.write("dus=" + " ".join(f"{k}:{n}" for k, n in dus) + "\n")
+          EOF
+      - name: Déclencher les publications
+        if: steps.move.outputs.dus != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DUS: ${{ steps.move.outputs.dus }}
+        run: |
+          for kn in $DUS; do
+            kind=${kn%%:*}; nom=${kn#*:}
+            if [ "$kind" = ligne ]; then
+              gh workflow run publish-ligne.yml -R "$GITHUB_REPOSITORY" -f dry_run=false -f force=true
+            else
+              gh workflow run publish-story.yml -R "$GITHUB_REPOSITORY" -f id="$nom" -f dry_run=false -f force=true
+            fi
+            echo "Publication déclenchée : $kind $nom"
+          done
