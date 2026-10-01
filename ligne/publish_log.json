@@ -1317,5 +1317,13 @@
     "attempt": 1,
     "error": "Création du conteneur — HTTP 400 : Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.",
     "logged_at": "2026-10-01T16:03:57.797662+00:00"
+  },
+  {
+    "episode": "WB06-revenge-trade",
+    "status": "success",
+    "media_id": "17883681108511510",
+    "container_id": "18154695505557833",
+    "published_at": "2026-10-01T17:23:26.337837+00:00",
+    "logged_at": "2026-10-01T17:23:26.337837+00:00"
   }
 ]
