@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L115 « THE SIGNAL EVERYONE SAW » — HARENG ROUGE : le faux coupable (les indicateurs) est désigné,
+       puis la vraie cause (le consensus = tu es la liquidité) se révèle.
+       S1 : émotion frame 0 = RECONNAISSANCE DE SOI — tous les indicateurs pointent la même direction,
+       trade pris sans réfléchir. S2 : les signaux lisent la MÊME donnée, ce ne sont pas des confirmations
+       indépendantes. S3 : les stops de tous les traders tombent au même endroit = cible facile.
+       S4 : le prix inverse pile dans le cluster, la foule est la liquidité. S5 : « When everyone agrees,
+       you are the liquidity. » CTA. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // ── QUESTION ──
+    const QLINES=['WHY DOES THE SAFEST TRADE','FAIL THE MOST'];
+    const FS=64,lineH=90,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── CAPTIONS ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — RECONNAISSANCE DE SOI : tous les indicateurs pointent UP, trade pris sans réfléchir ═══
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      // question visible frame 0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      // multiple indicators all pointing UP — arrows (polylines) in teal, spread across X
+      const arrows=[260,400,540,680,820];
+      const arrowBase=1050, arrowH=180+30*Math.sin(u*1.2);
+      for(let i=0;i<arrows.length;i++){
+        const ax=arrows[i], breath=6*Math.sin(u*2.0+i*1.1);
+        // upward arrow as polyline
+        path([[ax-30,arrowBase],[ax,arrowBase-arrowH+breath],[ax+30,arrowBase]], YOU, 0.85, 8);
+      }
+
+      // a position bar enters at center
+      const entryF=clamp((u-1.5)/0.8,0,1);
+      bar(CX-60, 1100-120*eOut(entryF)+4*Math.sin(u*1.8), 120, 120*eOut(entryF), YOU, entryF*0.9);
+
+      // label
+      putCap(capC,'ALL INDICATORS AGREE',CX, 1260, INK, clamp((u-0.6)/0.6,0,1)*gf);
+
+      flushAll();
+    }
+
+    // ═══ S2 — Les signaux lisent la MÊME donnée — pas des confirmations indépendantes ═══
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+
+      // arrows converge to ONE source point at center
+      const arrows=[220,380,540,700,860];
+      const sourceY=960, sourceX=CX;
+      const convergeF=clamp(u/3.0,0,1);
+
+      for(let i=0;i<arrows.length;i++){
+        const startX=arrows[i], startY=700;
+        const cx=lerp(startX, sourceX, eInOut(convergeF));
+        const cy=lerp(startY, sourceY, eInOut(convergeF));
+        const breath=5*Math.sin(u*2.1+i*0.9);
+        // arrows shrink as they converge
+        const h=160*(1-0.5*convergeF);
+        path([[cx-25,cy+breath],[cx,cy-h+breath],[cx+25,cy+breath]], YOU, 0.8, 7);
+      }
+
+      // source point pulses
+      const pulseR=20+8*Math.sin(u*3.0);
+      ring(sourceX, sourceY, pulseR, INK, clamp(convergeF,0,0.9));
+
+      putCap(capB,'SAME DATA',sourceX, sourceY+60, INK, clamp((u-1.5)/0.6,0,1));
+      putCap(capC,'SAME ANSWER',sourceX, sourceY+110, DEAD, clamp((u-2.2)/0.6,0,1));
+
+      // label
+      putCap(capA,'NOT INDEPENDENT CONFIRMATIONS',CX, 1240, INK, clamp((u-2.8)/0.7,0,1));
+
+      flushAll();
+    }
+
+    // ═══ S3 — Tous les stops au même niveau = cible la plus facile ═══
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+
+      // a horizontal stop level
+      const stopY=920, stopLineW=680;
+      bar(CX-stopLineW/2, stopY-3, stopLineW, 6, INK, 0.8, 0);
+
+      // many small stop bars clustering at that level — appear in sequence
+      const N=14;
+      for(let i=0;i<N;i++){
+        const at=0.15+i*0.25, ap=clamp((u-at)/0.3,0,1);
+        if(ap<=0) continue;
+        const sx=CX-stopLineW/2+30+i*(stopLineW-60)/(N-1);
+        const w=28+6*Math.sin(u*2.3-i*0.7);
+        const h=40+10*Math.sin(u*1.8+i*0.5);
+        bar(sx-w/2, stopY-h*eOut(ap)+3*Math.sin(u*2.0+i), w, h*eOut(ap), YOU, ap*0.75);
+      }
+
+      // the cluster GLOWS — a pulsing highlight around the stop level
+      const glowF=clamp((u-2.0)/1.0,0,1);
+      const glowOp=glowF*(0.3+0.15*Math.sin(u*3.5));
+      bar(CX-stopLineW/2-10, stopY-60, stopLineW+20, 70, DEAD, glowOp, 12);
+
+      putCap(capB,'STOP CLUSTER',CX, stopY+80, INK, clamp((u-1.0)/0.6,0,1));
+      putCap(capC,'EASIEST TARGET ON THE CHART',CX, stopY+130, DEAD, clamp((u-2.5)/0.7,0,1));
+
+      flushAll();
+    }
+
+    // ═══ S4 — Le prix reverse pile dans le cluster — la foule est la liquidité ═══
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+
+      const stopY=900, stopLineW=680;
+      bar(CX-stopLineW/2, stopY-3, stopLineW, 6, INK, 0.7, 0);
+
+      // price comes down INTO the cluster
+      const priceDropF=clamp(u/2.5,0,1);
+      const priceY=lerp(600, stopY, eInOut(priceDropF));
+
+      // the stops — they turn grey as the price hits them
+      const N=12;
+      for(let i=0;i<N;i++){
+        const sx=CX-stopLineW/2+40+i*(stopLineW-80)/(N-1);
+        const hitF=clamp((priceY-(stopY-50))/50,0,1);
+        const col=hitF>0.5?DEAD:YOU;
+        const shrink=hitF>0.5?1-0.6*(hitF-0.5)*2:1;
+        const w=26, h=38*shrink+4*Math.sin(u*2.0+i*0.8);
+        bar(sx-w/2, stopY-h+2*Math.sin(u*1.7+i), w, Math.max(2,h), col, 0.75);
+      }
+
+      // the wick / price line dropping
+      path([[CX,600],[CX,priceY]], INK, 0.9, 5);
+      ring(CX, priceY, 14+4*Math.sin(u*2.8), INK, 0.9);
+
+      // after hitting cluster, price reverses UP (post u>3)
+      const reverseF=clamp((u-3.0)/1.5,0,1);
+      if(reverseF>0){
+        const revY=lerp(stopY, 550, eOut(reverseF));
+        path([[CX,stopY],[CX,revY]], YOU, reverseF*0.8, 6);
+        ring(CX, revY, 12+3*Math.sin(u*3.0), YOU, reverseF*0.8);
+      }
+
+      putCap(capA,'THE CROWD IS THE LIQUIDITY',CX, 1180, DEAD, clamp((u-3.5)/0.7,0,1));
+
+      flushAll();
+    }
+
+    // ═══ S5 — Quand tout le monde est d'accord, tu ES la liquidité ═══
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+
+      // the crowd (grey, many small bars) vs the lone contrarian (teal, one bar)
+      const base=1100;
+      // crowd: grey bars, collapsed
+      const crowdN=10;
+      for(let i=0;i<crowdN;i++){
+        const cx=CX-220+i*44;
+        const h=60+15*Math.sin(u*1.6+i*0.7);
+        bar(cx-16, base-h+3*Math.sin(u*1.9+i), 32, h, DEAD, 0.7);
+      }
+
+      // lone teal bar — stands apart, taller
+      const loneX=CX+260, loneH=180+12*Math.sin(u*1.4);
+      bar(loneX-40, base-loneH+4*Math.sin(u*1.7), 80, loneH, YOU, 1);
+      ring(loneX, base-loneH-28+4*Math.sin(u*1.7), 16, INK, 1);
+
+      // floor
+      bar(200, base, 680, 4, INK, 0.6, 0);
+
+      // message
+      putCap(capA,'WHEN EVERYONE AGREES',CX, 780, INK, clamp(u/0.7,0,1));
+      putCap(capB,'YOU ARE THE LIQUIDITY',CX, 850, DEAD, clamp((u-0.8)/0.7,0,1));
+      putCap(capF,'FOLLOW @KONGRAVE_',CX, 1300, YOU, clamp((u-2.0)/0.7,0,1));
+
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t);const lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
