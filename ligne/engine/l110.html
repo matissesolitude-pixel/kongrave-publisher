@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L110 « THE SPIKE THAT CLEANED THE BOOK » — HARENG ROUGE : un faux coupable (le hasard)
+       est désigné, puis la vraie cause (les ordres visibles dans le carnet) se révèle.
+       S1 : COLÈRE — ton stop a été touché par 3 pips et le prix est reparti exactement dans
+       ta direction. La mèche (spike) perce le niveau dès la frame 0. Tu es SORTI, le prix monte
+       SANS toi. S2 : le faux coupable (le hasard) s'efface, le vrai coupable (les ordres empilés
+       dans le carnet) apparaît. S3 : chaque stop retail au même chiffre rond forme un bassin de
+       liquidité — les petites barres fusionnent en un gros bloc. S4 : escalade — le prix descend
+       au cluster, remplit l'ordre en attente, repart avant que l'écran se rafraîchisse. S5 : deux
+       zones — là où la foule attend (gris) vs là où la liquidité a déjà été prise (teal, sûr).
+       CTA abonnement KONGRAVE. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHY DID THE PRICE HIT YOUR STOP','AND REVERSE IMMEDIATELY'];
+    const FS=64,lineH=90,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — COLÈRE : ton stop touché, le prix repart sans toi ═══
+    // Frame 0 : la mèche (spike) perce DÉJÀ le niveau de stop. Le trader (teal) est sorti.
+    // Le prix remonte sans lui. Faux coupable implicite : le hasard.
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      // question dès frame 0
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      const stopY=920, base=1380;
+      // niveau de stop — ligne horizontale épaisse
+      bar(200, stopY-3, 680, 6, INK, 0.7, 0);
+      putCap(capE,'YOUR STOP',820, stopY-18, INK, clamp(u/0.5,0,1)*gf);
+      // cluster de petits ordres au niveau du stop (retail stops empilés)
+      for(let i=0;i<6;i++){
+        const bx=280+i*70, bw=50, bh=24+4*Math.sin(u*2.1+i*1.2);
+        bar(bx, stopY+8, bw, bh, DEAD, 0.6+0.1*Math.sin(u*1.8+i));
+      }
+      // la mèche (spike) — DÉJÀ visible frame 0, perce 3 pips sous le stop puis remonte
+      const spikePhase=clamp(u/3.0,0,1);
+      const spikeBottom=stopY+60+12*Math.sin(u*2.6);
+      const spikeTop=lerp(spikeBottom, stopY-180-80*eOut(spikePhase), eOut(spikePhase));
+      path([[CX,spikeBottom],[CX,spikeTop]], INK, 1, 8);
+      // indicateur « 3 pips sous le stop »
+      ring(CX, spikeBottom, 10+3*Math.sin(u*3.1), DEAD, 0.8);
+      // ta position (barre teal) — SORTIE, elle se vide
+      const exitF=clamp(u/2.0,0,1);
+      const posH=lerp(160, 30, eOut(exitF))+5*Math.sin(u*1.7);
+      bar(380, stopY-posH-20, 80, Math.max(4,posH), YOU, lerp(1,0.3,exitF));
+      // le prix qui repart vers le haut SANS toi
+      const riseF=clamp((u-2.0)/4.0,0,1);
+      const priceY=lerp(stopY-20, stopY-280, eOut(riseF))+6*Math.sin(u*2.3);
+      ring(CX, priceY, 16+4*Math.sin(u*2.8), INK, clamp((u-1.5)/0.6,0,1));
+      putCap(capC,'PRICE REVERSED',CX, priceY-34, INK, clamp((u-3.0)/0.6,0,1)*gf);
+      putCap(capD,'WITHOUT YOU',CX, priceY+46, DEAD, clamp((u-3.5)/0.6,0,1)*gf);
+      flushAll();
+    }
+
+    // ═══ S2 — RÉVÉLATION : le faux coupable (hasard) s'efface, le vrai (carnet d'ordres) apparaît ═══
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      // le « faux coupable » — texte RANDOM? qui s'efface
+      const fadeRandom=clamp(1-u/2.5,0,1);
+      putCap(capA,'RANDOM',CX, 740, DEAD, fadeRandom*0.8);
+      // barre de texte barrée
+      if(fadeRandom>0.05) bar(CX-120, 732, 240, 5, DEAD, fadeRandom*0.6, 0);
+      // le vrai coupable — le carnet d'ordres, barres empilées visibles
+      const revealF=clamp((u-1.5)/2.0,0,1);
+      const bookX=CX, bookY=900;
+      // barres du carnet (ordres empilés au même niveau)
+      for(let i=0;i<8;i++){
+        const bw=60+40*Math.random()*0+40*(i%3===0?1:0.6);
+        const bwActual=60+40*(i%3===0?1:0.6)+6*Math.sin(u*1.9+i*0.7);
+        const by=bookY+i*32;
+        const ap=clamp((revealF-(i*0.08))/0.3,0,1);
+        bar(bookX-bwActual/2, by, bwActual, 24, (i<5)?DEAD:INK, ap*0.85);
+      }
+      putCap(capB,'THE ORDER BOOK',CX, bookY-30, INK, eOut(revealF));
+      putCap(capC,'VISIBLE TO ANYONE',CX, bookY+8*32+40, INK, clamp((u-3.0)/0.6,0,1));
+      // flèche « la vraie cause »
+      const arrowAp=clamp((u-3.5)/0.8,0,1);
+      path([[CX-200,bookY+120],[CX-60,bookY+120]], YOU, arrowAp, 6);
+      putCap(capD,'THE REAL CAUSE',CX+120, bookY+128, YOU, arrowAp);
+      flushAll();
+    }
+
+    // ═══ S3 — POOL DE LIQUIDITÉ : les stops retail fusionnent en un bloc ═══
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const poolY=920, base=1300;
+      putCap(capB,'ROUND NUMBER',CX, poolY-60, INK, 1);
+      // ligne du chiffre rond
+      bar(200, poolY-3, 680, 6, INK, 0.6, 0);
+      // petits stops retail qui arrivent et fusionnent
+      const N=10;
+      const mergeF=clamp((u-2.0)/2.5,0,1);
+      for(let i=0;i<N;i++){
+        const ox=260+i*56;
+        const tx=lerp(ox, CX-100+i*20, eOut(mergeF));
+        const tw=lerp(36, 200/N, eOut(mergeF));
+        const th=20+4*Math.sin(u*2.2+i*0.8);
+        const ap=clamp((u-i*0.15)/0.4,0,1);
+        bar(tx, poolY+10, tw, th, DEAD, ap*0.8);
+      }
+      // le pool fusionné — un gros bloc gris qui pulse
+      if(mergeF>0.5){
+        const poolAp=clamp((mergeF-0.5)/0.5,0,1);
+        const poolW=260+20*Math.sin(u*1.6), poolH=50+8*Math.sin(u*2.4);
+        bar(CX-poolW/2, poolY+6, poolW, poolH, DEAD, poolAp*0.9);
+        putCap(capC,'LIQUIDITY POOL',CX, poolY+poolH+40, DEAD, poolAp);
+      }
+      // le gros ordre qui arrive pour se remplir
+      const bigF=clamp((u-4.5)/1.5,0,1);
+      const bigY=lerp(poolY-200, poolY-20, eOut(bigF));
+      bar(CX-40, bigY, 80, 60+6*Math.sin(u*2.8), INK, bigF*0.9);
+      putCap(capA,'LARGER ORDER FILLS HERE',CX, poolY-220, INK, clamp((u-5.0)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S4 — ESCALADE : le prix descend au cluster, remplit, repart avant que l'écran se rafraîchisse ═══
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const clusterY=960, topY=680;
+      // le cluster de stops — bloc gris fixe
+      bar(CX-130, clusterY, 260, 40, DEAD, 0.7);
+      putCap(capE,'STOP CLUSTER',CX, clusterY+60, DEAD, 0.9);
+      // ligne de prix qui descend, touche, remonte violemment
+      const phase1=clamp(u/1.8,0,1);
+      const phase2=clamp((u-1.8)/0.4,0,1);
+      const phase3=clamp((u-2.2)/2.0,0,1);
+      let priceY;
+      if(phase3>0){
+        priceY=lerp(clusterY+30, topY-60, eOut(phase3));
+      } else if(phase2>0){
+        priceY=clusterY+30+10*Math.sin(u*8);
+      } else {
+        priceY=lerp(topY, clusterY+30, eIn(phase1));
+      }
+      priceY+=4*Math.sin(u*3.2);
+      // trace du prix (polyline)
+      const pts=[];
+      const steps=20;
+      for(let i=0;i<=steps;i++){
+        const f=i/steps;
+        const ut=u*f;
+        const p1=clamp(ut/1.8,0,1);
+        const p2=clamp((ut-1.8)/0.4,0,1);
+        const p3=clamp((ut-2.2)/2.0,0,1);
+        let py;
+        if(p3>0) py=lerp(clusterY+30, topY-60, eOut(p3));
+        else if(p2>0) py=clusterY+30;
+        else py=lerp(topY, clusterY+30, eIn(p1));
+        pts.push([260+460*f, py+6*Math.sin(f*12+u)]);
+      }
+      path(pts, INK, 0.9, 5);
+      // boule de prix courante
+      ring(260+460*(u/Math.max(0.1,u)), priceY, 18+4*Math.sin(u*3.8), INK, 1);
+      // flash au moment du remplissage
+      if(phase2>0 && phase2<1){
+        ring(CX, clusterY+20, 40+60*phase2, DEAD, (1-phase2)*0.6, 3);
+      }
+      // le prix repart au-dessus
+      putCap(capA,'FILLS AND REVERSES',CX, topY-100, INK, clamp((u-2.8)/0.6,0,1));
+      putCap(capC,'BEFORE THE SCREEN REFRESHES',CX, topY-50, DEAD, clamp((u-3.5)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S5 — DÉCHARGE : deux zones — foule (gris) vs liquidité prise (teal, sûr) ═══
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const Lc=320, Rc=760, zoneY=880;
+      // zone gauche — là où la foule attend encore (gris, dangereux)
+      const crowdAp=clamp(u/1.0,0,1);
+      for(let i=0;i<6;i++){
+        const bx=Lc-90+i*30, bh=28+6*Math.sin(u*2.0+i*1.1);
+        bar(bx, zoneY, 22, bh, DEAD, crowdAp*0.7);
+      }
+      bar(Lc-100, zoneY+50, 200, 5, DEAD, crowdAp*0.8, 0);
+      putCap(capC,'WHERE THE CROWD SITS',Lc, zoneY-30, DEAD, crowdAp);
+      // croix de danger
+      if(crowdAp>0.5){
+        path([[Lc-18,zoneY+70],[Lc+18,zoneY+100]], DEAD, (crowdAp-0.5)*2, 5);
+        path([[Lc+18,zoneY+70],[Lc-18,zoneY+100]], DEAD, (crowdAp-0.5)*2, 5);
+      }
+      // zone droite — là où la liquidité a déjà été prise (teal, sûr)
+      const safeAp=clamp((u-1.5)/1.0,0,1);
+      bar(Rc-100, zoneY, 200, 40+6*Math.sin(u*1.8), YOU, safeAp*0.85);
+      bar(Rc-100, zoneY+50, 200, 5, YOU, safeAp*0.6, 0);
+      putCap(capD,'WHERE LIQUIDITY WAS TAKEN',Rc, zoneY-30, YOU, safeAp);
+      // coche de sûreté
+      if(safeAp>0.5){
+        path([[Rc-16,zoneY+80],[Rc,zoneY+96],[Rc+24,zoneY+64]], YOU, (safeAp-0.5)*2, 5);
+      }
+      // ta position (teal) placée dans la zone sûre
+      const posAp=clamp((u-2.5)/0.8,0,1);
+      bar(Rc-30, zoneY+60, 60, 100+8*Math.sin(u*1.6), YOU, posAp);
+      ring(Rc, zoneY+52, 14, INK, posAp);
+      // message et CTA
+      putCap(capA,'PLACE YOUR STOP WHERE THE LIQUIDITY HAS ALREADY BEEN TAKEN',CX, 1200, INK, clamp((u-2.0)/0.7,0,1));
+      putCap(capF,'FOLLOW @KONGRAVE_',CX, 1320, YOU, clamp((u-3.0)/0.7,0,1));
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t);const lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
