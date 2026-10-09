@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L109 « THE TOLL NOBODY COUNTS » — MÉTAPHORE SEULE : le péage invisible (le spread).
+       Objet-métaphore unique : la FENTE entre deux barres de prix (bid/ask). Elle prélève à chaque passage.
+       S1 : émotion frame 0 = RECONNAISSANCE DE SOI — un compte (barre teal) déjà en train de rétrécir
+       malgré un trade « gagnant » (flèche entrée-sortie correcte). La fente entre deux niveaux de prix
+       est DÉJÀ visible, fine, qui pulse. S2 : la fente S'OUVRE et montre ce qu'elle prend — le prix
+       affiché (barre haute) et le prix reçu (barre basse), l'écart mange chaque passage.
+       S3 : pivot — sur une paire calme la fente est fine, sur une session volatile elle S'ÉLARGIT
+       brutalement au pire moment. S4 : escalade — 100 petites fentes empilées = même hauteur qu'un
+       stop touché (gros bloc gris). S5 : décharge — la fente se referme sur le message « COUNT THE
+       TOLL FIRST » ; CTA abonnement KONGRAVE. Teal = toi/ton compte ; gris = ce qui se perd ;
+       aucun chiffre ; aucun narrateur. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // ── QUESTION (§M15) — 1re ligne pleine dès la frame 0 ──
+    const QLINES=['WHERE DID THE MONEY GO','IF THE TRADE WAS RIGHT'];
+    const FS=64,lineH=90,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES (putCap copié tel quel de l26) ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — RECONNAISSANCE DE SOI : le trade était juste, le compte a rétréci quand même ═══
+    // Verbe visuel : le compte (barre teal) perd de la hauteur malgré une flèche entrée-sortie correcte.
+    // La fente entre BID et ASK est DÉJÀ visible, fine, qui pulse — c'est elle qui prélève.
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      const acctX=CX, acctW=180, base=1280;
+      // le compte qui rétrécit lentement — déjà en train de baisser dès frame 0
+      const shrink=clamp(u/8.0,0,0.25), throb=8*Math.sin(u*1.6)+4*Math.sin(u*2.9);
+      const acctH=380*(1-shrink)+throb;
+      bar(acctX-acctW/2, base-acctH, acctW, acctH, YOU, 1);
+      // marqueur « toi » au sommet
+      ring(acctX, base-acctH-28, 20, INK, 1);
+      putCap(capE,'YOU',acctX, base-acctH-62, INK, clamp(u/0.6,0,1));
+      // le sol
+      bar(200, base, 680, 5, INK, 0.9, 0);
+      // la fente (le spread) — deux barres horizontales avec un écart qui pulse
+      const fY=860, fGap=14+6*Math.sin(u*2.4)+3*Math.sin(u*3.8);
+      bar(280, fY-fGap/2-5, 520, 5, INK, 0.8, 0);
+      bar(280, fY+fGap/2, 520, 5, INK, 0.8, 0);
+      // remplissage de la fente (ce qui est prélevé) — pulse en gris
+      bar(280, fY-fGap/2, 520, fGap, DEAD, 0.5+0.15*Math.sin(u*3.2));
+      putCap(capC,'THE PRICE YOU SEE',CX, fY-fGap/2-28, INK, clamp((u-1.2)/0.6,0,1));
+      putCap(capD,'THE PRICE YOU GET',CX, fY+fGap/2+42, INK, clamp((u-2.0)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S2 — LE SPREAD S'OUVRE : il prélève à chaque passage ═══
+    // Verbe visuel : la fente s'ouvre et laisse passer une boule teal qui rétrécit en traversant.
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const fY=900, gap=40+20*eOut(clamp(u/2.0,0,1))+8*Math.sin(u*2.1);
+      // les deux niveaux de prix (bid/ask)
+      bar(200, fY-gap/2-8, 680, 8, INK, 1, 0);
+      bar(200, fY+gap/2, 680, 8, INK, 1, 0);
+      // le spread (la fente) vibre
+      bar(200, fY-gap/2, 680, gap, DEAD, 0.35+0.1*Math.sin(u*2.8));
+      putCap(capB,'THE SPREAD',CX, fY-gap/2-34, INK, 1);
+      // boules teal qui traversent la fente — chacune perd un bout
+      const PASSES=[0.8, 2.2, 3.6];
+      for(let i=0;i<PASSES.length;i++){
+        const pu=u-PASSES[i]; if(pu<0||pu>1.4) continue;
+        const py=lerp(fY-gap/2-120, fY+gap/2+120, clamp(pu/1.4,0,1));
+        const inGap=(py>fY-gap/2 && py<fY+gap/2);
+        const r=inGap ? 24-6*clamp((pu-0.4)/0.6,0,1) : 24-6*Math.max(0,clamp((pu-0.7)/0.7,0,1));
+        ring(CX, py, Math.max(8,r), YOU, clamp(1-Math.abs(pu-0.7)/0.7,0,1)*0.9);
+      }
+      // étiquettes
+      putCap(capC,'PRICE DISPLAYED',380, fY+gap/2+72, INK, clamp((u-0.4)/0.6,0,1));
+      putCap(capD,'PRICE RECEIVED',700, fY+gap/2+72, DEAD, clamp((u-1.0)/0.6,0,1));
+      // le compte en bas qui rétrécit à chaque passage
+      const base=1340, acctW=160, loss=clamp(u/5.0,0,0.3);
+      const acctH=260*(1-loss)+6*Math.sin(u*1.8);
+      bar(CX-acctW/2, base-acctH, acctW, acctH, YOU, 0.85);
+      bar(300, base, 480, 4, INK, 0.6, 0);
+      flushAll();
+    }
+
+    // ═══ S3 — PAIRE CALME vs SESSION VOLATILE : la fente s'élargit quand tu en as le plus besoin ═══
+    // Verbe visuel : deux colonnes — à gauche la fente fine et stable, à droite elle explose.
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const Lc=320, Rc=760, fY=920;
+      // gauche : paire calme — fente fine, stable
+      const gapL=10+3*Math.sin(u*1.8);
+      bar(Lc-180, fY-gapL/2-6, 360, 6, INK, 0.9, 0);
+      bar(Lc-180, fY+gapL/2, 360, 6, INK, 0.9, 0);
+      bar(Lc-180, fY-gapL/2, 360, gapL, DEAD, 0.4);
+      putCap(capC,'QUIET PAIR',Lc, 780, INK, 1);
+      // droite : session volatile — la fente EXPLOSE
+      const volPulse=clamp((u-1.2)/1.5,0,1);
+      const gapR=10+80*eOut(volPulse)+18*Math.sin(u*3.4)*volPulse;
+      bar(Rc-180, fY-gapR/2-6, 360, 6, INK, 0.9, 0);
+      bar(Rc-180, fY+gapR/2, 360, 6, INK, 0.9, 0);
+      bar(Rc-180, fY-gapR/2, 360, gapR, DEAD, 0.5+0.2*volPulse);
+      putCap(capD,'VOLATILE SESSION',Rc, 780, DEAD, 1);
+      // étiquette « WIDENS WHEN YOU NEED IT LEAST »
+      putCap(capA,'WIDENS WHEN YOU NEED IT LEAST',CX, 1220, DEAD, clamp((u-2.4)/0.8,0,1));
+      // deux comptes : le gauche perd un peu, le droit perd beaucoup
+      const base=1360;
+      const hL=180-18*clamp(u/5,0,1)+5*Math.sin(u*2.0);
+      const hR=180-90*clamp(u/4,0,1)+5*Math.sin(u*2.3);
+      bar(Lc-60, base-hL, 120, hL, YOU, 0.8);
+      bar(Rc-60, base-hR, 120, hR, (hR<120)?DEAD:YOU, 0.8);
+      flushAll();
+    }
+
+    // ═══ S4 — ESCALADE : 100 petits spreads = un stop touché ═══
+    // Verbe visuel : l'empilement — des fentes fines s'empilent jusqu'à atteindre la hauteur d'un gros bloc gris.
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      putCap(capB,'A HUNDRED SMALL TOLLS',CX, 680, INK, 1);
+      const base=1300, stackX=340, stopX=740;
+      // empilement de fentes (les spreads cumulés) — apparaissent en cadence
+      const N=12, sliceH=22, sliceW=200;
+      let totalH=0;
+      for(let i=0;i<N;i++){
+        const at=0.3+i*0.35, ap=clamp((u-at)/0.3,0,1);
+        if(ap<=0) continue;
+        const sy=base-(i+1)*sliceH-i*4+3*Math.sin(u*2.1-i*0.5);
+        bar(stackX-sliceW/2, sy, sliceW, sliceH, DEAD, ap*0.85);
+        totalH=(i+1)*sliceH+i*4;
+      }
+      // le stop touché à droite — un seul gros bloc gris de même hauteur
+      const stopAp=clamp((u-3.0)/0.8,0,1);
+      const stopH=totalH>0?totalH:N*sliceH+(N-1)*4;
+      bar(stopX-100, base-stopH*eOut(stopAp), 200, stopH*eOut(stopAp), DEAD, stopAp*0.95);
+      // signe « = » entre les deux
+      const eqAp=clamp((u-3.8)/0.5,0,1);
+      bar(CX-30, base-stopH/2-14, 60, 8, INK, eqAp, 0);
+      bar(CX-30, base-stopH/2+6, 60, 8, INK, eqAp, 0);
+      putCap(capC,'SPREAD COST',stackX, base+44, DEAD, clamp((u-1.0)/0.6,0,1));
+      putCap(capD,'ONE BLOWN STOP',stopX, base+44, DEAD, stopAp);
+      flushAll();
+    }
+
+    // ═══ S5 — DÉCHARGE : compte le péage avant de compter le gain ═══
+    // Verbe visuel : la fente se referme sur le message ; CTA abonnement KONGRAVE.
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      // la fente (spread) au centre, qui se referme lentement
+      const fY=880, closeF=clamp(u/3.0,0,0.85);
+      const gap=60*(1-closeF)+4*Math.sin(u*2.4);
+      bar(200, fY-gap/2-6, 680, 6, INK, 1, 0);
+      bar(200, fY+gap/2, 680, 6, INK, 1, 0);
+      bar(200, fY-gap/2, 680, gap, DEAD, 0.3*(1-closeF));
+      // le compte (teal) qui se stabilise — il arrête de rétrécir quand on a compris
+      const base=1240, acctW=180;
+      const acctH=220+40*eOut(clamp((u-1.0)/2.0,0,1))+6*Math.sin(u*1.7);
+      bar(CX-acctW/2, base-acctH, acctW, acctH, YOU, 1);
+      bar(300, base, 480, 4, INK, 0.6, 0);
+      ring(CX, base-acctH-28, 18, INK, 1);
+      // message et CTA
+      putCap(capA,'COUNT THE TOLL FIRST',CX, 1310, INK, clamp((u-1.8)/0.7,0,1));
+      putCap(capF,'FOLLOW @KONGRAVE_',CX, 1400, YOU, clamp((u-2.8)/0.7,0,1));
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t);const lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
