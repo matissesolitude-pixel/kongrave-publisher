@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // ── QUESTION ──
+    const QLINES=['WHY IS THE VOLUME SCREAMING','WHILE THE PRICE STAYS QUIET'];
+    const FS=62,lineH=88,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── CAPTIONS ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — TENSION : bougie verte calme, volume 3× en dessous ═══
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      // candle zone — 5 small candles + the big calm green one at center
+      const candleBase=820, volBase=1320;
+      const smallW=50, bigW=70;
+      // background candles (grey, small)
+      const cx_arr=[240,360,540,720,840];
+      const ch_arr=[80,60,50,70,55];
+      for(let i=0;i<cx_arr.length;i++){
+        if(i===2) continue; // skip center, that's the big candle
+        const ch=ch_arr[i]+4*Math.sin(u*1.3+i*0.7);
+        bar(cx_arr[i]-smallW/2, candleBase-ch, smallW, ch, DEAD, 0.4);
+        // small volume bars
+        const vh=40+10*Math.sin(u*1.1+i);
+        bar(cx_arr[i]-smallW/2, volBase-vh, smallW, vh, DEAD, 0.35);
+      }
+      // the big green candle at center — calm, slim, tall
+      const bigH=140+6*Math.sin(u*1.6);
+      bar(CX-bigW/2, candleBase-bigH, bigW, bigH, YOU, 0.95);
+      // wick lines above and below candle
+      path([[CX,candleBase-bigH-30],[CX,candleBase-bigH]], INK, 0.6, 4);
+      path([[CX,candleBase],[CX,candleBase+20]], INK, 0.6, 4);
+
+      // THE massive volume bar — 3x average, pulsing, already visible frame 0
+      const avgVol=50;
+      const bigVol=avgVol*3+20*Math.sin(u*2.4)+12*Math.sin(u*3.7);
+      bar(CX-bigW/2-10, volBase-bigVol, bigW+20, bigVol, DEAD, 0.7+0.15*Math.sin(u*2.8));
+
+      // baseline
+      bar(180, candleBase, 720, 4, INK, 0.5, 0);
+      bar(180, volBase, 720, 4, INK, 0.4, 0);
+
+      putCap(capE,'VOLUME',CX, volBase+40, DEAD, clamp(u/0.5,0,1));
+      putCap(capC,'PRICE',CX, candleBase+40, INK, clamp(u/0.5,0,1));
+
+      flushAll();
+    }
+
+    // ═══ S2 — ABSORPTION : ordres teal arrivent mais sont absorbés par un mur ═══
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const wallX=640, wallW=60, wallH=400, wallY=760;
+      // the absorption wall — does not move
+      bar(wallX, wallY, wallW, wallH, INK, 0.85);
+      putCap(capB,'SELLER WALL',wallX+wallW/2, wallY-20, INK, 1);
+
+      // teal order bars arriving from the left, getting absorbed
+      const ORDERS=[0.3,1.0,1.7,2.4,3.1,3.8,4.5];
+      for(let i=0;i<ORDERS.length;i++){
+        const ou=u-ORDERS[i]; if(ou<0) continue;
+        const travelF=clamp(ou/0.6,0,1);
+        const fadeF=clamp((ou-0.55)/0.15,0,1);
+        const ox=lerp(200, wallX-10, eOut(travelF));
+        const ow=60-20*fadeF;
+        const oh=30+6*Math.sin(u*2.1+i);
+        const oy=wallY+40+i*50;
+        if(fadeF<1) bar(ox, oy, ow, oh, YOU, (1-fadeF)*0.8);
+      }
+
+      // invisible pressure building behind the wall (right side) — growing mass
+      const pressureW=clamp(u/5.0,0,1)*200+8*Math.sin(u*1.9);
+      bar(wallX+wallW, wallY+60, pressureW, wallH-120, DEAD, 0.25+0.1*clamp(u/6,0,1));
+      putCap(capC,'PRESSURE BUILDING',wallX+wallW+pressureW/2, wallY+wallH+30, DEAD, clamp((u-2.0)/0.8,0,1));
+      putCap(capD,'ORDERS ABSORBED',380, wallY+wallH+30, YOU, clamp((u-1.0)/0.6,0,1));
+
+      flushAll();
+    }
+
+    // ═══ S3 — RÉSISTANCE : acheteurs poussent mais le vendeur absorbe sans reculer ═══
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      // resistance line
+      const resY=850;
+      bar(180, resY, 720, 6, INK, 0.9, 0);
+      putCap(capB,'RESISTANCE',CX, resY-20, INK, 1);
+
+      // buyer bars pushing up from below — they arrive and shrink into the line
+      const BUYS=[0.2,0.8,1.4,2.0,2.6,3.2,3.8,4.4];
+      for(let i=0;i<BUYS.length;i++){
+        const bu=u-BUYS[i]; if(bu<0) continue;
+        const riseF=clamp(bu/0.4,0,1);
+        const absorbF=clamp((bu-0.35)/0.25,0,1);
+        const bw=50+10*Math.sin(u+i);
+        const bh=lerp(80, 10, absorbF);
+        const by=lerp(resY+120, resY+3, eOut(riseF));
+        const bx=240+i*75;
+        if(absorbF<1) bar(bx, by, bw, bh, YOU, (1-absorbF*0.7)*0.75);
+      }
+
+      // seller block above the line — absorbing, immovable, breathing
+      const sellerH=160+10*Math.sin(u*1.4);
+      bar(CX-180, resY-sellerH, 360, sellerH, DEAD, 0.6+0.1*Math.sin(u*2.2));
+      putCap(capC,'SELLER ABSORBS',CX, resY-sellerH-18, DEAD, clamp((u-0.8)/0.6,0,1));
+
+      // price level indicator — stays flat
+      ring(CX, resY+8, 12, YOU, 0.7);
+      putCap(capD,'PRICE UNCHANGED',CX, resY+50, YOU, clamp((u-1.6)/0.6,0,1));
+
+      flushAll();
+    }
+
+    // ═══ S4 — ESCALADE : bougie plate + volume hurle → prochaine bougie explose ═══
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const candleBase=800, volBase=1280;
+
+      // flat candle — tiny body, breathing
+      const flatH=20+4*Math.sin(u*2.0);
+      bar(CX-40, candleBase-flatH, 80, flatH, YOU, 0.8);
+      // wicks
+      path([[CX,candleBase-flatH-15],[CX,candleBase-flatH]], INK, 0.5, 3);
+      path([[CX,candleBase],[CX,candleBase+12]], INK, 0.5, 3);
+
+      // SCREAMING volume bar — pulsing intensely
+      const volPulse=0.6+0.3*Math.sin(u*3.2)+0.1*Math.sin(u*5.1);
+      const volH=240+40*Math.sin(u*2.6)+20*Math.sin(u*4.3);
+      bar(CX-50, volBase-volH, 100, volH, DEAD, volPulse);
+
+      putCap(capC,'CANDLE: FLAT',CX, candleBase+50, INK, 1);
+      putCap(capD,'VOLUME: SCREAMING',CX, volBase+36, DEAD, 1);
+
+      // baselines
+      bar(280, candleBase, 520, 4, INK, 0.4, 0);
+      bar(280, volBase, 520, 4, INK, 0.4, 0);
+
+      // the NEXT candle — appears after delay, EXPLODES downward
+      const nextT=clamp((u-3.5)/0.8,0,1);
+      if(nextT>0){
+        const nextX=CX+140;
+        const dropH=280*eOut(nextT)+10*Math.sin(u*2.8)*nextT;
+        bar(nextX-40, candleBase, 80, dropH, DEAD, nextT*0.9);
+        // downward wick
+        path([[nextX,candleBase+dropH],[nextX,candleBase+dropH+40*nextT]], INK, nextT*0.7, 4);
+        putCap(capA,'PRESSURE RESOLVES',nextX, candleBase+dropH+70, DEAD, clamp((u-4.2)/0.5,0,1));
+      }
+
+      flushAll();
+    }
+
+    // ═══ S5 — DÉCHARGE : lis le volume avant de faire confiance à la bougie ═══
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const volBase=1100;
+
+      // prominent volume bar at center — calming now
+      const volH=200+20*Math.sin(u*1.6);
+      bar(CX-70, volBase-volH, 140, volH, DEAD, 0.6);
+
+      // small candle above — secondary
+      const candleY=volBase-volH-80;
+      bar(CX-30, candleY, 60, 40+4*Math.sin(u*1.8), YOU, 0.5);
+
+      // connection line
+      path([[CX,candleY+44],[CX,volBase-volH]], INK, 0.4, 3);
+
+      // volume label
+      putCap(capE,'VOLUME',CX, volBase+36, DEAD, 1);
+
+      // message
+      putCap(capA,'READ THE VOLUME FIRST',CX, 1180, INK, clamp((u-1.2)/0.7,0,1));
+      putCap(capF,'FOLLOW @KONGRAVE_',CX, 1280, YOU, clamp((u-2.4)/0.7,0,1));
+
+      // baseline
+      bar(300, volBase, 480, 4, INK, 0.5, 0);
+
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t);const lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
