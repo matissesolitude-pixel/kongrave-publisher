@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L116 « THE CLOSE THAT DECIDED MONDAY » — PRÉSAGE : le piège est tendu vendredi,
+       il se referme lundi. Le gap saute par-dessus le stop. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    // ── POOLS ──
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // ── QUESTION ──
+    const QLINES=['WHAT HAPPENS TO YOUR STOP','WHEN THE MARKET IS CLOSED'];
+    const FS=62,lineH=88,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── CAPTIONS ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — PRÉSAGE : vendredi calme, le piège est tendu ═══
+    // Position ouverte, stop posé, tout semble normal. Les jours avancent sous le chart.
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      // question — frame 0 line 1 visible
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      // chart zone
+      const chartL=180, chartR=900, priceY=820, stopY=1020;
+      const breath=4*Math.sin(u*1.6);
+      // price line — flat, calm
+      bar(chartL, priceY+breath, chartR-chartL, 6, YOU, 0.9, 0);
+      // position bar at price level
+      bar(CX-80, priceY-100+breath, 160, 100, YOU, 0.85);
+      putCap(capE,'YOUR POSITION',CX, priceY-112+breath, INK, clamp(u/0.6,0,1));
+      // stop level — dashed feel via multiple small bars
+      for(let i=0;i<8;i++){
+        bar(chartL+i*92, stopY+3*Math.sin(u*2.1+i*0.7), 60, 4, DEAD, 0.7, 0);
+      }
+      putCap(capD,'YOUR STOP',CX, stopY+34, DEAD, clamp((u-0.8)/0.6,0,1));
+      // day labels advancing below — FRI SAT SUN MON
+      const days=['FRI','SAT','SUN','MON'];
+      const dayX=[280,440,600,760];
+      const dayProgress=clamp(u/7.0,0,1);
+      const activeDay=Math.min(3,Math.floor(dayProgress*4));
+      for(let d=0;d<4;d++){
+        const dap=clamp((dayProgress*4-d)/0.8,0,1);
+        const isActive=d===activeDay;
+        putCap(d===0?capA:d===1?capB:d===2?capC:capE, days[d], dayX[d], 1180, isActive?INK:DEAD, dap*(isActive?1:0.4));
+      }
+      // timeline bar showing progress through weekend
+      bar(chartL, 1220, (chartR-chartL)*dayProgress, 8, INK, 0.5, 0);
+      // ground
+      bar(chartL, 1260, chartR-chartL, 3, INK, 0.3, 0);
+      flushAll();
+    }
+
+    // ═══ S2 — le marché ferme mais les nouvelles continuent ═══
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const chartL=180, chartR=900, priceY=820;
+      // Friday close — price line ends abruptly
+      const friEnd=520;
+      bar(chartL, priceY, friEnd-chartL, 6, YOU, 0.9, 0);
+      putCap(capC,'MARKET CLOSES',friEnd, priceY-30, DEAD, 1);
+      // dark zone after Friday — the market is closed
+      bar(friEnd, 700, chartR-friEnd, 260, INK, 0.08+0.03*Math.sin(u*1.4));
+      // news events appearing in the dark zone
+      const NEWS=[
+        {t:0.6, x:580, y:760}, {t:1.2, x:650, y:830}, {t:1.8, x:720, y:780},
+        {t:2.4, x:790, y:850}, {t:3.0, x:680, y:900}, {t:3.6, x:760, y:740},
+      ];
+      for(const n of NEWS){
+        const nap=clamp((u-n.t)/0.3,0,1);
+        if(nap<=0) continue;
+        const pulse=3*Math.sin(u*3.2+n.x*0.01);
+        bar(n.x-14, n.y-14+pulse, 28, 28, INK, nap*0.7, 4);
+      }
+      putCap(capB,'NEWS KEEPS MOVING',700, 660, INK, clamp((u-1.0)/0.6,0,1));
+      // stop still sitting below, unaware
+      bar(chartL, 1020, friEnd-chartL, 4, DEAD, 0.5, 0);
+      putCap(capD,'STOP STILL SET',360, 1060, DEAD, clamp((u-0.4)/0.6,0,1));
+      // position still open
+      bar(CX-80, priceY-100, 160, 100, YOU, 0.6);
+      flushAll();
+    }
+
+    // ═══ S3 — lundi ouvre, le prix saute par-dessus le stop ═══
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const chartL=180, chartR=900;
+      const friCloseY=820, stopY=1020, gapOpenY=1160;
+      // Friday price level
+      bar(chartL, friCloseY, 340, 6, YOU, 0.7, 0);
+      putCap(capC,'FRIDAY CLOSE',360, friCloseY-24, DEAD, 0.8);
+      // the GAP — empty space between Friday close and Monday open
+      const gapAp=eOut(clamp(u/1.5,0,1));
+      // Monday open far below
+      const monY=lerp(friCloseY, gapOpenY, gapAp);
+      bar(540, monY, 360, 6, DEAD, gapAp*0.9, 0);
+      putCap(capD,'MONDAY OPEN',720, monY+34, DEAD, gapAp);
+      // gap zone highlight
+      if(gapAp>0.1){
+        bar(440, friCloseY+6, 200, monY-friCloseY-6, PAPER, 0);
+        // gap border lines
+        bar(440, friCloseY, 4, monY-friCloseY, INK, gapAp*0.3, 0);
+        bar(636, friCloseY, 4, monY-friCloseY, INK, gapAp*0.3, 0);
+      }
+      // stop level — IN the gap, untouched
+      const stopInGap=(stopY>friCloseY && stopY<monY);
+      bar(chartL, stopY+3*Math.sin(u*2.1), chartR-chartL, 4, stopInGap?DEAD:YOU, 0.6, 0);
+      if(stopInGap){
+        putCap(capB,'STOP IN THE VOID',CX, stopY-28, DEAD, clamp((u-2.0)/0.6,0,1));
+      }
+      // actual fill — way below stop
+      const fillY=gapOpenY+40;
+      const fillAp=clamp((u-2.5)/0.8,0,1);
+      bar(CX-60, fillY+4*Math.sin(u*1.8), 120, 30, DEAD, fillAp*0.9);
+      putCap(capE,'ACTUAL FILL',CX, fillY+56, DEAD, fillAp);
+      flushAll();
+    }
+
+    // ═══ S4 — le stop est une demande de vente à un prix qui n'existe plus ═══
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const stopY=920, fillY=1160;
+      // the stop line alone in empty space
+      bar(280, stopY+3*Math.sin(u*2.0), 520, 5, DEAD, 0.7+0.15*Math.sin(u*2.4), 0);
+      putCap(capC,'SELL HERE',CX, stopY-28, DEAD, 1);
+      // arrows showing: nobody was there
+      // arrow down from stop to fill
+      const arrowAp=eOut(clamp((u-0.8)/1.0,0,1));
+      path([[CX, stopY+20],[CX, lerp(stopY+20, fillY-20, arrowAp)]], DEAD, arrowAp*0.8, 5);
+      // the void between
+      const voidH=(fillY-stopY-40)*arrowAp;
+      if(voidH>10){
+        // subtle void shading
+        bar(CX-100, stopY+20, 200, voidH, INK, 0.04+0.02*Math.sin(u*1.6));
+      }
+      // actual fill bar far below
+      bar(CX-80, fillY+4*Math.sin(u*1.9), 160, 35, DEAD, arrowAp*0.9);
+      putCap(capD,'FILLED HERE',CX, fillY+62, DEAD, arrowAp);
+      // the gap skipped the stop
+      putCap(capA,'THE GAP SKIPPED YOUR STOP',CX, 780, INK, clamp((u-2.0)/0.7,0,1));
+      // ring where nobody was
+      ring(CX, stopY, 40+8*Math.sin(u*1.8), DEAD, clamp((u-1.4)/0.6,0,1)*0.5, 3);
+      putCap(capE,'NO BUYER HERE',CX, stopY+60, DEAD, clamp((u-1.8)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S5 — un stop ne marche que si quelqu'un est là pour l'acheter ═══
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      // the stop line fading alone
+      const fadeF=clamp(u/3.0,0,0.7);
+      bar(280, 920+3*Math.sin(u*1.8), 520, 5, DEAD, 0.6*(1-fadeF), 0);
+      // empty space around it — the void
+      ring(CX, 920, 60+10*Math.sin(u*1.4), DEAD, 0.2*(1-fadeF), 2);
+      // message
+      putCap(capA,'A STOP ONLY WORKS',CX, 1100, INK, clamp((u-0.8)/0.7,0,1));
+      putCap(capB,'WHEN SOMEONE IS THERE TO BUY IT',CX, 1160, INK, clamp((u-1.4)/0.7,0,1));
+      // CTA
+      putCap(capF,'FOLLOW @KONGRAVE_',CX, 1320, YOU, clamp((u-2.4)/0.7,0,1));
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t);const lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
