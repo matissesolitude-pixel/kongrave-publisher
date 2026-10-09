@@ -1,0 +1,163 @@
+{
+  "id": "L111",
+  "engine": "l111",
+  "title": "L111 — THE VOLUME THAT ARRIVED EARLY",
+  "_cellule": "SETD (Sniper) · Curiosité · Risk · regard=autres traders · futur · −−",
+  "_dispositif": "PRÉSAGE",
+  "voice": [
+    "You watched the candle close green and felt safe, but the volume bar underneath was three times the average and nobody was talking about it.",
+    "When volume spikes without a move, the orders are being absorbed, and the market is loading pressure that the candle does not show yet.",
+    "A large buyer at a resistance does not push the price up, because the seller absorbs every contract without retreating.",
+    "The candle stays flat while the volume screams, and the next candle resolves the pressure in one direction.",
+    "Read the volume before you trust the candle. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "La bougie ferme verte et tout semble calme, mais le volume en dessous est trois fois la moyenne et personne n'en parle.",
+      "question": "WHY IS THE VOLUME SCREAMING WHILE THE PRICE STAYS QUIET?",
+      "emotion_lever": "TENSION — la surface est calme mais le volume explose sous la bougie, quelque chose de gros se charge",
+      "cast": {
+        "c1": {
+          "type": "object",
+          "note": "bougie verte calme"
+        },
+        "c2": {
+          "type": "object",
+          "note": "barre de volume géante en dessous"
+        },
+        "c3": {
+          "type": "object",
+          "note": "ordres absorbés sans recul"
+        },
+        "c4": {
+          "type": "object",
+          "note": "pression invisible qui charge"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.4",
+          "do": "La bougie ferme verte et tout semble calme, mais la barre de volume en dessous est trois fois la moyenne. La tension est visible."
+        },
+        {
+          "t": "3.4-6.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.8-10.2",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La bougie ferme verte et tout semble calme, mais la barre de volume en dessous est trois fois la moyenne.",
+      "dispositif_cle": "PRÉSAGE : un signal discret annonce ce qui va se passer, et on le révèle rétrospectivement."
+    },
+    {
+      "id": "s2",
+      "clarity": "Quand le volume monte sans que le prix bouge, les ordres sont absorbés, et le marché charge une pression que la bougie ne montre pas encore.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "Quand le volume monte sans que le prix bouge, les ordres sont absorbés, et le marché charge une pression invisible."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.4",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Quand le volume monte sans que le prix bouge, les ordres sont absorbés, et le marché charge une pression invisible.",
+      "turn": "Quand le volume monte sans que le prix bouge, les ordres sont absorbés, et le marché charge une pression invisible."
+    },
+    {
+      "id": "s3",
+      "clarity": "Un gros acheteur à une résistance ne pousse pas le prix, parce que le vendeur absorbe chaque contrat sans reculer.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Un gros acheteur à une résistance ne pousse pas le prix, parce que le vendeur absorbe chaque contrat sans reculer."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Un gros acheteur à une résistance ne pousse pas le prix, parce que le vendeur absorbe chaque contrat sans reculer.",
+      "turn": "Un gros acheteur à une résistance ne pousse pas le prix, parce que le vendeur absorbe chaque contrat sans reculer."
+    },
+    {
+      "id": "s4",
+      "clarity": "La bougie reste plate pendant que le volume hurle, et la bougie suivante résout la pression d'un coup.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "La bougie reste plate pendant que le volume hurle, et la bougie suivante résout la pression d'un coup."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-6.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La bougie reste plate pendant que le volume hurle, et la bougie suivante résout la pression d'un coup.",
+      "turn": "La bougie reste plate pendant que le volume hurle, et la bougie suivante résout la pression d'un coup.",
+      "note": "Scene d'escalade — le présage se réalise."
+    },
+    {
+      "id": "s5",
+      "clarity": "Lis le volume avant de faire confiance à la bougie. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Lis le volume avant de faire confiance à la bougie. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Lis le volume avant de faire confiance à la bougie. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 42.4,
+  "caption": "You watched the candle close green and felt safe, but the volume bar underneath was three times the average and nobody was talking about it.\n\nWhen volume spikes without a move, the orders are being absorbed, and the market is loading pressure that the candle does not show yet. A large buyer at a resistance does not push the price up, because the seller absorbs every contract without retreating.\n\nRead the volume before you trust the candle.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #volume #orderflow #priceaction #smartmoney #daytrading #absorption #tradingmechanics #tradingstrategy",
+  "pinned_comment": "Read the volume before you trust the candle. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "PRÉSAGE — un signal discret annonce ce qui va se passer, et on le revele retrospectivement. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~42.4s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable : « Read the volume before you trust the candle. »",
+    "duel": "Pas de duel. Ouverture sur « You » + geste."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

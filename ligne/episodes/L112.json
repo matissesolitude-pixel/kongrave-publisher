@@ -1,0 +1,167 @@
+{
+  "id": "L112",
+  "engine": "l112",
+  "title": "L112 — THE SIZE THAT CAME FROM NOWHERE",
+  "_cellule": "OERD (Assaillant) · Miroir · Ease · regard=famille · présent · −−",
+  "_dispositif": "MONTAGE PARALLÈLE",
+  "voice": [
+    "Two traders enter the same setup at the same price. One sizes from the account balance, and the other sizes from the profit he made an hour ago.",
+    "The first position risks what the account can lose, while the second position risks what the last win felt like.",
+    "A profit is not capital until it survives a drawdown, because unrealized gains disappear at the same speed they arrived.",
+    "The account grew, but the method that grew it did not change its rules.",
+    "Size from the balance, never from the last trade. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Deux traders entrent sur le même setup au même prix. L'un calcule depuis le solde, l'autre depuis le profit qu'il a fait une heure plus tôt.",
+      "question": "WHICH SIZE SURVIVES A LOSING STREAK?",
+      "emotion_lever": "CURIOSITÉ — même setup, même prix, deux tailles de position pour deux raisons différentes",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "figure gauche (calcul depuis le solde)"
+        },
+        "c2": {
+          "type": "figure",
+          "note": "figure droite (calcul depuis le profit)"
+        },
+        "c3": {
+          "type": "object",
+          "note": "solde du compte"
+        },
+        "c4": {
+          "type": "object",
+          "note": "dernier profit"
+        },
+        "c5": {
+          "type": "object",
+          "note": "taille de position"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.2",
+          "do": "Deux traders entrent sur le même setup au même prix. L'un calcule depuis le solde, l'autre depuis le profit d'une heure plus tôt."
+        },
+        {
+          "t": "3.2-6.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.4-9.7",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Deux traders entrent sur le même setup au même prix. L'un calcule depuis le solde, l'autre depuis le profit d'une heure plus tôt.",
+      "dispositif_cle": "MONTAGE PARALLÈLE : les deux figures tournent toujours ensemble, en miroir, sur la même donnée."
+    },
+    {
+      "id": "s2",
+      "clarity": "La première position risque ce que le compte peut perdre, tandis que la seconde risque ce que le dernier gain a donné comme sensation.",
+      "beats": [
+        {
+          "t": "0.0-2.4",
+          "do": "La première position risque ce que le compte peut perdre, tandis que la seconde risque ce que le dernier gain a donné comme sensation."
+        },
+        {
+          "t": "2.4-4.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.8-7.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La première position risque ce que le compte peut perdre, tandis que la seconde risque ce que le dernier gain a donné comme sensation.",
+      "turn": "La première position risque ce que le compte peut perdre, tandis que la seconde risque ce que le dernier gain a donné comme sensation."
+    },
+    {
+      "id": "s3",
+      "clarity": "Un profit n'est pas du capital tant qu'il n'a pas survécu à un drawdown.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Un profit n'est pas du capital tant qu'il n'a pas survécu à un drawdown."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Un profit n'est pas du capital tant qu'il n'a pas survécu à un drawdown.",
+      "turn": "Un profit n'est pas du capital tant qu'il n'a pas survécu à un drawdown."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le compte a grandi, mais la méthode qui l'a fait grandir n'a pas changé ses règles.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "Le compte a grandi, mais la méthode qui l'a fait grandir n'a pas changé ses règles."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-6.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le compte a grandi, mais la méthode qui l'a fait grandir n'a pas changé ses règles.",
+      "turn": "Le compte a grandi, mais la méthode qui l'a fait grandir n'a pas changé ses règles.",
+      "note": "Scene d'escalade — le piège de la taille devient clair."
+    },
+    {
+      "id": "s5",
+      "clarity": "Calcule ta taille depuis le solde, jamais depuis le dernier trade. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Calcule ta taille depuis le solde, jamais depuis le dernier trade. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Calcule ta taille depuis le solde, jamais depuis le dernier trade. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 41.6,
+  "caption": "Two traders enter the same setup at the same price. One sizes from the account balance, and the other sizes from the profit he made an hour ago.\n\nThe first position risks what the account can lose. The second risks what the last win felt like. A profit is not capital until it survives a drawdown, because unrealized gains disappear at the same speed they arrived.\n\nSize from the balance, never from the last trade.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #positionsizing #riskmanagement #daytrading #priceaction #tradingdiscipline #smartmoney #tradingstrategy #tradingmechanics",
+  "pinned_comment": "Size from the balance, never from the last trade. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "MONTAGE PARALLÈLE — les deux figures tournent ensemble. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~41.6s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable : « Size from the balance, never from the last trade. »",
+    "duel": "Duel autorise ici (1 sur 4 = 25%, sous le seuil des 33%)."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

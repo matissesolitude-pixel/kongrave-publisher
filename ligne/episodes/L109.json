@@ -1,0 +1,163 @@
+{
+  "id": "L109",
+  "engine": "l109",
+  "title": "L109 — THE TOLL NOBODY COUNTS",
+  "_cellule": "SIRD (Glacier) · Éducation · Nightmare · regard=prospect · présent · −−",
+  "_dispositif": "MÉTAPHORE SEULE",
+  "voice": [
+    "You entered a trade at the price you wanted, and you left at the price you wanted, and somehow the account shrank.",
+    "The spread is the gap between the price you see and the price you get, and it collects on every single trade you take.",
+    "On a quiet pair, the toll is small, but on a volatile session, the gap widens right when you need it least.",
+    "A hundred trades at two pips of spread cost the same as one blown stop.",
+    "Count the toll before you count the win. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Tu es entré et sorti au bon prix, mais ton compte a quand même rétréci. Quelque chose a prélevé sans prévenir.",
+      "question": "WHERE DID THE MONEY GO IF THE TRADE WAS RIGHT?",
+      "emotion_lever": "RECONNAISSANCE DE SOI — le trader regarde son compte après un trade gagnant et voit moins que prévu, exactement ce qui arrive à tous",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "trader (teal, toi)"
+        },
+        "c2": {
+          "type": "object",
+          "note": "péage invisible entre deux prix"
+        },
+        "c3": {
+          "type": "object",
+          "note": "compte qui rétrécit malgré le gain"
+        },
+        "c4": {
+          "type": "object",
+          "note": "prix affiché vs prix réel"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.4",
+          "do": "Tu es entré et sorti au bon prix, mais ton compte a quand même rétréci. Le péage invisible apparaît entre les deux prix."
+        },
+        {
+          "t": "3.4-6.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.8-10.2",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Tu es entré et sorti au bon prix, mais ton compte a quand même rétréci. Le péage invisible apparaît entre les deux prix.",
+      "dispositif_cle": "MÉTAPHORE SEULE : un seul objet-métaphore porte toute la démonstration, du début à la fin."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le spread est l'écart entre le prix que tu vois et le prix que tu reçois, et il se prélève à chaque trade.",
+      "beats": [
+        {
+          "t": "0.0-2.4",
+          "do": "Le spread est l'écart entre le prix que tu vois et le prix que tu reçois, et il se prélève à chaque trade."
+        },
+        {
+          "t": "2.4-4.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.8-7.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le spread est l'écart entre le prix que tu vois et le prix que tu reçois, et il se prélève à chaque trade.",
+      "turn": "Le spread est l'écart entre le prix que tu vois et le prix que tu reçois, et il se prélève à chaque trade."
+    },
+    {
+      "id": "s3",
+      "clarity": "Sur une paire calme le péage est petit, mais quand la volatilité monte, l'écart s'élargit au pire moment.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Sur une paire calme le péage est petit, mais quand la volatilité monte, l'écart s'élargit au pire moment."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Sur une paire calme le péage est petit, mais quand la volatilité monte, l'écart s'élargit au pire moment.",
+      "turn": "Sur une paire calme le péage est petit, mais quand la volatilité monte, l'écart s'élargit au pire moment."
+    },
+    {
+      "id": "s4",
+      "clarity": "Cent trades avec deux pips de spread coûtent autant qu'un stop touché.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "Cent trades avec deux pips de spread coûtent autant qu'un stop touché."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-6.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Cent trades avec deux pips de spread coûtent autant qu'un stop touché.",
+      "turn": "Cent trades avec deux pips de spread coûtent autant qu'un stop touché.",
+      "note": "Scene d'escalade — le coût cumulé apparaît."
+    },
+    {
+      "id": "s5",
+      "clarity": "Compte le péage avant de compter le gain. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Compte le péage avant de compter le gain. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Compte le péage avant de compter le gain. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 41.0,
+  "caption": "You entered a trade at the price you wanted, and you left at the price you wanted, and somehow the account shrank.\n\nThe spread is the gap between the price you see and the price you get, and it collects on every single trade you take. On a quiet pair, the toll is small, but on a volatile session, the gap widens right when you need it least.\n\nCount the toll before you count the win.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #spread #tradingcosts #daytrading #priceaction #tradingmechanics #liquidite #smartmoney #tradingstrategy",
+  "pinned_comment": "Count the toll before you count the win. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "MÉTAPHORE SEULE — un seul objet-metaphore porte la demo. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~41.0s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin : « Count the toll before you count the win. »",
+    "duel": "Pas de duel. Ouverture sur « You » + geste."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

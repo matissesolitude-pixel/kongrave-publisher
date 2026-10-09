@@ -1,0 +1,167 @@
+{
+  "id": "L110",
+  "engine": "l110",
+  "title": "L110 — THE SPIKE THAT CLEANED THE BOOK",
+  "_cellule": "OITX (Circuit) · Story · Likelihood · regard=desk · présent · −−",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "You placed your stop exactly where the textbook told you, and the price ran through it by three pips before reversing in the direction you picked.",
+    "The spike was not random, because the orders sitting at that level were visible to anyone reading the book.",
+    "Every retail stop clustered at the same round number becomes a pool of liquidity that a larger order needs to fill.",
+    "The price visits the cluster, fills the waiting order, and reverses before the screen refreshes.",
+    "Place your stop where the liquidity has already been taken, not where the crowd still sits. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Tu as posé ton stop au bon endroit, et le prix l'a traversé de trois pips avant de repartir exactement dans ta direction.",
+      "question": "WHY DID THE PRICE HIT YOUR STOP AND REVERSE IMMEDIATELY?",
+      "emotion_lever": "COLÈRE/INJUSTICE — le trader vient de se faire sortir, et le prix fait exactement ce qu'il avait prévu, mais sans lui",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "trader (teal, toi)"
+        },
+        "c2": {
+          "type": "object",
+          "note": "niveau de stop avec cluster d'ordres"
+        },
+        "c3": {
+          "type": "object",
+          "note": "mèche qui dépasse et revient"
+        },
+        "c4": {
+          "type": "object",
+          "note": "gros bloc qui se remplit"
+        },
+        "c5": {
+          "type": "object",
+          "note": "écran qui affiche le retournement"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.6",
+          "do": "Tu as posé ton stop au bon endroit, et le prix l'a traversé de trois pips avant de repartir dans ta direction. La mèche traverse le cluster."
+        },
+        {
+          "t": "3.6-7.2",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "7.2-10.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Tu as posé ton stop au bon endroit, et le prix l'a traversé de trois pips avant de repartir dans ta direction.",
+      "dispositif_cle": "HARENG ROUGE : un faux coupable est désigné d'abord, puis la vraie cause se révèle."
+    },
+    {
+      "id": "s2",
+      "clarity": "La mèche n'était pas aléatoire, parce que les ordres posés à ce niveau étaient visibles dans le carnet.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "La mèche n'était pas aléatoire, parce que les ordres posés à ce niveau étaient visibles dans le carnet."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.4",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La mèche n'était pas aléatoire, parce que les ordres posés à ce niveau étaient visibles dans le carnet.",
+      "turn": "La mèche n'était pas aléatoire, parce que les ordres posés à ce niveau étaient visibles dans le carnet."
+    },
+    {
+      "id": "s3",
+      "clarity": "Chaque stop retail posé au même chiffre rond forme un bassin de liquidité dont un ordre plus gros a besoin.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Chaque stop retail posé au même chiffre rond forme un bassin de liquidité dont un ordre plus gros a besoin."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Chaque stop retail posé au même chiffre rond forme un bassin de liquidité dont un ordre plus gros a besoin.",
+      "turn": "Chaque stop retail posé au même chiffre rond forme un bassin de liquidité dont un ordre plus gros a besoin."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le prix visite le cluster, remplit l'ordre en attente et repart avant que l'écran se rafraîchisse.",
+      "beats": [
+        {
+          "t": "0.0-2.0",
+          "do": "Le prix visite le cluster, remplit l'ordre en attente et repart avant que l'écran se rafraîchisse."
+        },
+        {
+          "t": "2.0-4.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.0-6.1",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le prix visite le cluster, remplit l'ordre en attente et repart avant que l'écran se rafraîchisse.",
+      "turn": "Le prix visite le cluster, remplit l'ordre en attente et repart avant que l'écran se rafraîchisse.",
+      "note": "Scene d'escalade — la mécanique complète est visible."
+    },
+    {
+      "id": "s5",
+      "clarity": "Pose ton stop là où la liquidité a déjà été prise, pas là où la foule attend encore. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Pose ton stop là où la liquidité a déjà été prise, pas là où la foule attend encore. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Pose ton stop là où la liquidité a déjà été prise, pas là où la foule attend encore. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 42.2,
+  "caption": "You placed your stop exactly where the textbook told you, and the price ran through it by three pips before reversing in the direction you picked.\n\nThe spike was not random. Every retail stop clustered at the same round number becomes a pool of liquidity that a larger order needs to fill. The price visits the cluster, fills the waiting order, and reverses before the screen refreshes.\n\nPlace your stop where the liquidity has already been taken, not where the crowd still sits.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #stophunt #liquidity #smartmoney #priceaction #orderflow #daytrading #tradingmechanics #tradingstrategy",
+  "pinned_comment": "Place your stop where the liquidity has already been taken. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "HARENG ROUGE — un faux coupable est designe, puis la vraie cause se revele. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~42.2s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable : « Place your stop where the liquidity has already been taken, not where the crowd still sits. »",
+    "duel": "Pas de duel. Ouverture sur « You » + geste."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}
