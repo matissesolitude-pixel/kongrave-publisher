@@ -1,0 +1,162 @@
+{
+  "id": "L113",
+  "engine": "l113",
+  "title": "L113 — THE WICK THAT ERASED A WEEK",
+  "_cellule": "SITX (Glacier) · Story · Dream · regard=prospect · présent · −−",
+  "_dispositif": "IN MEDIAS RES",
+  "voice": [
+    "You watched the chart climb for five straight days, and a single candle wick just sent the price back to where it started.",
+    "That wick was not an accident, because the orders that triggered it were already placed before the rally began.",
+    "Every long stop below the range became fuel, and the wick burned through all of them in one second flat.",
+    "The stops did not protect the traders who placed them, they funded the entry for someone who waited below.",
+    "Wicks are not noise, they are receipts. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le prix a grimpé pendant cinq jours, et une seule mèche l'a ramené au point de départ en une seconde.",
+      "question": "WHY DID FIVE DAYS OF GAINS VANISH IN ONE CANDLE?",
+      "emotion_lever": "CHOC — une semaine de hausse anéantie par une seule bougie, brutalité visuelle immédiate",
+      "cast": {
+        "c1": {
+          "type": "object",
+          "note": "ligne de prix ascendante (5 bougies vertes)"
+        },
+        "c2": {
+          "type": "object",
+          "note": "longue mèche rouge qui traverse toute la montée"
+        },
+        "c3": {
+          "type": "figure",
+          "note": "boule teal figée au sommet"
+        },
+        "c4": {
+          "type": "object",
+          "note": "niveau de départ marqué"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.4",
+          "do": "Le prix a grimpé pendant cinq jours, et une seule mèche l'a ramené au point de départ en une seconde."
+        },
+        {
+          "t": "3.4-6.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.8-10.0",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le prix a grimpé pendant cinq jours, et une seule mèche l'a ramené au point de départ en une seconde.",
+      "dispositif_cle": "IN MEDIAS RES : la mèche a déjà frappé, on découvre le résultat avant la cause."
+    },
+    {
+      "id": "s2",
+      "clarity": "La mèche n'est pas un accident, les ordres qui l'ont déclenchée étaient placés avant la montée.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "La mèche n'est pas un accident, les ordres qui l'ont déclenchée étaient placés avant la montée."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La mèche n'est pas un accident, les ordres qui l'ont déclenchée étaient placés avant la montée.",
+      "turn": "La mèche n'est pas un accident, les ordres qui l'ont déclenchée étaient placés avant la montée."
+    },
+    {
+      "id": "s3",
+      "clarity": "Chaque stop loss sous le range est devenu du carburant, et la mèche les a tous traversés en une seconde.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Chaque stop loss sous le range est devenu du carburant, et la mèche les a tous traversés en une seconde."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Chaque stop loss sous le range est devenu du carburant, et la mèche les a tous traversés en une seconde.",
+      "turn": "Chaque stop loss sous le range est devenu du carburant, et la mèche les a tous traversés en une seconde."
+    },
+    {
+      "id": "s4",
+      "clarity": "Les stops n'ont pas protégé ceux qui les avaient placés, ils ont financé l'entrée de celui qui attendait en dessous.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "Les stops n'ont pas protégé ceux qui les avaient placés, ils ont financé l'entrée de celui qui attendait en dessous."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les stops n'ont pas protégé ceux qui les avaient placés, ils ont financé l'entrée de celui qui attendait en dessous.",
+      "turn": "Les stops n'ont pas protégé ceux qui les avaient placés, ils ont financé l'entrée de celui qui attendait en dessous."
+    },
+    {
+      "id": "s5",
+      "clarity": "Les mèches ne sont pas du bruit, elles sont des reçus. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Les mèches ne sont pas du bruit, elles sont des reçus. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les mèches ne sont pas du bruit, elles sont des reçus. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 38.7,
+  "caption": "You watched the chart climb for five straight days, and a single candle wick sent the price back to where it started.\n\nThat wick was not random — the orders that triggered it were placed before the rally even began. Every stop loss below the range became fuel, and the wick burned through all of them in one second.\n\nWicks are not noise, they are receipts.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #priceaction #liquidity #smartmoney #stophunt #candlestick #wicktrap #tradingmechanics",
+  "pinned_comment": "Wicks are not noise, they are receipts. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "IN MEDIAS RES — PAS de fusil. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~38.7s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin : « Wicks are not noise, they are receipts. »",
+    "duel": "Ouverture en 'You' + geste que le spectateur a fait."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

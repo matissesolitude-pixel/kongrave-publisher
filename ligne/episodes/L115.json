@@ -1,0 +1,162 @@
+{
+  "id": "L115",
+  "engine": "l115",
+  "title": "L115 — THE SIGNAL EVERYONE SAW",
+  "_cellule": "SETX (Sniper) · Communauté · Likelihood · regard=collègues · présent · −−",
+  "_dispositif": "HARENG ROUGE",
+  "voice": [
+    "You checked your chart, and every single indicator was pointing the same direction, so you placed the trade without a second thought.",
+    "The problem is not that the signals were wrong, because they were reading the same data and producing the same answer at the same time.",
+    "When every retail trader reads the same confirmation, their stops land at the same level, and that cluster becomes the easiest target on the chart.",
+    "The trade that looks the safest is the one that costs the most to fill, because every other buyer already arrived at the same price.",
+    "When everyone agrees, you are the liquidity. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Tous les indicateurs pointent dans la même direction, et le trader entre sans réfléchir.",
+      "question": "WHY DOES THE SAFEST TRADE FAIL THE MOST?",
+      "emotion_lever": "RECONNAISSANCE DE SOI — le spectateur a vécu exactement cette situation, toutes les cases cochées et pourtant une perte",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "boule teal (le spectateur, confiant)"
+        },
+        "c2": {
+          "type": "object",
+          "note": "trois indicateurs alignés (le hareng)"
+        },
+        "c3": {
+          "type": "object",
+          "note": "flèche verte unanime"
+        },
+        "c4": {
+          "type": "object",
+          "note": "cluster de stops identiques"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.2",
+          "do": "Tous les indicateurs pointent dans la même direction, et le trader entre sans réfléchir."
+        },
+        {
+          "t": "3.2-6.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.4-9.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Tous les indicateurs pointent dans la même direction, et le trader entre sans réfléchir.",
+      "dispositif_cle": "HARENG ROUGE : les indicateurs unanimes sont le leurre, la vraie menace est le cluster de stops qu'ils créent."
+    },
+    {
+      "id": "s2",
+      "clarity": "Les signaux n'étaient pas faux, ils lisaient les mêmes données et produisaient la même réponse en même temps.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "Les signaux n'étaient pas faux, ils lisaient les mêmes données et produisaient la même réponse en même temps."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les signaux n'étaient pas faux, ils lisaient les mêmes données et produisaient la même réponse en même temps.",
+      "turn": "Les signaux n'étaient pas faux, ils lisaient les mêmes données et produisaient la même réponse en même temps."
+    },
+    {
+      "id": "s3",
+      "clarity": "Quand tous les stops sont au même endroit, ce cluster devient la cible la plus facile du chart.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Quand tous les stops sont au même endroit, ce cluster devient la cible la plus facile du chart."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Quand tous les stops sont au même endroit, ce cluster devient la cible la plus facile du chart.",
+      "turn": "Quand tous les stops sont au même endroit, ce cluster devient la cible la plus facile du chart."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le trade qui semble le plus sûr coûte le plus cher à remplir, parce que tous les autres acheteurs sont déjà au même prix.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "Le trade qui semble le plus sûr coûte le plus cher à remplir, parce que tous les autres acheteurs sont déjà au même prix."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le trade qui semble le plus sûr coûte le plus cher à remplir, parce que tous les autres acheteurs sont déjà au même prix.",
+      "turn": "Le trade qui semble le plus sûr coûte le plus cher à remplir, parce que tous les autres acheteurs sont déjà au même prix."
+    },
+    {
+      "id": "s5",
+      "clarity": "Quand tout le monde est d'accord, c'est toi la liquidité. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Quand tout le monde est d'accord, c'est toi la liquidité. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Quand tout le monde est d'accord, c'est toi la liquidité. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 41.3,
+  "caption": "You checked your chart, and every indicator pointed the same way, so you took the trade without thinking twice.\n\nThe signals were not wrong — they all read the same data at the same time. When every retail trader gets the same confirmation, their stops land at the same level, and that cluster becomes the easiest target on the chart.\n\nWhen everyone agrees, you are the liquidity.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #priceaction #indicators #liquidity #smartmoney #stophunt #retailtraders #tradingmechanics",
+  "pinned_comment": "When everyone agrees, you are the liquidity. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "HARENG ROUGE — les indicateurs unanimes sont le leurre. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~41.3s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin : « When everyone agrees, you are the liquidity. »",
+    "duel": "Ouverture en 'You' + geste que le spectateur a fait."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

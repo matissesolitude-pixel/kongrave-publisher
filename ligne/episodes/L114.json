@@ -1,0 +1,162 @@
+{
+  "id": "L114",
+  "engine": "l114",
+  "title": "L114 — THE RANGE THAT WAS LOADING",
+  "_cellule": "OIRD (Circuit) · Éducation · Effort · regard=desk · présent · −−",
+  "_dispositif": "MÉTAPHORE SEULE",
+  "voice": [
+    "You stared at the same price range for three days, convinced that nothing was happening on the chart.",
+    "While you waited, orders were stacking on both sides of the range, because every buyer and every seller needed someone on the other end.",
+    "The range was not dead time, it was a spring being loaded by the weight of every position that entered during the pause.",
+    "When the spring released, the move did not come from new money, it came from every stop that was parked inside the range.",
+    "Consolidation is not waiting, it is loading. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le prix n'a pas bougé pendant trois jours, mais des ordres s'empilaient des deux côtés du range.",
+      "question": "WHY DOES THE BIGGEST MOVE COME RIGHT AFTER THE QUIETEST PERIOD?",
+      "emotion_lever": "CURIOSITÉ — trois jours de calme plat, puis une explosion, et le lien est invisible au premier regard",
+      "cast": {
+        "c1": {
+          "type": "object",
+          "note": "ressort comprimé (la métaphore)"
+        },
+        "c2": {
+          "type": "object",
+          "note": "range horizontal avec bougies plates"
+        },
+        "c3": {
+          "type": "object",
+          "note": "ordres empilés des deux côtés"
+        },
+        "c4": {
+          "type": "figure",
+          "note": "boule teal qui regarde sans comprendre"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.0",
+          "do": "Le prix n'a pas bougé pendant trois jours, mais des ordres s'empilaient des deux côtés du range."
+        },
+        {
+          "t": "3.0-6.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.0-9.2",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le prix n'a pas bougé pendant trois jours, mais des ordres s'empilaient des deux côtés du range.",
+      "dispositif_cle": "MÉTAPHORE SEULE : le ressort comprimé EST le range. La métaphore porte l'épisode entier."
+    },
+    {
+      "id": "s2",
+      "clarity": "Les ordres s'empilaient pendant le calme, chaque acheteur et chaque vendeur avait besoin de quelqu'un en face.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "Les ordres s'empilaient pendant le calme, chaque acheteur et chaque vendeur avait besoin de quelqu'un en face."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.4",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Les ordres s'empilaient pendant le calme, chaque acheteur et chaque vendeur avait besoin de quelqu'un en face.",
+      "turn": "Les ordres s'empilaient pendant le calme, chaque acheteur et chaque vendeur avait besoin de quelqu'un en face."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le range est un ressort chargé par le poids de chaque position entrée pendant la pause.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Le range est un ressort chargé par le poids de chaque position entrée pendant la pause."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le range est un ressort chargé par le poids de chaque position entrée pendant la pause.",
+      "turn": "Le range est un ressort chargé par le poids de chaque position entrée pendant la pause."
+    },
+    {
+      "id": "s4",
+      "clarity": "Quand le ressort se détend, le mouvement ne vient pas d'argent neuf, il vient de chaque stop garé dans le range.",
+      "beats": [
+        {
+          "t": "0.0-2.2",
+          "do": "Quand le ressort se détend, le mouvement ne vient pas d'argent neuf, il vient de chaque stop garé dans le range."
+        },
+        {
+          "t": "2.2-4.4",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.4-6.5",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Quand le ressort se détend, le mouvement ne vient pas d'argent neuf, il vient de chaque stop garé dans le range.",
+      "turn": "Quand le ressort se détend, le mouvement ne vient pas d'argent neuf, il vient de chaque stop garé dans le range."
+    },
+    {
+      "id": "s5",
+      "clarity": "La consolidation n'est pas de l'attente, c'est du chargement. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "La consolidation n'est pas de l'attente, c'est du chargement. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "La consolidation n'est pas de l'attente, c'est du chargement. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 40.3,
+  "caption": "You stared at the same price range for three days, convinced that nothing was happening.\n\nWhile you waited, orders were stacking on both sides. The range was not dead time — it was a spring being loaded by every position that entered during the pause. When it released, the move came from every stop that was parked inside.\n\nConsolidation is not waiting, it is loading.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #priceaction #consolidation #liquidity #smartmoney #breakout #orderfow #tradingmechanics",
+  "pinned_comment": "Consolidation is not waiting, it is loading. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "MÉTAPHORE SEULE — le ressort EST le range. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~40.3s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin : « Consolidation is not waiting, it is loading. »",
+    "duel": "Ouverture en 'You' + geste que le spectateur a fait."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}

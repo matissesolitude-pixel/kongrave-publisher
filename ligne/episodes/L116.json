@@ -1,0 +1,162 @@
+{
+  "id": "L116",
+  "engine": "l116",
+  "title": "L116 — THE CLOSE THAT DECIDED MONDAY",
+  "_cellule": "OITD (Circuit) · Autorité · Nightmare · regard=autres traders · futur · −−",
+  "_dispositif": "PRÉSAGE",
+  "voice": [
+    "You closed your laptop on Friday afternoon with a trade still open, because the chart looked fine and the weekend felt short.",
+    "The market you trade closes at five, but the news that moves it does not stop publishing at five.",
+    "When the market reopened, the price jumped past your stop and filled at the next available order, which was nowhere near the level you had chosen.",
+    "The gap did not break your stop, it skipped it entirely, because a stop is a request to sell at a price that no longer exists.",
+    "A stop only works when someone is there to buy it. Follow KONGRAVE — the mechanics nobody explains."
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "clarity": "Le trader ferme son écran vendredi avec un trade ouvert, le chart a l'air bien, le weekend est court.",
+      "question": "WHAT HAPPENS TO YOUR STOP WHEN THE MARKET IS CLOSED?",
+      "emotion_lever": "TENSION — le trader s'en va tranquille, mais le spectateur sait que le piège est tendu pour lundi",
+      "cast": {
+        "c1": {
+          "type": "figure",
+          "note": "boule teal (le spectateur, confiant)"
+        },
+        "c2": {
+          "type": "object",
+          "note": "écran qui s'éteint (vendredi)"
+        },
+        "c3": {
+          "type": "object",
+          "note": "ligne de stop loss posée"
+        },
+        "c4": {
+          "type": "object",
+          "note": "gap vide entre vendredi et lundi"
+        }
+      },
+      "beats": [
+        {
+          "t": "0.0-3.0",
+          "do": "Le trader ferme son écran vendredi avec un trade ouvert, le chart a l'air bien, le weekend est court."
+        },
+        {
+          "t": "3.0-6.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "6.0-9.2",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le trader ferme son écran vendredi avec un trade ouvert, le chart a l'air bien, le weekend est court.",
+      "dispositif_cle": "PRÉSAGE : la scène d'ouverture montre la tranquillité du vendredi, mais le spectateur sent le piège."
+    },
+    {
+      "id": "s2",
+      "clarity": "Le marché ferme à cinq heures, mais les nouvelles qui le font bouger ne s'arrêtent pas à cinq heures.",
+      "beats": [
+        {
+          "t": "0.0-2.5",
+          "do": "Le marché ferme à cinq heures, mais les nouvelles qui le font bouger ne s'arrêtent pas à cinq heures."
+        },
+        {
+          "t": "2.5-5.0",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "5.0-7.4",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le marché ferme à cinq heures, mais les nouvelles qui le font bouger ne s'arrêtent pas à cinq heures.",
+      "turn": "Le marché ferme à cinq heures, mais les nouvelles qui le font bouger ne s'arrêtent pas à cinq heures."
+    },
+    {
+      "id": "s3",
+      "clarity": "Le prix a sauté par-dessus le stop et s'est exécuté au prochain ordre disponible, bien plus loin.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Le prix a sauté par-dessus le stop et s'est exécuté au prochain ordre disponible, bien plus loin."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.8",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le prix a sauté par-dessus le stop et s'est exécuté au prochain ordre disponible, bien plus loin.",
+      "turn": "Le prix a sauté par-dessus le stop et s'est exécuté au prochain ordre disponible, bien plus loin."
+    },
+    {
+      "id": "s4",
+      "clarity": "Le gap n'a pas cassé le stop, il l'a sauté, parce qu'un stop est une demande de vendre à un prix qui n'existe plus.",
+      "beats": [
+        {
+          "t": "0.0-2.4",
+          "do": "Le gap n'a pas cassé le stop, il l'a sauté, parce qu'un stop est une demande de vendre à un prix qui n'existe plus."
+        },
+        {
+          "t": "2.4-4.8",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.8-7.0",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Le gap n'a pas cassé le stop, il l'a sauté, parce qu'un stop est une demande de vendre à un prix qui n'existe plus.",
+      "turn": "Le gap n'a pas cassé le stop, il l'a sauté, parce qu'un stop est une demande de vendre à un prix qui n'existe plus."
+    },
+    {
+      "id": "s5",
+      "clarity": "Un stop ne marche que quand quelqu'un est là pour l'acheter. CTA abonnement.",
+      "beats": [
+        {
+          "t": "0.0-2.3",
+          "do": "Un stop ne marche que quand quelqu'un est là pour l'acheter. CTA abonnement."
+        },
+        {
+          "t": "2.3-4.6",
+          "do": "Le mouvement se poursuit."
+        },
+        {
+          "t": "4.6-6.9",
+          "do": "TENUE VIVANTE jusqu'a la fin de la scene."
+        }
+      ],
+      "camera": "fixe",
+      "dod": "Un stop ne marche que quand quelqu'un est là pour l'acheter. CTA abonnement.",
+      "note": "CTA ABONNEMENT en S5, tenu jusqu'a la fin."
+    }
+  ],
+  "total": 41.4,
+  "caption": "You closed your laptop on Friday with a trade still open, because the chart looked fine and the weekend felt short.\n\nThe market closes at five, but the news that moves it does not stop at five. When it reopened, the price jumped past your stop and filled at the next available order — nowhere near the level you chose.\n\nA stop only works when someone is there to buy it.\n\nFollow @kongrave_ — the mechanics nobody explains.\n\n#trading #forex #priceaction #weekendgap #stoploss #liquidity #smartmoney #gaptrading #tradingmechanics",
+  "pinned_comment": "A stop only works when someone is there to buy it. Follow @kongrave_ — the mechanics nobody explains.",
+  "_rules": {
+    "cta_keyword": "AUCUN — TOFU (abonnement)",
+    "registre": "STRUCTURE",
+    "cta_dans_la_video": "LOI 11/08 — le TOFU ne porte plus de mot-cle. CTA unique @kongrave_, prononce ET affiche en S5.",
+    "caption_structure": "MOULE A revise : caption longue + ~10 hashtags. Ligne 1 = LE HOOK. Morale sans prefixe avant le CTA d'abonnement.",
+    "dispositif": "PRÉSAGE — le vendredi calme annonce le piège du lundi. Jamais deux episodes consecutifs sur le meme dispositif.",
+    "interdits": "gris = perte. pas de brun. bas ~12% vide. JAMAIS 'perdre plus que son depot'. Aucune intention pretee aux institutionnels. Aucun chiffre de rendement affiche.",
+    "palette": "papier #F2EFE7 · encre #20242A · toi/teal #1E5F6E · perte/gris #474D50",
+    "duree": "~41.4s. Valeur dense avant la 15e seconde.",
+    "circuit": "M24 frames DoD d'abord.",
+    "segment_3": "UNE phrase, sous 130 caracteres, portant un FAIT DE MARCHE verifiable.",
+    "morale": "Le segment 5 porte une REGLE applicable demain matin : « A stop only works when someone is there to buy it. »",
+    "duel": "Ouverture en 'You' + geste que le spectateur a fait."
+  },
+  "_narrator": {
+    "regle_unique": "PLUS DE NARRATEUR DANS LES REELS. Aucun personnage. Voix LIGNE — Coach (A2) en OFF.",
+    "note": "Si un moteur herite d'un appel narrateur, l'IGNORER."
+  }
+}
