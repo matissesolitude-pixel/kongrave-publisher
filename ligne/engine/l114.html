@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait" data-fps="30">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>:root{--paper:#F2EFE7}*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}#stage{position:absolute;inset:0}svg{position:absolute;inset:0;width:1080px;height:1920px}</style>
+</head>
+<body>
+  <!-- L114 « THE RANGE THAT WAS LOADING » — MÉTAPHORE SEULE : le ressort (consolidation = chargement).
+       Objet unique : deux barres horizontales (haut/bas du range) qui se compriment comme un ressort.
+       Les ordres s'empilent des deux côtés à l'intérieur. Le ressort vibre sous la pression.
+       Quand il lâche, le mouvement vient des stops piégés dedans, pas d'argent frais.
+       S1 : CURIOSITÉ — 3 jours de calme plat, frame 0 le range comprime déjà.
+       S2 : ordres empilés des deux côtés (teal + gris), pression miroir.
+       S3 : le ressort-polyline explicite, vibrant, chaque bloc ajoute du poids.
+       S4 : RELEASE — le ressort explose, les stops cascadent en gris, mouvement vertical.
+       S5 : « CONSOLIDATION IS NOT WAITING, IT IS LOADING » + CTA. -->
+  <div id="stage" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="1"><svg id="svg" viewBox="0 0 1080 1920"></svg></div>
+  <script>
+    const TOTAL=__TOTAL__, SC=__SCENES__, SPEC=__SPEC__;
+    const NS='http://www.w3.org/2000/svg', SVG=document.getElementById('svg');
+    const YOU='#1E5F6E', INK='#20242A', PAPER='#F2EFE7', DEAD='#474D50';
+    const CX=540;
+    function mk(t,a,p){const e=document.createElementNS(NS,t);for(const k in(a||{}))e.setAttribute(k,a[k]);(p||SVG).appendChild(e);return e;}
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1),eIn=f=>f*f,eOut=f=>1-(1-f)*(1-f),eInOut=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+    const backOut=(p,s)=>{s=(s==null?1.9:s);const q=clamp(p,0,1)-1;return 1+(s+1)*q*q*q+s*q*q;};
+    const setOp=(el,o)=>el.setAttribute('opacity',clamp(o,0,1).toFixed(3));
+
+    const POOL=[]; for(let i=0;i<64;i++)POOL.push(mk('rect',{rx:6,opacity:0}));
+    let pk=0;
+    function bar(x,y,w,h,color,op,rx){const e=POOL[pk++];if(!e)return;e.setAttribute('x',x.toFixed(1));e.setAttribute('y',y.toFixed(1));
+      e.setAttribute('width',Math.max(1,w).toFixed(1));e.setAttribute('height',Math.max(1,h).toFixed(1));
+      e.setAttribute('rx',(rx==null?6:rx));e.setAttribute('fill',color);setOp(e,op);}
+    const RINGS=[]; for(let i=0;i<10;i++)RINGS.push(mk('circle',{fill:'none','stroke-width':7,opacity:0}));
+    let gk=0;
+    function ring(x,y,r,color,op,w){const e=RINGS[gk++];if(!e)return;e.setAttribute('cx',x.toFixed(1));e.setAttribute('cy',y.toFixed(1));
+      e.setAttribute('r',Math.max(0.5,r).toFixed(1));e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||7);setOp(e,op);}
+    const PATHS=[]; for(let i=0;i<8;i++)PATHS.push(mk('polyline',{fill:'none','stroke-width':6,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0}));
+    let ptk=0;
+    function path(pts,color,op,w){const e=PATHS[ptk++];if(!e)return;e.setAttribute('points',pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));
+      e.setAttribute('stroke',color);e.setAttribute('stroke-width',w||6);setOp(e,op);}
+    function resetAll(){pk=0;gk=0;ptk=0;}
+    function flushAll(){for(let i=pk;i<POOL.length;i++)setOp(POOL[i],0);for(let i=gk;i<RINGS.length;i++)setOp(RINGS[i],0);for(let i=ptk;i<PATHS.length;i++)setOp(PATHS[i],0);}
+
+    // ── QUESTION — 1re ligne pleine dès frame 0 ──
+    const QLINES=['WHY DOES THE BIGGEST MOVE COME','RIGHT AFTER THE QUIETEST PERIOD'];
+    const FS=64,lineH=90,y0=196,qY=QLINES.map((s,li)=>y0+li*lineH);
+    const qEls=QLINES.map((s,li)=>{const e=mk('text',{x:CX,y:qY[li],'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':FS,'letter-spacing':'1',opacity:0});e.textContent=s;return e;});
+    const QMY=y0+2*lineH+88,qMark=mk('text',{x:CX,y:QMY,'text-anchor':'middle',fill:INK,'font-family':'Helvetica Neue, Arial, sans-serif','font-weight':800,'font-size':150,opacity:0});qMark.textContent='?';
+    qEls.forEach(e=>{const t=e.textContent,f=Math.min(FS,930/Math.max(1,t.length*0.62));e.setAttribute('font-size',f.toFixed(1));});
+    function hideQ(){for(const e of qEls)setOp(e,0);setOp(qMark,0);}
+
+    // ── ÉTIQUETTES ──
+    function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
+    const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
+    function putCap(el,txt,cx,y,color,op){
+      const MARGIN=70, MAXW=1080-2*MARGIN;
+      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+        const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
+        el.setAttribute('font-size',nom);
+        let w=el.getComputedTextLength()||0;
+        if(!w) w=txt.length*nom*0.72;
+        if(w>MAXW){ const fs=Math.max(18,nom*MAXW/w); el.setAttribute('font-size',fs.toFixed(1)); w=el.getComputedTextLength()||txt.length*fs*0.72; }
+        el.__hw=w/2;
+      }
+      const x=clamp(+cx, MARGIN+el.__hw, 1080-MARGIN-el.__hw);
+      el.setAttribute('x',x.toFixed(1));el.setAttribute('y',y);el.setAttribute('fill',color);setOp(el,op);}
+    function hideCaps(){for(const e of [capA,capB,capC,capD,capE,capF])setOp(e,0);}
+
+    // ═══ S1 — CURIOSITÉ : 3 jours de range plat, le range comprime déjà ═══
+    function s1(lf,t,s){
+      const u=t-s; resetAll(); hideCaps();
+      // question — visible dès frame 0
+      const gf=clamp(1-(lf-0.82)/0.10,0,1);
+      for(let k=0;k<qEls.length;k++){const qt=(k===0?0.18:u-(0.1+k*0.28)),ap=clamp(qt/0.18,0,1),sc=0.7+0.3*backOut(ap);setOp(qEls[k],ap*gf);qEls[k].setAttribute('transform',`translate(${(CX*(1-sc)).toFixed(2)} ${(qY[k]*(1-sc)).toFixed(2)}) scale(${sc.toFixed(3)})`);}
+      const qm=u-0.9,qap=clamp(qm/0.2,0,1),qsc=0.6+0.4*backOut(qap);setOp(qMark,qap*gf);qMark.setAttribute('transform',`translate(${(CX*(1-qsc)).toFixed(2)} ${(QMY*(1-qsc)).toFixed(2)}) scale(${qsc.toFixed(3)})`);
+
+      // range = deux barres horizontales qui se rapprochent lentement
+      const rangeY=920, rangeH0=260, compress=clamp(u/8.0,0,0.35);
+      const halfH=(rangeH0/2)*(1-compress);
+      const topY=rangeY-halfH, botY=rangeY+halfH;
+      const shake=3*Math.sin(u*4.2)+2*Math.sin(u*6.1);
+      // top range boundary
+      bar(180, topY+shake-6, 720, 8, INK, 0.95, 0);
+      // bottom range boundary
+      bar(180, botY-shake, 720, 8, INK, 0.95, 0);
+      // blocks accumulating inside (orders stacking)
+      const N=8, bW=60, bH=24;
+      for(let i=0;i<N;i++){
+        const at=0.5+i*0.8, ap=clamp((u-at)/0.5,0,1);
+        if(ap<=0) continue;
+        const bx=240+i*70+6*Math.sin(u*2.3-i*0.7);
+        const by=rangeY-bH/2+12*Math.sin(u*1.9+i*1.1);
+        const col=i%2===0?YOU:DEAD;
+        bar(bx, by, bW*ap, bH*ap, col, ap*0.7);
+      }
+      // label
+      putCap(capC,'THREE DAYS',CX, botY+60, DEAD, clamp((u-1.0)/0.6,0,1));
+      putCap(capD,'NOTHING HAPPENING',CX, botY+108, DEAD, clamp((u-1.8)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S2 — ordres empilés des deux côtés, pression miroir ═══
+    function s2(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const rangeY=900, halfH=100;
+      const topY=rangeY-halfH, botY=rangeY+halfH;
+      const shake=2*Math.sin(u*3.8)+1.5*Math.sin(u*5.3);
+      bar(180, topY+shake-6, 720, 8, INK, 0.95, 0);
+      bar(180, botY-shake, 720, 8, INK, 0.95, 0);
+
+      // buyers stacking from left (teal)
+      const NB=6, bW=50, bH=20;
+      for(let i=0;i<NB;i++){
+        const at=0.2+i*0.5, ap=clamp((u-at)/0.4,0,1);
+        if(ap<=0) continue;
+        const bx=210+i*10+4*Math.sin(u*2.0-i*0.5);
+        const by=rangeY+20+i*24+3*Math.sin(u*1.7+i*0.8);
+        bar(bx, by-bH/2, bW*ap, bH, YOU, ap*0.8);
+      }
+      // sellers stacking from right (grey)
+      for(let i=0;i<NB;i++){
+        const at=0.4+i*0.5, ap=clamp((u-at)/0.4,0,1);
+        if(ap<=0) continue;
+        const bx=760-i*10+4*Math.sin(u*2.2+i*0.6);
+        const by=rangeY-20-i*24+3*Math.sin(u*1.9-i*0.9);
+        bar(bx, by-bH/2, bW*ap, bH, DEAD, ap*0.8);
+      }
+      putCap(capC,'BUYERS',280, botY+70, YOU, clamp((u-0.6)/0.5,0,1));
+      putCap(capD,'SELLERS',800, topY-30, DEAD, clamp((u-1.0)/0.5,0,1));
+      putCap(capA,'BOTH SIDES LOADING',CX, 1200, INK, clamp((u-2.5)/0.7,0,1));
+      flushAll();
+    }
+
+    // ═══ S3 — le ressort devient explicite, il vibre sous la pression ═══
+    function s3(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const rangeY=920, halfH=80-20*eOut(clamp(u/4.0,0,1));
+      const topY=rangeY-halfH, botY=rangeY+halfH;
+      const vibrate=6*Math.sin(u*8.0)*clamp(u/2.0,0,1)+3*Math.sin(u*12.0)*clamp(u/3.0,0,1);
+
+      // range boundaries vibrating harder as pressure builds
+      bar(180, topY+vibrate-6, 720, 8, INK, 0.95, 0);
+      bar(180, botY-vibrate, 720, 8, INK, 0.95, 0);
+
+      // spring coils (polyline zigzag between top and bottom)
+      const coils=7, springAp=clamp(u/1.5,0,1);
+      const springPts=[];
+      for(let i=0;i<=coils;i++){
+        const frac=i/coils;
+        const sy=topY+8+frac*(botY-topY-16);
+        const sx=(i%2===0)?340:740;
+        springPts.push([sx+vibrate*(i%2===0?1:-1), sy]);
+      }
+      path(springPts, INK, springAp*0.8, 5);
+
+      // blocks adding weight — they fall onto the spring
+      const NW=5;
+      for(let i=0;i<NW;i++){
+        const at=1.0+i*0.7, ap=clamp((u-at)/0.4,0,1);
+        if(ap<=0) continue;
+        const wx=CX+(-60+i*30)+vibrate*0.5;
+        const wy=topY-20-i*8;
+        bar(wx-25, wy+4*Math.sin(u*2.5-i), 50, 18, YOU, ap*0.75);
+      }
+      putCap(capB,'EVERY POSITION ADDS WEIGHT',CX, 1180, INK, clamp((u-2.0)/0.7,0,1));
+      flushAll();
+    }
+
+    // ═══ S4 — RELEASE : le ressort explose, stops cascadent ═══
+    function s4(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      const rangeY=920;
+      // pre-release: compressed range, then SNAP at u~2.0
+      const snap=clamp((u-2.0)/0.3,0,1);
+      const halfH=60*(1-snap*0.8);
+      const topY=rangeY-halfH-400*eOut(snap);
+      const botY=rangeY+halfH;
+      const vibPre=(1-snap)*8*Math.sin(u*10.0);
+
+      // top boundary flies up (the breakout)
+      bar(180, topY+vibPre-6, 720, 8, INK, 0.95, 0);
+      // bottom boundary stays
+      bar(180, botY, 720, 8, INK, 0.95*(1-snap*0.3), 0);
+
+      // price shoots up — a tall teal bar extending from the range
+      const moveH=500*eOut(snap);
+      if(snap>0) bar(CX-40, rangeY-halfH-moveH, 80, moveH, YOU, snap*0.9);
+
+      // stops cascading (grey blocks falling out of the range)
+      const NS_=6;
+      for(let i=0;i<NS_;i++){
+        const at=2.1+i*0.15, ap=clamp((u-at)/0.2,0,1);
+        if(ap<=0) continue;
+        const fallY=botY+10+120*eOut(ap)+8*Math.sin(u*3.0-i);
+        const fx=300+i*80+10*Math.sin(u*2.0+i*0.7);
+        bar(fx, fallY, 55, 20, DEAD, (1-ap*0.3)*0.8);
+      }
+      // spring breaking apart (polyline fragments)
+      if(snap>0.5){
+        const fragAp=clamp((snap-0.5)/0.5,0,1);
+        path([[300,rangeY-30],[400,rangeY+20],[350,rangeY-10]], DEAD, fragAp*0.5, 3);
+        path([[700,rangeY-20],[780,rangeY+30],[730,rangeY+10]], DEAD, fragAp*0.5, 3);
+      }
+      putCap(capA,'THE SPRING RELEASED',CX, 680, INK, clamp((u-2.8)/0.6,0,1));
+      putCap(capC,'NOT NEW MONEY',CX, 1360, DEAD, clamp((u-3.5)/0.6,0,1));
+      putCap(capD,'TRAPPED STOPS',CX, 1408, DEAD, clamp((u-4.0)/0.6,0,1));
+      flushAll();
+    }
+
+    // ═══ S5 — DÉCHARGE : « CONSOLIDATION IS NOT WAITING, IT IS LOADING » + CTA ═══
+    function s5(lf,t,s){
+      const u=t-s; resetAll(); hideQ(); hideCaps();
+      // the released spring — expanded, calm now
+      const rangeY=880;
+      const breathe=4*Math.sin(u*1.6)+2*Math.sin(u*2.7);
+      // a single relaxed coil
+      const coilPts=[];
+      for(let i=0;i<=5;i++){
+        const frac=i/5;
+        const sy=rangeY-100+frac*200+breathe;
+        const sx=(i%2===0)?380:700;
+        coilPts.push([sx, sy]);
+      }
+      path(coilPts, INK, 0.3+0.1*Math.sin(u*1.2), 4);
+      // the move bar standing tall — proof the spring released
+      const moveH=300+20*Math.sin(u*1.4);
+      bar(CX-50, rangeY-100-moveH, 100, moveH, YOU, 0.85);
+      ring(CX, rangeY-100-moveH-24, 18, INK, 1);
+      // floor
+      bar(280, rangeY+120, 520, 4, INK, 0.5, 0);
+      // message
+      putCap(capA,'CONSOLIDATION IS NOT WAITING',CX, 1280, INK, clamp((u-0.8)/0.7,0,1));
+      putCap(capB,'IT IS LOADING',CX, 1340, INK, clamp((u-1.4)/0.7,0,1));
+      putCap(capF,'FOLLOW @KONGRAVE_',CX, 1440, YOU, clamp((u-2.4)/0.7,0,1));
+      flushAll();
+    }
+
+    const RENDER={s1,s2,s3,s4,s5};const SCENEFN=SPEC.map(s=>RENDER[s.id]||s1);
+    const clock={t:0};
+    function sceneAt(t){let i=0;for(let k=0;k<SC.length;k++){if(t>=SC[k].s-1e-6)i=k;}return Math.min(i,SCENEFN.length-1);}
+    function render(){const t=clock.t;const i=sceneAt(t);const lf=clamp((t-SC[i].s)/SC[i].d,0,1);SCENEFN[i](lf,t,SC[i].s);}
+    const tl=gsap.timeline({paused:true});
+    tl.to(clock,{t:TOTAL,duration:TOTAL,ease:'none',onUpdate:render},0);
+    tl.to(SVG,{opacity:1,duration:0.001},TOTAL-0.001);
+    window.__timelines=window.__timelines||{};window.__timelines['main']=tl;
+  </script>
+</body>
+</html>
