@@ -54,9 +54,10 @@
     // ── ÉTIQUETTES ──
     function caption(sz){return mk('text',{'text-anchor':'middle','font-family':'Helvetica Neue, Arial, sans-serif','font-weight':(sz>44?800:700),'font-size':(sz||38),'data-fs':(sz||38),'letter-spacing':'1.5',opacity:0});}
     const capA=caption(46),capB=caption(40),capC=caption(38),capD=caption(38),capE=caption(36),capF=caption(58);
-    function putCap(el,txt,cx,y,color,op){
-      const MARGIN=70, MAXW=1080-2*MARGIN;
-      if(el.__cap!==txt){ el.__cap=txt; el.textContent=txt;
+    function putCap(el,txt,cx,y,color,op,maxW){
+      // maxW : largeur permise quand deux libelles partagent la meme ligne (LOI zero chevauchement)
+      const MARGIN=70, MAXW=Math.min(1080-2*MARGIN, maxW||Infinity);
+      if(el.__cap!==txt||el.__maxw!==MAXW){ el.__cap=txt; el.__maxw=MAXW; el.textContent=txt;
         const nom=+el.getAttribute('data-fs')||+el.getAttribute('font-size')||38;
         el.setAttribute('font-size',nom);
         let w=el.getComputedTextLength()||0;
@@ -226,7 +227,7 @@
     // ═══ S5 — DÉCHARGE : deux zones — foule (gris) vs liquidité prise (teal, sûr) ═══
     function s5(lf,t,s){
       const u=t-s; resetAll(); hideQ(); hideCaps();
-      const Lc=320, Rc=760, zoneY=880;
+      const Lc=295, Rc=785, zoneY=880, DEMI=430;  // deux libelles sur une ligne : chacun garde sa moitie
       // zone gauche — là où la foule attend encore (gris, dangereux)
       const crowdAp=clamp(u/1.0,0,1);
       for(let i=0;i<6;i++){
@@ -234,7 +235,7 @@
         bar(bx, zoneY, 22, bh, DEAD, crowdAp*0.7);
       }
       bar(Lc-100, zoneY+50, 200, 5, DEAD, crowdAp*0.8, 0);
-      putCap(capC,'WHERE THE CROWD SITS',Lc, zoneY-30, DEAD, crowdAp);
+      putCap(capC,'WHERE THE CROWD SITS',Lc, zoneY-30, DEAD, crowdAp, DEMI);
       // croix de danger
       if(crowdAp>0.5){
         path([[Lc-18,zoneY+70],[Lc+18,zoneY+100]], DEAD, (crowdAp-0.5)*2, 5);
@@ -244,7 +245,7 @@
       const safeAp=clamp((u-1.5)/1.0,0,1);
       bar(Rc-100, zoneY, 200, 40+6*Math.sin(u*1.8), YOU, safeAp*0.85);
       bar(Rc-100, zoneY+50, 200, 5, YOU, safeAp*0.6, 0);
-      putCap(capD,'WHERE LIQUIDITY WAS TAKEN',Rc, zoneY-30, YOU, safeAp);
+      putCap(capD,'WHERE LIQUIDITY WAS TAKEN',Rc, zoneY-30, YOU, safeAp, DEMI);
       // coche de sûreté
       if(safeAp>0.5){
         path([[Rc-16,zoneY+80],[Rc,zoneY+96],[Rc+24,zoneY+64]], YOU, (safeAp-0.5)*2, 5);
