@@ -1,0 +1,9 @@
+You placed your stop exactly where the textbook told you, and the price ran through it by three pips before reversing in the direction you picked.
+
+The spike was not random. Every retail stop clustered at the same round number becomes a pool of liquidity that a larger order needs to fill. The price visits the cluster, fills the waiting order, and reverses before the screen refreshes.
+
+Place your stop where the liquidity has already been taken, not where the crowd still sits.
+
+Follow @kongrave_ — the mechanics nobody explains.
+
+#trading #forex #stophunt #liquidity #smartmoney #priceaction #orderflow #daytrading #tradingmechanics #tradingstrategy
