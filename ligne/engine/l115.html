@@ -132,10 +132,11 @@
       const stopY=920, stopLineW=680;
       bar(CX-stopLineW/2, stopY-3, stopLineW, 6, INK, 0.8, 0);
 
-      // many small stop bars clustering at that level — appear in sequence
+      // many small stop bars clustering at that level — the cluster is already half-formed at frame 0
+      // (coupe franche : la scène ouvre sur SES objets ; scan CI du 10/10 : 0,4 s quasi vide), the rest keep arriving
       const N=14;
       for(let i=0;i<N;i++){
-        const at=0.15+i*0.25, ap=clamp((u-at)/0.3,0,1);
+        const at=-1.6+i*0.25, ap=clamp((u-at)/0.3,0,1);
         if(ap<=0) continue;
         const sx=CX-stopLineW/2+30+i*(stopLineW-60)/(N-1);
         const w=28+6*Math.sin(u*2.3-i*0.7);
@@ -148,7 +149,7 @@
       const glowOp=glowF*(0.3+0.15*Math.sin(u*3.5));
       bar(CX-stopLineW/2-10, stopY-60, stopLineW+20, 70, DEAD, glowOp, 12);
 
-      putCap(capB,'STOP CLUSTER',CX, stopY+80, INK, clamp((u-1.0)/0.6,0,1));
+      putCap(capB,'STOP CLUSTER',CX, stopY+80, INK, clamp((u-0.3)/0.5,0,1));
       putCap(capC,'EASIEST TARGET ON THE CHART',CX, stopY+130, DEAD, clamp((u-2.5)/0.7,0,1));
 
       flushAll();

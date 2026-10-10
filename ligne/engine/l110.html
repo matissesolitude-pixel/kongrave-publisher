@@ -112,18 +112,24 @@
       const u=t-s; resetAll(); hideQ(); hideCaps();
       // le « faux coupable » — texte RANDOM? qui s'efface
       const fadeRandom=clamp(1-u/2.5,0,1);
-      putCap(capA,'RANDOM',CX, 740, DEAD, fadeRandom*0.8);
-      // barre de texte barrée
-      if(fadeRandom>0.05) bar(CX-120, 732, 240, 5, DEAD, fadeRandom*0.6, 0);
+      // le faux coupable TOMBE en s'effaçant (tomber = perdre) : déplacement de position dès la frame 0
+      const dropR=16*Math.min(u,2.5);
+      putCap(capA,'RANDOM',CX, 740+dropR, DEAD, fadeRandom*0.8);
+      // barre de texte barrée — le trait BALAIE le faux coupable (mouvement dès l'ouverture)
+      const strikeF=eOut(clamp((u-0.15)/0.55,0,1));
+      if(fadeRandom>0.05) bar(CX-120, 732+dropR, Math.max(1,240*strikeF), 5, DEAD, fadeRandom*0.6, 0);
       // le vrai coupable — le carnet d'ordres, barres empilées visibles
       const revealF=clamp((u-1.5)/2.0,0,1);
       const bookX=CX, bookY=900;
       // barres du carnet (ordres empilés au même niveau)
       for(let i=0;i<8;i++){
         const bw=60+40*Math.random()*0+40*(i%3===0?1:0.6);
-        const bwActual=60+40*(i%3===0?1:0.6)+6*Math.sin(u*1.9+i*0.7);
+        // le carnet VIT : des ordres arrivent et repartent à chaque niveau (deux harmoniques, jamais de vitesse nulle)
+        const bwActual=60+40*(i%3===0?1:0.6)+9*Math.sin(u*1.9+i*0.7)+5*Math.sin(u*3.4+i*1.3);
         const by=bookY+i*32;
-        const ap=clamp((revealF-(i*0.08))/0.3,0,1);
+        // le carnet est DÉJÀ là dès la frame 0, en fantôme, pendant qu'on accuse RANDOM ; il s'allume à la révélation
+        // (scan CI du 09/10 : 1,5 s quasi vide et sans progression à l'ouverture de S2)
+        const ap=0.5+0.5*clamp((revealF-(i*0.08))/0.3,0,1);
         bar(bookX-bwActual/2, by, bwActual, 24, (i<5)?DEAD:INK, ap*0.85);
       }
       putCap(capB,'THE ORDER BOOK',CX, bookY-30, INK, eOut(revealF));
@@ -131,7 +137,8 @@
       // flèche « la vraie cause »
       const arrowAp=clamp((u-3.5)/0.8,0,1);
       path([[CX-200,bookY+120],[CX-60,bookY+120]], YOU, arrowAp, 6);
-      putCap(capD,'THE REAL CAUSE',CX+120, bookY+128, YOU, arrowAp);
+      // zéro chevauchement : l'étiquette tient dans la moitié gauche, au-dessus de la flèche, hors de la colonne du carnet
+      putCap(capD,'THE REAL CAUSE',CX-290, bookY+86, YOU, arrowAp);
       flushAll();
     }
 

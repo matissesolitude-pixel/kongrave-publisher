@@ -177,6 +177,9 @@
       // Wick sweeps left to right across the stops
       const sweepX=lerp(200, 820, clamp(u/4.0, 0, 1));
 
+      // The wick (vertical line sweeping down)
+      const wickX=clamp(sweepX, 240, 740);
+
       for(let i=0;i<stops.length;i++){
         const st=stops[i];
         const consumed=(st.x < sweepX);
@@ -185,11 +188,15 @@
         const shake=consumed ? 3*Math.sin(u*8-i*2)*(1-burnF) : 0;
         const opac=consumed ? lerp(1, 0.4, burnF) : 0.9;
         const breath=3*Math.sin(u*1.9-i*0.6);
-        bar(st.x-stopW/2+shake, st.y+breath, stopW, stopH, col, opac);
+        // EVERY STOP BECAME FUEL : une fois brûlé, le stop est aspiré par la mèche (il nourrit le mouvement),
+        // rétréci et éteint mais jamais effacé. La vie continue jusqu'à la fin de la scène
+        // (scan CI du 09/10 : 3,5 s sans progression après la fin du balayage).
+        const tb=4.0*(st.x+80-200)/620, k=eIn(clamp((u-tb)/3.2,0,1));
+        const px=lerp(st.x+shake, wickX+12*Math.sin(u*2.7+i)*(1-k), k);
+        const py=lerp(st.y+breath, 760+18*i*(1-k), k);
+        const w=stopW*(1-0.5*k), h=stopH*(1-0.5*k);
+        bar(px-w/2, py, w, h, col, lerp(opac, 0.35, k));
       }
-
-      // The wick (vertical line sweeping down)
-      const wickX=clamp(sweepX, 240, 740);
       bar(wickX-3, 720, 6, 250+20*Math.sin(u*2.3), INK, 0.85, 0);
 
       putCap(capC,'ONE SECOND FLAT',CX, 1140, DEAD, clamp((u-2.5)/0.6,0,1));
@@ -241,19 +248,23 @@
       const u=t-s; resetAll(); hideQ(); hideCaps();
 
       // The wick stands alone — tall, vertical, like a receipt
-      const wickTop=600, wickBot=1150;
-      const wickH=(wickBot-wickTop)+8*Math.sin(u*1.4);
-      bar(CX-5, wickTop, 10, wickH, INK, 1, 0);
+      // la mèche-reçu, assez épaisse pour porter la scène dès la frame 0 (scan CI du 09/10 : 1,0 s quasi vide) ;
+      // elle vit par le HAUT (deux harmoniques) pour ne jamais toucher l'ordre rempli en bas
+      const wickBot=1150, wickTop=600-(14*Math.sin(u*1.4)+8*Math.sin(u*2.6+1.0));
+      bar(CX-9, wickTop, 18, wickBot-wickTop, INK, 1, 0);
 
       // Small teal dot at the bottom (the filled order)
-      ring(CX, wickBot+30, 14+3*Math.sin(u*2.1), YOU, 0.9);
+      ring(CX, wickBot+30, 14+3*Math.sin(u*2.1)+2*Math.sin(u*3.7+0.5), YOU, 0.9);
 
-      // Receipt lines — small horizontal dashes on each side of the wick
-      for(let i=0;i<4;i++){
-        const ry=wickTop+80+i*120;
-        const dashOp=clamp((u-0.3-i*0.3)/0.4, 0, 1);
-        bar(CX-80, ry, 60, 3, DEAD, dashOp*0.5, 0);
-        bar(CX+20, ry, 60, 3, DEAD, dashOp*0.5, 0);
+      // Receipt lines — de chaque côté de la mèche, elles DÉFILENT vers le haut comme un ticket qui s'imprime :
+      // la scène progresse jusqu'au dernier mot (scan local : gel 1,6 s en fin de S5 avec des traits fixes)
+      for(let i=0;i<5;i++){
+        const ph=((i*110-26*u)%550+550)%550;
+        const ry=620+ph;
+        const edge=clamp(Math.min(ph,530-ph)/40,0,1);
+        const dashOp=clamp((u+0.4-i*0.3)/0.4, 0, 1)*edge;
+        bar(CX-84, ry, 60, 5, DEAD, dashOp*0.65, 0);
+        bar(CX+24, ry, 60, 5, DEAD, dashOp*0.65, 0);
       }
 
       putCap(capA,'WICKS ARE NOT NOISE',CX, 1260, INK, clamp((u-1.0)/0.7,0,1));
