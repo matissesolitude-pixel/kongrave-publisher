@@ -150,7 +150,7 @@ série. **Ne jamais rallonger un épisode pour « gagner du watch time ».**
 1. **La frame 0 montre un objet de trading RECONNAISSABLE au premier regard,
    déjà en mouvement.** Un stop touché par une mèche. Deux mains au-dessus d'un
    ticket. Jamais un mécanisme abstrait qui se construit sous nos yeux.
-2. **`voice[0]` commence par « You » + un geste que le spectateur a FAIT.**
+2. **`voice[0]` part de l'émotion visée et d'un geste concret de l'histoire.** « You » + un geste que le spectateur a fait est une possibilité, jamais une obligation (M, 11/10/2026) ; une histoire réelle part de la personne et de faits vérifiés.
    Voix active, verbes d'action. Interdits mesurés : la voix passive
    (L69 « Your plan is being followed » → skip 72,6 %, 147 vues) et le gérondif
    en sujet (L63 « Waiting for more information keeps you safe » → skip 74,4 %).
