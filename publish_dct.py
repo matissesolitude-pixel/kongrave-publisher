@@ -27,7 +27,9 @@ Options :
 import argparse
 import json
 import shutil
+import subprocess
 import sys
+import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -111,6 +113,39 @@ def _file() -> list[Path]:
     return sorted(d for d in QUEUE_DIR.iterdir() if d.is_dir() and not d.name.startswith("."))
 
 
+# Profil exactement conforme a ce que CE compte a deja accepte (masters LIGNE publies) :
+# H.264 High 4.0, yuv420p, 30 i/s, GOP ferme, AAC LC 44,1 kHz MONO, moov en tete.
+# Un master en 48 kHz stereo a ete refuse par Meta le 27/10 avec un ProcessingFailedError
+# opaque ; on normalise donc TOUJOURS avant l envoi plutot que de deviner apres coup.
+FFMPEG = [
+    "ffmpeg", "-y", "-loglevel", "error", "-i", "{src}",
+    "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-pix_fmt", "yuv420p",
+    "-r", "30", "-g", "60", "-keyint_min", "60", "-sc_threshold", "0",
+    "-crf", "20", "-maxrate", "5M", "-bufsize", "10M",
+    "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1",
+    "-movflags", "+faststart", "{dst}",
+]
+
+
+def _normalise(src: Path) -> Path:
+    """Reencode vers le profil accepte. Si ffmpeg manque, on envoie le fichier tel quel
+       plutot que de bloquer la file, et on le dit."""
+    dst = Path(tempfile.gettempdir()) / f"dct_{src.stem}_meta.mp4"
+    cmd = [a.format(src=str(src), dst=str(dst)) for a in FFMPEG]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True)
+    except FileNotFoundError:
+        print("[dct] ffmpeg absent — envoi du master sans normalisation.", file=sys.stderr)
+        return src
+    except subprocess.CalledProcessError as exc:
+        print(f"[dct] normalisation impossible ({exc.stderr.decode()[:300]}) — "
+              f"envoi du master tel quel.", file=sys.stderr)
+        return src
+    print(f"[dct] normalise : {dst.stat().st_size / 1e6:.1f} Mo (depuis "
+          f"{src.stat().st_size / 1e6:.1f} Mo)")
+    return dst
+
+
 def _contenu(dossier: Path) -> tuple[Path, str]:
     mp4 = sorted(dossier.glob("*.mp4"))
     if len(mp4) != 1:
@@ -182,7 +217,7 @@ def main() -> int:
           f"{mp4.stat().st_size / 1e6:.1f} Mo){' [DRY-RUN]' if a.dry_run else ''}")
 
     try:
-        res = publish_episode(mp4, caption, dry_run=a.dry_run)
+        res = publish_episode(_normalise(mp4), caption, dry_run=a.dry_run)
     except (PublishError, RuntimeError) as exc:
         n = int(etat.get(dossier.name, 0)) + 1
         etat[dossier.name] = n
