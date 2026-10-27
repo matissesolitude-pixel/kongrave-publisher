@@ -1,0 +1,70 @@
+name: DCT auto-publish (file)
+
+# Publie le Reel quotidien DCT (War Room) depuis dct/queue/ : prend le PLUS ANCIEN
+# dossier, le publie sur le compte Instagram de la marque, puis l'archive dans
+# dct/published/ SANS le master (le dépôt pèse déjà 3 Go de masters LIGNE).
+#
+# L'HEURE. M veut le Reel à 20h15 Paris. Le cron est en UTC et Paris bascule deux fois
+# par an, donc on tourne aux DEUX heures possibles, 18h15 et 19h15 UTC, et c'est le
+# script qui tranche sur l'heure RÉELLE de Paris. Un seul des deux runs publie.
+
+on:
+  schedule:
+    - cron: "15 18 * * *"   # 20h15 Paris en heure d'été
+    - cron: "15 19 * * *"   # 20h15 Paris en heure d'hiver
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run : crée le conteneur mais NE PUBLIE PAS, n'archive pas"
+        type: boolean
+        default: false
+      force:
+        description: "Force : ignore la fenêtre horaire ET la cadence"
+        type: boolean
+        default: false
+
+concurrency:
+  group: dct-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Dépendances
+        run: pip install -r requirements.txt
+
+      - name: Publier
+        env:
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GRAPH_VERSION: v20.0
+        run: |
+          args=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then args="$args --dry-run"; fi
+          if [ "${{ inputs.force }}" = "true" ]; then args="$args --force"; fi
+          python publish_dct.py $args
+
+      - name: Committer l'archivage et le journal
+        if: always()
+        run: |
+          git config user.name "dct-publisher"
+          git config user.email "dct-publisher@users.noreply.github.com"
+          git add dct/ || true
+          git diff --cached --quiet || git commit -m "DCT : archivage + journal de publication"
+          git push || true
