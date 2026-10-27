@@ -10,11 +10,10 @@ name: LIGNE autoprod (fabrication)
 # Garde-fous : 1 épisode/run ; seuls les épisodes dont le FICHIER moteur existe sont fabriqués.
 
 on:
-  schedule:
-    - cron: "20 */6 * * *"           # 4 créneaux/jour (UTC) — suffit pour la cadence de publication (6/j).
-                                      # Économie de minutes Actions : le rendu vidéo (~18 min) est le gros poste.
-                                      # Double court-circuit <1 min : (a) aucun épisode prêt, (b) buffer déjà plein
-                                      # (LIGNE_QUEUE_TARGET épisodes en file). On ne rend que lorsque la file baisse.
+  # ARRÊT DE L'AUTOPROD — 2026-10-27. M : « annule tout l'autoprod the line, on en a plus besoin ».
+  # Le cron "20 */6 * * *" (1 épisode LIGNE fabriqué toutes les 6 h) est retiré : plus aucun
+  # épisode ne se fabrique tout seul. Le workflow reste déclenchable à la main si LA LIGNE reprend.
+  # La PUBLICATION (publish-ligne.yml) n'est pas touchée : elle sert aussi les whiteboards (WB/WR).
   workflow_dispatch:
     inputs:
       episode:
