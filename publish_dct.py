@@ -6,7 +6,9 @@ Modèle : une FILE, pas un planning, comme pour LIGNE. Un Reel prêt = UN sous-d
 de `dct/queue/` contenant UN `.mp4` et un `caption.txt`. Le seul geste : déposer ce
 dossier, commit, push.
 
-Le run prend le PLUS ANCIEN dossier de la file, le publie, puis le déplace en
+Le run prend la PLUS ANCIENNE date de la file et publie TOUS ses dossiers, l un après
+l autre (M, 28/10 : un Reel par actif gagnant et au plus un perdant, donc plusieurs Reels
+le même soir ; le nom `AAAA-MM-JJ-...` porte la date). Chaque dossier publié part en
 `dct/published/` SANS le .mp4 : le master vit déjà dans le dossier du lot sur le Mac,
 et le dépôt pèse déjà 3 Go à cause des masters LIGNE. On garde la trace, pas le poids.
 
@@ -30,6 +32,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -204,8 +207,20 @@ def main() -> int:
 
     etat = _load(STATE_PATH, {})
     etat = etat if isinstance(etat, dict) else {}
-    dossier = file[0]
+    lot = [d for d in file if d.name[:10] == file[0].name[:10]]
+    print(f"[dct] lot du {file[0].name[:10]} : {len(lot)} Reel(s)")
+    echecs = 0
+    for n, dossier in enumerate(lot):
+        if n:
+            time.sleep(PAUSE_ENTRE_REELS_S)
+        echecs += _publier(dossier, etat, a.dry_run)
+    return 1 if echecs else 0
 
+
+PAUSE_ENTRE_REELS_S = 60
+
+
+def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
     try:
         mp4, caption = _contenu(dossier)
     except PublishError as exc:
@@ -214,10 +229,10 @@ def main() -> int:
         return 1
 
     print(f"[dct] publication de {dossier.name} ({mp4.name}, "
-          f"{mp4.stat().st_size / 1e6:.1f} Mo){' [DRY-RUN]' if a.dry_run else ''}")
+          f"{mp4.stat().st_size / 1e6:.1f} Mo){' [DRY-RUN]' if dry_run else ''}")
 
     try:
-        res = publish_episode(_normalise(mp4), caption, dry_run=a.dry_run)
+        res = publish_episode(_normalise(mp4), caption, dry_run=dry_run)
     except (PublishError, RuntimeError) as exc:
         n = int(etat.get(dossier.name, 0)) + 1
         etat[dossier.name] = n
@@ -233,7 +248,7 @@ def main() -> int:
                         f"Nouvelle tentative au prochain run.")
         return 1
 
-    if a.dry_run:
+    if dry_run:
         print(f"[dct] DRY-RUN OK — conteneur {res['container_id']}, rien n'est publié.")
         return 0
 
