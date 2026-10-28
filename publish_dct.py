@@ -217,7 +217,7 @@ def main() -> int:
     return 1 if echecs else 0
 
 
-PAUSE_ENTRE_REELS_S = 60
+PAUSE_ENTRE_REELS_S = 12 * 60   # M, 28/10 : « laisse 10-15 minutes entre chaque post »
 
 
 def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
