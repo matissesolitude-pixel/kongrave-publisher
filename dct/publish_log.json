@@ -4,5 +4,29 @@
     "media_id": "17966441549982709",
     "status": "success",
     "published_at": "2026-10-27T22:17:36.707191+00:00"
+  },
+  {
+    "dossier": "2026-10-28-war-room-1-gbpusd-s2026-10-28",
+    "media_id": "17914717647555870",
+    "status": "success",
+    "published_at": "2026-10-28T18:28:12.318386+00:00"
+  },
+  {
+    "dossier": "2026-10-28-war-room-2-usdjpy-s2026-10-28",
+    "media_id": "17970951963193669",
+    "status": "success",
+    "published_at": "2026-10-28T18:41:03.938785+00:00"
+  },
+  {
+    "dossier": "2026-10-28-war-room-4-gold-s2026-10-28",
+    "media_id": "17889221211485119",
+    "status": "success",
+    "published_at": "2026-10-28T18:53:54.880194+00:00"
+  },
+  {
+    "dossier": "2026-10-28-war-room-5-dow-s2026-10-28",
+    "media_id": "17903805987376635",
+    "status": "success",
+    "published_at": "2026-10-28T19:06:43.474695+00:00"
   }
 ]
