@@ -52,5 +52,17 @@
     "media_id": "18126094768904277",
     "status": "success",
     "published_at": "2026-10-29T19:37:49.968243+00:00"
+  },
+  {
+    "dossier": "2026-10-29-war-room-5-eurusd-preuve-s2026-10-29",
+    "media_id": "18151633606518266",
+    "status": "success",
+    "published_at": "2026-10-29T21:47:02.326009+00:00"
+  },
+  {
+    "dossier": "2026-10-29-war-room-6-dow-preuve-s2026-10-29",
+    "media_id": "18116672588278020",
+    "status": "success",
+    "published_at": "2026-10-29T21:59:43.036569+00:00"
   }
 ]
