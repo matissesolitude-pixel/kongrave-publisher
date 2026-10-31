@@ -70,5 +70,26 @@
     "media_id": "17865105474696004",
     "status": "success",
     "published_at": "2026-10-31T09:01:34.240625+00:00"
+  },
+  {
+    "dossier": "2026-10-31-war-room-3-eurusd-s2026-10-30",
+    "media_id": null,
+    "permalink": "https://www.instagram.com/reel/DfJ0go8iJsT/",
+    "status": "success",
+    "published_at": "2026-10-31T09:2x:00Z (run 41188021591, archivé à la main après blocage du run)"
+  },
+  {
+    "dossier": "2026-10-31-war-room-4-gbpusd-s2026-10-30",
+    "media_id": null,
+    "permalink": "https://www.instagram.com/reel/DfJ1-yjiH5L/",
+    "status": "success",
+    "published_at": "2026-10-31T09:2x:00Z (run 41188021591, archivé à la main après blocage du run)"
+  },
+  {
+    "dossier": "2026-10-31-war-room-5-usdjpy-s2026-10-30",
+    "media_id": null,
+    "permalink": "https://www.instagram.com/reel/DfJ3dGqCKuv/",
+    "status": "success",
+    "published_at": "2026-10-31T09:2x:00Z (run 41188021591, archivé à la main après blocage du run)"
   }
 ]
