@@ -115,5 +115,23 @@
     "media_id": "18238831255317630",
     "status": "success",
     "published_at": "2026-10-31T21:37:21.910660+00:00"
+  },
+  {
+    "dossier": "2026-11-01-war-room-1-eurusd-weekly-2026-10-26",
+    "media_id": "18426473689159322",
+    "status": "success",
+    "published_at": "2026-11-01T21:02:02.586642+00:00"
+  },
+  {
+    "dossier": "2026-11-01-war-room-2-gbpusd-weekly-2026-10-26",
+    "media_id": "17880139179651518",
+    "status": "success",
+    "published_at": "2026-11-01T21:14:58.679503+00:00"
+  },
+  {
+    "dossier": "2026-11-01-war-room-3-gold-weekly-2026-10-26",
+    "media_id": "18111652598236840",
+    "status": "success",
+    "published_at": "2026-11-01T21:27:47.268049+00:00"
   }
 ]
