@@ -139,5 +139,41 @@
     "media_id": "18101614367384093",
     "status": "success",
     "published_at": "2026-11-03T00:25:28.789714+00:00"
+  },
+  {
+    "dossier": "2026-11-03-war-room-2-gold-s2026-11-02",
+    "media_id": "18149223079544571",
+    "status": "success",
+    "published_at": "2026-11-03T19:40:19.055132+00:00"
+  },
+  {
+    "dossier": "2026-11-03-war-room-3-dow-s2026-11-02",
+    "media_id": "18361511548222668",
+    "status": "success",
+    "published_at": "2026-11-03T19:53:12.118698+00:00"
+  },
+  {
+    "dossier": "2026-11-03-war-room-4-eurusd-s2026-11-03",
+    "media_id": "18489087157119762",
+    "status": "success",
+    "published_at": "2026-11-03T20:06:08.826581+00:00"
+  },
+  {
+    "dossier": "2026-11-03-war-room-5-gbpusd-s2026-11-03",
+    "media_id": "18073556501592774",
+    "status": "success",
+    "published_at": "2026-11-03T20:19:03.868013+00:00"
+  },
+  {
+    "dossier": "2026-11-03-war-room-6-usdjpy-s2026-11-03",
+    "media_id": "17969258607199626",
+    "status": "success",
+    "published_at": "2026-11-03T20:32:01.562796+00:00"
+  },
+  {
+    "dossier": "2026-11-03-war-room-7-gold-s2026-11-03",
+    "media_id": "18042990533833026",
+    "status": "success",
+    "published_at": "2026-11-03T20:44:53.018591+00:00"
   }
 ]
