@@ -187,5 +187,11 @@
     "media_id": "17904600513386260",
     "status": "success",
     "published_at": "2026-11-05T00:40:19.263972+00:00"
+  },
+  {
+    "dossier": "2026-11-05-zpreuve-eurusd-13oct",
+    "media_id": "18467159872191510",
+    "status": "success",
+    "published_at": "2026-11-05T19:24:19.803312+00:00"
   }
 ]
