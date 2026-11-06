@@ -193,5 +193,17 @@
     "media_id": "18467159872191510",
     "status": "success",
     "published_at": "2026-11-05T19:24:19.803312+00:00"
+  },
+  {
+    "dossier": "2026-11-06-koo35-viral-eurusd",
+    "media_id": "17912313909310659",
+    "status": "success",
+    "published_at": "2026-11-06T02:02:00.186649+00:00"
+  },
+  {
+    "dossier": "2026-11-06-zpreuve-eurusd-04nov",
+    "media_id": "18139638697656852",
+    "status": "success",
+    "published_at": "2026-11-06T02:14:41.609182+00:00"
   }
 ]
