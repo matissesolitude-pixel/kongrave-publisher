@@ -124,7 +124,9 @@ FFMPEG = [
     "ffmpeg", "-y", "-loglevel", "error", "-i", "{src}",
     "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-pix_fmt", "yuv420p",
     "-r", "30", "-g", "60", "-keyint_min", "60", "-sc_threshold", "0",
-    "-crf", "20", "-maxrate", "5M", "-bufsize", "10M",
+    # 08/11 : un Reel sur fond crème uni sortait à 0,77 Mbit/s en crf 20 et Meta le refusait (ProcessingFailedError, comme LIGNE
+    # en juillet) : débit constant de 5 Mbit/s, quel que soit le contenu.
+    "-b:v", "5M", "-minrate", "5M", "-maxrate", "5M", "-bufsize", "10M", "-x264-params", "nal-hrd=cbr:force-cfr=1",
     "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1",
     "-movflags", "+faststart", "{dst}",
 ]
