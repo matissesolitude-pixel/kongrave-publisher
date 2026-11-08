@@ -253,5 +253,11 @@
     "media_id": "18003800142008758",
     "status": "success",
     "published_at": "2026-11-06T22:04:08.678106+00:00"
+  },
+  {
+    "dossier": "2026-11-08-dct-gann-box-ibdr",
+    "media_id": "17943699033381783",
+    "status": "success",
+    "published_at": "2026-11-08T21:47:51.070346+00:00"
   }
 ]
