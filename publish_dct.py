@@ -28,7 +28,6 @@ Options :
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -43,9 +42,8 @@ try:
 except Exception:
     PARIS = timezone(timedelta(hours=1))
 
-import ig_api
 import notify
-from publish_reel import PublishError, _wait_until_finished, publish_episode
+from publish_reel import PublishError, publish_episode
 
 BASE_DIR = Path(__file__).resolve().parent
 DCT_DIR = BASE_DIR / "dct"
@@ -125,34 +123,20 @@ def _file() -> list[Path]:
 FFMPEG = [
     "ffmpeg", "-y", "-loglevel", "error", "-i", "{src}",
     "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-pix_fmt", "yuv420p",
-    "-r", "30", "-g", "60", "-keyint_min", "60", "-sc_threshold", "0", "-crf", "20",
+    "-r", "30", "-g", "60", "-keyint_min", "60", "-sc_threshold", "0",
+    # 08/11 : un Reel sur fond crème uni sortait à 0,77 Mbit/s en crf 20 et Meta le refusait (ProcessingFailedError, comme LIGNE
+    # en juillet) : débit constant de 5 Mbit/s, quel que soit le contenu.
+    "-b:v", "5M", "-minrate", "5M", "-maxrate", "5M", "-bufsize", "10M", "-x264-params", "nal-hrd=cbr:force-cfr=1",
     "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1",
     "-movflags", "+faststart", "{dst}",
 ]
 
-# 08/11, diagnostic par dry-run (run 42523394652) : le Reel de 54 s est refusé par rupload (HTTP 400
-# ProcessingFailedError) en crf 20 comme en CBR 5 Mbit/s, alors que ses 30 premières secondes et un Reel
-# War Room de 30 s passent avec la même recette. Le débit n est donc pas en cause (crf 20 rétabli
-# ci-dessus) ; c est la longueur. Deux replis, déclenchés UNIQUEMENT par ce refus, dans cet ordre :
-#   1. la recette de juillet qui a publié les masters LIGNE de 30 à 67 s : 25 i/s, CBR 6 Mbit/s,
-#      AAC 48 kHz stéréo, SANS +faststart ;
-#   2. `video_url` : Meta va chercher lui-même le master dans la file (le dépôt est public), servi en
-#      video/mp4 par jsDelivr et épinglé sur le commit du run, sans passer par rupload.
-# Un Reel que rupload accepte du premier coup suit exactement le même chemin qu avant.
-FFMPEG_JUILLET = [
-    "ffmpeg", "-y", "-loglevel", "error", "-i", "{src}",
-    "-c:v", "libx264", "-profile:v", "high", "-level", "4.0", "-pix_fmt", "yuv420p",
-    "-b:v", "6M", "-minrate", "6M", "-maxrate", "6M", "-bufsize", "6M", "-x264opts", "nal-hrd=cbr",
-    "-r", "25", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2", "{dst}",
-]
-DEPOT_PUBLIC = "matissesolitude-pixel/kongrave-publisher"
 
-
-def _normalise(src: Path, recette: list = FFMPEG, suffixe: str = "meta") -> Path:
+def _normalise(src: Path) -> Path:
     """Reencode vers le profil accepte. Si ffmpeg manque, on envoie le fichier tel quel
        plutot que de bloquer la file, et on le dit."""
-    dst = Path(tempfile.gettempdir()) / f"dct_{src.stem}_{suffixe}.mp4"
-    cmd = [a.format(src=str(src), dst=str(dst)) for a in recette]
+    dst = Path(tempfile.gettempdir()) / f"dct_{src.stem}_meta.mp4"
+    cmd = [a.format(src=str(src), dst=str(dst)) for a in FFMPEG]
     try:
         subprocess.run(cmd, check=True, capture_output=True)
     except FileNotFoundError:
@@ -165,50 +149,6 @@ def _normalise(src: Path, recette: list = FFMPEG, suffixe: str = "meta") -> Path
     print(f"[dct] normalise : {dst.stat().st_size / 1e6:.1f} Mo (depuis "
           f"{src.stat().st_size / 1e6:.1f} Mo)")
     return dst
-
-
-def _refus_rupload(exc: Exception) -> bool:
-    return "Upload du fichier" in str(exc) and "ProcessingFailedError" in str(exc)
-
-
-def _publier_par_url(mp4: Path, caption: str, dry_run: bool) -> dict:
-    sha = os.getenv("GITHUB_SHA")
-    if not sha:
-        raise PublishError("repli video_url impossible : pas de GITHUB_SHA (hors GitHub Actions).")
-    url = (f"https://cdn.jsdelivr.net/gh/{DEPOT_PUBLIC}@{sha}/"
-           f"{mp4.resolve().relative_to(BASE_DIR).as_posix()}")
-    print(f"[dct] repli 2 (video_url) : {url}", flush=True)
-    resp = ig_api._request(
-        "POST", f"{ig_api.GRAPH_HOST}/{ig_api.GRAPH_VERSION}/{ig_api._ig_user_id()}/media",
-        data={"media_type": "REELS", "video_url": url, "caption": caption,
-              "access_token": ig_api._access_token()})
-    container_id = ig_api._raise_for_api_error(resp, "Conteneur Reel par video_url").get("id")
-    if not container_id:
-        raise PublishError("Conteneur Reel par video_url : réponse sans id.")
-    _wait_until_finished(container_id)
-    if dry_run:
-        return {"status": "dry_run_ok", "container_id": container_id, "media_id": None, "dry_run": True}
-    return {"status": "success", "container_id": container_id,
-            "media_id": ig_api.publish(container_id), "dry_run": False}
-
-
-def _envoyer(mp4: Path, caption: str, dry_run: bool) -> dict:
-    """Recette principale, puis les deux replis (voir FFMPEG_JUILLET) sur refus rupload seulement."""
-    try:
-        return publish_episode(_normalise(mp4), caption, dry_run=dry_run)
-    except (PublishError, RuntimeError) as exc:
-        if not _refus_rupload(exc):
-            raise
-        print(f"[dct] recette principale refusée par rupload : {exc}", flush=True)
-    try:
-        print("[dct] repli 1 (recette de juillet : 25 i/s, CBR 6M, 48 kHz stéréo, sans faststart)",
-              flush=True)
-        return publish_episode(_normalise(mp4, FFMPEG_JUILLET, "juillet"), caption, dry_run=dry_run)
-    except (PublishError, RuntimeError) as exc:
-        if not _refus_rupload(exc):
-            raise
-        print(f"[dct] recette de juillet refusée par rupload : {exc}", flush=True)
-    return _publier_par_url(mp4, caption, dry_run)
 
 
 def _contenu(dossier: Path) -> tuple[Path, str]:
@@ -294,7 +234,7 @@ def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
           f"{mp4.stat().st_size / 1e6:.1f} Mo){' [DRY-RUN]' if dry_run else ''}")
 
     try:
-        res = _envoyer(mp4, caption, dry_run)
+        res = publish_episode(_normalise(mp4), caption, dry_run=dry_run)
     except (PublishError, RuntimeError) as exc:
         n = int(etat.get(dossier.name, 0)) + 1
         etat[dossier.name] = n
@@ -311,7 +251,7 @@ def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
         return 1
 
     if dry_run:
-        print(f"[dct] DRY-RUN OK — conteneur {res['container_id']}, rien n'est publié.", flush=True)
+        print(f"[dct] DRY-RUN OK — conteneur {res['container_id']}, rien n'est publié.")
         return 0
 
     media_id = res["media_id"]
@@ -322,7 +262,7 @@ def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
                 "published_at": datetime.now(timezone.utc).isoformat()})
     _save(LOG_PATH, log)
     _archive(dossier, media_id)
-    print(f"[dct] PUBLIÉ — media_id {media_id}", flush=True)
+    print(f"[dct] PUBLIÉ — media_id {media_id}")
     notify.send(f"✅ Reel DCT publié : {dossier.name} (media_id {media_id})")
     return 0
 
