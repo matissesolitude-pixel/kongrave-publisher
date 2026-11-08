@@ -28,6 +28,7 @@ Options :
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -42,8 +43,9 @@ try:
 except Exception:
     PARIS = timezone(timedelta(hours=1))
 
+import ig_api
 import notify
-from publish_reel import PublishError, publish_episode
+from publish_reel import PublishError, _wait_until_finished, publish_episode
 
 BASE_DIR = Path(__file__).resolve().parent
 DCT_DIR = BASE_DIR / "dct"
@@ -151,6 +153,43 @@ def _normalise(src: Path) -> Path:
     return dst
 
 
+# 08/11 : rupload.facebook.com refuse l envoi binaire du Reel de 54 s (HTTP 400 ProcessingFailedError
+# « Request processing failed ») en crf 20 comme en CBR 5 Mbit/s, alors que ses 30 premières secondes et un
+# Reel War Room de 30 s passent avec la même recette (dry-run 42523394652) : c est la longueur, pas le débit.
+# Le dépôt étant PUBLIC, on retente alors par l autre porte de l API : `video_url`, où Meta va CHERCHER
+# lui-même le master tel qu il est dans la file, servi en video/mp4 par jsDelivr et épinglé sur le commit du
+# run (GITHUB_SHA), donc immuable. Seul ce refus de rupload déclenche le repli : un Reel qui passe par
+# rupload (les War Room du soir) suit exactement le même chemin qu avant.
+DEPOT_PUBLIC = "matissesolitude-pixel/kongrave-publisher"
+
+
+def _url_publique(mp4: Path) -> str | None:
+    sha = os.getenv("GITHUB_SHA")
+    if not sha:
+        return None
+    chemin = mp4.resolve().relative_to(BASE_DIR).as_posix()
+    return f"https://cdn.jsdelivr.net/gh/{DEPOT_PUBLIC}@{sha}/{chemin}"
+
+
+def _publier_par_url(mp4: Path, caption: str, dry_run: bool) -> dict:
+    url = _url_publique(mp4)
+    if not url:
+        raise PublishError("repli video_url impossible : pas de GITHUB_SHA (hors GitHub Actions).")
+    print(f"[dct] repli video_url : {url}", flush=True)
+    resp = ig_api._request(
+        "POST", f"{ig_api.GRAPH_HOST}/{ig_api.GRAPH_VERSION}/{ig_api._ig_user_id()}/media",
+        data={"media_type": "REELS", "video_url": url, "caption": caption,
+              "access_token": ig_api._access_token()})
+    container_id = ig_api._raise_for_api_error(resp, "Conteneur Reel par video_url").get("id")
+    if not container_id:
+        raise PublishError("Conteneur Reel par video_url : réponse sans id.")
+    _wait_until_finished(container_id)
+    if dry_run:
+        return {"status": "dry_run_ok", "container_id": container_id, "media_id": None, "dry_run": True}
+    return {"status": "success", "container_id": container_id,
+            "media_id": ig_api.publish(container_id), "dry_run": False}
+
+
 def _contenu(dossier: Path) -> tuple[Path, str]:
     mp4 = sorted(dossier.glob("*.mp4"))
     if len(mp4) != 1:
@@ -234,7 +273,13 @@ def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
           f"{mp4.stat().st_size / 1e6:.1f} Mo){' [DRY-RUN]' if dry_run else ''}")
 
     try:
-        res = publish_episode(_normalise(mp4), caption, dry_run=dry_run)
+        try:
+            res = publish_episode(_normalise(mp4), caption, dry_run=dry_run)
+        except (PublishError, RuntimeError) as exc:
+            if "Upload du fichier" not in str(exc) or "ProcessingFailedError" not in str(exc):
+                raise
+            print(f"[dct] rupload refusé ({exc}) : repli par video_url.", file=sys.stderr, flush=True)
+            res = _publier_par_url(mp4, caption, dry_run)
     except (PublishError, RuntimeError) as exc:
         n = int(etat.get(dossier.name, 0)) + 1
         etat[dossier.name] = n
