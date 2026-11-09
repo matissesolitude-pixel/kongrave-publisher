@@ -89,7 +89,9 @@ def _log() -> list:
 
 def _dernier_succes() -> datetime | None:
     for e in reversed(_log()):
-        if e.get("status") == "success":
+        # Un Reel d'essai (montré d'abord aux non-abonnés) ne compte pas dans la cadence :
+        # le 09/11, le quiz d'essai de 19:26 a bloqué la copie prévue à 20:15.
+        if e.get("status") == "success" and not e.get("essai"):
             try:
                 return datetime.fromisoformat(e["published_at"].replace("Z", "+00:00"))
             except (KeyError, ValueError):
