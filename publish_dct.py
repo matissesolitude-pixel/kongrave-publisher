@@ -171,15 +171,18 @@ def _url_publique(mp4: Path) -> str | None:
     return f"https://cdn.jsdelivr.net/gh/{DEPOT_PUBLIC}@{sha}/{chemin}"
 
 
-def _publier_par_url(mp4: Path, caption: str, dry_run: bool) -> dict:
+def _publier_par_url(mp4: Path, caption: str, dry_run: bool, essai: dict | None = None) -> dict:
     url = _url_publique(mp4)
     if not url:
         raise PublishError("repli video_url impossible : pas de GITHUB_SHA (hors GitHub Actions).")
-    print(f"[dct] repli video_url : {url}", flush=True)
+    print(f"[dct] {'Reel d essai par' if essai else 'repli'} video_url : {url}", flush=True)
+    data = {"media_type": "REELS", "video_url": url, "caption": caption,
+            "access_token": ig_api._access_token()}
+    if essai:
+        # M, 09/11 : « Reel d'essai » choisi dans l'OS = Reel d'essai Instagram (montré d'abord aux non-abonnés).
+        data["trial_params"] = json.dumps(essai)
     resp = ig_api._request(
-        "POST", f"{ig_api.GRAPH_HOST}/{ig_api.GRAPH_VERSION}/{ig_api._ig_user_id()}/media",
-        data={"media_type": "REELS", "video_url": url, "caption": caption,
-              "access_token": ig_api._access_token()})
+        "POST", f"{ig_api.GRAPH_HOST}/{ig_api.GRAPH_VERSION}/{ig_api._ig_user_id()}/media", data=data)
     container_id = ig_api._raise_for_api_error(resp, "Conteneur Reel par video_url").get("id")
     if not container_id:
         raise PublishError("Conteneur Reel par video_url : réponse sans id.")
@@ -188,6 +191,22 @@ def _publier_par_url(mp4: Path, caption: str, dry_run: bool) -> dict:
         return {"status": "dry_run_ok", "container_id": container_id, "media_id": None, "dry_run": True}
     return {"status": "success", "container_id": container_id,
             "media_id": ig_api.publish(container_id), "dry_run": False}
+
+
+def _essai(dossier: Path) -> dict | None:
+    """Un fichier essai.json dans le dossier fait du Reel un Reel d'essai Instagram.
+    Contenu : {"graduation_strategy": "MANUAL"} (défaut) ou "SS_PERFORMANCE"."""
+    f = dossier / "essai.json"
+    if not f.is_file():
+        return None
+    try:
+        d = json.loads(f.read_text(encoding="utf-8") or "{}")
+    except json.JSONDecodeError as exc:
+        raise PublishError(f"{dossier.name} : essai.json illisible ({exc}).")
+    strategie = d.get("graduation_strategy", "MANUAL")
+    if strategie not in ("MANUAL", "SS_PERFORMANCE"):
+        raise PublishError(f"{dossier.name} : graduation_strategy inconnue ({strategie}).")
+    return {"graduation_strategy": strategie}
 
 
 def _contenu(dossier: Path) -> tuple[Path, str]:
@@ -264,6 +283,7 @@ PAUSE_ENTRE_REELS_S = 12 * 60   # M, 28/10 : « laisse 10-15 minutes entre chaqu
 def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
     try:
         mp4, caption = _contenu(dossier)
+        essai = _essai(dossier)
     except PublishError as exc:
         print(f"[dct] {exc}", file=sys.stderr)
         notify.send(f"⚠️ Reel DCT malformé : {exc}")
@@ -274,7 +294,10 @@ def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
 
     try:
         try:
-            res = publish_episode(_normalise(mp4), caption, dry_run=dry_run)
+            if essai:
+                res = _publier_par_url(mp4, caption, dry_run, essai)
+            else:
+                res = publish_episode(_normalise(mp4), caption, dry_run=dry_run)
         except (PublishError, RuntimeError) as exc:
             if "Upload du fichier" not in str(exc) or "ProcessingFailedError" not in str(exc):
                 raise
@@ -304,7 +327,7 @@ def _publier(dossier: Path, etat: dict, dry_run: bool) -> int:
     _save(STATE_PATH, etat)
     log = _log()
     log.append({"dossier": dossier.name, "media_id": media_id, "status": "success",
-                "published_at": datetime.now(timezone.utc).isoformat()})
+                "published_at": datetime.now(timezone.utc).isoformat(), "essai": bool(essai)})
     _save(LOG_PATH, log)
     _archive(dossier, media_id)
     print(f"[dct] PUBLIÉ — media_id {media_id}")
