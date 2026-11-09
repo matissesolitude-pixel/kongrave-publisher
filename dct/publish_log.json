@@ -266,5 +266,12 @@
     "status": "success",
     "published_at": "2026-11-09T10:46:54.744530+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-08-dct-quiz-up-or-down-essai",
+    "media_id": "18125005364314414",
+    "status": "success",
+    "published_at": "2026-11-09T18:28:30.996180+00:00",
+    "essai": true
   }
 ]
