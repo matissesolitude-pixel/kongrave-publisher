@@ -273,5 +273,12 @@
     "status": "success",
     "published_at": "2026-11-09T18:28:30.996180+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-09-dct-dont-buy-it",
+    "media_id": "17976230211187576",
+    "status": "success",
+    "published_at": "2026-11-09T19:38:37.676495+00:00",
+    "essai": false
   }
 ]
