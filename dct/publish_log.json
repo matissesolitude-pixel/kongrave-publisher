@@ -280,5 +280,33 @@
     "status": "success",
     "published_at": "2026-11-09T19:38:37.676495+00:00",
     "essai": false
+  },
+  {
+    "dossier": "2026-11-10-war-room-2-gold-s2026-11-09",
+    "media_id": "18106650548455842",
+    "status": "success",
+    "published_at": "2026-11-10T19:24:18.409048+00:00",
+    "essai": false
+  },
+  {
+    "dossier": "2026-11-10-war-room-3-eurusd-s2026-11-10",
+    "media_id": "18097615832147200",
+    "status": "success",
+    "published_at": "2026-11-10T19:37:00.857606+00:00",
+    "essai": false
+  },
+  {
+    "dossier": "2026-11-10-war-room-4-gbpusd-s2026-11-10",
+    "media_id": "18388346494227898",
+    "status": "success",
+    "published_at": "2026-11-10T19:50:32.781972+00:00",
+    "essai": false
+  },
+  {
+    "dossier": "2026-11-10-war-room-5-usdjpy-s2026-11-10",
+    "media_id": "18121625540095253",
+    "status": "success",
+    "published_at": "2026-11-10T20:03:14.923531+00:00",
+    "essai": false
   }
 ]
