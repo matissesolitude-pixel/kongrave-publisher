@@ -315,5 +315,12 @@
     "status": "success",
     "published_at": "2026-11-12T01:12:27.639419+00:00",
     "essai": false
+  },
+  {
+    "dossier": "2026-11-12-dct-haut-bas-hier-v03",
+    "media_id": "18042446553334984",
+    "status": "success",
+    "published_at": "2026-11-12T22:00:51.703104+00:00",
+    "essai": true
   }
 ]
