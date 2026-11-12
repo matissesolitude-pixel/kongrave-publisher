@@ -141,8 +141,12 @@ jobs:
           # Reels DCT publiés (le nom est celui du dossier du lot).
           for e in (lire_json("dct/publish_log.json", []) or [])[-120:]:
               if isinstance(e, dict) and e.get("status") == "success" and e.get("dossier"):
-                  pubs.append({"type": "reel", "nom": e["dossier"], "etat": "publie",
-                               "publie_le": heure(e.get("published_at")), "media_id": e.get("media_id")})
+                  p = {"type": "reel", "nom": e["dossier"], "etat": "publie",
+                       "publie_le": heure(e.get("published_at")), "media_id": e.get("media_id")}
+                  # Reel d'essai Instagram (montré d'abord aux non-abonnés) : l'OS l'affiche « Reel d'essai ».
+                  if e.get("essai") is True:
+                      p["essai"] = True
+                  pubs.append(p)
 
           # Stories publiées, avec le média prêt de l'OS quand le manifeste le nomme.
           for e in lignes_journal("story/journal.jsonl"):
