@@ -1,6 +1,20 @@
 # HUB IA (HUB-15 / HUB-16) : envoie au hub l'état de la file et des publications.
 # Lecture seule sur ce dépôt : ce workflow ne publie rien, ne déplace rien, ne pousse rien.
-# Il tourne après chaque changement de file ou de journal, et chaque heure en filet de sécurité.
+#
+# QUAND IL TOURNE. Après chaque changement de file ou de journal poussé depuis un poste, après chaque passage d'un workflow de
+# publication (workflow_run : un commit poussé par une Action ne déclenche pas « push », et le cron horaire ne tourne en
+# réalité que toutes les 6 à 9 heures sur ce dépôt), et chaque heure en filet de sécurité.
+#
+# MÉDIA PRÊT DE L'OS (12/11). Le fondateur voyait « Prêt à partir » des stories déjà publiées : l'OS ne savait pas relier la
+# publication au média que l'agent lui avait déclaré (/api/ingest/media). La correspondance est explicite, jamais devinée :
+#   1. le manifeste d'une story (story/queue/<id>.json, rangé ensuite dans story/published/) peut porter
+#      "media_pret": "<identifiant déclaré à l'OS>", par exemple "story:2026-11-09" ; il est transmis tel quel ;
+#   2. à défaut, l'OS relie par le même identifiant : déclarer le média prêt sous « story:<id du manifeste> »,
+#      « reel:<nom du dossier DCT ou de l'épisode LIGNE> » ou « carrousel:<id> ».
+# Un média prêt sans l'un ni l'autre passe, dans l'OS, en « Publication non confirmée » 24 heures après son heure prévue.
+#
+# DOUBLONS (panne du 03/11 au 12/11). Une séquence republiée figure plusieurs fois dans le journal ; l'envoi ne garde qu'une
+# ligne par type et nom (« publié » l'emporte sur « programmé », puis la publication la plus récente).
 name: Synchro hub
 
 on:
@@ -11,9 +25,19 @@ on:
       - "ligne/published/**"
       - "ligne/publish_log.json"
       - "story/queue/**"
+      - "story/published/**"
       - "story/journal.jsonl"
       - "carrousel/queue/**"
+      - "carrousel/journal.jsonl"
+      - "dct/publish_log.json"
       - "programme/**"
+  workflow_run:
+    workflows:
+      - "STORY auto-publish (file)"
+      - "DCT auto-publish (file)"
+      - "LIGNE auto-publish (file)"
+      - "CARROUSEL auto-publish (file)"
+    types: [completed]
   schedule:
     - cron: "40 * * * *"
   workflow_dispatch:
@@ -29,25 +53,59 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # Après un workflow de publication, lire main tel qu'il est maintenant (avec le commit du journal), pas le commit
+          # qui a lancé ce workflow.
+          ref: main
           sparse-checkout: |
             ligne/queue
             ligne/publish_log.json
             story/queue
+            story/published
             story/journal.jsonl
             carrousel/queue
+            carrousel/journal.jsonl
+            dct/publish_log.json
             programme
       - name: Envoyer l'état au hub
         env:
           HUB_INGEST_TOKEN: ${{ secrets.HUB_INGEST_TOKEN }}
         run: |
           python3 - <<'EOF'
-          import json, os, pathlib, urllib.request
+          import json, os, pathlib, re, sys, urllib.error, urllib.request
 
           def dossiers(chemin):
               p = pathlib.Path(chemin)
               if not p.is_dir():
                   return []
               return sorted(x.name.removesuffix(".json") for x in p.iterdir() if not x.name.startswith("."))
+
+          def lire_json(chemin, defaut):
+              try:
+                  return json.loads(pathlib.Path(chemin).read_text())
+              except (OSError, ValueError):
+                  return defaut
+
+          def lignes_journal(chemin):
+              p = pathlib.Path(chemin)
+              if not p.exists():
+                  return []
+              sorties = []
+              for ligne in p.read_text().splitlines()[-120:]:
+                  try:
+                      e = json.loads(ligne)
+                  except ValueError:
+                      continue
+                  if isinstance(e, dict):
+                      sorties.append(e)
+              return sorties
+
+          def media_pret_story(sid):
+              # Le manifeste, là où il se trouve : rangé après publication, ou encore en file.
+              for dossier in ("story/published", "story/queue"):
+                  m = lire_json(f"{dossier}/{sid}.json", None)
+                  if isinstance(m, dict) and isinstance(m.get("media_pret"), str) and m["media_pret"].strip():
+                      return m["media_pret"].strip()
+              return None
 
           pubs = []
           for i, nom in enumerate(dossiers("ligne/queue")):
@@ -57,38 +115,73 @@ jobs:
           for i, nom in enumerate(dossiers("carrousel/queue")):
               pubs.append({"type": "carrousel", "nom": nom, "etat": "programme", "ordre": i})
           # Les posts datés du calendrier (programme/AAAA-MM-JJ_HHhMM__type__nom) attendent leur créneau : ils sont en file aussi.
-          import re
           for i, d in enumerate(dossiers("programme")):
               m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})_(\d{2})h(\d{2})__(ligne|story)__(.+)", d)
               if m:
                   pubs.append({"type": "reel" if m[4] == "ligne" else "story", "nom": m[5], "etat": "programme", "ordre": 100 + i})
 
-          log = pathlib.Path("ligne/publish_log.json")
-          if log.exists():
-              for e in json.loads(log.read_text())[-120:]:
-                  if e.get("status") == "success" and e.get("episode"):
-                      pubs.append({"type": "reel", "nom": e["episode"], "etat": "publie",
-                                   "publie_le": e.get("published_at"), "media_id": e.get("media_id")})
+          # Reels LIGNE publiés.
+          for e in (lire_json("ligne/publish_log.json", []) or [])[-120:]:
+              if isinstance(e, dict) and e.get("status") == "success" and e.get("episode"):
+                  pubs.append({"type": "reel", "nom": e["episode"], "etat": "publie",
+                               "publie_le": e.get("published_at"), "media_id": e.get("media_id")})
 
-          journal = pathlib.Path("story/journal.jsonl")
-          if journal.exists():
-              for ligne in journal.read_text().splitlines()[-120:]:
-                  try:
-                      e = json.loads(ligne)
-                  except ValueError:
-                      continue
-                  if e.get("event") == "published" and e.get("id"):
-                      media = (e.get("media") or [{}])[0].get("media_id")
-                      pubs.append({"type": "story", "nom": e["id"], "etat": "publie",
-                                   "publie_le": e.get("at"), "media_id": media})
+          # Reels DCT publiés (le nom est celui du dossier du lot).
+          for e in (lire_json("dct/publish_log.json", []) or [])[-120:]:
+              if isinstance(e, dict) and e.get("status") == "success" and e.get("dossier"):
+                  pubs.append({"type": "reel", "nom": e["dossier"], "etat": "publie",
+                               "publie_le": e.get("published_at"), "media_id": e.get("media_id")})
+
+          # Stories publiées, avec le média prêt de l'OS quand le manifeste le nomme.
+          for e in lignes_journal("story/journal.jsonl"):
+              if e.get("event") == "published" and e.get("id"):
+                  media = (e.get("media") or [{}])[0].get("media_id")
+                  p = {"type": "story", "nom": e["id"], "etat": "publie", "publie_le": e.get("at"), "media_id": media}
+                  pret = media_pret_story(e["id"])
+                  if pret:
+                      p["media_pret"] = pret
+                  pubs.append(p)
+
+          # Carrousels publiés.
+          for e in lignes_journal("carrousel/journal.jsonl"):
+              if e.get("event") == "published" and e.get("id"):
+                  pubs.append({"type": "carrousel", "nom": e["id"], "etat": "publie",
+                               "publie_le": e.get("at"), "media_id": e.get("media_id")})
+
+          # Une seule ligne par type et nom : « publié » l'emporte sur « programmé », puis la publication la plus récente.
+          uniques = {}
+          for p in pubs:
+              cle = (p["type"], p["nom"])
+              vu = uniques.get(cle)
+              if vu is None:
+                  uniques[cle] = p
+              elif vu["etat"] != p["etat"]:
+                  garde = p if p["etat"] == "publie" else vu
+                  if "media_pret" not in garde and (vu.get("media_pret") or p.get("media_pret")):
+                      garde = {**garde, "media_pret": vu.get("media_pret") or p.get("media_pret")}
+                  uniques[cle] = garde
+              elif p["etat"] == "publie" and str(p.get("publie_le") or "") >= str(vu.get("publie_le") or ""):
+                  uniques[cle] = {**p, **({"media_pret": vu["media_pret"]} if "media_pret" not in p and vu.get("media_pret") else {})}
+          envoi = list(uniques.values())
+          print(f"envoi : {len(envoi)} lignes ({len(pubs) - len(envoi)} doublons écartés), "
+                f"{sum(1 for p in envoi if p['etat'] == 'publie')} publiées, "
+                f"{sum(1 for p in envoi if p.get('media_pret'))} avec un média prêt nommé")
+
+          if os.environ.get("HUB_SYNC_A_BLANC"):
+              sys.exit(0)
 
           req = urllib.request.Request(
               "https://hub-ia-inky.vercel.app/api/ingest/publication",
-              data=json.dumps({"publications": pubs}).encode(),
+              data=json.dumps({"publications": envoi}).encode(),
               headers={"Content-Type": "application/json",
                        "Authorization": "Bearer " + os.environ["HUB_INGEST_TOKEN"]},
               method="POST",
           )
-          with urllib.request.urlopen(req, timeout=30) as r:
-              print("hub :", r.status, r.read().decode())
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  print("hub :", r.status, r.read().decode())
+          except urllib.error.HTTPError as exc:
+              # Le refus du hub se lit dans le journal du passage (le corps ne contient jamais la clé).
+              print("hub : refus", exc.code, exc.read().decode()[:500])
+              sys.exit(1)
           EOF
