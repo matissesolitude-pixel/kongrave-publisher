@@ -308,5 +308,12 @@
     "status": "success",
     "published_at": "2026-11-10T20:03:14.923531+00:00",
     "essai": false
+  },
+  {
+    "dossier": "2026-11-12-dct-bougie-du-jour",
+    "media_id": "18133227205694977",
+    "status": "success",
+    "published_at": "2026-11-12T01:12:27.639419+00:00",
+    "essai": false
   }
 ]
