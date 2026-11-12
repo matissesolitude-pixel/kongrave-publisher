@@ -72,6 +72,7 @@ jobs:
         run: |
           python3 - <<'EOF'
           import json, os, pathlib, re, sys, urllib.error, urllib.request
+          from datetime import datetime
 
           def dossiers(chemin):
               p = pathlib.Path(chemin)
@@ -99,6 +100,17 @@ jobs:
                       sorties.append(e)
               return sorties
 
+          def heure(v):
+              # Une heure écrite à la main dans un journal (« 2026-10-31T09:2x:00Z (run …) ») ne part pas : une seule
+              # faisait refuser tout l'envoi par la base du hub. La ligne reste « publié », sans heure.
+              if not isinstance(v, str):
+                  return None
+              try:
+                  datetime.fromisoformat(v.strip().replace("Z", "+00:00"))
+              except ValueError:
+                  return None
+              return v.strip()
+
           def media_pret_story(sid):
               # Le manifeste, là où il se trouve : rangé après publication, ou encore en file.
               for dossier in ("story/published", "story/queue"):
@@ -124,19 +136,19 @@ jobs:
           for e in (lire_json("ligne/publish_log.json", []) or [])[-120:]:
               if isinstance(e, dict) and e.get("status") == "success" and e.get("episode"):
                   pubs.append({"type": "reel", "nom": e["episode"], "etat": "publie",
-                               "publie_le": e.get("published_at"), "media_id": e.get("media_id")})
+                               "publie_le": heure(e.get("published_at")), "media_id": e.get("media_id")})
 
           # Reels DCT publiés (le nom est celui du dossier du lot).
           for e in (lire_json("dct/publish_log.json", []) or [])[-120:]:
               if isinstance(e, dict) and e.get("status") == "success" and e.get("dossier"):
                   pubs.append({"type": "reel", "nom": e["dossier"], "etat": "publie",
-                               "publie_le": e.get("published_at"), "media_id": e.get("media_id")})
+                               "publie_le": heure(e.get("published_at")), "media_id": e.get("media_id")})
 
           # Stories publiées, avec le média prêt de l'OS quand le manifeste le nomme.
           for e in lignes_journal("story/journal.jsonl"):
               if e.get("event") == "published" and e.get("id"):
                   media = (e.get("media") or [{}])[0].get("media_id")
-                  p = {"type": "story", "nom": e["id"], "etat": "publie", "publie_le": e.get("at"), "media_id": media}
+                  p = {"type": "story", "nom": e["id"], "etat": "publie", "publie_le": heure(e.get("at")), "media_id": media}
                   pret = media_pret_story(e["id"])
                   if pret:
                       p["media_pret"] = pret
@@ -146,7 +158,7 @@ jobs:
           for e in lignes_journal("carrousel/journal.jsonl"):
               if e.get("event") == "published" and e.get("id"):
                   pubs.append({"type": "carrousel", "nom": e["id"], "etat": "publie",
-                               "publie_le": e.get("at"), "media_id": e.get("media_id")})
+                               "publie_le": heure(e.get("at")), "media_id": e.get("media_id")})
 
           # Une seule ligne par type et nom : « publié » l'emporte sur « programmé », puis la publication la plus récente.
           uniques = {}
