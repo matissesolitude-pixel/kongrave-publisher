@@ -336,5 +336,12 @@
     "status": "success",
     "published_at": "2026-11-13T14:25:22.645706+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-13-kos-3-win-rate-v01",
+    "media_id": "18154657966469553",
+    "status": "success",
+    "published_at": "2026-11-13T14:42:12.800316+00:00",
+    "essai": true
   }
 ]
