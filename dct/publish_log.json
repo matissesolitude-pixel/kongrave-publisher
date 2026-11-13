@@ -322,5 +322,12 @@
     "status": "success",
     "published_at": "2026-11-12T22:00:51.703104+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-13-dct-order-block-liquidite-v03",
+    "media_id": "18092762600298378",
+    "status": "success",
+    "published_at": "2026-11-13T13:46:51.586635+00:00",
+    "essai": false
   }
 ]
