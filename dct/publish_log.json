@@ -329,5 +329,12 @@
     "status": "success",
     "published_at": "2026-11-13T13:46:51.586635+00:00",
     "essai": false
+  },
+  {
+    "dossier": "2026-11-13-kos-1-stop-quiz-v02",
+    "media_id": "18124038733943688",
+    "status": "success",
+    "published_at": "2026-11-13T14:25:22.645706+00:00",
+    "essai": true
   }
 ]
