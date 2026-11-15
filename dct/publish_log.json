@@ -343,5 +343,19 @@
     "status": "success",
     "published_at": "2026-11-13T14:42:12.800316+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-15-DZDQfqexr3L-copie-v04",
+    "media_id": "18081247721404562",
+    "status": "success",
+    "published_at": "2026-11-15T19:26:32.455760+00:00",
+    "essai": true
+  },
+  {
+    "dossier": "2026-11-15-KOS-5-who-pays-v02",
+    "media_id": "18099924767664620",
+    "status": "success",
+    "published_at": "2026-11-15T19:39:55.345375+00:00",
+    "essai": true
   }
 ]
