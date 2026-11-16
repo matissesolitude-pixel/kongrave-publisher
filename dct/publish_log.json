@@ -357,5 +357,12 @@
     "status": "success",
     "published_at": "2026-11-15T19:39:55.345375+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-16-DH9BBWUg_92-copie-v01",
+    "media_id": "18012293753778419",
+    "status": "success",
+    "published_at": "2026-11-16T19:40:20.604772+00:00",
+    "essai": true
   }
 ]
