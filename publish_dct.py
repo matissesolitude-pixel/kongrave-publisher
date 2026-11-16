@@ -170,7 +170,9 @@ def _url_publique(mp4: Path) -> str | None:
     if not sha:
         return None
     chemin = mp4.resolve().relative_to(BASE_DIR).as_posix()
-    return f"https://cdn.jsdelivr.net/gh/{DEPOT_PUBLIC}@{sha}/{chemin}"
+    # 16/11/2026 : jsDelivr répond 404 sur les MP4 de ce dépôt (4,7 Go), même sur une vidéo servie la veille ; deux conteneurs
+    # d'essai en ERROR (runs 43938607052 et 43939755826). L'adresse brute de GitHub sert le même fichier, au même commit.
+    return f"https://raw.githubusercontent.com/{DEPOT_PUBLIC}/{sha}/{chemin}"
 
 
 def _publier_par_url(mp4: Path, caption: str, dry_run: bool, essai: dict | None = None) -> dict:
