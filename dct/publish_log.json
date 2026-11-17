@@ -364,5 +364,19 @@
     "status": "success",
     "published_at": "2026-11-16T19:40:20.604772+00:00",
     "essai": true
+  },
+  {
+    "dossier": "2026-11-17-a-loom-gu-analyse",
+    "media_id": "18187792387425039",
+    "status": "success",
+    "published_at": "2026-11-17T19:19:05.623027+00:00",
+    "essai": false
+  },
+  {
+    "dossier": "2026-11-17-b-motion-eu-trade-m",
+    "media_id": "18123866035822228",
+    "status": "success",
+    "published_at": "2026-11-17T19:32:04.705250+00:00",
+    "essai": false
   }
 ]
