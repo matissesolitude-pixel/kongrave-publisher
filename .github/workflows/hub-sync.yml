@@ -63,6 +63,7 @@ jobs:
             story/published
             story/journal.jsonl
             carrousel/queue
+            carrousel/published
             carrousel/journal.jsonl
             dct/publish_log.json
             programme
@@ -111,9 +112,10 @@ jobs:
                   return None
               return v.strip()
 
-          def media_pret_story(sid):
+          def media_pret_story(sid, racine="story"):
               # Le manifeste, là où il se trouve : rangé après publication, ou encore en file.
-              for dossier in ("story/published", "story/queue"):
+              # C, 18/11 : aussi pour les carrousels (racine « carrousel »), dont le média prêt de l'OS restait ouvert.
+              for dossier in (f"{racine}/published", f"{racine}/queue"):
                   m = lire_json(f"{dossier}/{sid}.json", None)
                   if isinstance(m, dict) and isinstance(m.get("media_pret"), str) and m["media_pret"].strip():
                       return m["media_pret"].strip()
@@ -161,8 +163,12 @@ jobs:
           # Carrousels publiés.
           for e in lignes_journal("carrousel/journal.jsonl"):
               if e.get("event") == "published" and e.get("id"):
-                  pubs.append({"type": "carrousel", "nom": e["id"], "etat": "publie",
-                               "publie_le": heure(e.get("at")), "media_id": e.get("media_id")})
+                  p = {"type": "carrousel", "nom": e["id"], "etat": "publie",
+                       "publie_le": heure(e.get("at")), "media_id": e.get("media_id")}
+                  pret = media_pret_story(e["id"], "carrousel")
+                  if pret:
+                      p["media_pret"] = pret
+                  pubs.append(p)
 
           # Une seule ligne par type et nom : « publié » l'emporte sur « programmé », puis la publication la plus récente.
           uniques = {}
